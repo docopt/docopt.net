@@ -14,42 +14,42 @@ and instead can write only the help message--*the way you want it*.
 
 .. code:: c#
 
-using System;
-using NDocOpt;
+  using System;
+  using NDocOpt;
 
-namespace NavalFate
-{
-    internal class Program
-    {
-        private const string usage = @"Naval Fate.
+  namespace NavalFate
+  {
+      internal class Program
+      {
+          private const string usage = @"Naval Fate.
 
-    Usage:
-      naval_fate.exe ship new <name>...
-      naval_fate.exe ship <name> move <x> <y> [--speed=<kn>]
-      naval_fate.exe ship shoot <x> <y>
-      naval_fate.exe mine (set|remove) <x> <y> [--moored | --drifting]
-      naval_fate.exe (-h | --help)
-      naval_fate.exe --version
+      Usage:
+        naval_fate.exe ship new <name>...
+        naval_fate.exe ship <name> move <x> <y> [--speed=<kn>]
+        naval_fate.exe ship shoot <x> <y>
+        naval_fate.exe mine (set|remove) <x> <y> [--moored | --drifting]
+        naval_fate.exe (-h | --help)
+        naval_fate.exe --version
 
-    Options:
-      -h --help     Show this screen.
-      --version     Show version.
-      --speed=<kn>  Speed in knots [default: 10].
-      --moored      Moored (anchored) mine.
-      --drifting    Drifting mine.
+      Options:
+        -h --help     Show this screen.
+        --version     Show version.
+        --speed=<kn>  Speed in knots [default: 10].
+        --moored      Moored (anchored) mine.
+        --drifting    Drifting mine.
 
-    ";
+      ";
 
-        private static void Main(string[] args)
-        {
-            var arguments = new DocOpt().Apply(usage, args, version: "Naval Fate 2.0");
-            foreach (var argument in arguments)
-            {
-                Console.WriteLine("{0} = {1}", argument.Key, argument.Value);
-            }
-        }
-    }
-}
+          private static void Main(string[] args)
+          {
+              var arguments = new DocOpt().Apply(usage, args, version: "Naval Fate 2.0");
+              foreach (var argument in arguments)
+              {
+                  Console.WriteLine("{0} = {1}", argument.Key, argument.Value);
+              }
+          }
+      }
+  }
 
 Beat that! The option parser is generated based on the docstring above
 that is passed to the ``DocOpt.Apply`` method.  ``DocOpt.Apply`` parses the usage
