@@ -6,7 +6,7 @@ namespace NDocOpt
 {
     public class ValueObject
     {
-        protected object Value { get; private set; }
+        public object Value { get; private set; }
 
         public ValueObject(object obj)
         {
