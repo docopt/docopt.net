@@ -1,5 +1,7 @@
-``docopt.net`` is a .NET port of docopt
+``docopt.net`` is a .NET port of docopt (Work In Progress)
 ======================================================================
+
+.. warning:: /!\ Work in progress until all the language agnostic tests pass. /!\ 
 
 Isn't it awesome how ``optparse`` and ``argparse`` generate help
 messages based on your code?!
