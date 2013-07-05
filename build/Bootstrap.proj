@@ -1,0 +1,75 @@
+<Project DefaultTargets = "RestorePackages"
+         ToolsVersion="4.0"
+         xmlns="http://schemas.microsoft.com/developer/msbuild/2003" >
+
+  <!-- Bootstrapping settings -->
+  <PropertyGroup>
+    <TopDir>$(MSBuildProjectDirectory)\..</TopDir>
+    <SrcDir>$(TopDir)\src</SrcDir>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <SrcPackageConfig Include="$(SrcDir)\**\packages.config" />
+  </ItemGroup>
+
+  <Target Name="Help">
+    <Message
+      Text="
+Build bootstraping script
+=========================
+
+This script ensures that all the required Nuget packages are installed.
+
+Input properties:
+-----------------
+
+ None
+
+Public Targets:
+---------------
+
+ * RestorePackages (default) : restore all packages
+ * RestoreBuildPackages : restore build packages only
+ * RestoreSrcPackages : restore source packages only
+ * Help : display this text
+
+"
+      Importance="high"
+    />
+  </Target>
+
+  <Target Name="RestorePackages" DependsOnTargets="RestoreBuildPackages;RestoreSrcPackages" />
+
+  <Target Name="RestoreBuildPackages">
+    <Message Importance="high" Text="** Restoring packages from build" />
+    <PropertyGroup>
+      <NugetTargets>$(SrcDir)\.nuget\NuGet.targets</NugetTargets>
+	  <!-- Location of packages.config -->
+      <ProjectDir>$(TopDir)\build</ProjectDir>
+	  <!-- Location of .nuget -->
+      <SolutionDir>$(TopDir)\src</SolutionDir>
+    </PropertyGroup>
+    <MSBuild
+      Projects="$(NugetTargets)"
+      Targets="RestorePackages"
+      Properties="ProjectDir=$(ProjectDir);SolutionDir=$(SolutionDir)"
+      />
+  </Target>
+
+  <Target Name="RestoreSrcPackages" Outputs="%(SrcPackageConfig.FullPath)" Condition="Exists('$(SrcDir)')">
+    <Message Importance="high" Text="** Restoring packages from %(SrcPackageConfig.FullPath)" />
+    <PropertyGroup>
+      <NugetTargets>$(TopDir)\src\.nuget\NuGet.targets</NugetTargets>
+	  <!-- Location of packages.config -->
+      <ProjectDir>%(SrcPackageConfig.RootDir)%(SrcPackageConfig.Directory)</ProjectDir>
+      <!-- Location of .nuget -->
+	  <SolutionDir>$(TopDir)\src</SolutionDir>
+    </PropertyGroup>
+    <MSBuild
+      Projects="$(NugetTargets)"
+      Targets="RestorePackages"
+      Properties="ProjectDir=$(ProjectDir);SolutionDir=$(SolutionDir)"
+      />
+  </Target>
+
+</Project>
