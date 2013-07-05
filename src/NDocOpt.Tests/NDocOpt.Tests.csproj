@@ -59,6 +59,9 @@
   <PropertyGroup>
     <AssemblyOriginatorKeyFile>NDocOpt.snk</AssemblyOriginatorKeyFile>
   </PropertyGroup>
+  <PropertyGroup Condition="$(BuildOutDir) != '' ">
+    <OutputPath>$(BuildOutDir)\$(MSBuildProjectName)</OutputPath>
+  </PropertyGroup>  
   <ItemGroup>
     <Compile Include="AnyOptionsParameterTests.cs" />
     <Compile Include="ArgumentMatchTests.cs" />
