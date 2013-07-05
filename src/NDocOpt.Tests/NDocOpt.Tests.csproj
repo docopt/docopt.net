@@ -70,6 +70,8 @@
     <Compile Include="DefaultValueForPositionalArgumentsTests.cs" />
     <Compile Include="DocOptTests.cs" />
     <Compile Include="EitherMatchTests.cs" />
+    <Compile Include="LanguageAgnosticTests.cs" />
+    <Compile Include="LanguageAgnosticTests.generated.cs" />
     <Compile Include="ListArgumentMatchTests.cs" />
     <Compile Include="LongOptionsErrorHandlingTests.cs" />
     <Compile Include="OneOrMoreMatchTests.cs" />
@@ -93,6 +95,9 @@
     <Compile Include="UsageTests.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Reference Include="Newtonsoft.Json">
+      <HintPath>..\packages\Newtonsoft.Json.5.0.5\lib\net40\Newtonsoft.Json.dll</HintPath>
+    </Reference>
     <Reference Include="NSubstitute">
       <HintPath>..\packages\NSubstitute.1.6.1.0\lib\NET40\NSubstitute.dll</HintPath>
     </Reference>

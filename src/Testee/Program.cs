@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Text;
 using NDocOpt;
 using Newtonsoft.Json;
@@ -28,13 +30,19 @@ namespace Testee
                 var dict = new Dictionary<string, object>();
                 foreach (var argument in arguments)
                 {
-                    dict[argument.Key] = argument.Value.Value;
+                    if (argument.Value.IsList)
+                    {
+                        var v = (argument.Value.Value as ICollection<object>).Select(x => ((ValueObject)x).Value);
+                        dict[argument.Key] = v;
+                    }
+                    else
+                        dict[argument.Key] = argument.Value.Value;
                 }
                 Console.WriteLine(JsonConvert.SerializeObject(dict));
             }
-            catch (Exception)
+            catch (Exception e)
             {
-                Console.WriteLine("user-error");
+                Console.WriteLine("\"user-error\"");
             }
             
         }
