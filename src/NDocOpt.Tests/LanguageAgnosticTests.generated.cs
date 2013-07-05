@@ -6,6 +6,8 @@ namespace NDocOpt.Tests
     [TestFixture]
     public partial class LanguageAgnosticTests
     {
+      #region Language agnostic tests generated code
+    
 
       [Test]
       public void Test_1()
@@ -2241,5 +2243,6 @@ other options:
       }
 
 
+      #endregion    
     }
 }

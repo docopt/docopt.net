@@ -1,6 +1,6 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
 using NUnit.Framework;
 using Newtonsoft.Json;
 
@@ -21,8 +21,15 @@ namespace NDocOpt.Tests
                         dict[argument.Key] = null;
                     else if (argument.Value.IsList)
                     {
-                        var v = (argument.Value.Value as ICollection<object>).Select(x => ((ValueObject) x).Value);
-                        dict[argument.Key] = v;
+                        var l = new ArrayList();
+                        foreach (var v in argument.Value.AsList)
+                        {
+                            if (v is ValueObject)
+                                l.Add(((v) as ValueObject).Value);
+                            else
+                                l.Add(v);
+                        }
+                        dict[argument.Key] = l;
                     }
                     else
                         dict[argument.Key] = argument.Value.Value;
@@ -37,9 +44,18 @@ namespace NDocOpt.Tests
 
         public void CheckResult(string expectedJson, string resultJson)
         {
-            var expected = JsonConvert.DeserializeObject(expectedJson).ToString();
-            var actual = JsonConvert.DeserializeObject(resultJson).ToString();
-            Assert.AreEqual(expected, actual);
+            if (expectedJson.StartsWith("{"))
+            {
+                var expectedDict = JsonConvert.DeserializeObject<Dictionary<string, dynamic>>(expectedJson);
+                var actualDict = JsonConvert.DeserializeObject<Dictionary<string, dynamic>>(resultJson);
+                Assert.AreEqual(expectedDict, actualDict);
+            }
+            else
+            {
+                var expected = JsonConvert.DeserializeObject(expectedJson).ToString();
+                var actual = JsonConvert.DeserializeObject(resultJson).ToString();
+                Assert.AreEqual(expected, actual);
+            }
         }
     }
 }

@@ -71,7 +71,9 @@
     <Compile Include="DocOptTests.cs" />
     <Compile Include="EitherMatchTests.cs" />
     <Compile Include="LanguageAgnosticTests.cs" />
-    <Compile Include="LanguageAgnosticTests.generated.cs" />
+    <Compile Include="LanguageAgnosticTests.generated.cs">
+        <DependentUpon>LanguageAgnosticTests.cs</DependentUpon>    
+    </Compile>
     <Compile Include="ListArgumentMatchTests.cs" />
     <Compile Include="LongOptionsErrorHandlingTests.cs" />
     <Compile Include="OneOrMoreMatchTests.cs" />
