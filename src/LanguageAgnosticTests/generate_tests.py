@@ -1,4 +1,12 @@
 #! /usr/bin/env python
+
+#
+# Quick and dirty script to generate a C# test suite
+# out of testcases.docopt
+# 
+# e.g. generate_tests >LanguageAgnosticTests.generated.cs
+#
+
 import sys, json, re, os
 
 fixtures = open(os.path.join(os.path.dirname(__file__), 'testcases.docopt'), 'r').read()

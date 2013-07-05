@@ -1,7 +1,5 @@
-``docopt.net`` is a .NET port of docopt (Work In Progress)
+``docopt.net`` is a .NET port of docopt
 ======================================================================
-
-*** Work in progress until all the language agnostic tests pass. ***
 
 Isn't it awesome how ``optparse`` and ``argparse`` generate help
 messages based on your code?!
@@ -60,6 +58,12 @@ with dash "``-``") and ensures that the program invocation matches the
 usage pattern; it parses options, arguments and commands based on
 that. The basic idea is that *a good help message has all necessary
 information in it to make a parser*.
+
+Differences from reference python implementation
+======================================================================
+This port should be fully docopt language compatible with the 
+python reference implementation.
+
 
 Installation
 ======================================================================
@@ -342,4 +346,4 @@ tools, e.g.::
 
     nuget install docopt.net -Version 0.6.1
 
-- 0.6.1 Initial port.
+- 0.6.1 Initial port. All reference language agnostic tests pass.
