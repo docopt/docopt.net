@@ -14,10 +14,10 @@
         <summary>A command-line interface description language and parser that will make you smile.</summary>
         <copyright>Copyright (c) 2012-2013 Vladimir Keleshev, Dinh Doan Van Bien</copyright>
         <language>en-US</language>
-        <tags>parser command line argument option library syntax shell beautiful</tags>
+        <tags>parser command line argument option library syntax shell beautiful posix python</tags>
     </metadata>
     <files>
-        <file src="lib\net40\NDocOpt.dll" target="lib\net40\NDocOpt.dll" />
-        <file src="lib\net40\NDocOpt.pdb" target="lib\net40\NDocOpt.pdb" />
+        <file src="..\..\_build\bin\NDocOpt\NDocOpt.dll" target="lib\net40\NDocOpt.dll" />
+        <file src="..\..\_build\bin\NDocOpt\NDocOpt.pdb" target="lib\net40\NDocOpt.pdb" />
     </files>
 </package>
