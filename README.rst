@@ -1,7 +1,7 @@
 ``docopt.net`` is a .NET port of docopt
 ======================================================================
 
-Isn't it awesome how ``optparse`` and ``argparse`` generate help
+Isn't it awesome how `CommandLineParser <https://nuget.org/packages/CommandLineParser/>`_ and `PowerArgs <https://nuget.org/packages/PowerArgs/>`_ generate help
 messages based on your code?!
 
 *Hell no!*  You know what's awesome?  It's when the option parser *is*
@@ -61,9 +61,12 @@ information in it to make a parser*.
 
 Differences from reference python implementation
 ======================================================================
-This port should be fully docopt language compatible with the 
-python reference implementation.
-
+- This port should be fully docopt language compatible with the 
+  python reference implementation.
+  
+- Because C# is statically typed, the return dictionary is of type 
+  ``IDictionary<string,ValueObject>`` where ``ValueObject`` is a simple wrapper
+  class around entry values.
 
 Installation
 ======================================================================
@@ -122,6 +125,14 @@ API
   want to handle ``-h`` or ``--help`` options manually (as other
   options), set ``help: false``.
 
+    Note, you can override the print and exit behaviour by providing
+    a custom handler for the ``DocOpt.PrintExit`` event. e.g.
+    
+.. code:: c#
+
+    var docopt = new DocOpt();
+    docopt.PrintExit += MyCustomPrintExit;
+   
 - ``version``, by default ``null``, is an optional argument that
   specifies the version of your program. If supplied, then, (assuming
   ``--version`` option is mentioned in usage pattern) when parser
@@ -137,7 +148,7 @@ API
 - ``optionsFirst``, by default ``false``.  If set to ``true`` will
   disallow mixing options and positional argument.  I.e. after first
   positional argument, all arguments will be interpreted as positional
-  even if the look like options.  This can be used for strict
+  even if they look like options.  This can be used for strict
   compatibility with POSIX, or if you want to dispatch your arguments
   to other programs.
 
