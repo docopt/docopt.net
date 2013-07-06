@@ -15,7 +15,7 @@ namespace NDocOpt.Tests
 
         prog is a program.";
             var usage = DocOpt.ParseSection("usage:", DOC).First();
-            Assert.AreEqual("Usage: prog [-hv] ARG\n               prog N M", usage);
+            Assert.AreEqual("Usage: prog [-hv] ARG\r\n               prog N M", usage);
             Assert.AreEqual("( [-hv] ARG ) | ( N M )", DocOpt.FormalUsage(usage));
         }
         [Test]

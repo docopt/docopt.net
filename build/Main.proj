@@ -6,6 +6,7 @@
   <PropertyGroup>
     <TopDir>$(MSBuildProjectDirectory)\..</TopDir>
     <SrcDir>$(TopDir)\src</SrcDir>
+    <ReportDir>$(TopDir)\_build\report</ReportDir>
     <BuildOutDir>$(TopDir)\_build\bin</BuildOutDir>
     <PackageDir>$(TopDir)\src\packages</PackageDir>
     <SolutionFile>$(SrcDir)\NDocOpt.sln</SolutionFile>
@@ -38,7 +39,14 @@ Public Targets:
 
   <PropertyGroup>
     <MSBuildCommunityTasksPath>$(PackageDir)\MSBuildTasks.1.4.0.61\tools</MSBuildCommunityTasksPath>
+    <!-- Tool path for the NUnit task -->
+    <NUnit-ToolPath>$(PackageDir)\NUnit.Runners.2.6.2\tools</NUnit-ToolPath>
+    <NUnitReport>$(ReportDir)\nunit-result.xml</NUnitReport>
   </PropertyGroup>
+
+  <ItemGroup>
+    <UnitTestAssembly Include="$(BuildOutDir)\NDocOpt.Tests\NDocOpt.Tests.dll" />
+  </ItemGroup>
 
   <Import Project="$(MSBuildCommunityTasksPath)\MSBuild.Community.Tasks.targets"/>
 
@@ -65,5 +73,13 @@ Public Targets:
   </Target>
 
   <Target Name="RunUnitTests">
-  </Target>  
+    <MakeDir Directories="$(ReportDir)" Condition="!Exists($(ReportDir))" />
+    <MSBuild.Community.Tasks.NUnit
+      Assemblies="@(UnitTestAssembly)"
+      ToolPath="$(NUnit-ToolPath)"
+      DisableShadowCopy="true"
+      OutputXmlFile="$(NUnitReport)"
+      Framework="4.0"
+    />
+</Target>  
 </Project>
