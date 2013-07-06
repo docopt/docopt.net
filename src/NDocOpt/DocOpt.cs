@@ -81,8 +81,15 @@ namespace NDocOpt
 
         protected void OnPrintExit(string doc)
         {
-            if (PrintExit == null) return;
-            PrintExit(this, new PrintExitEventArgs(doc));
+            if (PrintExit == null)
+            {
+                Console.WriteLine(doc.Trim("\r\n".ToArray()));
+                Environment.Exit(0);
+            }
+            else
+            {
+                PrintExit(this, new PrintExitEventArgs(doc));    
+            }
         }
 
         /// <summary>
