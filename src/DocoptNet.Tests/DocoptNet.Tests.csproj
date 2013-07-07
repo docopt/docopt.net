@@ -71,7 +71,7 @@
     <Compile Include="CommandsTests.cs" />
     <Compile Include="CountMultipleFlagsTests.cs" />
     <Compile Include="DefaultValueForPositionalArgumentsTests.cs" />
-    <Compile Include="DocOptTestsx.cs" />
+    <Compile Include="DocoptTests.cs" />
     <Compile Include="EitherMatchTests.cs" />
     <Compile Include="LanguageAgnosticTests.cs" />
     <Compile Include="LanguageAgnosticTests.generated.cs">
