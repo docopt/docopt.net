@@ -34,7 +34,7 @@
     <SignAssembly>true</SignAssembly>
   </PropertyGroup>
   <PropertyGroup>
-    <AssemblyOriginatorKeyFile>NDocOpt.snk</AssemblyOriginatorKeyFile>
+    <AssemblyOriginatorKeyFile>DocoptNet.snk</AssemblyOriginatorKeyFile>
   </PropertyGroup>
   <PropertyGroup Condition="$(BuildOutDir) != '' ">
     <OutputPath>$(BuildOutDir)\$(MSBuildProjectName)</OutputPath>
@@ -70,7 +70,7 @@
     <Compile Include="ValueObject.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="NDocOpt.snk" />
+    <None Include="DocoptNet.snk" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

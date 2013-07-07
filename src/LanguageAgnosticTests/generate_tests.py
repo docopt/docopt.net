@@ -21,7 +21,7 @@ fmt = """
       public void Test_%d()
       {
           var doc = @"%s";
-          var actual = DocOpt(doc, @"%s");
+          var actual = Docopt(doc, @"%s");
           var expected = @"%s";
           CheckResult(expected, actual);
       }
@@ -30,7 +30,7 @@ fmt = """
 print ("""using System.Collections.Generic;
 using NUnit.Framework;
 
-namespace NDocOpt.Tests
+namespace DocoptNet.Tests
 {
     [TestFixture]
     public partial class LanguageAgnosticTests

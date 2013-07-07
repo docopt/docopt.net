@@ -23,7 +23,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <DebugType>full</DebugType>
     <PlatformTarget>AnyCPU</PlatformTarget>
-    <CodeAnalysisLogFile>bin\Debug\NDocOpt.Tests.exe.CodeAnalysisLog.xml</CodeAnalysisLogFile>
+    <CodeAnalysisLogFile>bin\Debug\DocoptNet.Tests.exe.CodeAnalysisLog.xml</CodeAnalysisLogFile>
     <CodeAnalysisUseTypeNameInSuppression>true</CodeAnalysisUseTypeNameInSuppression>
     <CodeAnalysisModuleSuppressionsFile>GlobalSuppressions.cs</CodeAnalysisModuleSuppressionsFile>
     <ErrorReport>prompt</ErrorReport>
@@ -39,7 +39,7 @@
     <Optimize>true</Optimize>
     <DebugType>pdbonly</DebugType>
     <PlatformTarget>AnyCPU</PlatformTarget>
-    <CodeAnalysisLogFile>bin\Release\NDocOpt.Tests.exe.CodeAnalysisLog.xml</CodeAnalysisLogFile>
+    <CodeAnalysisLogFile>bin\Release\DocoptNet.Tests.exe.CodeAnalysisLog.xml</CodeAnalysisLogFile>
     <CodeAnalysisUseTypeNameInSuppression>true</CodeAnalysisUseTypeNameInSuppression>
     <CodeAnalysisModuleSuppressionsFile>GlobalSuppressions.cs</CodeAnalysisModuleSuppressionsFile>
     <ErrorReport>prompt</ErrorReport>
@@ -57,7 +57,7 @@
     <SignAssembly>true</SignAssembly>
   </PropertyGroup>
   <PropertyGroup>
-    <AssemblyOriginatorKeyFile>NDocOpt.snk</AssemblyOriginatorKeyFile>
+    <AssemblyOriginatorKeyFile>..\DocoptNet\DocoptNet.snk</AssemblyOriginatorKeyFile>
   </PropertyGroup>
   <PropertyGroup Condition="$(BuildOutDir) != '' ">
     <OutputPath>$(BuildOutDir)\$(MSBuildProjectName)</OutputPath>
@@ -112,12 +112,14 @@
     <Reference Include="System" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="..\DocoptNet\DocoptNet.snk">
+      <Link>DocoptNet.snk</Link>
+    </None>
     <None Include="app.config" />
-    <None Include="NDocOpt.snk" />
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\NDocOpt\DocoptNet.csproj">
+    <ProjectReference Include="..\DocoptNet\DocoptNet.csproj">
       <Project>{98A9E0AA-D81F-4919-8582-2451087A757E}</Project>
       <Name>DocoptNet</Name>
     </ProjectReference>

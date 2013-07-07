@@ -13,5 +13,5 @@ Method 2: generated unit tests
 
 1. Generate the tests
 	cd src\LanguageAgnosticTests
-    generate_tests >..\NDocOpt.Tests\LanguageAgnosticTests.generated.cs
+    generate_tests >..\DocoptNet.Tests\LanguageAgnosticTests.generated.cs
 2. Run all the unit tests

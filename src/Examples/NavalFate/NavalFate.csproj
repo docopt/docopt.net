@@ -48,7 +48,7 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\NDocOpt\DocoptNet.csproj">
+    <ProjectReference Include="..\..\DocoptNet\DocoptNet.csproj">
       <Project>{98a9e0aa-d81f-4919-8582-2451087a757e}</Project>
       <Name>DocoptNet</Name>
     </ProjectReference>
