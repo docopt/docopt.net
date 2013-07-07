@@ -73,7 +73,7 @@ Installation
 
 Use nuget
 
-    nuget install Docopt.net -Version 0.6.1
+    nuget install Docopt.net -Version 0.6.1.3
 
 Alternatively, you can just drop ``DocoptNet.dll`` file into your
 project--it is self-contained.
@@ -90,12 +90,12 @@ API
 .. code:: c#
 
   public IDictionary<string, ValueObject> Apply(string doc, string cmdLine, bool help = true,
-    object version = null, bool optionsFirst = false)
+    object version = null, bool optionsFirst = false, bool exit = true)
 
   public IDictionary<string, ValueObject> Apply(string doc, ICollection<string> argv, bool help = true,
-    object version = null, bool optionsFirst = false)
+    object version = null, bool optionsFirst = false, bool exit = true)
 
-``Apply`` takes 1 required and 4 optional arguments:
+``Apply`` takes 1 required and 5 optional arguments:
 
 - ``doc`` is a string that contains a **help message** that will be parsed to
   create the option parser.  The simple rules of how to write such a
@@ -152,6 +152,11 @@ API
   compatibility with POSIX, or if you want to dispatch your arguments
   to other programs.
 
+- ``exit``, by default ``true``.  If set to ``false`` will
+  raise a DocoptExitException instead of printing and exiting. Note 
+  that this behaviour will kick in only if a ``Docopt.PrintExit``
+  event handler is not provided.  
+  
 The **return** value is a simple dictionary with options, arguments
 and commands as keys, spelled exactly like in your help message.  Long
 versions of options are given priority. For example, if you invoke the
@@ -355,6 +360,8 @@ first release with stable API will be 1.0.0 (soon).  Until then, you
 are encouraged to specify explicitly the version in your dependency
 tools, e.g.::
 
-    nuget install docopt.net -Version 0.6.1
+    nuget install docopt.net -Version 0.6.1.3
 
-- 0.6.1 Initial port. All reference language agnostic tests pass.
+- 0.6.1.3 Added exit parameter.
+- 0.6.1.2 Fixed docopt capitalisation.
+- 0.6.1.1 Initial port. All reference language agnostic tests pass.

@@ -14,24 +14,24 @@ namespace DocoptNet
 
         public IDictionary<string, ValueObject> Apply(string doc)
         {
-            return Apply(doc, new Tokens("", typeof(DocoptExitException)), true, null, false);
+            return Apply(doc, new Tokens("", typeof(DocoptExitException)));
         }
 
         public IDictionary<string, ValueObject> Apply(string doc, string cmdLine, bool help = true,
-                                                      object version = null, bool optionsFirst = false)
+                                                      object version = null, bool optionsFirst = false, bool exit=true)
         {
-            return Apply(doc, new Tokens(cmdLine, typeof(DocoptExitException)), help, version, optionsFirst);
+            return Apply(doc, new Tokens(cmdLine, typeof(DocoptExitException)), help, version, optionsFirst, exit);
         }
 
         public IDictionary<string, ValueObject> Apply(string doc, ICollection<string> argv, bool help = true,
-                                                      object version = null, bool optionsFirst = false)
+                                                      object version = null, bool optionsFirst = false, bool exit = true)
         {
-            return Apply(doc, new Tokens(argv, typeof(DocoptExitException)), help, version, optionsFirst);
+            return Apply(doc, new Tokens(argv, typeof(DocoptExitException)), help, version, optionsFirst, exit);
         }
 
         protected IDictionary<string, ValueObject> Apply(string doc, Tokens tokens,
                                                       bool help = true,
-                                                      object version = null, bool optionsFirst = false)
+                                                      object version = null, bool optionsFirst = false, bool exit = true)
         {
             var usageSections = ParseSection("usage:", doc);
             if (usageSections.Length == 0)
@@ -49,7 +49,7 @@ namespace DocoptNet
                 var docOptions = ParseDefaults(doc);
                 optionsShortcut.Children = docOptions.Distinct().Except(patternOptions).ToList();
             }
-            Extras(help, version, arguments, doc);
+            Extras(help, version, arguments, doc, exit);
             var res = pattern.Fix().Match(arguments);
             if (res.Matched && res.LeftIsEmpty)
             {
@@ -67,22 +67,24 @@ namespace DocoptNet
             throw new DocoptExitException(exitUsage);
         }
 
-        private void Extras(bool help, object version, ICollection<Pattern> options, string doc)
+        private void Extras(bool help, object version, ICollection<Pattern> options, string doc, bool exit)
         {
             if (help && options.Any(o => (o.Name == "-h" || o.Name == "--help") && !o.Value.IsNullOrEmpty))
             {
-                OnPrintExit(doc);
+                OnPrintExit(exit, doc);
             }
             if (version != null && options.Any(o => (o.Name == "--version") && !o.Value.IsNullOrEmpty))
             {
-                OnPrintExit(version.ToString());
+                OnPrintExit(exit, version.ToString());
             }
         }
 
-        protected void OnPrintExit(string doc)
+        protected void OnPrintExit(bool exit, string doc)
         {
             if (PrintExit == null)
             {
+                if (!exit)
+                    throw new DocoptExitException(doc);
                 Console.WriteLine(doc.Trim("\r\n".ToArray()));
                 Environment.Exit(0);
             }

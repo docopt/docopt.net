@@ -38,6 +38,13 @@ namespace DocoptNet.Tests
         }
 
         [Test]
+        public void Test_issue_106_exit()
+        {
+            Assert.Throws<DocoptExitException>(
+                () => new Docopt().Apply("usage: prog --help-commands | --help", "--help", exit: false));
+        }
+
+        [Test]
         public void Test_issue_40_same_prefix()
         {
             var expected = new Dictionary<string, ValueObject>
@@ -77,7 +84,7 @@ namespace DocoptNet.Tests
             Assert.AreEqual(expected, actual);
         }
 
-        const string DOC = @"Usage: prog [-vqr] [FILE]
+        private const string DOC = @"Usage: prog [-vqr] [FILE]
               prog INPUT OUTPUT
               prog --help
 
@@ -162,7 +169,7 @@ namespace DocoptNet.Tests
                 {
                     {"-l", new ValueObject("")}
                 };
-            var actual = new Docopt().Apply("usage: prog -l <a>\noptions: -l <a>", new[]{"-l", ""});
+            var actual = new Docopt().Apply("usage: prog -l <a>\noptions: -l <a>", new[] {"-l", ""});
             Assert.AreEqual(expected, actual);
         }
 
