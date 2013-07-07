@@ -27,3 +27,4 @@ _ReSharper*/
 [Tt]est[Rr]esult*
 packages/
 *.nupkg
+/_build
