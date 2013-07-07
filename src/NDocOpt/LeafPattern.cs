@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace NDocOpt
+namespace DocoptNet
 {
     /// <summary>
     /// Leaf/terminal node of a pattern tree.

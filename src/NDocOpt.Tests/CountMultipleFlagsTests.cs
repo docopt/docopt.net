@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using NUnit.Framework;
 
-namespace NDocOpt.Tests
+namespace DocoptNet.Tests
 {
     [TestFixture]
     public class CountMultipleFlagsTests
@@ -13,7 +13,7 @@ namespace NDocOpt.Tests
                 {
                     {"-v", new ValueObject(true)}
                 };
-            var actual = new DocOpt().Apply("Usage: prog [-v]", "-v");
+            var actual = new Docopt().Apply("Usage: prog [-v]", "-v");
             Assert.AreEqual(expected, actual);
         }
 
@@ -24,7 +24,7 @@ namespace NDocOpt.Tests
                 {
                     {"-v", new ValueObject(0)}
                 };
-            var actual = new DocOpt().Apply("Usage: prog [-vv]", "");
+            var actual = new Docopt().Apply("Usage: prog [-vv]", "");
             Assert.AreEqual(expected, actual);
         }
 
@@ -35,7 +35,7 @@ namespace NDocOpt.Tests
                 {
                     {"-v", new ValueObject(1)}
                 };
-            var actual = new DocOpt().Apply("Usage: prog [-vv]", "-v");
+            var actual = new Docopt().Apply("Usage: prog [-vv]", "-v");
             Assert.AreEqual(expected, actual);
         }
 
@@ -46,14 +46,14 @@ namespace NDocOpt.Tests
                 {
                     {"-v", new ValueObject(2)}
                 };
-            var actual = new DocOpt().Apply("Usage: prog [-vv]", "-vv");
+            var actual = new Docopt().Apply("Usage: prog [-vv]", "-vv");
             Assert.AreEqual(expected, actual);
         }
 
         [Test]
         public void Flag_too_many()
         {
-            Assert.Throws<DocOptExitException>(() => new DocOpt().Apply("Usage: prog [-vv]", "-vvv"));
+            Assert.Throws<DocoptExitException>(() => new Docopt().Apply("Usage: prog [-vv]", "-vvv"));
         }
 
         [Test]
@@ -63,7 +63,7 @@ namespace NDocOpt.Tests
                 {
                     {"-v", new ValueObject(3)}
                 };
-            var actual = new DocOpt().Apply("Usage: prog [-v | -vv | -vvv]", "-vvv");
+            var actual = new Docopt().Apply("Usage: prog [-v | -vv | -vvv]", "-vvv");
             Assert.AreEqual(expected, actual);
         }
 
@@ -74,7 +74,7 @@ namespace NDocOpt.Tests
                 {
                     {"-v", new ValueObject(6)}
                 };
-            var actual = new DocOpt().Apply("Usage: prog -v...", "-vvvvvv");
+            var actual = new Docopt().Apply("Usage: prog -v...", "-vvvvvv");
             Assert.AreEqual(expected, actual);
         }
 
@@ -85,7 +85,7 @@ namespace NDocOpt.Tests
                 {
                     {"--ver", new ValueObject(2)}
                 };
-            var actual = new DocOpt().Apply("Usage: prog [--ver --ver]", "--ver --ver");
+            var actual = new Docopt().Apply("Usage: prog [--ver --ver]", "--ver --ver");
             Assert.AreEqual(expected, actual);
         }
 

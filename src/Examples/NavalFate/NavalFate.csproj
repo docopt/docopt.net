@@ -48,9 +48,9 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\NDocOpt\NDocOpt.csproj">
+    <ProjectReference Include="..\..\NDocOpt\DocoptNet.csproj">
       <Project>{98a9e0aa-d81f-4919-8582-2451087a757e}</Project>
-      <Name>NDocOpt</Name>
+      <Name>DocoptNet</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

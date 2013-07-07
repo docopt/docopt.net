@@ -1,7 +1,7 @@
 ﻿using System;
 using NUnit.Framework;
 
-namespace NDocOpt.Tests
+namespace DocoptNet.Tests
 {
     /// <summary>
     ///     Set of tests to validate assumptions about the BCL or other APIs.

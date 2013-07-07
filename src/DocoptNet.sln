@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2012
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NDocOpt", "NDocOpt\NDocOpt.csproj", "{98A9E0AA-D81F-4919-8582-2451087A757E}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DocoptNet", "NDocOpt\DocoptNet.csproj", "{98A9E0AA-D81F-4919-8582-2451087A757E}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{7B46FD28-5BBB-4C80-978A-58E7A00412A1}"
 	ProjectSection(SolutionItems) = preProject
@@ -10,13 +10,21 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{7B46FD
 		.nuget\NuGet.targets = .nuget\NuGet.targets
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NDocOpt.Tests", "NDocOpt.Tests\NDocOpt.Tests.csproj", "{80A9BB30-873C-47E9-8314-5E53AC66E8B7}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DocoptNet.Tests", "NDocOpt.Tests\DocoptNet.Tests.csproj", "{80A9BB30-873C-47E9-8314-5E53AC66E8B7}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NavalFate", "Examples\NavalFate\NavalFate.csproj", "{2B454F8B-D702-4281-80DF-367142007B0C}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Examples", "Examples", "{AE631D61-6BE6-438F-A535-955BB9A0218F}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Testee", "Testee\Testee.csproj", "{C3490CAE-5A69-4852-BD61-50179D587D0D}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "build", "build", "{DC286C58-6D9D-4B8B-9C0D-F6E8CDB0D28E}"
+	ProjectSection(SolutionItems) = preProject
+		..\build\Bootstrap.proj = ..\build\Bootstrap.proj
+		..\build\Build.bat = ..\build\Build.bat
+		..\build\Main.proj = ..\build\Main.proj
+		..\build\packages.config = ..\build\packages.config
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

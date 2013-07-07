@@ -1,6 +1,6 @@
 ﻿using NUnit.Framework;
 
-namespace NDocOpt.Tests
+namespace DocoptNet.Tests
 {
     [TestFixture]
     public class ParseArgvTests
@@ -10,20 +10,20 @@ namespace NDocOpt.Tests
 
         private Tokens TS(string s)
         {
-            return new Tokens(s, typeof (DocOptExitException));
+            return new Tokens(s, typeof (DocoptExitException));
         }
 
         [Test]
         public void Test_parse_argv_empty()
         {
-            Assert.IsEmpty(DocOpt.ParseArgv(TS(""), _options));
+            Assert.IsEmpty(Docopt.ParseArgv(TS(""), _options));
         }
 
         [Test]
         public void Test_parse_argv_one_opt()
         {
             Assert.AreEqual(new[] {new Option("-h", null, 0, new ValueObject(true))},
-                            DocOpt.ParseArgv(TS("-h"), _options));
+                            Docopt.ParseArgv(TS("-h"), _options));
         }
 
         [Test]
@@ -34,7 +34,7 @@ namespace NDocOpt.Tests
                     new Option("-h", null, 0, new ValueObject(true)),
                     new Option("-v", "--verbose", 0, new ValueObject(true))
                 },
-                            DocOpt.ParseArgv(TS("-h --verbose"), _options));
+                            Docopt.ParseArgv(TS("-h --verbose"), _options));
         }
 
         [Test]
@@ -45,7 +45,7 @@ namespace NDocOpt.Tests
                     new Option("-h", null, 0, new ValueObject(true)),
                     new Option("-f", "--file", 1, "f.txt")
                 },
-                            DocOpt.ParseArgv(TS("-h --file f.txt"), _options));
+                            Docopt.ParseArgv(TS("-h --file f.txt"), _options));
         }
 
         [Test]
@@ -58,7 +58,7 @@ namespace NDocOpt.Tests
                         new Option("-f", "--file", 1, "f.txt"),
                         new Argument(null, "arg")
                     },
-                DocOpt.ParseArgv(TS("-h --file f.txt arg"), _options));
+                Docopt.ParseArgv(TS("-h --file f.txt arg"), _options));
         }
 
         [Test]
@@ -72,7 +72,7 @@ namespace NDocOpt.Tests
                         new Argument(null, "arg"),
                         new Argument(null, "arg2")
                     },
-                DocOpt.ParseArgv(TS("-h --file f.txt arg arg2"), _options));
+                Docopt.ParseArgv(TS("-h --file f.txt arg arg2"), _options));
         }
 
         [Test]
@@ -86,7 +86,7 @@ namespace NDocOpt.Tests
                         new Argument(null, "--"),
                         new Argument(null, "-v")
                     },
-                DocOpt.ParseArgv(TS("-h arg -- -v"), _options));
+                Docopt.ParseArgv(TS("-h arg -- -v"), _options));
         }
     }
 }

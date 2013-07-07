@@ -1,6 +1,6 @@
 ﻿using NUnit.Framework;
 
-namespace NDocOpt.Tests
+namespace DocoptNet.Tests
 {
     [TestFixture]
     public class LongOptionsErrorHandlingTests
@@ -8,16 +8,16 @@ namespace NDocOpt.Tests
         [Test]
         public void Non_existent()
         {
-            Assert.Throws<DocOptExitException>(() =>
-                                               new DocOpt().Apply("Usage: prog", "--non-existent")
+            Assert.Throws<DocoptExitException>(() =>
+                                               new Docopt().Apply("Usage: prog", "--non-existent")
                 );
         }
 
         [Test]
         public void Wrong_long_opt()
         {
-            Assert.Throws<DocOptExitException>(
-                () => new DocOpt().Apply(
+            Assert.Throws<DocoptExitException>(
+                () => new Docopt().Apply(
                     "Usage: prog [--version --verbose]\n" +
                     "Options: --version\n" +
                     " --verbose", "--ver")
@@ -27,8 +27,8 @@ namespace NDocOpt.Tests
         [Test]
         public void Missing_long_opt_arg_spec()
         {
-            Assert.Throws<DocOptLanguageErrorException>(
-                () => new DocOpt().Apply(
+            Assert.Throws<DocoptLanguageErrorException>(
+                () => new Docopt().Apply(
                     "Usage: prog --long\n" +
                     "Options: --long ARG\n", "")
                 );
@@ -37,8 +37,8 @@ namespace NDocOpt.Tests
         [Test]
         public void Missing_long_opt_arg()
         {
-            Assert.Throws<DocOptExitException>(
-                () => new DocOpt().Apply(
+            Assert.Throws<DocoptExitException>(
+                () => new Docopt().Apply(
                     "Usage: prog --long ARG\n" +
                     "Options: --long ARG\n", "--long")
                 );
@@ -47,8 +47,8 @@ namespace NDocOpt.Tests
         [Test]
         public void Missing_long_opt_arg_spec2()
         {
-            Assert.Throws<DocOptLanguageErrorException>(
-                () => new DocOpt().Apply(
+            Assert.Throws<DocoptLanguageErrorException>(
+                () => new Docopt().Apply(
                     "Usage: prog --long=ARG\n" +
                     "Options: --long\n", "")
                 );
@@ -57,8 +57,8 @@ namespace NDocOpt.Tests
         [Test]
         public void Unexpected_arg()
         {
-            Assert.Throws<DocOptExitException>(
-                () => new DocOpt().Apply(
+            Assert.Throws<DocoptExitException>(
+                () => new Docopt().Apply(
                     "Usage: prog --long\n" +
                     "Options: --long\n", "--long=ARG")
                 );

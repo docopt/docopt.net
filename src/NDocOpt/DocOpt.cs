@@ -5,28 +5,28 @@ using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 
-namespace NDocOpt
+namespace DocoptNet
 {
 
-    public class DocOpt
+    public class Docopt
     {
         public event EventHandler<PrintExitEventArgs> PrintExit;
 
         public IDictionary<string, ValueObject> Apply(string doc)
         {
-            return Apply(doc, new Tokens("", typeof(DocOptExitException)), true, null, false);
+            return Apply(doc, new Tokens("", typeof(DocoptExitException)), true, null, false);
         }
 
         public IDictionary<string, ValueObject> Apply(string doc, string cmdLine, bool help = true,
                                                       object version = null, bool optionsFirst = false)
         {
-            return Apply(doc, new Tokens(cmdLine, typeof(DocOptExitException)), help, version, optionsFirst);
+            return Apply(doc, new Tokens(cmdLine, typeof(DocoptExitException)), help, version, optionsFirst);
         }
 
         public IDictionary<string, ValueObject> Apply(string doc, ICollection<string> argv, bool help = true,
                                                       object version = null, bool optionsFirst = false)
         {
-            return Apply(doc, new Tokens(argv, typeof(DocOptExitException)), help, version, optionsFirst);
+            return Apply(doc, new Tokens(argv, typeof(DocoptExitException)), help, version, optionsFirst);
         }
 
         protected IDictionary<string, ValueObject> Apply(string doc, Tokens tokens,
@@ -35,9 +35,9 @@ namespace NDocOpt
         {
             var usageSections = ParseSection("usage:", doc);
             if (usageSections.Length == 0)
-                throw new DocOptLanguageErrorException("\"usage:\" (case-insensitive) not found.");
+                throw new DocoptLanguageErrorException("\"usage:\" (case-insensitive) not found.");
             if (usageSections.Length > 1)
-                throw new DocOptLanguageErrorException("More that one \"usage:\" (case-insensitive).");
+                throw new DocoptLanguageErrorException("More that one \"usage:\" (case-insensitive).");
             var exitUsage = usageSections[0];
             var options = ParseDefaults(doc);
             var pattern = ParsePattern(FormalUsage(exitUsage), options);
@@ -64,7 +64,7 @@ namespace NDocOpt
                 }
                 return dict;
             }
-            throw new DocOptExitException(exitUsage);
+            throw new DocoptExitException(exitUsage);
         }
 
         private void Extras(bool help, object version, ICollection<Pattern> options, string doc)
@@ -290,7 +290,7 @@ namespace NDocOpt
                 {
                     option = new Option(shortName, null, 0);
                     options.Add(option);
-                    if (tokens.ErrorType == typeof (DocOptExitException))
+                    if (tokens.ErrorType == typeof (DocoptExitException))
                     {
                         option = new Option(shortName, null, 0, new ValueObject(true));
                     }
@@ -316,7 +316,7 @@ namespace NDocOpt
                             left = "";
                         }
                     }
-                    if (tokens.ErrorType == typeof (DocOptExitException))
+                    if (tokens.ErrorType == typeof (DocoptExitException))
                         option.Value = value ?? new ValueObject(true);
                 }
                 parsed.Add(option);
@@ -332,7 +332,7 @@ namespace NDocOpt
             Debug.Assert(longName.StartsWith("--"));
             var value = (p.NoSeparatorFound) ? null : new ValueObject(p.RightString);
             var similar = options.Where(o => o.LongName == longName).ToList();
-            if (tokens.ErrorType == typeof (DocOptExitException) && similar.Count == 0)
+            if (tokens.ErrorType == typeof (DocoptExitException) && similar.Count == 0)
             {
                 // If not exact match
                 similar =
@@ -350,7 +350,7 @@ namespace NDocOpt
                 var argCount = p.Separator == "=" ? 1 : 0;
                 option = new Option(null, longName, argCount);
                 options.Add(option);
-                if (tokens.ErrorType == typeof (DocOptExitException))
+                if (tokens.ErrorType == typeof (DocoptExitException))
                     option = new Option(null, longName, argCount, argCount != 0 ? value : new ValueObject(true));
             }
             else
@@ -370,7 +370,7 @@ namespace NDocOpt
                         value = new ValueObject(tokens.Move());
                     }
                 }
-                if (tokens.ErrorType == typeof (DocOptExitException))
+                if (tokens.ErrorType == typeof (DocoptExitException))
                     option.Value = value ?? new ValueObject(true);
             }
             return new[] {option};

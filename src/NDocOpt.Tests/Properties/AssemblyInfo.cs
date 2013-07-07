@@ -5,11 +5,11 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("NDocOpt Tests")]
-[assembly: AssemblyDescription("NDocOpt Tests")]
+[assembly: AssemblyTitle("DocoptNet Tests")]
+[assembly: AssemblyDescription("DocoptNet Tests")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("NDocOpt")]
+[assembly: AssemblyProduct("DocoptNet")]
 [assembly: AssemblyCopyright("Copyright (c) 2013 Dinh Doan Van Bien, <dinh@doanvanbien.com>")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]

@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
 
-namespace NDocOpt
+namespace DocoptNet
 {
     public class Option : LeafPattern
     {

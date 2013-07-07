@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using NUnit.Framework;
 
-namespace NDocOpt.Tests
+namespace DocoptNet.Tests
 {
     [TestFixture]
     public class OptionsFirstTests
@@ -14,7 +14,7 @@ namespace NDocOpt.Tests
                     {"--opt", new ValueObject(true)},
                     {"<args>", new ValueObject(new[]{"this", "that"})}
                 };
-            var actual = new DocOpt().Apply("usage: prog [--opt] [<args>...]", "--opt this that");
+            var actual = new Docopt().Apply("usage: prog [--opt] [<args>...]", "--opt this that");
             Assert.AreEqual(expected, actual);
         }
 
@@ -26,7 +26,7 @@ namespace NDocOpt.Tests
                     {"--opt", new ValueObject(true)},
                     {"<args>", new ValueObject(new[]{"this", "that"})}
                 };
-            var actual = new DocOpt().Apply("usage: prog [--opt] [<args>...]", "this that --opt");
+            var actual = new Docopt().Apply("usage: prog [--opt] [<args>...]", "this that --opt");
             Assert.AreEqual(expected, actual);
         }
 
@@ -38,7 +38,7 @@ namespace NDocOpt.Tests
                     {"--opt", new ValueObject(false)},
                     {"<args>", new ValueObject(new[]{"this", "that", "--opt"})}
                 };
-            var actual = new DocOpt().Apply("usage: prog [--opt] [<args>...]", "this that --opt", optionsFirst: true);
+            var actual = new Docopt().Apply("usage: prog [--opt] [<args>...]", "this that --opt", optionsFirst: true);
             Assert.AreEqual(expected, actual);
         }
     }

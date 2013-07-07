@@ -8,8 +8,8 @@
     <ProjectGuid>{80A9BB30-873C-47E9-8314-5E53AC66E8B7}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>NDocOpt.Tests</RootNamespace>
-    <AssemblyName>NDocOpt.Tests</AssemblyName>
+    <RootNamespace>DocoptNet.Tests</RootNamespace>
+    <AssemblyName>DocoptNet.Tests</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <TargetFrameworkProfile>
     </TargetFrameworkProfile>
@@ -61,7 +61,7 @@
   </PropertyGroup>
   <PropertyGroup Condition="$(BuildOutDir) != '' ">
     <OutputPath>$(BuildOutDir)\$(MSBuildProjectName)</OutputPath>
-  </PropertyGroup>  
+  </PropertyGroup>
   <ItemGroup>
     <Compile Include="AnyOptionsParameterTests.cs" />
     <Compile Include="ArgumentMatchTests.cs" />
@@ -75,7 +75,7 @@
     <Compile Include="EitherMatchTests.cs" />
     <Compile Include="LanguageAgnosticTests.cs" />
     <Compile Include="LanguageAgnosticTests.generated.cs">
-        <DependentUpon>LanguageAgnosticTests.cs</DependentUpon>    
+      <DependentUpon>LanguageAgnosticTests.cs</DependentUpon>
     </Compile>
     <Compile Include="ListArgumentMatchTests.cs" />
     <Compile Include="LongOptionsErrorHandlingTests.cs" />
@@ -117,9 +117,9 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\NDocOpt\NDocOpt.csproj">
+    <ProjectReference Include="..\NDocOpt\DocoptNet.csproj">
       <Project>{98A9E0AA-D81F-4919-8582-2451087A757E}</Project>
-      <Name>NDocOpt</Name>
+      <Name>DocoptNet</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

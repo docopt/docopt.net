@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Runtime.Serialization;
 
-namespace NDocOpt
+namespace DocoptNet
 {
     [Serializable]
-    public class DocOptExitException : Exception
+    public class DocoptExitException : Exception
     {
         //
         // For guidelines regarding the creation of new exception types, see
@@ -13,16 +13,16 @@ namespace NDocOpt
         //    http://msdn.microsoft.com/library/default.asp?url=/library/en-us/dncscol/html/csharp07192001.asp
         //
 
-        public DocOptExitException()
+        public DocoptExitException()
         {
         }
-        public DocOptExitException(string message) : base(message)
+        public DocoptExitException(string message) : base(message)
         {
         }
-        public DocOptExitException(string message, Exception inner) : base(message, inner)
+        public DocoptExitException(string message, Exception inner) : base(message, inner)
         {
         }
-        protected DocOptExitException(
+        protected DocoptExitException(
             SerializationInfo info,
             StreamingContext context) : base(info, context)
         {

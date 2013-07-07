@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Diagnostics;
 
-namespace NDocOpt
+namespace DocoptNet
 {
     public class OneOrMore : BranchPattern
     {

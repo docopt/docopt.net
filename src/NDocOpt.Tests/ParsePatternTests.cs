@@ -1,6 +1,6 @@
 ﻿using NUnit.Framework;
 
-namespace NDocOpt.Tests
+namespace DocoptNet.Tests
 {
     [TestFixture]
     public class ParsePatternTests
@@ -10,21 +10,21 @@ namespace NDocOpt.Tests
         [Test]
         public void Test_parse_pattern_one_optional_option()
         {
-            Assert.AreEqual(new Required(new Optional(new Option("-h"))), DocOpt.ParsePattern("[ -h ]", _options));
+            Assert.AreEqual(new Required(new Optional(new Option("-h"))), Docopt.ParsePattern("[ -h ]", _options));
         }
 
         [Test]
         public void Test_parse_pattern_optional_oneormore_arg()
         {
             Assert.AreEqual(new Required(new Optional(new OneOrMore(new Argument("ARG")))),
-                            DocOpt.ParsePattern("[ ARG ... ]", _options));
+                            Docopt.ParsePattern("[ ARG ... ]", _options));
         }
 
         [Test]
         public void Test_parse_pattern_either_options()
         {
             Assert.AreEqual(new Required(new Optional(new Either(new Option("-h"), new Option("-v", "--verbose")))),
-                            DocOpt.ParsePattern("[ -h | -v ]", _options));
+                            Docopt.ParsePattern("[ -h | -v ]", _options));
         }
 
         [Test]
@@ -38,7 +38,7 @@ namespace NDocOpt.Tests
                                                  )
                                              )
                                 ),
-                            DocOpt.ParsePattern("( -h | -v [ --file <f> ] )", _options));
+                            Docopt.ParsePattern("( -h | -v [ --file <f> ] )", _options));
         }
 
         [Test]
@@ -53,7 +53,7 @@ namespace NDocOpt.Tests
                                                  )
                                              )
                                 ),
-                            DocOpt.ParsePattern("(-h|-v[--file=<f>]N...)", _options));
+                            Docopt.ParsePattern("(-h|-v[--file=<f>]N...)", _options));
         }
 
         [Test]
@@ -71,56 +71,56 @@ namespace NDocOpt.Tests
                                                               )
                                                           , new Required(new Argument("O"), new Argument("P"))))
                                 ),
-                            DocOpt.ParsePattern("(N [M | (K | L)] | O P)", _options));
+                            Docopt.ParsePattern("(N [M | (K | L)] | O P)", _options));
         }
 
         [Test]
         public void Test_parse_pattern_option_with_optional_arg()
         {
             Assert.AreEqual(new Required(new Optional(new Option("-h")), new Optional(new Argument("N"))),
-                            DocOpt.ParsePattern("[ -h ] [N]", _options));
+                            Docopt.ParsePattern("[ -h ] [N]", _options));
         }
 
         [Test]
         public void Test_parse_pattern_options_shortcut()
         {
             Assert.AreEqual(new Required(new Optional(new OptionsShortcut())),
-                            DocOpt.ParsePattern("[options]", _options));
+                            Docopt.ParsePattern("[options]", _options));
         }
 
         [Test]
         public void Test_parse_pattern_options_shortcut_with_arg()
         {
             Assert.AreEqual(new Required(new Optional(new OptionsShortcut()), new Argument("A")),
-                            DocOpt.ParsePattern("[options] A", _options));
+                            Docopt.ParsePattern("[options] A", _options));
         }
 
         [Test]
         public void Test_parse_pattern_options_shortcut_with_long()
         {
             Assert.AreEqual(new Required(new Option("-v", "--verbose"), new Optional(new OptionsShortcut())),
-                            DocOpt.ParsePattern("-v [options]", _options));
+                            Docopt.ParsePattern("-v [options]", _options));
         }
 
         [Test]
         public void Test_parse_pattern_arg_upper_case()
         {
             Assert.AreEqual(new Required(new Argument("ADD")),
-                            DocOpt.ParsePattern("ADD", _options));
+                            Docopt.ParsePattern("ADD", _options));
         }
 
         [Test]
         public void Test_parse_pattern_arg_between_pointy_brackets()
         {
             Assert.AreEqual(new Required(new Argument("<add>")),
-                            DocOpt.ParsePattern("<add>", _options));
+                            Docopt.ParsePattern("<add>", _options));
         }
 
         [Test]
         public void Test_parse_pattern_command()
         {
             Assert.AreEqual(new Required(new Command("add")),
-                            DocOpt.ParsePattern("add", _options));
+                            Docopt.ParsePattern("add", _options));
         }
 
     }

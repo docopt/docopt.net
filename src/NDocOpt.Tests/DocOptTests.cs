@@ -2,10 +2,10 @@
 using System.Linq;
 using NUnit.Framework;
 
-namespace NDocOpt.Tests
+namespace DocoptNet.Tests
 {
     [TestFixture]
-    public class DocOptTests
+    public class DocoptTests
     {
         [Test]
         public void Test_tokens_from_pattern()
@@ -31,7 +31,7 @@ namespace NDocOpt.Tests
         public void Test_issue_40_help()
         {
             var message = "";
-            var d = new DocOpt();
+            var d = new Docopt();
             d.PrintExit += (s, e) => message = e.Message;
             d.Apply("usage: prog --help-commands | --help", "--help");
             StringAssert.StartsWith("usage", message);
@@ -45,7 +45,7 @@ namespace NDocOpt.Tests
                     {"--aabb", new ValueObject(false)},
                     {"--aa", new ValueObject(true)}
                 };
-            var actual = new DocOpt().Apply("usage: prog --aabb | --aa", "--aa");
+            var actual = new Docopt().Apply("usage: prog --aabb | --aa", "--aa");
             Assert.AreEqual(expected, actual);
         }
 
@@ -57,7 +57,7 @@ namespace NDocOpt.Tests
                     {"-v", new ValueObject(false)},
                     {"A", new ValueObject("arg")}
                 };
-            var actual = new DocOpt().Apply(@"Usage: prog [-v] A
+            var actual = new Docopt().Apply(@"Usage: prog [-v] A
 
              Options: -v  Be verbose.", "arg");
             Assert.AreEqual(expected, actual);
@@ -71,7 +71,7 @@ namespace NDocOpt.Tests
                     {"-v", new ValueObject(true)},
                     {"A", new ValueObject("arg")}
                 };
-            var actual = new DocOpt().Apply(@"Usage: prog [-v] A
+            var actual = new Docopt().Apply(@"Usage: prog [-v] A
 
              Options: -v  Be verbose.", "-v arg");
             Assert.AreEqual(expected, actual);
@@ -101,7 +101,7 @@ namespace NDocOpt.Tests
                     {"INPUT", null},
                     {"OUTPUT", null}
                 };
-            var actual = new DocOpt().Apply(DOC, "-v file.py");
+            var actual = new Docopt().Apply(DOC, "-v file.py");
             Assert.AreEqual(expected, actual);
         }
 
@@ -118,27 +118,27 @@ namespace NDocOpt.Tests
                     {"INPUT", null},
                     {"OUTPUT", null}
                 };
-            var actual = new DocOpt().Apply(DOC, "-v");
+            var actual = new Docopt().Apply(DOC, "-v");
             Assert.AreEqual(expected, actual);
         }
 
         [Test]
         public void No_match()
         {
-            Assert.Throws<DocOptExitException>(() => new DocOpt().Apply(DOC, "-v input.py output.py"));
+            Assert.Throws<DocoptExitException>(() => new Docopt().Apply(DOC, "-v input.py output.py"));
         }
 
         [Test]
         public void Non_existent_long()
         {
-            Assert.Throws<DocOptExitException>(() => new DocOpt().Apply(DOC, "--fake"));
+            Assert.Throws<DocoptExitException>(() => new Docopt().Apply(DOC, "--fake"));
         }
 
         [Test]
         public void Display_help()
         {
             var message = "";
-            var d = new DocOpt();
+            var d = new Docopt();
             d.PrintExit += (s, e) => message = e.Message;
             d.Apply(DOC, "--hel");
             StringAssert.StartsWith("Usage", message);
@@ -151,7 +151,7 @@ namespace NDocOpt.Tests
                 {
                     {"--long", new ValueObject("")}
                 };
-            var actual = new DocOpt().Apply("usage: prog --long=<a>", "--long=");
+            var actual = new Docopt().Apply("usage: prog --long=<a>", "--long=");
             Assert.AreEqual(expected, actual);
         }
 
@@ -162,14 +162,14 @@ namespace NDocOpt.Tests
                 {
                     {"-l", new ValueObject("")}
                 };
-            var actual = new DocOpt().Apply("usage: prog -l <a>\noptions: -l <a>", new[]{"-l", ""});
+            var actual = new Docopt().Apply("usage: prog -l <a>\noptions: -l <a>", new[]{"-l", ""});
             Assert.AreEqual(expected, actual);
         }
 
         [Test]
         public void Test_issue_68_options_shortcut_does_not_include_options_in_usage_pattern()
         {
-            var args = new DocOpt().Apply("usage: prog [-ab] [options]\noptions: -x\n -y", "-ax");
+            var args = new Docopt().Apply("usage: prog [-ab] [options]\noptions: -x\n -y", "-ax");
             Assert.True(args["-a"].IsTrue);
             Assert.True(args["-b"].IsFalse);
             Assert.True(args["-x"].IsTrue);

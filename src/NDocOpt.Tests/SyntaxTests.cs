@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using NUnit.Framework;
 
-namespace NDocOpt.Tests
+namespace DocoptNet.Tests
 {
     [TestFixture]
     public class SyntaxTests
@@ -9,16 +9,16 @@ namespace NDocOpt.Tests
         [Test]
         public void Missing_closing_square_bracket()
         {
-            Assert.Throws<DocOptLanguageErrorException>(
-                () => new DocOpt().Apply("Usage: prog [a [b]"));
+            Assert.Throws<DocoptLanguageErrorException>(
+                () => new Docopt().Apply("Usage: prog [a [b]"));
             
         }
 
         [Test]
         public void Missing_opening_paren()
         {
-            Assert.Throws<DocOptLanguageErrorException>(
-                () => new DocOpt().Apply("Usage: prog [a [b] ] c )"));
+            Assert.Throws<DocoptLanguageErrorException>(
+                () => new Docopt().Apply("Usage: prog [a [b] ] c )"));
 
         }
 
@@ -31,7 +31,7 @@ namespace NDocOpt.Tests
                     {"<arg>", new ValueObject("-o")},
                     {"--", new ValueObject(true)}
                 };
-            var actual = new DocOpt().Apply("usage: prog [-o] [--] <arg>\nOptions: -o", "-- -o");
+            var actual = new Docopt().Apply("usage: prog [-o] [--] <arg>\nOptions: -o", "-- -o");
             Assert.AreEqual(expected, actual);
         }
 
@@ -44,39 +44,39 @@ namespace NDocOpt.Tests
                     {"<arg>", new ValueObject("1")},
                     {"--", new ValueObject(false)}
                 };
-            var actual = new DocOpt().Apply("usage: prog [-o] [--] <arg>\nOptions: -o", "-o 1");
+            var actual = new Docopt().Apply("usage: prog [-o] [--] <arg>\nOptions: -o", "-o 1");
             Assert.AreEqual(expected, actual);
         }
 
         [Test]
         public void Double_dash_not_allowed() // FIXME?
         {
-            Assert.Throws<DocOptExitException>(
-                () => new DocOpt().Apply("usage: prog [-o] <arg>\noptions:-o", "-- -o"));
+            Assert.Throws<DocoptExitException>(
+                () => new Docopt().Apply("usage: prog [-o] <arg>\noptions:-o", "-- -o"));
 
         }
 
         [Test]
         public void No_usage()
         {
-            Assert.Throws<DocOptLanguageErrorException>(
-                () => new DocOpt().Apply("no usage with colon here"));
+            Assert.Throws<DocoptLanguageErrorException>(
+                () => new Docopt().Apply("no usage with colon here"));
 
         }
 
         [Test]
         public void Duplicate_usage()
         {
-            Assert.Throws<DocOptLanguageErrorException>(
-                () => new DocOpt().Apply("usage: here \n\n and again usage: here"));
+            Assert.Throws<DocoptLanguageErrorException>(
+                () => new Docopt().Apply("usage: here \n\n and again usage: here"));
 
         }
 
         [Test]
         public void Test_issue_71_double_dash_is_not_a_valid_option_argument()
         {
-            Assert.Throws<DocOptExitException>(
-                () => new DocOpt().Apply("usage: prog [--log=LEVEL] [--] <args>...", "--log -- 1 2"));
+            Assert.Throws<DocoptExitException>(
+                () => new Docopt().Apply("usage: prog [--log=LEVEL] [--] <args>...", "--log -- 1 2"));
         }
 
     }

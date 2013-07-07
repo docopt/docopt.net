@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using NUnit.Framework;
 
-namespace NDocOpt.Tests
+namespace DocoptNet.Tests
 {
     [TestFixture]
     public class DefaultValueForPositionalArgumentsTests
@@ -14,7 +14,7 @@ namespace NDocOpt.Tests
                 {
                     {"<p>", null}
                 };
-            var actual = new DocOpt().Apply("usage: prog [<p>]\n\n<p>  [default: x]", "");
+            var actual = new Docopt().Apply("usage: prog [<p>]\n\n<p>  [default: x]", "");
             Assert.AreEqual(expected, actual);
         }
 
@@ -25,7 +25,7 @@ namespace NDocOpt.Tests
                 {
                     {"<p>", new ValueObject(new string[0])}
                 };
-            var actual = new DocOpt().Apply("usage: prog [<p>]...\n\n<p>  [default: x y]", "");
+            var actual = new Docopt().Apply("usage: prog [<p>]...\n\n<p>  [default: x y]", "");
             Assert.AreEqual(expected, actual);
         }
 
@@ -36,7 +36,7 @@ namespace NDocOpt.Tests
                 {
                     {"<p>", new ValueObject(new[] {"this"})}
                 };
-            var actual = new DocOpt().Apply("usage: prog [<p>]...\n\n<p>  [default: x y]", "this");
+            var actual = new Docopt().Apply("usage: prog [<p>]...\n\n<p>  [default: x y]", "this");
             Assert.AreEqual(expected, actual);
         }
     }

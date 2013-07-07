@@ -35,7 +35,7 @@
   </PropertyGroup>
   <PropertyGroup Condition="$(BuildOutDir) != '' ">
     <OutputPath>$(BuildOutDir)\$(MSBuildProjectName)</OutputPath>
-  </PropertyGroup> 
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="Newtonsoft.Json">
       <HintPath>..\packages\Newtonsoft.Json.5.0.5\lib\net45\Newtonsoft.Json.dll</HintPath>
@@ -57,9 +57,9 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\NDocOpt\NDocOpt.csproj">
+    <ProjectReference Include="..\NDocOpt\DocoptNet.csproj">
       <Project>{98a9e0aa-d81f-4919-8582-2451087a757e}</Project>
-      <Name>NDocOpt</Name>
+      <Name>DocoptNet</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

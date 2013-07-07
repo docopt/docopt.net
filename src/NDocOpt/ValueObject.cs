@@ -2,7 +2,7 @@
 using System.Collections;
 using System.Linq;
 
-namespace NDocOpt
+namespace DocoptNet
 {
     public class ValueObject
     {

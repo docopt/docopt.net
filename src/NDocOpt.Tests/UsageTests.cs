@@ -1,7 +1,7 @@
 ﻿using System.Linq;
 using NUnit.Framework;
 
-namespace NDocOpt.Tests
+namespace DocoptNet.Tests
 {
     [TestFixture]
     public class UsageTests
@@ -14,9 +14,9 @@ namespace NDocOpt.Tests
                prog N M
 
         prog is a program.";
-            var usage = DocOpt.ParseSection("usage:", DOC).First();
+            var usage = Docopt.ParseSection("usage:", DOC).First();
             Assert.AreEqual("Usage: prog [-hv] ARG\r\n               prog N M", usage);
-            Assert.AreEqual("( [-hv] ARG ) | ( N M )", DocOpt.FormalUsage(usage));
+            Assert.AreEqual("( [-hv] ARG ) | ( N M )", Docopt.FormalUsage(usage));
         }
         [Test]
         public void Should_parse_usage_section_correctly()
@@ -41,11 +41,11 @@ usage: pit stop
 ";
 
 
-            Assert.AreEqual(new string[] {}, DocOpt.ParseSection("usage:", "foo bar fizz buzz"), "No usage");
+            Assert.AreEqual(new string[] {}, Docopt.ParseSection("usage:", "foo bar fizz buzz"), "No usage");
 
-            Assert.AreEqual(new[] {"usage: prog"}, DocOpt.ParseSection("usage:", "usage: prog"), "One line usage");
+            Assert.AreEqual(new[] {"usage: prog"}, Docopt.ParseSection("usage:", "usage: prog"), "One line usage");
 
-            Assert.AreEqual(new[] {@"usage: -args\r\n -y"}, DocOpt.ParseSection("usage:", @"usage: -args\r\n -y"),
+            Assert.AreEqual(new[] {@"usage: -args\r\n -y"}, Docopt.ParseSection("usage:", @"usage: -args\r\n -y"),
                             "Multi line usage");
 
             Assert.AreEqual(new[]
@@ -61,7 +61,7 @@ usage: pit stop
                     "usage:\r\n\ttoo\r\n\ttar",
                     "Usage: eggs spam",
                     "usage: pit stop"
-                }, DocOpt.ParseSection("usage:", USAGE), "Variations on casing, spaces and tabs");
+                }, Docopt.ParseSection("usage:", USAGE), "Variations on casing, spaces and tabs");
         }
     }
 }

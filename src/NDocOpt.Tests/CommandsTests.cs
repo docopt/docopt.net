@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using NUnit.Framework;
 
-namespace NDocOpt.Tests
+namespace DocoptNet.Tests
 {
     [TestFixture]
     public class CommandsTests
@@ -13,7 +13,7 @@ namespace NDocOpt.Tests
                 {
                     {"add", new ValueObject(true)}
                 };
-            var actual = new DocOpt().Apply("Usage: prog add", "add");
+            var actual = new Docopt().Apply("Usage: prog add", "add");
             Assert.AreEqual(expected, actual);
         }
 
@@ -24,7 +24,7 @@ namespace NDocOpt.Tests
                 {
                     {"add", new ValueObject(false)}
                 };
-            var actual = new DocOpt().Apply("Usage: prog [add]", "");
+            var actual = new Docopt().Apply("Usage: prog [add]", "");
             Assert.AreEqual(expected, actual);
         }
 
@@ -35,7 +35,7 @@ namespace NDocOpt.Tests
                 {
                     {"add", new ValueObject(true)}
                 };
-            var actual = new DocOpt().Apply("Usage: prog [add]", "add");
+            var actual = new Docopt().Apply("Usage: prog [add]", "add");
             Assert.AreEqual(expected, actual);
         }
 
@@ -47,7 +47,7 @@ namespace NDocOpt.Tests
                     {"add", new ValueObject(true)},
                     {"rm", new ValueObject(false)}
                 };
-            var actual = new DocOpt().Apply("Usage: prog (add|rm)", "add");
+            var actual = new Docopt().Apply("Usage: prog (add|rm)", "add");
             Assert.AreEqual(expected, actual);
         }
 
@@ -59,7 +59,7 @@ namespace NDocOpt.Tests
                     {"add", new ValueObject(false)},
                     {"rm", new ValueObject(true)}
                 };
-            var actual = new DocOpt().Apply("Usage: prog (add|rm)", "rm");
+            var actual = new Docopt().Apply("Usage: prog (add|rm)", "rm");
             Assert.AreEqual(expected, actual);
         }
 
@@ -71,14 +71,14 @@ namespace NDocOpt.Tests
                     {"a", new ValueObject(true)},
                     {"b", new ValueObject(true)}
                 };
-            var actual = new DocOpt().Apply("Usage: prog a b", "a b");
+            var actual = new Docopt().Apply("Usage: prog a b", "a b");
             Assert.AreEqual(expected, actual);
         }
 
         [Test]
         public void Required_wrong_order()
         {
-            Assert.Throws<DocOptExitException>(() => new DocOpt().Apply("Usage: prog a b", "b a"));
+            Assert.Throws<DocoptExitException>(() => new Docopt().Apply("Usage: prog a b", "b a"));
         }
     }
 }

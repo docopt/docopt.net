@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace NDocOpt
+namespace DocoptNet
 {
     public class Command : Argument
     {

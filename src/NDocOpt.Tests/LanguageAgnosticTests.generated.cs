@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using NUnit.Framework;
 
-namespace NDocOpt.Tests
+namespace DocoptNet.Tests
 {
     [TestFixture]
     public partial class LanguageAgnosticTests
@@ -15,7 +15,7 @@ namespace NDocOpt.Tests
           var doc = @"Usage: prog
 
 ";
-          var actual = DocOpt(doc, @"");
+          var actual = Docopt(doc, @"");
           var expected = @"{}";
           CheckResult(expected, actual);
       }
@@ -27,7 +27,7 @@ namespace NDocOpt.Tests
           var doc = @"Usage: prog
 
 ";
-          var actual = DocOpt(doc, @"--xxx");
+          var actual = Docopt(doc, @"--xxx");
           var expected = @"""user-error""";
           CheckResult(expected, actual);
       }
@@ -41,7 +41,7 @@ namespace NDocOpt.Tests
 Options: -a  All.
 
 ";
-          var actual = DocOpt(doc, @"");
+          var actual = Docopt(doc, @"");
           var expected = @"{""-a"": false}";
           CheckResult(expected, actual);
       }
@@ -55,7 +55,7 @@ Options: -a  All.
 Options: -a  All.
 
 ";
-          var actual = DocOpt(doc, @"-a");
+          var actual = Docopt(doc, @"-a");
           var expected = @"{""-a"": true}";
           CheckResult(expected, actual);
       }
@@ -69,7 +69,7 @@ Options: -a  All.
 Options: -a  All.
 
 ";
-          var actual = DocOpt(doc, @"-x");
+          var actual = Docopt(doc, @"-x");
           var expected = @"""user-error""";
           CheckResult(expected, actual);
       }
@@ -83,7 +83,7 @@ Options: -a  All.
 Options: --all  All.
 
 ";
-          var actual = DocOpt(doc, @"");
+          var actual = Docopt(doc, @"");
           var expected = @"{""--all"": false}";
           CheckResult(expected, actual);
       }
@@ -97,7 +97,7 @@ Options: --all  All.
 Options: --all  All.
 
 ";
-          var actual = DocOpt(doc, @"--all");
+          var actual = Docopt(doc, @"--all");
           var expected = @"{""--all"": true}";
           CheckResult(expected, actual);
       }
@@ -111,7 +111,7 @@ Options: --all  All.
 Options: --all  All.
 
 ";
-          var actual = DocOpt(doc, @"--xxx");
+          var actual = Docopt(doc, @"--xxx");
           var expected = @"""user-error""";
           CheckResult(expected, actual);
       }
@@ -125,7 +125,7 @@ Options: --all  All.
 Options: -v, --verbose  Verbose.
 
 ";
-          var actual = DocOpt(doc, @"--verbose");
+          var actual = Docopt(doc, @"--verbose");
           var expected = @"{""--verbose"": true}";
           CheckResult(expected, actual);
       }
@@ -139,7 +139,7 @@ Options: -v, --verbose  Verbose.
 Options: -v, --verbose  Verbose.
 
 ";
-          var actual = DocOpt(doc, @"--ver");
+          var actual = Docopt(doc, @"--ver");
           var expected = @"{""--verbose"": true}";
           CheckResult(expected, actual);
       }
@@ -153,7 +153,7 @@ Options: -v, --verbose  Verbose.
 Options: -v, --verbose  Verbose.
 
 ";
-          var actual = DocOpt(doc, @"-v");
+          var actual = Docopt(doc, @"-v");
           var expected = @"{""--verbose"": true}";
           CheckResult(expected, actual);
       }
@@ -167,7 +167,7 @@ Options: -v, --verbose  Verbose.
 Options: -p PATH
 
 ";
-          var actual = DocOpt(doc, @"-p home/");
+          var actual = Docopt(doc, @"-p home/");
           var expected = @"{""-p"": ""home/""}";
           CheckResult(expected, actual);
       }
@@ -181,7 +181,7 @@ Options: -p PATH
 Options: -p PATH
 
 ";
-          var actual = DocOpt(doc, @"-phome/");
+          var actual = Docopt(doc, @"-phome/");
           var expected = @"{""-p"": ""home/""}";
           CheckResult(expected, actual);
       }
@@ -195,7 +195,7 @@ Options: -p PATH
 Options: -p PATH
 
 ";
-          var actual = DocOpt(doc, @"-p");
+          var actual = Docopt(doc, @"-p");
           var expected = @"""user-error""";
           CheckResult(expected, actual);
       }
@@ -209,7 +209,7 @@ Options: -p PATH
 Options: --path <path>
 
 ";
-          var actual = DocOpt(doc, @"--path home/");
+          var actual = Docopt(doc, @"--path home/");
           var expected = @"{""--path"": ""home/""}";
           CheckResult(expected, actual);
       }
@@ -223,7 +223,7 @@ Options: --path <path>
 Options: --path <path>
 
 ";
-          var actual = DocOpt(doc, @"--path=home/");
+          var actual = Docopt(doc, @"--path=home/");
           var expected = @"{""--path"": ""home/""}";
           CheckResult(expected, actual);
       }
@@ -237,7 +237,7 @@ Options: --path <path>
 Options: --path <path>
 
 ";
-          var actual = DocOpt(doc, @"--pa home/");
+          var actual = Docopt(doc, @"--pa home/");
           var expected = @"{""--path"": ""home/""}";
           CheckResult(expected, actual);
       }
@@ -251,7 +251,7 @@ Options: --path <path>
 Options: --path <path>
 
 ";
-          var actual = DocOpt(doc, @"--pa=home/");
+          var actual = Docopt(doc, @"--pa=home/");
           var expected = @"{""--path"": ""home/""}";
           CheckResult(expected, actual);
       }
@@ -265,7 +265,7 @@ Options: --path <path>
 Options: --path <path>
 
 ";
-          var actual = DocOpt(doc, @"--path");
+          var actual = Docopt(doc, @"--path");
           var expected = @"""user-error""";
           CheckResult(expected, actual);
       }
@@ -279,7 +279,7 @@ Options: --path <path>
 Options: -p PATH, --path=<path>  Path to files.
 
 ";
-          var actual = DocOpt(doc, @"-proot");
+          var actual = Docopt(doc, @"-proot");
           var expected = @"{""--path"": ""root""}";
           CheckResult(expected, actual);
       }
@@ -293,7 +293,7 @@ Options: -p PATH, --path=<path>  Path to files.
 Options:    -p --path PATH  Path to files.
 
 ";
-          var actual = DocOpt(doc, @"-p root");
+          var actual = Docopt(doc, @"-p root");
           var expected = @"{""--path"": ""root""}";
           CheckResult(expected, actual);
       }
@@ -307,7 +307,7 @@ Options:    -p --path PATH  Path to files.
 Options:    -p --path PATH  Path to files.
 
 ";
-          var actual = DocOpt(doc, @"--path root");
+          var actual = Docopt(doc, @"--path root");
           var expected = @"{""--path"": ""root""}";
           CheckResult(expected, actual);
       }
@@ -322,7 +322,7 @@ Options:
  -p PATH  Path to files [default: ./]
 
 ";
-          var actual = DocOpt(doc, @"");
+          var actual = Docopt(doc, @"");
           var expected = @"{""-p"": ""./""}";
           CheckResult(expected, actual);
       }
@@ -337,7 +337,7 @@ Options:
  -p PATH  Path to files [default: ./]
 
 ";
-          var actual = DocOpt(doc, @"-phome");
+          var actual = Docopt(doc, @"-phome");
           var expected = @"{""-p"": ""home""}";
           CheckResult(expected, actual);
       }
@@ -352,7 +352,7 @@ OpTiOnS: --path=<files>  Path to files
                 [dEfAuLt: /root]
 
 ";
-          var actual = DocOpt(doc, @"");
+          var actual = Docopt(doc, @"");
           var expected = @"{""--path"": ""/root""}";
           CheckResult(expected, actual);
       }
@@ -367,7 +367,7 @@ OpTiOnS: --path=<files>  Path to files
                 [dEfAuLt: /root]
 
 ";
-          var actual = DocOpt(doc, @"--path=home");
+          var actual = Docopt(doc, @"--path=home");
           var expected = @"{""--path"": ""home""}";
           CheckResult(expected, actual);
       }
@@ -384,7 +384,7 @@ options:
     -m <msg>  Message
 
 ";
-          var actual = DocOpt(doc, @"-a -r -m Hello");
+          var actual = Docopt(doc, @"-a -r -m Hello");
           var expected = @"{""-a"": true,
  ""-r"": true,
  ""-m"": ""Hello""}";
@@ -403,7 +403,7 @@ options:
     -m <msg>  Message
 
 ";
-          var actual = DocOpt(doc, @"-armyourass");
+          var actual = Docopt(doc, @"-armyourass");
           var expected = @"{""-a"": true,
  ""-r"": true,
  ""-m"": ""yourass""}";
@@ -422,7 +422,7 @@ options:
     -m <msg>  Message
 
 ";
-          var actual = DocOpt(doc, @"-a -r");
+          var actual = Docopt(doc, @"-a -r");
           var expected = @"{""-a"": true,
  ""-r"": true,
  ""-m"": null}";
@@ -439,7 +439,7 @@ Options: --version
          --verbose
 
 ";
-          var actual = DocOpt(doc, @"--version");
+          var actual = Docopt(doc, @"--version");
           var expected = @"{""--version"": true,
  ""--verbose"": false}";
           CheckResult(expected, actual);
@@ -455,7 +455,7 @@ Options: --version
          --verbose
 
 ";
-          var actual = DocOpt(doc, @"--verbose");
+          var actual = Docopt(doc, @"--verbose");
           var expected = @"{""--version"": false,
  ""--verbose"": true}";
           CheckResult(expected, actual);
@@ -471,7 +471,7 @@ Options: --version
          --verbose
 
 ";
-          var actual = DocOpt(doc, @"--ver");
+          var actual = Docopt(doc, @"--ver");
           var expected = @"""user-error""";
           CheckResult(expected, actual);
       }
@@ -486,7 +486,7 @@ Options: --version
          --verbose
 
 ";
-          var actual = DocOpt(doc, @"--verb");
+          var actual = Docopt(doc, @"--verb");
           var expected = @"{""--version"": false,
  ""--verbose"": true}";
           CheckResult(expected, actual);
@@ -504,7 +504,7 @@ options:
  -m <msg>  Message
 
 ";
-          var actual = DocOpt(doc, @"-armyourass");
+          var actual = Docopt(doc, @"-armyourass");
           var expected = @"{""-a"": true,
  ""-r"": true,
  ""-m"": ""yourass""}";
@@ -522,7 +522,7 @@ options: -a        Add
          -m <msg>  Message
 
 ";
-          var actual = DocOpt(doc, @"-a -r -m Hello");
+          var actual = Docopt(doc, @"-a -r -m Hello");
           var expected = @"{""-a"": true,
  ""-r"": true,
  ""-m"": ""Hello""}";
@@ -540,7 +540,7 @@ options:
  -b
 
 ";
-          var actual = DocOpt(doc, @"-a -b");
+          var actual = Docopt(doc, @"-a -b");
           var expected = @"{""-a"": true, ""-b"": true}";
           CheckResult(expected, actual);
       }
@@ -556,7 +556,7 @@ options:
  -b
 
 ";
-          var actual = DocOpt(doc, @"-b -a");
+          var actual = Docopt(doc, @"-b -a");
           var expected = @"{""-a"": true, ""-b"": true}";
           CheckResult(expected, actual);
       }
@@ -572,7 +572,7 @@ options:
  -b
 
 ";
-          var actual = DocOpt(doc, @"-a");
+          var actual = Docopt(doc, @"-a");
           var expected = @"""user-error""";
           CheckResult(expected, actual);
       }
@@ -588,7 +588,7 @@ options:
  -b
 
 ";
-          var actual = DocOpt(doc, @"");
+          var actual = Docopt(doc, @"");
           var expected = @"""user-error""";
           CheckResult(expected, actual);
       }
@@ -603,7 +603,7 @@ options: -a
          -b
 
 ";
-          var actual = DocOpt(doc, @"-a -b");
+          var actual = Docopt(doc, @"-a -b");
           var expected = @"{""-a"": true, ""-b"": true}";
           CheckResult(expected, actual);
       }
@@ -618,7 +618,7 @@ options: -a
          -b
 
 ";
-          var actual = DocOpt(doc, @"-b -a");
+          var actual = Docopt(doc, @"-b -a");
           var expected = @"{""-a"": true, ""-b"": true}";
           CheckResult(expected, actual);
       }
@@ -633,7 +633,7 @@ options: -a
          -b
 
 ";
-          var actual = DocOpt(doc, @"-a");
+          var actual = Docopt(doc, @"-a");
           var expected = @"""user-error""";
           CheckResult(expected, actual);
       }
@@ -648,7 +648,7 @@ options: -a
          -b
 
 ";
-          var actual = DocOpt(doc, @"");
+          var actual = Docopt(doc, @"");
           var expected = @"""user-error""";
           CheckResult(expected, actual);
       }
@@ -663,7 +663,7 @@ options: -a
  -b
 
 ";
-          var actual = DocOpt(doc, @"-a -b");
+          var actual = Docopt(doc, @"-a -b");
           var expected = @"{""-a"": true, ""-b"": true}";
           CheckResult(expected, actual);
       }
@@ -678,7 +678,7 @@ options: -a
  -b
 
 ";
-          var actual = DocOpt(doc, @"-b -a");
+          var actual = Docopt(doc, @"-b -a");
           var expected = @"{""-a"": true, ""-b"": true}";
           CheckResult(expected, actual);
       }
@@ -693,7 +693,7 @@ options: -a
  -b
 
 ";
-          var actual = DocOpt(doc, @"-a");
+          var actual = Docopt(doc, @"-a");
           var expected = @"""user-error""";
           CheckResult(expected, actual);
       }
@@ -708,7 +708,7 @@ options: -a
  -b
 
 ";
-          var actual = DocOpt(doc, @"-b");
+          var actual = Docopt(doc, @"-b");
           var expected = @"{""-a"": false, ""-b"": true}";
           CheckResult(expected, actual);
       }
@@ -723,7 +723,7 @@ options: -a
  -b
 
 ";
-          var actual = DocOpt(doc, @"");
+          var actual = Docopt(doc, @"");
           var expected = @"""user-error""";
           CheckResult(expected, actual);
       }
@@ -738,7 +738,7 @@ options: -a
          -b
 
 ";
-          var actual = DocOpt(doc, @"-a -b");
+          var actual = Docopt(doc, @"-a -b");
           var expected = @"{""-a"": true, ""-b"": true}";
           CheckResult(expected, actual);
       }
@@ -753,7 +753,7 @@ options: -a
          -b
 
 ";
-          var actual = DocOpt(doc, @"-b -a");
+          var actual = Docopt(doc, @"-b -a");
           var expected = @"{""-a"": true, ""-b"": true}";
           CheckResult(expected, actual);
       }
@@ -768,7 +768,7 @@ options: -a
          -b
 
 ";
-          var actual = DocOpt(doc, @"-a");
+          var actual = Docopt(doc, @"-a");
           var expected = @"""user-error""";
           CheckResult(expected, actual);
       }
@@ -783,7 +783,7 @@ options: -a
          -b
 
 ";
-          var actual = DocOpt(doc, @"-b");
+          var actual = Docopt(doc, @"-b");
           var expected = @"""user-error""";
           CheckResult(expected, actual);
       }
@@ -798,7 +798,7 @@ options: -a
          -b
 
 ";
-          var actual = DocOpt(doc, @"");
+          var actual = Docopt(doc, @"");
           var expected = @"{""-a"": false, ""-b"": false}";
           CheckResult(expected, actual);
       }
@@ -813,7 +813,7 @@ options: -a
          -b
 
 ";
-          var actual = DocOpt(doc, @"-a -b");
+          var actual = Docopt(doc, @"-a -b");
           var expected = @"""user-error""";
           CheckResult(expected, actual);
       }
@@ -828,7 +828,7 @@ options: -a
          -b
 
 ";
-          var actual = DocOpt(doc, @"");
+          var actual = Docopt(doc, @"");
           var expected = @"""user-error""";
           CheckResult(expected, actual);
       }
@@ -843,7 +843,7 @@ options: -a
          -b
 
 ";
-          var actual = DocOpt(doc, @"-a");
+          var actual = Docopt(doc, @"-a");
           var expected = @"{""-a"": true, ""-b"": false}";
           CheckResult(expected, actual);
       }
@@ -858,7 +858,7 @@ options: -a
          -b
 
 ";
-          var actual = DocOpt(doc, @"-b");
+          var actual = Docopt(doc, @"-b");
           var expected = @"{""-a"": false, ""-b"": true}";
           CheckResult(expected, actual);
       }
@@ -873,7 +873,7 @@ options: -a
          -b
 
 ";
-          var actual = DocOpt(doc, @"-a -b");
+          var actual = Docopt(doc, @"-a -b");
           var expected = @"""user-error""";
           CheckResult(expected, actual);
       }
@@ -888,7 +888,7 @@ options: -a
          -b
 
 ";
-          var actual = DocOpt(doc, @"");
+          var actual = Docopt(doc, @"");
           var expected = @"{""-a"": false, ""-b"": false}";
           CheckResult(expected, actual);
       }
@@ -903,7 +903,7 @@ options: -a
          -b
 
 ";
-          var actual = DocOpt(doc, @"-a");
+          var actual = Docopt(doc, @"-a");
           var expected = @"{""-a"": true, ""-b"": false}";
           CheckResult(expected, actual);
       }
@@ -918,7 +918,7 @@ options: -a
          -b
 
 ";
-          var actual = DocOpt(doc, @"-b");
+          var actual = Docopt(doc, @"-b");
           var expected = @"{""-a"": false, ""-b"": true}";
           CheckResult(expected, actual);
       }
@@ -928,7 +928,7 @@ options: -a
       public void Test_62()
       {
           var doc = @"usage: prog <arg>";
-          var actual = DocOpt(doc, @"10");
+          var actual = Docopt(doc, @"10");
           var expected = @"{""<arg>"": ""10""}";
           CheckResult(expected, actual);
       }
@@ -938,7 +938,7 @@ options: -a
       public void Test_63()
       {
           var doc = @"usage: prog <arg>";
-          var actual = DocOpt(doc, @"10 20");
+          var actual = Docopt(doc, @"10 20");
           var expected = @"""user-error""";
           CheckResult(expected, actual);
       }
@@ -948,7 +948,7 @@ options: -a
       public void Test_64()
       {
           var doc = @"usage: prog <arg>";
-          var actual = DocOpt(doc, @"");
+          var actual = Docopt(doc, @"");
           var expected = @"""user-error""";
           CheckResult(expected, actual);
       }
@@ -958,7 +958,7 @@ options: -a
       public void Test_65()
       {
           var doc = @"usage: prog [<arg>]";
-          var actual = DocOpt(doc, @"10");
+          var actual = Docopt(doc, @"10");
           var expected = @"{""<arg>"": ""10""}";
           CheckResult(expected, actual);
       }
@@ -968,7 +968,7 @@ options: -a
       public void Test_66()
       {
           var doc = @"usage: prog [<arg>]";
-          var actual = DocOpt(doc, @"10 20");
+          var actual = Docopt(doc, @"10 20");
           var expected = @"""user-error""";
           CheckResult(expected, actual);
       }
@@ -978,7 +978,7 @@ options: -a
       public void Test_67()
       {
           var doc = @"usage: prog [<arg>]";
-          var actual = DocOpt(doc, @"");
+          var actual = Docopt(doc, @"");
           var expected = @"{""<arg>"": null}";
           CheckResult(expected, actual);
       }
@@ -988,7 +988,7 @@ options: -a
       public void Test_68()
       {
           var doc = @"usage: prog <kind> <name> <type>";
-          var actual = DocOpt(doc, @"10 20 40");
+          var actual = Docopt(doc, @"10 20 40");
           var expected = @"{""<kind>"": ""10"", ""<name>"": ""20"", ""<type>"": ""40""}";
           CheckResult(expected, actual);
       }
@@ -998,7 +998,7 @@ options: -a
       public void Test_69()
       {
           var doc = @"usage: prog <kind> <name> <type>";
-          var actual = DocOpt(doc, @"10 20");
+          var actual = Docopt(doc, @"10 20");
           var expected = @"""user-error""";
           CheckResult(expected, actual);
       }
@@ -1008,7 +1008,7 @@ options: -a
       public void Test_70()
       {
           var doc = @"usage: prog <kind> <name> <type>";
-          var actual = DocOpt(doc, @"");
+          var actual = Docopt(doc, @"");
           var expected = @"""user-error""";
           CheckResult(expected, actual);
       }
@@ -1018,7 +1018,7 @@ options: -a
       public void Test_71()
       {
           var doc = @"usage: prog <kind> [<name> <type>]";
-          var actual = DocOpt(doc, @"10 20 40");
+          var actual = Docopt(doc, @"10 20 40");
           var expected = @"{""<kind>"": ""10"", ""<name>"": ""20"", ""<type>"": ""40""}";
           CheckResult(expected, actual);
       }
@@ -1028,7 +1028,7 @@ options: -a
       public void Test_72()
       {
           var doc = @"usage: prog <kind> [<name> <type>]";
-          var actual = DocOpt(doc, @"10 20");
+          var actual = Docopt(doc, @"10 20");
           var expected = @"{""<kind>"": ""10"", ""<name>"": ""20"", ""<type>"": null}";
           CheckResult(expected, actual);
       }
@@ -1038,7 +1038,7 @@ options: -a
       public void Test_73()
       {
           var doc = @"usage: prog <kind> [<name> <type>]";
-          var actual = DocOpt(doc, @"");
+          var actual = Docopt(doc, @"");
           var expected = @"""user-error""";
           CheckResult(expected, actual);
       }
@@ -1048,7 +1048,7 @@ options: -a
       public void Test_74()
       {
           var doc = @"usage: prog [<kind> | <name> <type>]";
-          var actual = DocOpt(doc, @"10 20 40");
+          var actual = Docopt(doc, @"10 20 40");
           var expected = @"""user-error""";
           CheckResult(expected, actual);
       }
@@ -1058,7 +1058,7 @@ options: -a
       public void Test_75()
       {
           var doc = @"usage: prog [<kind> | <name> <type>]";
-          var actual = DocOpt(doc, @"20 40");
+          var actual = Docopt(doc, @"20 40");
           var expected = @"{""<kind>"": null, ""<name>"": ""20"", ""<type>"": ""40""}";
           CheckResult(expected, actual);
       }
@@ -1068,7 +1068,7 @@ options: -a
       public void Test_76()
       {
           var doc = @"usage: prog [<kind> | <name> <type>]";
-          var actual = DocOpt(doc, @"");
+          var actual = Docopt(doc, @"");
           var expected = @"{""<kind>"": null, ""<name>"": null, ""<type>"": null}";
           CheckResult(expected, actual);
       }
@@ -1083,7 +1083,7 @@ options:
  --all
 
 ";
-          var actual = DocOpt(doc, @"10 --all");
+          var actual = Docopt(doc, @"10 --all");
           var expected = @"{""<kind>"": ""10"", ""--all"": true, ""<name>"": null}";
           CheckResult(expected, actual);
       }
@@ -1098,7 +1098,7 @@ options:
  --all
 
 ";
-          var actual = DocOpt(doc, @"10");
+          var actual = Docopt(doc, @"10");
           var expected = @"{""<kind>"": null, ""--all"": false, ""<name>"": ""10""}";
           CheckResult(expected, actual);
       }
@@ -1113,7 +1113,7 @@ options:
  --all
 
 ";
-          var actual = DocOpt(doc, @"");
+          var actual = Docopt(doc, @"");
           var expected = @"""user-error""";
           CheckResult(expected, actual);
       }
@@ -1123,7 +1123,7 @@ options:
       public void Test_80()
       {
           var doc = @"usage: prog [<name> <name>]";
-          var actual = DocOpt(doc, @"10 20");
+          var actual = Docopt(doc, @"10 20");
           var expected = @"{""<name>"": [""10"", ""20""]}";
           CheckResult(expected, actual);
       }
@@ -1133,7 +1133,7 @@ options:
       public void Test_81()
       {
           var doc = @"usage: prog [<name> <name>]";
-          var actual = DocOpt(doc, @"10");
+          var actual = Docopt(doc, @"10");
           var expected = @"{""<name>"": [""10""]}";
           CheckResult(expected, actual);
       }
@@ -1143,7 +1143,7 @@ options:
       public void Test_82()
       {
           var doc = @"usage: prog [<name> <name>]";
-          var actual = DocOpt(doc, @"");
+          var actual = Docopt(doc, @"");
           var expected = @"{""<name>"": []}";
           CheckResult(expected, actual);
       }
@@ -1153,7 +1153,7 @@ options:
       public void Test_83()
       {
           var doc = @"usage: prog [(<name> <name>)]";
-          var actual = DocOpt(doc, @"10 20");
+          var actual = Docopt(doc, @"10 20");
           var expected = @"{""<name>"": [""10"", ""20""]}";
           CheckResult(expected, actual);
       }
@@ -1163,7 +1163,7 @@ options:
       public void Test_84()
       {
           var doc = @"usage: prog [(<name> <name>)]";
-          var actual = DocOpt(doc, @"10");
+          var actual = Docopt(doc, @"10");
           var expected = @"""user-error""";
           CheckResult(expected, actual);
       }
@@ -1173,7 +1173,7 @@ options:
       public void Test_85()
       {
           var doc = @"usage: prog [(<name> <name>)]";
-          var actual = DocOpt(doc, @"");
+          var actual = Docopt(doc, @"");
           var expected = @"{""<name>"": []}";
           CheckResult(expected, actual);
       }
@@ -1183,7 +1183,7 @@ options:
       public void Test_86()
       {
           var doc = @"usage: prog NAME...";
-          var actual = DocOpt(doc, @"10 20");
+          var actual = Docopt(doc, @"10 20");
           var expected = @"{""NAME"": [""10"", ""20""]}";
           CheckResult(expected, actual);
       }
@@ -1193,7 +1193,7 @@ options:
       public void Test_87()
       {
           var doc = @"usage: prog NAME...";
-          var actual = DocOpt(doc, @"10");
+          var actual = Docopt(doc, @"10");
           var expected = @"{""NAME"": [""10""]}";
           CheckResult(expected, actual);
       }
@@ -1203,7 +1203,7 @@ options:
       public void Test_88()
       {
           var doc = @"usage: prog NAME...";
-          var actual = DocOpt(doc, @"");
+          var actual = Docopt(doc, @"");
           var expected = @"""user-error""";
           CheckResult(expected, actual);
       }
@@ -1213,7 +1213,7 @@ options:
       public void Test_89()
       {
           var doc = @"usage: prog [NAME]...";
-          var actual = DocOpt(doc, @"10 20");
+          var actual = Docopt(doc, @"10 20");
           var expected = @"{""NAME"": [""10"", ""20""]}";
           CheckResult(expected, actual);
       }
@@ -1223,7 +1223,7 @@ options:
       public void Test_90()
       {
           var doc = @"usage: prog [NAME]...";
-          var actual = DocOpt(doc, @"10");
+          var actual = Docopt(doc, @"10");
           var expected = @"{""NAME"": [""10""]}";
           CheckResult(expected, actual);
       }
@@ -1233,7 +1233,7 @@ options:
       public void Test_91()
       {
           var doc = @"usage: prog [NAME]...";
-          var actual = DocOpt(doc, @"");
+          var actual = Docopt(doc, @"");
           var expected = @"{""NAME"": []}";
           CheckResult(expected, actual);
       }
@@ -1243,7 +1243,7 @@ options:
       public void Test_92()
       {
           var doc = @"usage: prog [NAME...]";
-          var actual = DocOpt(doc, @"10 20");
+          var actual = Docopt(doc, @"10 20");
           var expected = @"{""NAME"": [""10"", ""20""]}";
           CheckResult(expected, actual);
       }
@@ -1253,7 +1253,7 @@ options:
       public void Test_93()
       {
           var doc = @"usage: prog [NAME...]";
-          var actual = DocOpt(doc, @"10");
+          var actual = Docopt(doc, @"10");
           var expected = @"{""NAME"": [""10""]}";
           CheckResult(expected, actual);
       }
@@ -1263,7 +1263,7 @@ options:
       public void Test_94()
       {
           var doc = @"usage: prog [NAME...]";
-          var actual = DocOpt(doc, @"");
+          var actual = Docopt(doc, @"");
           var expected = @"{""NAME"": []}";
           CheckResult(expected, actual);
       }
@@ -1273,7 +1273,7 @@ options:
       public void Test_95()
       {
           var doc = @"usage: prog [NAME [NAME ...]]";
-          var actual = DocOpt(doc, @"10 20");
+          var actual = Docopt(doc, @"10 20");
           var expected = @"{""NAME"": [""10"", ""20""]}";
           CheckResult(expected, actual);
       }
@@ -1283,7 +1283,7 @@ options:
       public void Test_96()
       {
           var doc = @"usage: prog [NAME [NAME ...]]";
-          var actual = DocOpt(doc, @"10");
+          var actual = Docopt(doc, @"10");
           var expected = @"{""NAME"": [""10""]}";
           CheckResult(expected, actual);
       }
@@ -1293,7 +1293,7 @@ options:
       public void Test_97()
       {
           var doc = @"usage: prog [NAME [NAME ...]]";
-          var actual = DocOpt(doc, @"");
+          var actual = Docopt(doc, @"");
           var expected = @"{""NAME"": []}";
           CheckResult(expected, actual);
       }
@@ -1307,7 +1307,7 @@ options:
 options: --foo
 
 ";
-          var actual = DocOpt(doc, @"10");
+          var actual = Docopt(doc, @"10");
           var expected = @"{""NAME"": ""10"", ""--foo"": false}";
           CheckResult(expected, actual);
       }
@@ -1321,7 +1321,7 @@ options: --foo
 options: --foo
 
 ";
-          var actual = DocOpt(doc, @"--foo 10");
+          var actual = Docopt(doc, @"--foo 10");
           var expected = @"{""NAME"": ""10"", ""--foo"": true}";
           CheckResult(expected, actual);
       }
@@ -1335,7 +1335,7 @@ options: --foo
 options: --foo
 
 ";
-          var actual = DocOpt(doc, @"--foo=10");
+          var actual = Docopt(doc, @"--foo=10");
           var expected = @"""user-error""";
           CheckResult(expected, actual);
       }
@@ -1350,7 +1350,7 @@ options: --foo
 options: --bar
 
 ";
-          var actual = DocOpt(doc, @"10");
+          var actual = Docopt(doc, @"10");
           var expected = @"{""NAME"": [""10""], ""--foo"": false, ""--bar"": false}";
           CheckResult(expected, actual);
       }
@@ -1365,7 +1365,7 @@ options: --foo
 options: --bar
 
 ";
-          var actual = DocOpt(doc, @"10 20");
+          var actual = Docopt(doc, @"10 20");
           var expected = @"{""NAME"": [""10"", ""20""], ""--foo"": false, ""--bar"": false}";
           CheckResult(expected, actual);
       }
@@ -1380,7 +1380,7 @@ options: --foo
 options: --bar
 
 ";
-          var actual = DocOpt(doc, @"--foo --bar");
+          var actual = Docopt(doc, @"--foo --bar");
           var expected = @"{""NAME"": [], ""--foo"": true, ""--bar"": true}";
           CheckResult(expected, actual);
       }
@@ -1407,7 +1407,7 @@ Options:
   --drifting    Drifting mine.
 
 ";
-          var actual = DocOpt(doc, @"ship Guardian move 150 300 --speed=20");
+          var actual = Docopt(doc, @"ship Guardian move 150 300 --speed=20");
           var expected = @"{""--drifting"": false,
  ""--help"": false,
  ""--moored"": false,
@@ -1431,7 +1431,7 @@ Options:
       public void Test_105()
       {
           var doc = @"usage: prog --hello";
-          var actual = DocOpt(doc, @"--hello");
+          var actual = Docopt(doc, @"--hello");
           var expected = @"{""--hello"": true}";
           CheckResult(expected, actual);
       }
@@ -1441,7 +1441,7 @@ Options:
       public void Test_106()
       {
           var doc = @"usage: prog [--hello=<world>]";
-          var actual = DocOpt(doc, @"");
+          var actual = Docopt(doc, @"");
           var expected = @"{""--hello"": null}";
           CheckResult(expected, actual);
       }
@@ -1451,7 +1451,7 @@ Options:
       public void Test_107()
       {
           var doc = @"usage: prog [--hello=<world>]";
-          var actual = DocOpt(doc, @"--hello wrld");
+          var actual = Docopt(doc, @"--hello wrld");
           var expected = @"{""--hello"": ""wrld""}";
           CheckResult(expected, actual);
       }
@@ -1461,7 +1461,7 @@ Options:
       public void Test_108()
       {
           var doc = @"usage: prog [-o]";
-          var actual = DocOpt(doc, @"");
+          var actual = Docopt(doc, @"");
           var expected = @"{""-o"": false}";
           CheckResult(expected, actual);
       }
@@ -1471,7 +1471,7 @@ Options:
       public void Test_109()
       {
           var doc = @"usage: prog [-o]";
-          var actual = DocOpt(doc, @"-o");
+          var actual = Docopt(doc, @"-o");
           var expected = @"{""-o"": true}";
           CheckResult(expected, actual);
       }
@@ -1481,7 +1481,7 @@ Options:
       public void Test_110()
       {
           var doc = @"usage: prog [-opr]";
-          var actual = DocOpt(doc, @"-op");
+          var actual = Docopt(doc, @"-op");
           var expected = @"{""-o"": true, ""-p"": true, ""-r"": false}";
           CheckResult(expected, actual);
       }
@@ -1491,7 +1491,7 @@ Options:
       public void Test_111()
       {
           var doc = @"usage: prog --aabb | --aa";
-          var actual = DocOpt(doc, @"--aa");
+          var actual = Docopt(doc, @"--aa");
           var expected = @"{""--aabb"": false, ""--aa"": true}";
           CheckResult(expected, actual);
       }
@@ -1501,7 +1501,7 @@ Options:
       public void Test_112()
       {
           var doc = @"usage: prog --aabb | --aa";
-          var actual = DocOpt(doc, @"--a");
+          var actual = Docopt(doc, @"--a");
           var expected = @"""user-error""";
           CheckResult(expected, actual);
       }
@@ -1511,7 +1511,7 @@ Options:
       public void Test_113()
       {
           var doc = @"Usage: prog -v";
-          var actual = DocOpt(doc, @"-v");
+          var actual = Docopt(doc, @"-v");
           var expected = @"{""-v"": true}";
           CheckResult(expected, actual);
       }
@@ -1521,7 +1521,7 @@ Options:
       public void Test_114()
       {
           var doc = @"Usage: prog [-v -v]";
-          var actual = DocOpt(doc, @"");
+          var actual = Docopt(doc, @"");
           var expected = @"{""-v"": 0}";
           CheckResult(expected, actual);
       }
@@ -1531,7 +1531,7 @@ Options:
       public void Test_115()
       {
           var doc = @"Usage: prog [-v -v]";
-          var actual = DocOpt(doc, @"-v");
+          var actual = Docopt(doc, @"-v");
           var expected = @"{""-v"": 1}";
           CheckResult(expected, actual);
       }
@@ -1541,7 +1541,7 @@ Options:
       public void Test_116()
       {
           var doc = @"Usage: prog [-v -v]";
-          var actual = DocOpt(doc, @"-vv");
+          var actual = Docopt(doc, @"-vv");
           var expected = @"{""-v"": 2}";
           CheckResult(expected, actual);
       }
@@ -1551,7 +1551,7 @@ Options:
       public void Test_117()
       {
           var doc = @"Usage: prog -v ...";
-          var actual = DocOpt(doc, @"");
+          var actual = Docopt(doc, @"");
           var expected = @"""user-error""";
           CheckResult(expected, actual);
       }
@@ -1561,7 +1561,7 @@ Options:
       public void Test_118()
       {
           var doc = @"Usage: prog -v ...";
-          var actual = DocOpt(doc, @"-v");
+          var actual = Docopt(doc, @"-v");
           var expected = @"{""-v"": 1}";
           CheckResult(expected, actual);
       }
@@ -1571,7 +1571,7 @@ Options:
       public void Test_119()
       {
           var doc = @"Usage: prog -v ...";
-          var actual = DocOpt(doc, @"-vv");
+          var actual = Docopt(doc, @"-vv");
           var expected = @"{""-v"": 2}";
           CheckResult(expected, actual);
       }
@@ -1581,7 +1581,7 @@ Options:
       public void Test_120()
       {
           var doc = @"Usage: prog -v ...";
-          var actual = DocOpt(doc, @"-vvvvvv");
+          var actual = Docopt(doc, @"-vvvvvv");
           var expected = @"{""-v"": 6}";
           CheckResult(expected, actual);
       }
@@ -1595,7 +1595,7 @@ Options:
 This one is probably most readable user-friednly variant.
 
 ";
-          var actual = DocOpt(doc, @"");
+          var actual = Docopt(doc, @"");
           var expected = @"{""-v"": 0}";
           CheckResult(expected, actual);
       }
@@ -1609,7 +1609,7 @@ This one is probably most readable user-friednly variant.
 This one is probably most readable user-friednly variant.
 
 ";
-          var actual = DocOpt(doc, @"-v");
+          var actual = Docopt(doc, @"-v");
           var expected = @"{""-v"": 1}";
           CheckResult(expected, actual);
       }
@@ -1623,7 +1623,7 @@ This one is probably most readable user-friednly variant.
 This one is probably most readable user-friednly variant.
 
 ";
-          var actual = DocOpt(doc, @"-vv");
+          var actual = Docopt(doc, @"-vv");
           var expected = @"{""-v"": 2}";
           CheckResult(expected, actual);
       }
@@ -1637,7 +1637,7 @@ This one is probably most readable user-friednly variant.
 This one is probably most readable user-friednly variant.
 
 ";
-          var actual = DocOpt(doc, @"-vvvv");
+          var actual = Docopt(doc, @"-vvvv");
           var expected = @"""user-error""";
           CheckResult(expected, actual);
       }
@@ -1647,7 +1647,7 @@ This one is probably most readable user-friednly variant.
       public void Test_125()
       {
           var doc = @"usage: prog [--ver --ver]";
-          var actual = DocOpt(doc, @"--ver --ver");
+          var actual = Docopt(doc, @"--ver --ver");
           var expected = @"{""--ver"": 2}";
           CheckResult(expected, actual);
       }
@@ -1657,7 +1657,7 @@ This one is probably most readable user-friednly variant.
       public void Test_126()
       {
           var doc = @"usage: prog [go]";
-          var actual = DocOpt(doc, @"go");
+          var actual = Docopt(doc, @"go");
           var expected = @"{""go"": true}";
           CheckResult(expected, actual);
       }
@@ -1667,7 +1667,7 @@ This one is probably most readable user-friednly variant.
       public void Test_127()
       {
           var doc = @"usage: prog [go go]";
-          var actual = DocOpt(doc, @"");
+          var actual = Docopt(doc, @"");
           var expected = @"{""go"": 0}";
           CheckResult(expected, actual);
       }
@@ -1677,7 +1677,7 @@ This one is probably most readable user-friednly variant.
       public void Test_128()
       {
           var doc = @"usage: prog [go go]";
-          var actual = DocOpt(doc, @"go");
+          var actual = Docopt(doc, @"go");
           var expected = @"{""go"": 1}";
           CheckResult(expected, actual);
       }
@@ -1687,7 +1687,7 @@ This one is probably most readable user-friednly variant.
       public void Test_129()
       {
           var doc = @"usage: prog [go go]";
-          var actual = DocOpt(doc, @"go go");
+          var actual = Docopt(doc, @"go go");
           var expected = @"{""go"": 2}";
           CheckResult(expected, actual);
       }
@@ -1697,7 +1697,7 @@ This one is probably most readable user-friednly variant.
       public void Test_130()
       {
           var doc = @"usage: prog [go go]";
-          var actual = DocOpt(doc, @"go go go");
+          var actual = Docopt(doc, @"go go go");
           var expected = @"""user-error""";
           CheckResult(expected, actual);
       }
@@ -1707,7 +1707,7 @@ This one is probably most readable user-friednly variant.
       public void Test_131()
       {
           var doc = @"usage: prog go...";
-          var actual = DocOpt(doc, @"go go go go go");
+          var actual = Docopt(doc, @"go go go go go");
           var expected = @"{""go"": 5}";
           CheckResult(expected, actual);
       }
@@ -1721,7 +1721,7 @@ This one is probably most readable user-friednly variant.
 options: -a
          -b
 ";
-          var actual = DocOpt(doc, @"-a");
+          var actual = Docopt(doc, @"-a");
           var expected = @"{""-a"": true, ""-b"": false}";
           CheckResult(expected, actual);
       }
@@ -1735,7 +1735,7 @@ options: -a
 options: -a
          -b
 ";
-          var actual = DocOpt(doc, @"-aa");
+          var actual = Docopt(doc, @"-aa");
           var expected = @"""user-error""";
           CheckResult(expected, actual);
       }
@@ -1750,7 +1750,7 @@ Options:
     -v  Be verbose.
 
 ";
-          var actual = DocOpt(doc, @"arg");
+          var actual = Docopt(doc, @"arg");
           var expected = @"{""A"": ""arg"", ""-v"": false, ""-q"": false}";
           CheckResult(expected, actual);
       }
@@ -1765,7 +1765,7 @@ Options:
     -v  Be verbose.
 
 ";
-          var actual = DocOpt(doc, @"-v arg");
+          var actual = Docopt(doc, @"-v arg");
           var expected = @"{""A"": ""arg"", ""-v"": true, ""-q"": false}";
           CheckResult(expected, actual);
       }
@@ -1780,7 +1780,7 @@ Options:
     -v  Be verbose.
 
 ";
-          var actual = DocOpt(doc, @"-q arg");
+          var actual = Docopt(doc, @"-q arg");
           var expected = @"{""A"": ""arg"", ""-v"": false, ""-q"": true}";
           CheckResult(expected, actual);
       }
@@ -1790,7 +1790,7 @@ Options:
       public void Test_137()
       {
           var doc = @"usage: prog [-]";
-          var actual = DocOpt(doc, @"-");
+          var actual = Docopt(doc, @"-");
           var expected = @"{""-"": true}";
           CheckResult(expected, actual);
       }
@@ -1800,7 +1800,7 @@ Options:
       public void Test_138()
       {
           var doc = @"usage: prog [-]";
-          var actual = DocOpt(doc, @"");
+          var actual = Docopt(doc, @"");
           var expected = @"{""-"": false}";
           CheckResult(expected, actual);
       }
@@ -1810,7 +1810,7 @@ Options:
       public void Test_139()
       {
           var doc = @"usage: prog [NAME [NAME ...]]";
-          var actual = DocOpt(doc, @"a b");
+          var actual = Docopt(doc, @"a b");
           var expected = @"{""NAME"": [""a"", ""b""]}";
           CheckResult(expected, actual);
       }
@@ -1820,7 +1820,7 @@ Options:
       public void Test_140()
       {
           var doc = @"usage: prog [NAME [NAME ...]]";
-          var actual = DocOpt(doc, @"");
+          var actual = Docopt(doc, @"");
           var expected = @"{""NAME"": []}";
           CheckResult(expected, actual);
       }
@@ -1835,7 +1835,7 @@ options:
  -m <msg>  Message
 
 ";
-          var actual = DocOpt(doc, @"-a");
+          var actual = Docopt(doc, @"-a");
           var expected = @"{""-m"": null, ""-a"": true}";
           CheckResult(expected, actual);
       }
@@ -1845,7 +1845,7 @@ options:
       public void Test_142()
       {
           var doc = @"usage: prog --hello";
-          var actual = DocOpt(doc, @"--hello");
+          var actual = Docopt(doc, @"--hello");
           var expected = @"{""--hello"": true}";
           CheckResult(expected, actual);
       }
@@ -1855,7 +1855,7 @@ options:
       public void Test_143()
       {
           var doc = @"usage: prog [--hello=<world>]";
-          var actual = DocOpt(doc, @"");
+          var actual = Docopt(doc, @"");
           var expected = @"{""--hello"": null}";
           CheckResult(expected, actual);
       }
@@ -1865,7 +1865,7 @@ options:
       public void Test_144()
       {
           var doc = @"usage: prog [--hello=<world>]";
-          var actual = DocOpt(doc, @"--hello wrld");
+          var actual = Docopt(doc, @"--hello wrld");
           var expected = @"{""--hello"": ""wrld""}";
           CheckResult(expected, actual);
       }
@@ -1875,7 +1875,7 @@ options:
       public void Test_145()
       {
           var doc = @"usage: prog [-o]";
-          var actual = DocOpt(doc, @"");
+          var actual = Docopt(doc, @"");
           var expected = @"{""-o"": false}";
           CheckResult(expected, actual);
       }
@@ -1885,7 +1885,7 @@ options:
       public void Test_146()
       {
           var doc = @"usage: prog [-o]";
-          var actual = DocOpt(doc, @"-o");
+          var actual = Docopt(doc, @"-o");
           var expected = @"{""-o"": true}";
           CheckResult(expected, actual);
       }
@@ -1895,7 +1895,7 @@ options:
       public void Test_147()
       {
           var doc = @"usage: prog [-opr]";
-          var actual = DocOpt(doc, @"-op");
+          var actual = Docopt(doc, @"-op");
           var expected = @"{""-o"": true, ""-p"": true, ""-r"": false}";
           CheckResult(expected, actual);
       }
@@ -1905,7 +1905,7 @@ options:
       public void Test_148()
       {
           var doc = @"usage: git [-v | --verbose]";
-          var actual = DocOpt(doc, @"-v");
+          var actual = Docopt(doc, @"-v");
           var expected = @"{""-v"": true, ""--verbose"": false}";
           CheckResult(expected, actual);
       }
@@ -1915,7 +1915,7 @@ options:
       public void Test_149()
       {
           var doc = @"usage: git remote [-v | --verbose]";
-          var actual = DocOpt(doc, @"remote -v");
+          var actual = Docopt(doc, @"remote -v");
           var expected = @"{""remote"": true, ""-v"": true, ""--verbose"": false}";
           CheckResult(expected, actual);
       }
@@ -1925,7 +1925,7 @@ options:
       public void Test_150()
       {
           var doc = @"usage: prog";
-          var actual = DocOpt(doc, @"");
+          var actual = Docopt(doc, @"");
           var expected = @"{}";
           CheckResult(expected, actual);
       }
@@ -1937,7 +1937,7 @@ options:
           var doc = @"usage: prog
            prog <a> <b>
 ";
-          var actual = DocOpt(doc, @"1 2");
+          var actual = Docopt(doc, @"1 2");
           var expected = @"{""<a>"": ""1"", ""<b>"": ""2""}";
           CheckResult(expected, actual);
       }
@@ -1949,7 +1949,7 @@ options:
           var doc = @"usage: prog
            prog <a> <b>
 ";
-          var actual = DocOpt(doc, @"");
+          var actual = Docopt(doc, @"");
           var expected = @"{""<a>"": null, ""<b>"": null}";
           CheckResult(expected, actual);
       }
@@ -1961,7 +1961,7 @@ options:
           var doc = @"usage: prog <a> <b>
            prog
 ";
-          var actual = DocOpt(doc, @"");
+          var actual = Docopt(doc, @"");
           var expected = @"{""<a>"": null, ""<b>"": null}";
           CheckResult(expected, actual);
       }
@@ -1971,7 +1971,7 @@ options:
       public void Test_154()
       {
           var doc = @"usage: prog [--file=<f>]";
-          var actual = DocOpt(doc, @"");
+          var actual = Docopt(doc, @"");
           var expected = @"{""--file"": null}";
           CheckResult(expected, actual);
       }
@@ -1985,7 +1985,7 @@ options:
 options: --file <a>
 
 ";
-          var actual = DocOpt(doc, @"");
+          var actual = Docopt(doc, @"");
           var expected = @"{""--file"": null}";
           CheckResult(expected, actual);
       }
@@ -1999,7 +1999,7 @@ options: --file <a>
 Options: -a, --address <host:port>  TCP address [default: localhost:6283].
 
 ";
-          var actual = DocOpt(doc, @"");
+          var actual = Docopt(doc, @"");
           var expected = @"{""--address"": ""localhost:6283""}";
           CheckResult(expected, actual);
       }
@@ -2009,7 +2009,7 @@ Options: -a, --address <host:port>  TCP address [default: localhost:6283].
       public void Test_157()
       {
           var doc = @"usage: prog --long=<arg> ...";
-          var actual = DocOpt(doc, @"--long one");
+          var actual = Docopt(doc, @"--long one");
           var expected = @"{""--long"": [""one""]}";
           CheckResult(expected, actual);
       }
@@ -2019,7 +2019,7 @@ Options: -a, --address <host:port>  TCP address [default: localhost:6283].
       public void Test_158()
       {
           var doc = @"usage: prog --long=<arg> ...";
-          var actual = DocOpt(doc, @"--long one --long two");
+          var actual = Docopt(doc, @"--long one --long two");
           var expected = @"{""--long"": [""one"", ""two""]}";
           CheckResult(expected, actual);
       }
@@ -2029,7 +2029,7 @@ Options: -a, --address <host:port>  TCP address [default: localhost:6283].
       public void Test_159()
       {
           var doc = @"usage: prog (go <direction> --speed=<km/h>)...";
-          var actual = DocOpt(doc, @" go left --speed=5  go right --speed=9");
+          var actual = Docopt(doc, @" go left --speed=5  go right --speed=9");
           var expected = @"{""go"": 2, ""<direction>"": [""left"", ""right""], ""--speed"": [""5"", ""9""]}";
           CheckResult(expected, actual);
       }
@@ -2043,7 +2043,7 @@ Options: -a, --address <host:port>  TCP address [default: localhost:6283].
 options: -a
 
 ";
-          var actual = DocOpt(doc, @"-a");
+          var actual = Docopt(doc, @"-a");
           var expected = @"{""-a"": true}";
           CheckResult(expected, actual);
       }
@@ -2057,7 +2057,7 @@ options: -a
 options: -o <o>  [default: x]
 
 ";
-          var actual = DocOpt(doc, @"-o this -o that");
+          var actual = Docopt(doc, @"-o this -o that");
           var expected = @"{""-o"": [""this"", ""that""]}";
           CheckResult(expected, actual);
       }
@@ -2071,7 +2071,7 @@ options: -o <o>  [default: x]
 options: -o <o>  [default: x]
 
 ";
-          var actual = DocOpt(doc, @"");
+          var actual = Docopt(doc, @"");
           var expected = @"{""-o"": [""x""]}";
           CheckResult(expected, actual);
       }
@@ -2085,7 +2085,7 @@ options: -o <o>  [default: x]
 options: -o <o>  [default: x y]
 
 ";
-          var actual = DocOpt(doc, @"-o this");
+          var actual = Docopt(doc, @"-o this");
           var expected = @"{""-o"": [""this""]}";
           CheckResult(expected, actual);
       }
@@ -2099,7 +2099,7 @@ options: -o <o>  [default: x y]
 options: -o <o>  [default: x y]
 
 ";
-          var actual = DocOpt(doc, @"");
+          var actual = Docopt(doc, @"");
           var expected = @"{""-o"": [""x"", ""y""]}";
           CheckResult(expected, actual);
       }
@@ -2113,7 +2113,7 @@ options: -o <o>  [default: x y]
 options: -p PATH
 
 ";
-          var actual = DocOpt(doc, @"-pHOME");
+          var actual = Docopt(doc, @"-pHOME");
           var expected = @"{""-p"": ""HOME""}";
           CheckResult(expected, actual);
       }
@@ -2123,7 +2123,7 @@ options: -p PATH
       public void Test_166()
       {
           var doc = @"Usage: foo (--xx=x|--yy=y)...";
-          var actual = DocOpt(doc, @"--xx=1 --yy=2");
+          var actual = Docopt(doc, @"--xx=1 --yy=2");
           var expected = @"{""--xx"": [""1""], ""--yy"": [""2""]}";
           CheckResult(expected, actual);
       }
@@ -2133,7 +2133,7 @@ options: -p PATH
       public void Test_167()
       {
           var doc = @"usage: prog [<input file>]";
-          var actual = DocOpt(doc, @"f.txt");
+          var actual = Docopt(doc, @"f.txt");
           var expected = @"{""<input file>"": ""f.txt""}";
           CheckResult(expected, actual);
       }
@@ -2143,7 +2143,7 @@ options: -p PATH
       public void Test_168()
       {
           var doc = @"usage: prog [--input=<file name>]...";
-          var actual = DocOpt(doc, @"--input a.txt --input=b.txt");
+          var actual = Docopt(doc, @"--input a.txt --input=b.txt");
           var expected = @"{""--input"": [""a.txt"", ""b.txt""]}";
           CheckResult(expected, actual);
       }
@@ -2158,7 +2158,7 @@ options: -p PATH
 options: --loglevel=N
 
 ";
-          var actual = DocOpt(doc, @"fail --loglevel 5");
+          var actual = Docopt(doc, @"fail --loglevel 5");
           var expected = @"{""--loglevel"": ""5"", ""fail"": true, ""good"": false}";
           CheckResult(expected, actual);
       }
@@ -2168,7 +2168,7 @@ options: --loglevel=N
       public void Test_170()
       {
           var doc = @"usage:prog --foo";
-          var actual = DocOpt(doc, @"--foo");
+          var actual = Docopt(doc, @"--foo");
           var expected = @"{""--foo"": true}";
           CheckResult(expected, actual);
       }
@@ -2178,7 +2178,7 @@ options: --loglevel=N
       public void Test_171()
       {
           var doc = @"PROGRAM USAGE: prog --foo";
-          var actual = DocOpt(doc, @"--foo");
+          var actual = Docopt(doc, @"--foo");
           var expected = @"{""--foo"": true}";
           CheckResult(expected, actual);
       }
@@ -2190,7 +2190,7 @@ options: --loglevel=N
           var doc = @"Usage: prog --foo
            prog --bar
 NOT PART OF SECTION";
-          var actual = DocOpt(doc, @"--foo");
+          var actual = Docopt(doc, @"--foo");
           var expected = @"{""--foo"": true, ""--bar"": false}";
           CheckResult(expected, actual);
       }
@@ -2204,7 +2204,7 @@ NOT PART OF SECTION";
  prog --bar
 
 NOT PART OF SECTION";
-          var actual = DocOpt(doc, @"--foo");
+          var actual = Docopt(doc, @"--foo");
           var expected = @"{""--foo"": true, ""--bar"": false}";
           CheckResult(expected, actual);
       }
@@ -2217,7 +2217,7 @@ NOT PART OF SECTION";
  prog --foo
  prog --bar
 NOT PART OF SECTION";
-          var actual = DocOpt(doc, @"--foo");
+          var actual = Docopt(doc, @"--foo");
           var expected = @"{""--foo"": true, ""--bar"": false}";
           CheckResult(expected, actual);
       }
@@ -2237,7 +2237,7 @@ other options:
 -not-an-option-
 
 ";
-          var actual = DocOpt(doc, @"--baz --egg");
+          var actual = Docopt(doc, @"--baz --egg");
           var expected = @"{""--foo"": false, ""--baz"": true, ""--bar"": false, ""--egg"": true, ""--spam"": false}";
           CheckResult(expected, actual);
       }

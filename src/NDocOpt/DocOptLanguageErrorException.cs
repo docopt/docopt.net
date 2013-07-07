@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Runtime.Serialization;
 
-namespace NDocOpt
+namespace DocoptNet
 {
     [Serializable]
-    public class DocOptLanguageErrorException : Exception
+    public class DocoptLanguageErrorException : Exception
     {
         //
         // For guidelines regarding the creation of new exception types, see
@@ -13,16 +13,16 @@ namespace NDocOpt
         //    http://msdn.microsoft.com/library/default.asp?url=/library/en-us/dncscol/html/csharp07192001.asp
         //
 
-        public DocOptLanguageErrorException()
+        public DocoptLanguageErrorException()
         {
         }
-        public DocOptLanguageErrorException(string message) : base(message)
+        public DocoptLanguageErrorException(string message) : base(message)
         {
         }
-        public DocOptLanguageErrorException(string message, Exception inner) : base(message, inner)
+        public DocoptLanguageErrorException(string message, Exception inner) : base(message, inner)
         {
         }
-        protected DocOptLanguageErrorException(
+        protected DocoptLanguageErrorException(
             SerializationInfo info,
             StreamingContext context) : base(info, context)
         {

@@ -8,8 +8,8 @@
     <ProjectGuid>{98A9E0AA-D81F-4919-8582-2451087A757E}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>NDocOpt</RootNamespace>
-    <AssemblyName>NDocOpt</AssemblyName>
+    <RootNamespace>DocoptNet</RootNamespace>
+    <AssemblyName>DocoptNet</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>

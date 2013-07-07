@@ -9,7 +9,7 @@
     <ReportDir>$(TopDir)\_build\report</ReportDir>
     <BuildOutDir>$(TopDir)\_build\bin</BuildOutDir>
     <PackageDir>$(TopDir)\src\packages</PackageDir>
-    <SolutionFile>$(SrcDir)\NDocOpt.sln</SolutionFile>
+    <SolutionFile>$(SrcDir)\DocoptNet.sln</SolutionFile>
   </PropertyGroup>
 
   <Target Name="Help">
@@ -45,7 +45,7 @@ Public Targets:
   </PropertyGroup>
 
   <ItemGroup>
-    <UnitTestAssembly Include="$(BuildOutDir)\NDocOpt.Tests\NDocOpt.Tests.dll" />
+    <UnitTestAssembly Include="$(BuildOutDir)\DocoptNet.Tests\DocoptNet.Tests.dll" />
   </ItemGroup>
 
   <Import Project="$(MSBuildCommunityTasksPath)\MSBuild.Community.Tasks.targets"/>

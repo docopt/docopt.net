@@ -4,16 +4,16 @@ using System.Collections.Generic;
 using NUnit.Framework;
 using Newtonsoft.Json;
 
-namespace NDocOpt.Tests
+namespace DocoptNet.Tests
 {
     [TestFixture]
     public partial class LanguageAgnosticTests
     {
-        public string DocOpt(string doc, string cmdLine)
+        public string Docopt(string doc, string cmdLine)
         {
             try
             {
-                var arguments = new DocOpt().Apply(doc, cmdLine);
+                var arguments = new Docopt().Apply(doc, cmdLine);
                 var dict = new Dictionary<string, object>();
                 foreach (var argument in arguments)
                 {

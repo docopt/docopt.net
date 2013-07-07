@@ -1,6 +1,6 @@
 ﻿using NUnit.Framework;
 
-namespace NDocOpt.Tests
+namespace DocoptNet.Tests
 {
     [TestFixture]
     public class OneOrMoreMatchTests

@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
 
-namespace NDocOpt
+namespace DocoptNet
 {
     public class Tokens: IEnumerable<string>
     {
@@ -13,13 +13,13 @@ namespace NDocOpt
 
         public Tokens(IEnumerable<string> source, Type errorType)
         {
-            _errorType = errorType ?? typeof(DocOptExitException);
+            _errorType = errorType ?? typeof(DocoptExitException);
             _tokens.AddRange(source);
         }
 
         public Tokens(string source, Type errorType)
         {
-            _errorType = errorType ?? typeof(DocOptExitException);
+            _errorType = errorType ?? typeof(DocoptExitException);
             _tokens.AddRange(source.Split(new char[0], StringSplitOptions.RemoveEmptyEntries));
         }
 
@@ -33,7 +33,7 @@ namespace NDocOpt
         {
             var spacedOut = Regex.Replace(pattern, @"([\[\]\(\)\|]|\.\.\.)", @" $1 ");
             var source = Regex.Split(spacedOut, @"\s+|(\S*<.*?>)").Where(x => !string.IsNullOrEmpty(x));
-            return new Tokens(source, typeof(DocOptLanguageErrorException));
+            return new Tokens(source, typeof(DocoptLanguageErrorException));
         }
 
         public IEnumerator<string> GetEnumerator()

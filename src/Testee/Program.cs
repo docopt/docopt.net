@@ -3,18 +3,18 @@ using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
-using NDocOpt;
+using DocoptNet;
 using Newtonsoft.Json;
 
 namespace Testee
 {
     internal class Program
     {
-        public static string DocOpt(string doc, string[] cmdLine)
+        public static string Docopt(string doc, string[] cmdLine)
         {
             try
             {
-                var arguments = new DocOpt().Apply(doc, cmdLine);
+                var arguments = new Docopt().Apply(doc, cmdLine);
                 var dict = new Dictionary<string, object>();
                 foreach (var argument in arguments)
                 {
@@ -56,7 +56,7 @@ namespace Testee
                 outputLength = inputStream.Read(bytes, 0, 100);
             }
             var doc = sb.ToString();
-            var s = DocOpt(doc, args);
+            var s = Docopt(doc, args);
             Console.WriteLine(s);
         }
     }

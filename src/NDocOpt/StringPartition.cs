@@ -1,4 +1,4 @@
-﻿namespace NDocOpt
+﻿namespace DocoptNet
 {
     public struct StringPartition
     {

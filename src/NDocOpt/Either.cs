@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 
-namespace NDocOpt
+namespace DocoptNet
 {
     public class Either : BranchPattern
     {

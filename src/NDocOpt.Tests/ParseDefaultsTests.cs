@@ -1,6 +1,6 @@
 ﻿using NUnit.Framework;
 
-namespace NDocOpt.Tests
+namespace DocoptNet.Tests
 {
     [TestFixture]
     public class ParseDefaultsTests
@@ -17,7 +17,7 @@ namespace NDocOpt.Tests
 
             var expected = new Option[]
                 {new Option("-h", "--help"), new Option("-o", null, 1), new Option(null, "--verbose")};
-            Assert.AreEqual(expected, DocOpt.ParseDefaults(DOC));
+            Assert.AreEqual(expected, Docopt.ParseDefaults(DOC));
         }
     }
 }

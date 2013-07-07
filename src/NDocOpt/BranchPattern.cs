@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 
-namespace NDocOpt
+namespace DocoptNet
 {
     /// <summary>
     ///     Branch/inner node of a pattern tree.

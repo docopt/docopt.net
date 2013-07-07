@@ -1,6 +1,6 @@
 ﻿using NUnit.Framework;
 
-namespace NDocOpt.Tests
+namespace DocoptNet.Tests
 {
     [TestFixture]
     public class AnyOptionsParameterTests
@@ -8,32 +8,32 @@ namespace NDocOpt.Tests
         [Test]
         public void Error_long_with_arg()
         {
-            Assert.Throws<DocOptExitException>(
-                () => new DocOpt().Apply("usage: prog [options]", "-foo --bar --spam=eggs"));
+            Assert.Throws<DocoptExitException>(
+                () => new Docopt().Apply("usage: prog [options]", "-foo --bar --spam=eggs"));
 
         }
 
         [Test]
         public void Error_all_long()
         {
-            Assert.Throws<DocOptExitException>(
-                () => new DocOpt().Apply("usage: prog [options]", "--foo --bar --bar"));
+            Assert.Throws<DocoptExitException>(
+                () => new Docopt().Apply("usage: prog [options]", "--foo --bar --bar"));
 
         }
 
         [Test]
         public void Error_short_acc()
         {
-            Assert.Throws<DocOptExitException>(
-                () => new DocOpt().Apply("usage: prog [options]", "--bar --bar --bar -ffff"));
+            Assert.Throws<DocoptExitException>(
+                () => new Docopt().Apply("usage: prog [options]", "--bar --bar --bar -ffff"));
 
         }
 
         [Test]
         public void Error_all_long_with_arg()
         {
-            Assert.Throws<DocOptExitException>(
-                () => new DocOpt().Apply("usage: prog [options]", "--long=arg --long=another"));
+            Assert.Throws<DocoptExitException>(
+                () => new Docopt().Apply("usage: prog [options]", "--long=arg --long=another"));
 
         }
     }
