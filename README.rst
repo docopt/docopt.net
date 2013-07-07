@@ -15,7 +15,7 @@ and instead can write only the help message--*the way you want it*.
 .. code:: c#
 
   using System;
-  using NDocOpt;
+  using DocoptNet;
 
   namespace NavalFate
   {
@@ -42,7 +42,7 @@ and instead can write only the help message--*the way you want it*.
 
           private static void Main(string[] args)
           {
-              var arguments = new DocOpt().Apply(usage, args, version: "Naval Fate 2.0");
+              var arguments = new Docopt().Apply(usage, args, version: "Naval Fate 2.0");
               foreach (var argument in arguments)
               {
                   Console.WriteLine("{0} = {1}", argument.Key, argument.Value);
@@ -52,7 +52,7 @@ and instead can write only the help message--*the way you want it*.
   }
 
 Beat that! The option parser is generated based on the docstring above
-that is passed to the ``DocOpt.Apply`` method.  ``DocOpt.Apply`` parses the usage
+that is passed to the ``Docopt.Apply`` method.  ``Docopt.Apply`` parses the usage
 pattern (``"Usage: ..."``) and option descriptions (lines starting
 with dash "``-``") and ensures that the program invocation matches the
 usage pattern; it parses options, arguments and commands based on
@@ -61,7 +61,7 @@ information in it to make a parser*.
 
 Differences from reference python implementation
 ======================================================================
-- This port should be fully docopt language compatible with the 
+- This port should be fully Docopt language compatible with the 
   python reference implementation.
   
 - Because C# is statically typed, the return dictionary is of type 
@@ -73,9 +73,9 @@ Installation
 
 Use nuget
 
-    nuget install docopt.net -Version 0.6.1
+    nuget install Docopt.net -Version 0.6.1
 
-Alternatively, you can just drop ``NDocOpt.dll`` file into your
+Alternatively, you can just drop ``DocoptNet.dll`` file into your
 project--it is self-contained.
 
 **docopt.net** is tested with Visual Studio 2012.
@@ -85,7 +85,7 @@ API
 
 .. code:: c#
 
-    using NDocOpt;
+    using DocoptNet;
 
 .. code:: c#
 
@@ -126,11 +126,11 @@ API
   options), set ``help: false``.
 
     Note, you can override the print and exit behaviour by providing
-    a custom handler for the ``DocOpt.PrintExit`` event. e.g.
+    a custom handler for the ``Docopt.PrintExit`` event. e.g.
     
 .. code:: c#
 
-    var docopt = new DocOpt();
+    var docopt = new Docopt();
     docopt.PrintExit += MyCustomPrintExit;
    
 - ``version``, by default ``null``, is an optional argument that
