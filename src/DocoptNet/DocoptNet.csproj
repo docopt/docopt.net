@@ -52,9 +52,9 @@
     <Compile Include="Argument.cs" />
     <Compile Include="BranchPattern.cs" />
     <Compile Include="Command.cs" />
-    <Compile Include="DocOpt.cs" />
-    <Compile Include="DocOptExitException.cs" />
-    <Compile Include="DocOptLanguageErrorException.cs" />
+    <Compile Include="DocOptx.cs" />
+    <Compile Include="DocOptExitExceptionx.cs" />
+    <Compile Include="DocOptLanguageErrorExceptionx.cs" />
     <Compile Include="Either.cs" />
     <Compile Include="LeafPattern.cs" />
     <Compile Include="MatchResult.cs" />
