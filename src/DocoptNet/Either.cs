@@ -3,7 +3,7 @@ using System.Linq;
 
 namespace DocoptNet
 {
-    public class Either : BranchPattern
+    internal class Either : BranchPattern
     {
         public Either(params Pattern[] patterns) : base(patterns)
         {

@@ -4,7 +4,7 @@ using System.Linq;
 
 namespace DocoptNet
 {
-    public class MatchResult
+    internal class MatchResult
     {
         public bool Matched;
         public IList<Pattern> Left;

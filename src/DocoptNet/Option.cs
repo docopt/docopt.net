@@ -4,7 +4,7 @@ using System.Text.RegularExpressions;
 
 namespace DocoptNet
 {
-    public class Option : LeafPattern
+    internal class Option : LeafPattern
     {
         public string ShortName { get; private set; }
         public string LongName { get; private set; }

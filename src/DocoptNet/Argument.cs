@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace DocoptNet
 {
-    public class Argument: LeafPattern
+    internal class Argument: LeafPattern
     {
         public Argument(string name, ValueObject value = null) : base(name, value)
         {

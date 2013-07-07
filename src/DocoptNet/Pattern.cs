@@ -6,7 +6,7 @@ using System.Linq;
 
 namespace DocoptNet
 {
-    public abstract class Pattern
+    internal abstract class Pattern
     {
         public ValueObject Value { get; set; }
 

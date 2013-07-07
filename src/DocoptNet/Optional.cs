@@ -2,7 +2,7 @@
 
 namespace DocoptNet
 {
-    public class Optional : BranchPattern
+    internal class Optional : BranchPattern
     {
         public Optional(params Pattern[] patterns) : base(patterns)
         {

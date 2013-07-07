@@ -7,7 +7,7 @@ namespace DocoptNet
     /// <summary>
     /// Leaf/terminal node of a pattern tree.
     /// </summary>
-    public class LeafPattern: Pattern
+    internal class LeafPattern: Pattern
     {
         private readonly string _name;
 
@@ -82,7 +82,7 @@ namespace DocoptNet
         }
     }
 
-    public class SingleMatchResult
+    internal class SingleMatchResult
     {
         public SingleMatchResult(int index, Pattern match)
         {

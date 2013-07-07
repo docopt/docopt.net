@@ -3,7 +3,7 @@ using System.Diagnostics;
 
 namespace DocoptNet
 {
-    public class OneOrMore : BranchPattern
+    internal class OneOrMore : BranchPattern
     {
         public OneOrMore(params Pattern[] patterns)
             : base(patterns)
