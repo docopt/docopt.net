@@ -11,12 +11,11 @@
         <iconUrl>https://secure.gravatar.com/avatar/e82bc289285e348387313a00cfd84979?s=400&amp;d=https://a248.e.akamai.net/assets.github.com%2Fimages%2Fgravatars%2Fgravatar-user-420.png</iconUrl>
         <requireLicenseAcceptance>false</requireLicenseAcceptance>
         <description>docopt.net is the .net version of the docopt python beautiful command line parser.  docopt.net helps you define an interface for your command-line app, and automatically generate a parser for it. docopt.net is based on conventions that have been used for decades in help messages and man pages for program interface description.  Interface description in docopt.net is such a help message, but formalized. Check out http://docopt.org for a more detailed explanation.
-         Quick example:  var arguments = new Docopt().Apply("Usage: prog [-a] [-b] FILE", args); if (arguments["-a"].IsTrue) { ... }
-         </description>
+         Quick example:  var arguments = new Docopt().Apply("Usage: prog [-a] [-b] FILE", args); if (arguments["-a"].IsTrue) { ... }</description>
         <summary>A command-line interface description language and parser that will make you smile.</summary>
         <copyright>Copyright (c) 2012-2013 Vladimir Keleshev, Dinh Doan Van Bien</copyright>
         <language>en-US</language>
-        <tags>parser command line argument option library syntax shell beautiful posix python</tags>
+        <tags>parser command line argument option library syntax shell beautiful posix python console command-line docopt</tags>
     </metadata>
     <files>
         <file src="..\..\_build\bin\DocoptNet\DocoptNet.dll" target="lib\net40\DocoptNet.dll" />

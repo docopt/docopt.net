@@ -152,8 +152,8 @@ API
   compatibility with POSIX, or if you want to dispatch your arguments
   to other programs.
 
-- ``exit``, by default ``true``.  If set to ``false`` will
-  raise a DocoptExitException instead of printing and exiting. Note 
+- ``exit``, by default ``true``.  Relevant only if ``help=true``. If set to ``false``
+  will raise a DocoptExitException instead of printing and exiting. Note 
   that this behaviour will kick in only if a ``Docopt.PrintExit``
   event handler is not provided.  
   
