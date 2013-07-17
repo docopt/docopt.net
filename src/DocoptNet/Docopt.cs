@@ -18,79 +18,89 @@ namespace DocoptNet
         }
 
         public IDictionary<string, ValueObject> Apply(string doc, string cmdLine, bool help = true,
-                                                      object version = null, bool optionsFirst = false, bool exit=true)
+                                                      object version = null, bool optionsFirst = false, bool exit=false)
         {
             return Apply(doc, new Tokens(cmdLine, typeof(DocoptInputErrorException)), help, version, optionsFirst, exit);
         }
 
         public IDictionary<string, ValueObject> Apply(string doc, ICollection<string> argv, bool help = true,
-                                                      object version = null, bool optionsFirst = false, bool exit = true)
+                                                      object version = null, bool optionsFirst = false, bool exit = false)
         {
             return Apply(doc, new Tokens(argv, typeof(DocoptInputErrorException)), help, version, optionsFirst, exit);
         }
 
         protected IDictionary<string, ValueObject> Apply(string doc, Tokens tokens,
                                                       bool help = true,
-                                                      object version = null, bool optionsFirst = false, bool exit = true)
+                                                      object version = null, bool optionsFirst = false, bool exit = false)
         {
-            var usageSections = ParseSection("usage:", doc);
-            if (usageSections.Length == 0)
-                throw new DocoptLanguageErrorException("\"usage:\" (case-insensitive) not found.");
-            if (usageSections.Length > 1)
-                throw new DocoptLanguageErrorException("More that one \"usage:\" (case-insensitive).");
-            var exitUsage = usageSections[0];
-            var options = ParseDefaults(doc);
-            var pattern = ParsePattern(FormalUsage(exitUsage), options);
-            var arguments = ParseArgv(tokens, options, optionsFirst);
-            var patternOptions = pattern.Flat<Option>().Distinct().ToList();
-            // [default] syntax for argument is disabled
-            foreach (OptionsShortcut optionsShortcut in pattern.Flat(typeof (OptionsShortcut)))
+            try
             {
-                var docOptions = ParseDefaults(doc);
-                optionsShortcut.Children = docOptions.Distinct().Except(patternOptions).ToList();
+                var usageSections = ParseSection("usage:", doc);
+                if (usageSections.Length == 0)
+                    throw new DocoptLanguageErrorException("\"usage:\" (case-insensitive) not found.");
+                if (usageSections.Length > 1)
+                    throw new DocoptLanguageErrorException("More that one \"usage:\" (case-insensitive).");
+                var exitUsage = usageSections[0];
+                var options = ParseDefaults(doc);
+                var pattern = ParsePattern(FormalUsage(exitUsage), options);
+                var arguments = ParseArgv(tokens, options, optionsFirst);
+                var patternOptions = pattern.Flat<Option>().Distinct().ToList();
+                // [default] syntax for argument is disabled
+                foreach (OptionsShortcut optionsShortcut in pattern.Flat(typeof (OptionsShortcut)))
+                {
+                    var docOptions = ParseDefaults(doc);
+                    optionsShortcut.Children = docOptions.Distinct().Except(patternOptions).ToList();
+                }
+                Extras(help, version, arguments, doc);
+                var res = pattern.Fix().Match(arguments);
+                if (res.Matched && res.LeftIsEmpty)
+                {
+                    var dict = new Dictionary<string, ValueObject>();
+                    foreach (var p in pattern.Flat())
+                    {
+                        dict[p.Name] = p.Value;
+                    }
+                    foreach (var p in res.Collected)
+                    {
+                        dict[p.Name] = p.Value;
+                    }
+                    return dict;
+                }
+                throw new DocoptInputErrorException(exitUsage);
             }
-            Extras(help, version, arguments, doc, exit);
-            var res = pattern.Fix().Match(arguments);
-            if (res.Matched && res.LeftIsEmpty)
+            catch (DocoptBaseException e)
             {
-                var dict = new Dictionary<string, ValueObject>();
-                foreach (var p in pattern.Flat())
-                {
-                    dict[p.Name] = p.Value;
-                }
-                foreach (var p in res.Collected)
-                {
-                    dict[p.Name] = p.Value;
-                }
-                return dict;
+                if (!exit)
+                    throw;
+
+                OnPrintExit(e.Message, e.ErrorCode);
+
+                return null;
             }
-            throw new DocoptInputErrorException(exitUsage);
         }
 
-        private void Extras(bool help, object version, ICollection<Pattern> options, string doc, bool exit)
+        private void Extras(bool help, object version, ICollection<Pattern> options, string doc)
         {
             if (help && options.Any(o => (o.Name == "-h" || o.Name == "--help") && !o.Value.IsNullOrEmpty))
             {
-                OnPrintExit(exit, doc);
+                OnPrintExit(doc);
             }
             if (version != null && options.Any(o => (o.Name == "--version") && !o.Value.IsNullOrEmpty))
             {
-                OnPrintExit(exit, version.ToString());
+                OnPrintExit(version.ToString());
             }
         }
 
-        protected void OnPrintExit(bool exit, string doc)
+        protected void OnPrintExit(string doc, int errorCode=0)
         {
             if (PrintExit == null)
             {
-                if (!exit)
-                    throw new DocoptExitException(doc);
                 Console.WriteLine(doc.Trim("\r\n".ToArray()));
-                Environment.Exit(0);
+                Environment.Exit(errorCode);
             }
             else
             {
-                PrintExit(this, new PrintExitEventArgs(doc));    
+                PrintExit(this, new PrintExitEventArgs(doc, errorCode));    
             }
         }
 
@@ -411,11 +421,13 @@ namespace DocoptNet
 
     public class PrintExitEventArgs : EventArgs
     {
-        public PrintExitEventArgs(string msg)
+        public PrintExitEventArgs(string msg, int errorCode)
         {
             Message = msg;
+            ErrorCode = errorCode;
         }
 
         public string Message { get; set; }
+        public int ErrorCode { get; set; }
     }
 }

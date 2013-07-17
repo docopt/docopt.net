@@ -142,13 +142,35 @@ namespace DocoptNet.Tests
         }
 
         [Test]
+        public void Should_exit_error_code_1()
+        {
+            var message = "";
+            var errorCode = 0;
+            var d = new Docopt();
+            d.PrintExit += (s, e) =>
+                {
+                    message = e.Message;
+                    errorCode = e.ErrorCode;
+                };
+            d.Apply(DOC, "--fake", exit:true);
+            StringAssert.StartsWith("Usage", message);
+            Assert.AreEqual(1, errorCode);
+        }
+
+        [Test]
         public void Display_help()
         {
             var message = "";
+            var errorCode = 0;
             var d = new Docopt();
-            d.PrintExit += (s, e) => message = e.Message;
-            d.Apply(DOC, "--hel");
+            d.PrintExit += (s, e) =>
+            {
+                message = e.Message;
+                errorCode = e.ErrorCode;
+            };
+            d.Apply(DOC, "--help");
             StringAssert.StartsWith("Usage", message);
+            Assert.AreEqual(0, errorCode);
         }
 
         [Test]
