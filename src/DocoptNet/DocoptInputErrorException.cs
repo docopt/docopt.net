@@ -4,7 +4,7 @@ using System.Runtime.Serialization;
 namespace DocoptNet
 {
     [Serializable]
-    public class DocoptLanguageErrorException : DocoptBaseException
+    public class DocoptInputErrorException : DocoptBaseException
     {
         //
         // For guidelines regarding the creation of new exception types, see
@@ -13,18 +13,21 @@ namespace DocoptNet
         //    http://msdn.microsoft.com/library/default.asp?url=/library/en-us/dncscol/html/csharp07192001.asp
         //
 
-        public DocoptLanguageErrorException()
+        public DocoptInputErrorException()
         {
         }
-        public DocoptLanguageErrorException(string message) : base(message)
+        public DocoptInputErrorException(string message)
+            : base(message)
         {
         }
-        public DocoptLanguageErrorException(string message, Exception inner) : base(message, inner)
+        public DocoptInputErrorException(string message, Exception inner)
+            : base(message, inner)
         {
         }
-        protected DocoptLanguageErrorException(
+        protected DocoptInputErrorException(
             SerializationInfo info,
-            StreamingContext context) : base(info, context)
+            StreamingContext context)
+            : base(info, context)
         {
         }
     }

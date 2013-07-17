@@ -78,7 +78,7 @@ namespace DocoptNet.Tests
         [Test]
         public void Required_wrong_order()
         {
-            Assert.Throws<DocoptExitException>(() => new Docopt().Apply("Usage: prog a b", "b a"));
+            Assert.Throws<DocoptInputErrorException>(() => new Docopt().Apply("Usage: prog a b", "b a"));
         }
     }
 }

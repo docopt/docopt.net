@@ -132,13 +132,13 @@ namespace DocoptNet.Tests
         [Test]
         public void No_match()
         {
-            Assert.Throws<DocoptExitException>(() => new Docopt().Apply(DOC, "-v input.py output.py"));
+            Assert.Throws<DocoptInputErrorException>(() => new Docopt().Apply(DOC, "-v input.py output.py"));
         }
 
         [Test]
         public void Non_existent_long()
         {
-            Assert.Throws<DocoptExitException>(() => new Docopt().Apply(DOC, "--fake"));
+            Assert.Throws<DocoptInputErrorException>(() => new Docopt().Apply(DOC, "--fake"));
         }
 
         [Test]

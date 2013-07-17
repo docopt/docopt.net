@@ -53,7 +53,7 @@ namespace DocoptNet.Tests
         [Test]
         public void Flag_too_many()
         {
-            Assert.Throws<DocoptExitException>(() => new Docopt().Apply("Usage: prog [-vv]", "-vvv"));
+            Assert.Throws<DocoptInputErrorException>(() => new Docopt().Apply("Usage: prog [-vv]", "-vvv"));
         }
 
         [Test]

@@ -15,7 +15,7 @@ namespace DocoptNet.Tests
         [Test]
         public void Non_existent()
         {
-            Assert.Throws<DocoptExitException>(
+            Assert.Throws<DocoptInputErrorException>(
                 () => new Docopt().Apply("Usage: prog", "-x"));
         }
 
@@ -29,7 +29,7 @@ namespace DocoptNet.Tests
         [Test]
         public void Wrong_missing_arg()
         {
-            Assert.Throws<DocoptExitException>(
+            Assert.Throws<DocoptInputErrorException>(
                 () => new Docopt().Apply("Usage: prog -o ARG\nOptions: -o ARG", "-o"));
         }
     }

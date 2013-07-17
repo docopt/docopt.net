@@ -13,19 +13,24 @@ namespace DocoptNet
 
         public Tokens(IEnumerable<string> source, Type errorType)
         {
-            _errorType = errorType ?? typeof(DocoptExitException);
+            _errorType = errorType ?? typeof(DocoptInputErrorException);
             _tokens.AddRange(source);
         }
 
         public Tokens(string source, Type errorType)
         {
-            _errorType = errorType ?? typeof(DocoptExitException);
+            _errorType = errorType ?? typeof(DocoptInputErrorException);
             _tokens.AddRange(source.Split(new char[0], StringSplitOptions.RemoveEmptyEntries));
         }
 
         public Type ErrorType
         {
             get { return _errorType; }
+        }
+
+        public bool ThrowsInputError
+        {
+            get { return ErrorType == typeof (DocoptInputErrorException); }
         }
 
 

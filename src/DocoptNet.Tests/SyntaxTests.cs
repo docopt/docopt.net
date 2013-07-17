@@ -51,7 +51,7 @@ namespace DocoptNet.Tests
         [Test]
         public void Double_dash_not_allowed() // FIXME?
         {
-            Assert.Throws<DocoptExitException>(
+            Assert.Throws<DocoptInputErrorException>(
                 () => new Docopt().Apply("usage: prog [-o] <arg>\noptions:-o", "-- -o"));
 
         }
@@ -75,7 +75,7 @@ namespace DocoptNet.Tests
         [Test]
         public void Test_issue_71_double_dash_is_not_a_valid_option_argument()
         {
-            Assert.Throws<DocoptExitException>(
+            Assert.Throws<DocoptInputErrorException>(
                 () => new Docopt().Apply("usage: prog [--log=LEVEL] [--] <args>...", "--log -- 1 2"));
         }
 

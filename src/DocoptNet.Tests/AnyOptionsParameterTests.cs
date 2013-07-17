@@ -8,7 +8,7 @@ namespace DocoptNet.Tests
         [Test]
         public void Error_long_with_arg()
         {
-            Assert.Throws<DocoptExitException>(
+            Assert.Throws<DocoptInputErrorException>(
                 () => new Docopt().Apply("usage: prog [options]", "-foo --bar --spam=eggs"));
 
         }
@@ -16,7 +16,7 @@ namespace DocoptNet.Tests
         [Test]
         public void Error_all_long()
         {
-            Assert.Throws<DocoptExitException>(
+            Assert.Throws<DocoptInputErrorException>(
                 () => new Docopt().Apply("usage: prog [options]", "--foo --bar --bar"));
 
         }
@@ -24,7 +24,7 @@ namespace DocoptNet.Tests
         [Test]
         public void Error_short_acc()
         {
-            Assert.Throws<DocoptExitException>(
+            Assert.Throws<DocoptInputErrorException>(
                 () => new Docopt().Apply("usage: prog [options]", "--bar --bar --bar -ffff"));
 
         }
@@ -32,7 +32,7 @@ namespace DocoptNet.Tests
         [Test]
         public void Error_all_long_with_arg()
         {
-            Assert.Throws<DocoptExitException>(
+            Assert.Throws<DocoptInputErrorException>(
                 () => new Docopt().Apply("usage: prog [options]", "--long=arg --long=another"));
 
         }

@@ -10,7 +10,7 @@ namespace DocoptNet.Tests
 
         private Tokens TS(string s)
         {
-            return new Tokens(s, typeof (DocoptExitException));
+            return new Tokens(s, typeof(DocoptInputErrorException));
         }
 
         [Test]

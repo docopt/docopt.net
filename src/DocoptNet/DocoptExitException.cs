@@ -4,7 +4,7 @@ using System.Runtime.Serialization;
 namespace DocoptNet
 {
     [Serializable]
-    public class DocoptExitException : Exception
+    public class DocoptExitException : DocoptBaseException
     {
         //
         // For guidelines regarding the creation of new exception types, see

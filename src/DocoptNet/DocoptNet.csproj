@@ -53,7 +53,9 @@
     <Compile Include="BranchPattern.cs" />
     <Compile Include="Command.cs" />
     <Compile Include="Docopt.cs" />
+    <Compile Include="DocoptBaseException.cs" />
     <Compile Include="DocoptExitException.cs" />
+    <Compile Include="DocoptInputErrorException.cs" />
     <Compile Include="DocoptLanguageErrorException.cs" />
     <Compile Include="Either.cs" />
     <Compile Include="LeafPattern.cs" />

@@ -8,7 +8,7 @@ namespace DocoptNet.Tests
         [Test]
         public void Non_existent()
         {
-            Assert.Throws<DocoptExitException>(() =>
+            Assert.Throws<DocoptInputErrorException>(() =>
                                                new Docopt().Apply("Usage: prog", "--non-existent")
                 );
         }
@@ -16,7 +16,7 @@ namespace DocoptNet.Tests
         [Test]
         public void Wrong_long_opt()
         {
-            Assert.Throws<DocoptExitException>(
+            Assert.Throws<DocoptInputErrorException>(
                 () => new Docopt().Apply(
                     "Usage: prog [--version --verbose]\n" +
                     "Options: --version\n" +
@@ -37,7 +37,7 @@ namespace DocoptNet.Tests
         [Test]
         public void Missing_long_opt_arg()
         {
-            Assert.Throws<DocoptExitException>(
+            Assert.Throws<DocoptInputErrorException>(
                 () => new Docopt().Apply(
                     "Usage: prog --long ARG\n" +
                     "Options: --long ARG\n", "--long")
@@ -57,7 +57,7 @@ namespace DocoptNet.Tests
         [Test]
         public void Unexpected_arg()
         {
-            Assert.Throws<DocoptExitException>(
+            Assert.Throws<DocoptInputErrorException>(
                 () => new Docopt().Apply(
                     "Usage: prog --long\n" +
                     "Options: --long\n", "--long=ARG")

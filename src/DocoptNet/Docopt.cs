@@ -14,19 +14,19 @@ namespace DocoptNet
 
         public IDictionary<string, ValueObject> Apply(string doc)
         {
-            return Apply(doc, new Tokens("", typeof(DocoptExitException)));
+            return Apply(doc, new Tokens("", typeof(DocoptInputErrorException)));
         }
 
         public IDictionary<string, ValueObject> Apply(string doc, string cmdLine, bool help = true,
                                                       object version = null, bool optionsFirst = false, bool exit=true)
         {
-            return Apply(doc, new Tokens(cmdLine, typeof(DocoptExitException)), help, version, optionsFirst, exit);
+            return Apply(doc, new Tokens(cmdLine, typeof(DocoptInputErrorException)), help, version, optionsFirst, exit);
         }
 
         public IDictionary<string, ValueObject> Apply(string doc, ICollection<string> argv, bool help = true,
                                                       object version = null, bool optionsFirst = false, bool exit = true)
         {
-            return Apply(doc, new Tokens(argv, typeof(DocoptExitException)), help, version, optionsFirst, exit);
+            return Apply(doc, new Tokens(argv, typeof(DocoptInputErrorException)), help, version, optionsFirst, exit);
         }
 
         protected IDictionary<string, ValueObject> Apply(string doc, Tokens tokens,
@@ -64,7 +64,7 @@ namespace DocoptNet
                 }
                 return dict;
             }
-            throw new DocoptExitException(exitUsage);
+            throw new DocoptInputErrorException(exitUsage);
         }
 
         private void Extras(bool help, object version, ICollection<Pattern> options, string doc, bool exit)
@@ -292,7 +292,7 @@ namespace DocoptNet
                 {
                     option = new Option(shortName, null, 0);
                     options.Add(option);
-                    if (tokens.ErrorType == typeof (DocoptExitException))
+                    if (tokens.ThrowsInputError)
                     {
                         option = new Option(shortName, null, 0, new ValueObject(true));
                     }
@@ -318,7 +318,7 @@ namespace DocoptNet
                             left = "";
                         }
                     }
-                    if (tokens.ErrorType == typeof (DocoptExitException))
+                    if (tokens.ThrowsInputError)
                         option.Value = value ?? new ValueObject(true);
                 }
                 parsed.Add(option);
@@ -334,7 +334,7 @@ namespace DocoptNet
             Debug.Assert(longName.StartsWith("--"));
             var value = (p.NoSeparatorFound) ? null : new ValueObject(p.RightString);
             var similar = options.Where(o => o.LongName == longName).ToList();
-            if (tokens.ErrorType == typeof (DocoptExitException) && similar.Count == 0)
+            if (tokens.ThrowsInputError && similar.Count == 0)
             {
                 // If not exact match
                 similar =
@@ -352,7 +352,7 @@ namespace DocoptNet
                 var argCount = p.Separator == "=" ? 1 : 0;
                 option = new Option(null, longName, argCount);
                 options.Add(option);
-                if (tokens.ErrorType == typeof (DocoptExitException))
+                if (tokens.ThrowsInputError)
                     option = new Option(null, longName, argCount, argCount != 0 ? value : new ValueObject(true));
             }
             else
@@ -372,7 +372,7 @@ namespace DocoptNet
                         value = new ValueObject(tokens.Move());
                     }
                 }
-                if (tokens.ErrorType == typeof (DocoptExitException))
+                if (tokens.ThrowsInputError)
                     option.Value = value ?? new ValueObject(true);
             }
             return new[] {option};
