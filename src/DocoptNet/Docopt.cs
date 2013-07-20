@@ -396,7 +396,7 @@ namespace DocoptNet
 
                 var p = new StringPartition(s, ":"); // get rid of "options:"
                 var optionsText = p.RightString;
-                var a = Regex.Split("\n" + optionsText, @"\r?\n *(-\S+?)");
+                var a = Regex.Split("\n" + optionsText, @"\r?\n[ \t]*(-\S+?)");
                 var split = new List<string>();
                 for (int i = 1; i < a.Length - 1; i += 2)
                 {
