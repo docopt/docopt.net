@@ -95,8 +95,7 @@ namespace DocoptNet
         {
             if (PrintExit == null)
             {
-                Console.WriteLine(doc.Trim("\r\n".ToArray()));
-                Environment.Exit(errorCode);
+                throw new DocoptExitException(doc);
             }
             else
             {
