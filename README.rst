@@ -73,7 +73,7 @@ Installation
 
 Use nuget
 
-    nuget install Docopt.net -Version 0.6.1.3
+    nuget install Docopt.net -Version 0.6.1.4
 
 Alternatively, you can just drop ``DocoptNet.dll`` file into your
 project--it is self-contained.
