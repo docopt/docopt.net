@@ -1,0 +1,18 @@
+﻿<#+
+/*
+
+This file contains hooks and extra code used by T4DocoptNet.tt. The main goal is to avoid the need for users
+to fork the 'official' template in order to achieve what they want.
+ 
+*/
+
+void RenderAdditionalCode() {
+#>
+[GeneratedCode("T4DocoptNet", "2.0"), DebuggerNonUserCode]
+internal static class T4DocoptNetHelpers {
+// TODO
+}
+
+<#+
+}
+#>

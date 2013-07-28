@@ -33,5 +33,17 @@ namespace DocoptNet
             }
             return new SingleMatchResult();
         }
+
+        public override string GenerateCode()
+        {
+            var s = Name.Replace("<", "").Replace(">", " ").ToLowerInvariant();
+            s = "Arg" + char.ToUpperInvariant(s[0]) + s.Substring(1);
+
+            if (Value != null && Value.IsList)
+            {
+                return string.Format("public ArrayList {0} {{ get {{ return _args[\"{1}\"].AsList; }} }}", s, Name);
+            }
+            return string.Format("public string {0} {{ get {{ return _args[\"{1}\"].ToString(); }} }}", s, Name);
+        }
     }
 }

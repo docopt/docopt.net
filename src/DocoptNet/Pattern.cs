@@ -15,6 +15,11 @@ namespace DocoptNet
             get { return ToString(); }
         }
 
+        public virtual string GenerateCode()
+        {
+            return "// No code for " + Name;
+        }
+
         // override object.Equals
         public override bool Equals(object obj)
         {
