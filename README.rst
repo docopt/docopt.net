@@ -90,10 +90,10 @@ API
 .. code:: c#
 
   public IDictionary<string, ValueObject> Apply(string doc, string cmdLine, bool help = true,
-    object version = null, bool optionsFirst = false, bool exit = true)
+    object version = null, bool optionsFirst = false, bool exit = false)
 
   public IDictionary<string, ValueObject> Apply(string doc, ICollection<string> argv, bool help = true,
-    object version = null, bool optionsFirst = false, bool exit = true)
+    object version = null, bool optionsFirst = false, bool exit = false)
 
 ``Apply`` takes 1 required and 5 optional arguments:
 
@@ -152,10 +152,12 @@ API
   compatibility with POSIX, or if you want to dispatch your arguments
   to other programs.
 
-- ``exit``, by default ``true``.  Relevant only if ``help=true``. If set to ``false``
-  will raise a DocoptExitException instead of printing and exiting. Note 
-  that this behaviour will kick in only if a ``Docopt.PrintExit``
-  event handler is not provided.  
+- ``exit``, by default ``false``.  If set to ``false`` will
+  raise exceptions based on ``DocoptBaseException`` and will
+  not print or exit.
+  If set to ``true``  any occurence of ``DocoptBaseException`` will be
+  caught by ``Docopt.Apply()``, the error message or the usage will be
+  printed, and the program will exit with error code 0 if it's a ``DocoptExitException``, 1 otherwise.  
   
 The **return** value is a simple dictionary with options, arguments
 and commands as keys, spelled exactly like in your help message.  Long
@@ -360,8 +362,9 @@ first release with stable API will be 1.0.0 (soon).  Until then, you
 are encouraged to specify explicitly the version in your dependency
 tools, e.g.::
 
-    nuget install docopt.net -Version 0.6.1.3
+    nuget install docopt.net -Version 0.6.1.4
 
+- 0.6.1.4 Clarified exit parameter behaviour.
 - 0.6.1.3 Added exit parameter.
 - 0.6.1.2 Fixed docopt capitalisation.
 - 0.6.1.1 Initial port. All reference language agnostic tests pass.
