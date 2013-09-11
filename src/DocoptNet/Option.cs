@@ -30,6 +30,18 @@ namespace DocoptNet
             get { return LongName ?? ShortName; }
         }
 
+        public override string GenerateCode()
+        {
+            var s = Name.Replace("-", "").ToLowerInvariant();
+            s = "Opt" + char.ToUpperInvariant(s[0]) + s.Substring(1);
+
+            if (ArgCount == 0)
+            {
+                return string.Format("public bool {0} {{ get {{ return _args[\"{1}\"].IsTrue; }} }}", s, Name);
+            }
+            return string.Format("public string {0} {{ get {{ return _args[\"{1}\"].ToString(); }} }}", s, Name);
+        }
+
         public override SingleMatchResult SingleMatch(IList<Pattern> left)
         {
             for (var i = 0; i < left.Count; i++)
