@@ -9,13 +9,13 @@ namespace DocoptNet.Tests
         [Test]
         public void Test_formal_usage()
         {
-            const string DOC = @"
-        Usage: prog [-hv] ARG
-               prog N M
-
-        prog is a program.";
+            const string DOC = 
+"Usage: prog [-hv] ARG\r\n" +
+"       prog N M\r\n" +
+"\r\n" +
+"       prog is a program.";
             var usage = Docopt.ParseSection("usage:", DOC).First();
-            Assert.AreEqual("Usage: prog [-hv] ARG\r\n               prog N M", usage);
+            Assert.AreEqual("Usage: prog [-hv] ARG\r\n       prog N M", usage);
             Assert.AreEqual("( [-hv] ARG ) | ( N M )", Docopt.FormalUsage(usage));
         }
         [Test]
