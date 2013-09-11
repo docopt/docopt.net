@@ -77,6 +77,10 @@ namespace DocoptNet.Tests
         {
             Assert.Throws<DocoptInputErrorException>(
                 () => new Docopt().Apply("usage: prog [--log=LEVEL] [--] <args>...", "--log -- 1 2"));
+
+            Assert.Throws<DocoptInputErrorException>(
+                () => new Docopt().Apply("usage: prog [-l LEVEL] [--] <args>...\r\n" +
+                    "options: -l LEVEL", "-l -- 1 2"));
         }
 
     }
