@@ -98,6 +98,7 @@
     <Compile Include="StringPartitionTests.cs" />
     <Compile Include="SyntaxTests.cs" />
     <Compile Include="UsageTests.cs" />
+    <Compile Include="ValueObjectTests.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="Newtonsoft.Json">
