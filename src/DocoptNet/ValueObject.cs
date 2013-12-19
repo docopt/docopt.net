@@ -109,7 +109,7 @@ namespace DocoptNet
             return (Value ?? "").ToString();
         }
 
-        public void Add(ValueObject increment)
+        internal void Add(ValueObject increment)
         {
             if (increment == null) throw new ArgumentNullException("increment");
 
