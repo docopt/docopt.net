@@ -53,6 +53,15 @@ namespace DocoptNet
             get { return Value is int?; }
         }
 
+        public bool IsInt
+        {
+            get
+            {
+                int value;
+                return Int32.TryParse(Value.ToString(), out value);
+            }
+        }
+
         public int AsInt
         {
             get { return IsList ? 0 : Convert.ToInt32(Value); }
