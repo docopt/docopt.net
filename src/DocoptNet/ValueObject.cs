@@ -8,7 +8,7 @@ namespace DocoptNet
     {
         public object Value { get; private set; }
 
-        public ValueObject(object obj)
+        internal ValueObject(object obj)
         {
             if (obj is ArrayList)
             {
@@ -23,7 +23,7 @@ namespace DocoptNet
             Value = obj;
         }
 
-        public ValueObject()
+        internal ValueObject()
         {
             Value = null;
         }
