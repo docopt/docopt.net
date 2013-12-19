@@ -48,7 +48,7 @@ namespace DocoptNet
             get { return Value is ArrayList; }
         }
 
-        public bool IsOfTypeInt
+        internal bool IsOfTypeInt
         {
             get { return Value is int?; }
         }
