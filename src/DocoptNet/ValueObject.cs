@@ -58,7 +58,7 @@ namespace DocoptNet
             get
             {
                 int value;
-                return Int32.TryParse(Value.ToString(), out value);
+                return Value is int || Int32.TryParse(Value.ToString(), out value);
             }
         }
 
