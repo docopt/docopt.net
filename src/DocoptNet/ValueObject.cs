@@ -48,7 +48,7 @@ namespace DocoptNet
             get { return Value is ArrayList; }
         }
 
-        public bool IsInt
+        public bool IsOfTypeInt
         {
             get { return Value is int?; }
         }
@@ -108,7 +108,7 @@ namespace DocoptNet
 
             if (Value == null) throw new InvalidOperationException("Value is null");
 
-            if (increment.IsInt)
+            if (increment.IsOfTypeInt)
             {
                 if (IsList)
                     (Value as ArrayList).Add(increment.AsInt);
