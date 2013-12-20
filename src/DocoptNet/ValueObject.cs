@@ -8,7 +8,7 @@ namespace DocoptNet
     {
         public object Value { get; private set; }
 
-        public ValueObject(object obj)
+        internal ValueObject(object obj)
         {
             if (obj is ArrayList)
             {
@@ -23,7 +23,7 @@ namespace DocoptNet
             Value = obj;
         }
 
-        public ValueObject()
+        internal ValueObject()
         {
             Value = null;
         }
@@ -48,9 +48,18 @@ namespace DocoptNet
             get { return Value is ArrayList; }
         }
 
-        public bool IsInt
+        internal bool IsOfTypeInt
         {
             get { return Value is int?; }
+        }
+
+        public bool IsInt
+        {
+            get
+            {
+                int value;
+                return Value != null && (Value is int || Int32.TryParse(Value.ToString(), out value));
+            }
         }
 
         public int AsInt
@@ -100,7 +109,7 @@ namespace DocoptNet
             return (Value ?? "").ToString();
         }
 
-        public void Add(ValueObject increment)
+        internal void Add(ValueObject increment)
         {
             if (increment == null) throw new ArgumentNullException("increment");
 
@@ -108,7 +117,7 @@ namespace DocoptNet
 
             if (Value == null) throw new InvalidOperationException("Value is null");
 
-            if (increment.IsInt)
+            if (increment.IsOfTypeInt)
             {
                 if (IsList)
                     (Value as ArrayList).Add(increment.AsInt);

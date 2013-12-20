@@ -54,10 +54,10 @@ namespace DocoptNet
             left_.AddRange(left.Take(sresult.Position));
             left_.AddRange(left.Skip(sresult.Position + 1));
             var sameName = coll.Where(a => a.Name == Name).ToList();
-            if (Value != null && (Value.IsList || Value.IsInt))
+            if (Value != null && (Value.IsList || Value.IsOfTypeInt))
             {
                 var increment = new ValueObject(1);
-                if (!Value.IsInt)
+                if (!Value.IsOfTypeInt)
                 {
                     increment = match.Value.IsString ? new ValueObject(new [] {match.Value})  : match.Value;
                 }
