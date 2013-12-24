@@ -42,7 +42,7 @@ and instead can write only the help message--*the way you want it*.
 
           private static void Main(string[] args)
           {
-              var arguments = new Docopt().Apply(usage, args, version: "Naval Fate 2.0");
+              var arguments = new Docopt().Apply(usage, args, version: "Naval Fate 2.0", exit: true);
               foreach (var argument in arguments)
               {
                   Console.WriteLine("{0} = {1}", argument.Key, argument.Value);
@@ -73,7 +73,7 @@ Installation
 
 Use nuget
 
-    nuget install Docopt.net -Version 0.6.1.4
+    nuget install Docopt.net -Version 0.6.1.5
 
 Alternatively, you can just drop ``DocoptNet.dll`` file into your
 project--it is self-contained.
@@ -354,6 +354,86 @@ The rules are as follows:
     # will be './here ./there', because it is not repeatable
     --not-repeatable=<arg>      [default: ./here ./there]
 
+Strongly typed arguments with T4 Macro
+======================================================================
+Include the `T4DocoptNet.tt*` files in your main project to enable the strongly type arguments
+code generation. Then add a file called `Main.usage.txt` to your project. Store the usage document in this file instead
+of creating a string constant in your program. When the `T4DocoptNet.tt` macro is applied, a class called `MainArgs` in a file called `T4DocoptNet.cs` will be generated.
+It will publish the following members:
+
+ - `USAGE` public string constant that returns the usage document.
+
+ - A set of properties that correspond to the commands, arguments, switches and options defined in the 
+   usage document.
+
+Note that if you name the usage file `Foo.usage.txt`, the generated class will be called `FooArgs`.
+
+Sample Main.usage.txt
+----------------------------------------------------------------------
+
+    Test.
+
+    Usage: prog command ARG FILES... [-o --switch --long=ARG]
+
+Resulting T4DocopNet.cs
+----------------------------------------------------------------------
+
+.. code:: c#
+
+	// Generated class for Main.usage.txt
+	public class MainArgs
+	{
+		public const string USAGE = @"Test.
+
+	Usage: prog command ARG FILES... [-o --switch --long=ARG]
+	";
+		private readonly IDictionary<string, ValueObject> _args;
+		public MainArgs(ICollection<string> argv, bool help = true,
+													  object version = null, bool optionsFirst = false, bool exit = false)
+		{
+			_args = new Docopt().Apply(USAGE, argv, help, version, optionsFirst, exit);
+		}
+
+		public IDictionary<string, ValueObject> Args
+		{
+			get { return _args; }
+		}
+
+		public bool CmdCommand { get { return _args["command"].IsTrue; } }
+		public string ArgArg { get { return _args["ARG"].ToString(); } }
+		public bool OptO { get { return _args["-o"].IsTrue; } }
+		public string OptLong { get { return _args["--long"].ToString(); } }
+		public bool OptSwitch { get { return _args["--switch"].IsTrue; } }
+		public ArrayList ArgFiles { get { return _args["FILES"].AsList; } }
+
+	}
+
+
+Using the generated code
+----------------------------------------------------------------------
+
+.. code:: c#
+
+	class Program
+	{
+
+	   static void DoStuff(string arg, bool flagO, string longValue)
+	   {
+		 // ...
+	   }
+
+		static void Main(string[] args)
+		{
+			var args = new MainArgs(args);
+			if (args.CmdCommand)
+			{
+				Console.WriteLine("First command");
+				DoStuff(args.ArgArg, args.OptO, args.OptLong);
+			}
+		}
+	}
+
+
 Changelog
 ======================================================================
 
@@ -362,8 +442,9 @@ first release with stable API will be 1.0.0 (soon).  Until then, you
 are encouraged to specify explicitly the version in your dependency
 tools, e.g.::
 
-    nuget install docopt.net -Version 0.6.1.4
+    nuget install docopt.net -Version 0.6.1.5
 
+- 0.6.1.5 Added strongly typed arguments through T4 macro. ValueObject interface cleanup. exit:true parameter behavior fix.
 - 0.6.1.4 Clarified exit parameter behaviour.
 - 0.6.1.3 Added exit parameter.
 - 0.6.1.2 Fixed docopt capitalisation.

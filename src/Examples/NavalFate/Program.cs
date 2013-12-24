@@ -26,11 +26,19 @@ namespace NavalFate
 
         private static void Main(string[] args)
         {
-            var arguments = new Docopt().Apply(usage, args, version: "Naval Fate 2.0");
-            foreach (var argument in arguments)
+            try
             {
-                Console.WriteLine("{0} = {1}", argument.Key, argument.Value);
+                var arguments = new Docopt().Apply(usage, args, version: "Naval Fate 2.0", exit: true);
+                foreach (var argument in arguments)
+                {
+                    Console.WriteLine("{0} = {1}", argument.Key, argument.Value);
+                }
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.Message);
             }
         }
+
     }
 }
