@@ -154,7 +154,7 @@ namespace DocoptNet.Tests
                 };
             d.Apply(DOC, "--fake", exit:true);
             StringAssert.StartsWith("Usage", message);
-            Assert.AreEqual(1, errorCode);
+            Assert.AreEqual(1, errorCode, "Should exit with error code 1 when exit=true and invalid args provided");
         }
 
         [Test]

@@ -7,34 +7,34 @@ using System.Text.RegularExpressions;
 
 namespace DocoptNet
 {
-
     public class Docopt
     {
         public event EventHandler<PrintExitEventArgs> PrintExit;
 
         public IDictionary<string, ValueObject> Apply(string doc)
         {
-            return Apply(doc, new Tokens("", typeof(DocoptInputErrorException)));
+            return Apply(doc, new Tokens("", typeof (DocoptInputErrorException)));
         }
 
         public IDictionary<string, ValueObject> Apply(string doc, string cmdLine, bool help = true,
-                                                      object version = null, bool optionsFirst = false, bool exit=false)
+            object version = null, bool optionsFirst = false, bool exit = false)
         {
-            return Apply(doc, new Tokens(cmdLine, typeof(DocoptInputErrorException)), help, version, optionsFirst, exit);
+            return Apply(doc, new Tokens(cmdLine, typeof (DocoptInputErrorException)), help, version, optionsFirst, exit);
         }
 
         public IDictionary<string, ValueObject> Apply(string doc, ICollection<string> argv, bool help = true,
-                                                      object version = null, bool optionsFirst = false, bool exit = false)
+            object version = null, bool optionsFirst = false, bool exit = false)
         {
-            return Apply(doc, new Tokens(argv, typeof(DocoptInputErrorException)), help, version, optionsFirst, exit);
+            return Apply(doc, new Tokens(argv, typeof (DocoptInputErrorException)), help, version, optionsFirst, exit);
         }
 
         protected IDictionary<string, ValueObject> Apply(string doc, Tokens tokens,
-                                                      bool help = true,
-                                                      object version = null, bool optionsFirst = false, bool exit = false)
+            bool help = true,
+            object version = null, bool optionsFirst = false, bool exit = false)
         {
             try
             {
+                SetDefaultPrintExitHandlerIfNecessary(exit);
                 var usageSections = ParseSection("usage:", doc);
                 if (usageSections.Length == 0)
                     throw new DocoptLanguageErrorException("\"usage:\" (case-insensitive) not found.");
@@ -79,6 +79,18 @@ namespace DocoptNet
             }
         }
 
+        private void SetDefaultPrintExitHandlerIfNecessary(bool exit)
+        {
+            if (exit && PrintExit == null)
+                // Default behaviour is to print usage
+                // and exit with error code 1
+                PrintExit += (sender, args) =>
+                {
+                    Console.WriteLine(args.Message);
+                    Environment.Exit(args.ErrorCode);
+                };
+        }
+
         public string GenerateCode(string doc)
         {
             var usageSections = ParseSection("usage:", doc);
@@ -91,7 +103,7 @@ namespace DocoptNet
             var pattern = ParsePattern(FormalUsage(exitUsage), options);
             var patternOptions = pattern.Flat<Option>().Distinct().ToList();
             // [default] syntax for argument is disabled
-            foreach (OptionsShortcut optionsShortcut in pattern.Flat(typeof(OptionsShortcut)))
+            foreach (OptionsShortcut optionsShortcut in pattern.Flat(typeof (OptionsShortcut)))
             {
                 var docOptions = ParseDefaults(doc);
                 optionsShortcut.Children = docOptions.Distinct().Except(patternOptions).ToList();
@@ -117,7 +129,7 @@ namespace DocoptNet
             }
         }
 
-        protected void OnPrintExit(string doc, int errorCode=0)
+        protected void OnPrintExit(string doc, int errorCode = 0)
         {
             if (PrintExit == null)
             {
@@ -125,7 +137,7 @@ namespace DocoptNet
             }
             else
             {
-                PrintExit(this, new PrintExitEventArgs(doc, errorCode));    
+                PrintExit(this, new PrintExitEventArgs(doc, errorCode));
             }
         }
 
@@ -137,7 +149,7 @@ namespace DocoptNet
         /// <param name="optionsFirst"></param>
         /// <returns></returns>
         internal static IList<Pattern> ParseArgv(Tokens tokens, ICollection<Option> options,
-                                               bool optionsFirst = false)
+            bool optionsFirst = false)
         {
             //    If options_first:
             //        argv ::= [ long | shorts ]* [ argument ]* [ '--' [ argument ]* ] ;
@@ -261,22 +273,22 @@ namespace DocoptNet
             {
                 case "[":
                 case "(":
+                {
+                    tokens.Move();
+                    string matching;
+                    if (token == "(")
                     {
-                        tokens.Move();
-                        string matching;
-                        if (token == "(")
-                        {
-                            matching = ")";
-                            result.Add(new Required(ParseExpr(tokens, options).ToArray()));
-                        }
-                        else
-                        {
-                            matching = "]";
-                            result.Add(new Optional(ParseExpr(tokens, options).ToArray()));
-                        }
-                        if (tokens.Move() != matching)
-                            throw tokens.CreateException("unmatched '" + token + "'");
+                        matching = ")";
+                        result.Add(new Required(ParseExpr(tokens, options).ToArray()));
                     }
+                    else
+                    {
+                        matching = "]";
+                        result.Add(new Optional(ParseExpr(tokens, options).ToArray()));
+                    }
+                    if (tokens.Move() != matching)
+                        throw tokens.CreateException("unmatched '" + token + "'");
+                }
                     break;
                 case "options":
                     tokens.Move();
@@ -321,7 +333,7 @@ namespace DocoptNet
                 if (similar.Count > 1)
                 {
                     throw tokens.CreateException(string.Format("{0} is specified ambiguously {1} times", shortName,
-                                                               similar.Count));
+                        similar.Count));
                 }
                 if (similar.Count < 1)
                 {
@@ -379,7 +391,7 @@ namespace DocoptNet
             {
                 // Might be simply specified ambiguously 2+ times?
                 throw tokens.CreateException(string.Format("{0} is not a unique prefix: {1}?", longName,
-                                                           string.Join(", ", similar.Select(o => o.LongName))));
+                    string.Join(", ", similar.Select(o => o.LongName))));
             }
             Option option = null;
             if (similar.Count < 1)
@@ -439,7 +451,7 @@ namespace DocoptNet
         internal static string[] ParseSection(string name, string source)
         {
             var pattern = new Regex(@"^([^\r\n]*" + name + @"[^\r\n]*\r?\n?(?:[ \t].*?(?:\r?\n|$))*)",
-                                    RegexOptions.IgnoreCase | RegexOptions.Multiline);
+                RegexOptions.IgnoreCase | RegexOptions.Multiline);
             return (from Match match in pattern.Matches(source) select match.Value.Trim()).ToArray();
         }
     }
