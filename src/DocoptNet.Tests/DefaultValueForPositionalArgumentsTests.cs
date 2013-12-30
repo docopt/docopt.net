@@ -6,26 +6,25 @@ namespace DocoptNet.Tests
     [TestFixture]
     public class DefaultValueForPositionalArgumentsTests
     {
-        // disabled right now
         [Test]
-        public void Expect_none()
+        public void Expect_default_value()
         {
             var expected = new Dictionary<string, ValueObject>
                 {
-                    {"<p>", null}
+                    {"--data", new ValueObject(new[] {"x"})}
                 };
-            var actual = new Docopt().Apply("usage: prog [<p>]\n\n<p>  [default: x]", "");
+            var actual = new Docopt().Apply("Usage: prog [--data=<data>...]\n\nOptions:\n\t-d --data=<arg>    Input data [default: x]", "");
             Assert.AreEqual(expected, actual);
         }
 
         [Test]
-        public void Expect_empty_collection()
+        public void Expect_default_collection()
         {
             var expected = new Dictionary<string, ValueObject>
                 {
-                    {"<p>", new ValueObject(new string[0])}
+                    {"--data", new ValueObject(new string[] {"x", "y"})}
                 };
-            var actual = new Docopt().Apply("usage: prog [<p>]...\n\n<p>  [default: x y]", "");
+            var actual = new Docopt().Apply("Usage: prog [--data=<data>...]\n\n         Options:\n\t-d --data=<arg>    Input data [default: x y]", "");
             Assert.AreEqual(expected, actual);
         }
 
@@ -34,9 +33,9 @@ namespace DocoptNet.Tests
         {
             var expected = new Dictionary<string, ValueObject>
                 {
-                    {"<p>", new ValueObject(new[] {"this"})}
+                    {"--data", new ValueObject(new[] {"this"})}
                 };
-            var actual = new Docopt().Apply("usage: prog [<p>]...\n\n<p>  [default: x y]", "this");
+            var actual = new Docopt().Apply("Usage: prog [--data=<data>...]\n\n         Options:\n\t-d --data=<arg>    Input data [default: x y]", "--data=this");
             Assert.AreEqual(expected, actual);
         }
     }
