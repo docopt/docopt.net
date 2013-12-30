@@ -1,31 +1,10 @@
 ﻿
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 using System.Collections;
 using System.Collections.Generic;
 using DocoptNet;
 
 namespace T4DocoptNetHostApp
 {
-
     // Generated class for Another.usage.txt
 	public class AnotherArgs
 	{
@@ -50,7 +29,7 @@ Options:
             get { return _args; }
         }
 
-public bool CmdCommand1 { get { return _args["command1"].IsTrue; } }
+		public bool CmdCommand1 { get { return _args["command1"].IsTrue; } }
 		public string ArgArg { get { return _args["ARG"].ToString(); } }
 		public bool OptO { get { return _args["-o"].IsTrue; } }
 		public string OptLong { get { return _args["--long"].ToString(); } }
@@ -59,7 +38,6 @@ public bool CmdCommand1 { get { return _args["command1"].IsTrue; } }
 		public bool CmdCommand2 { get { return _args["command2"].IsTrue; } }
 	
 	}
-
 
     // Generated class for Main.usage.txt
 	public class MainArgs
@@ -91,7 +69,7 @@ Explanation:
             get { return _args; }
         }
 
-public bool CmdCommand { get { return _args["command"].IsTrue; } }
+		public bool CmdCommand { get { return _args["command"].IsTrue; } }
 		public string ArgArg { get { return _args["ARG"].ToString(); } }
 		public string ArgMyarg  { get { return _args["<myarg>"].ToString(); } }
 		public string ArgOptionalarg { get { return _args["OPTIONALARG"].ToString(); } }

@@ -444,6 +444,12 @@ You can also access the `MainArgs.USAGE` string constant as follows:
 
   Console.WriteLine("Usage: " + MainArgs.USAGE)
 
+Getting rid of the T4 macro
+----------------------------------------------------------------------
+
+If you don't want to use the strongly typed arguments, just delete the
+`T4DocoptNet.*` files from the project.
+
 Changelog
 ======================================================================
 
