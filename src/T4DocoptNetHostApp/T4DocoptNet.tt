@@ -11,7 +11,7 @@ T4DocopNet Version 0.1.0
 <#@ assembly name="VSLangProj" #>
 <#@ assembly name="System.Xml" #>
 <#@ assembly name="System.Xml.Linq" #>
-<#@ assembly name="$(SolutionDir)DocoptNet\bin\Debug\DocoptNet.dll"  #>
+<#@ assembly name="$(ProjectDir)$(OutputPath)DocoptNet.dll"  #>
 <#@ import namespace="System.Collections.Generic" #>
 <#@ import namespace="System.IO" #>
 <#@ import namespace="System.Linq" #>
@@ -22,7 +22,6 @@ T4DocopNet Version 0.1.0
 <#@ import namespace="EnvDTE" #>
 <#@ import namespace="EnvDTE80" #>
 <#@ import namespace="Microsoft.VisualStudio.TextTemplating" #>
-
 
 using System.Collections;
 using System.Collections.Generic;
@@ -67,40 +66,42 @@ namespace <#= System.Runtime.Remoting.Messaging.CallContext.LogicalGetData("Name
 #>	
 }
 
-
 <#+
-class UsageFileEntry
-{
-    public string FileName;
-	public string Name;
-    public string Usage;
-	public UsageFileEntry(string fileName)
+	class UsageFileEntry
 	{
-	    FileName = fileName;
-	    Name = ExtractName(fileName);
-	    Usage = File.ReadAllText(fileName).Replace("\"", "\"\"");
+		public string FileName;
+		public string Name;
+		public string Usage;
+		public UsageFileEntry(string fileName)
+		{
+			FileName = fileName;
+			Name = ExtractName(fileName);
+			Usage = File.ReadAllText(fileName).Replace("\"", "\"\"");
+		}
+
+		private static string ExtractName(string fileName)
+		{
+	    
+			var s = Path.GetFileName(fileName).Replace(".usage.txt", "");
+			var res = "";
+			var first = true;
+			foreach (char c in s)
+			{
+				if (char.IsLetterOrDigit(c))
+				{
+					res += first ? char.ToUpperInvariant(c) : char.ToLowerInvariant(c);
+					first = false;
+				}
+				else
+				{
+					res += "_";
+				}
+			}
+			return res;
+		}
 	}
 
-    private static string ExtractName(string fileName)
-    {
-	    
-        var s = Path.GetFileName(fileName).Replace(".usage.txt", "");
-        var res = "";
-        var first = true;
-        foreach (char c in s)
-        {
-            if (char.IsLetterOrDigit(c))
-            {
-                res += first ? char.ToUpperInvariant(c) : char.ToLowerInvariant(c);
-                first = false;
-            }
-            else
-            {
-                res += "_";
-            }
-        }
-        return res;
-    }
-}
-
+/* IMPORTANT: Do not add blanks after this last tag as it would break the T4 generation
+ * See http://stackoverflow.com/questions/11379471/error-a-template-containing-a-class-feature-must-end-with-a-class-feature
+ */
 #>

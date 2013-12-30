@@ -27,5 +27,6 @@
         <file src="..\T4DocoptNetHostApp\T4DocoptNet.tt.settings.xml" target="content\T4DocoptNet.tt.settings.xml" />
         <file src="..\..\_build\bin\DocoptNet\DocoptNet.dll" target="lib\net40\DocoptNet.dll" />
         <file src="..\..\_build\bin\DocoptNet\DocoptNet.pdb" target="lib\net40\DocoptNet.pdb" />
+        <file src="install.ps1" target="tools\install.ps1" />
     </files>
 </package>
