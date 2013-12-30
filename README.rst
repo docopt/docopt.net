@@ -378,35 +378,40 @@ Sample Main.usage.txt
 Resulting T4DocopNet.cs
 ----------------------------------------------------------------------
 
+The generated class publishes the different argument items as strongly
+typed properties. Its constructor accepts the same parameters than
+the `Docopt.Apply` method. The original usage text is published
+as a string constant e.g. `MainArgs.USAGE`.
+
 .. code:: c#
 
-	// Generated class for Main.usage.txt
-	public class MainArgs
-	{
-		public const string USAGE = @"Test.
+  // Generated class for Main.usage.txt
+  public class MainArgs
+  {
+    public const string USAGE = @"Test.
 
-	Usage: prog command ARG FILES... [-o --switch --long=ARG]
-	";
-		private readonly IDictionary<string, ValueObject> _args;
-		public MainArgs(ICollection<string> argv, bool help = true,
-													  object version = null, bool optionsFirst = false, bool exit = false)
-		{
-			_args = new Docopt().Apply(USAGE, argv, help, version, optionsFirst, exit);
-		}
+  Usage: prog command ARG FILES... [-o --switch --long=ARG]
+  ";
+    private readonly IDictionary<string, ValueObject> _args;
+    public MainArgs(ICollection<string> argv, bool help = true,
+                            object version = null, bool optionsFirst = false, bool exit = false)
+    {
+      _args = new Docopt().Apply(USAGE, argv, help, version, optionsFirst, exit);
+    }
 
-		public IDictionary<string, ValueObject> Args
-		{
-			get { return _args; }
-		}
+    public IDictionary<string, ValueObject> Args
+    {
+      get { return _args; }
+    }
 
-		public bool CmdCommand { get { return _args["command"].IsTrue; } }
-		public string ArgArg { get { return _args["ARG"].ToString(); } }
-		public bool OptO { get { return _args["-o"].IsTrue; } }
-		public string OptLong { get { return _args["--long"].ToString(); } }
-		public bool OptSwitch { get { return _args["--switch"].IsTrue; } }
-		public ArrayList ArgFiles { get { return _args["FILES"].AsList; } }
+    public bool CmdCommand { get { return _args["command"].IsTrue; } }
+    public string ArgArg { get { return _args["ARG"].ToString(); } }
+    public bool OptO { get { return _args["-o"].IsTrue; } }
+    public string OptLong { get { return _args["--long"].ToString(); } }
+    public bool OptSwitch { get { return _args["--switch"].IsTrue; } }
+    public ArrayList ArgFiles { get { return _args["FILES"].AsList; } }
 
-	}
+  }
 
 
 Using the generated code
@@ -414,25 +419,30 @@ Using the generated code
 
 .. code:: c#
 
-	class Program
-	{
+  class Program
+  {
 
-	   static void DoStuff(string arg, bool flagO, string longValue)
-	   {
-		 // ...
-	   }
+     static void DoStuff(string arg, bool flagO, string longValue)
+     {
+     // ...
+     }
 
-		static void Main(string[] args)
-		{
-			var args = new MainArgs(args);
-			if (args.CmdCommand)
-			{
-				Console.WriteLine("First command");
-				DoStuff(args.ArgArg, args.OptO, args.OptLong);
-			}
-		}
-	}
+    static void Main(string[] argv)
+    {
+      // Automatically exit(1) if invalid arguments
+      var args = new MainArgs(argv, exit: true);
+      if (args.CmdCommand)
+      {
+        Console.WriteLine("First command");
+        DoStuff(args.ArgArg, args.OptO, args.OptLong);
+      }
+    }
+  }
 
+You can also access the `MainArgs.USAGE` string constant as follows:
+.. code:: c#
+
+  Console.WriteLine("Usage: " + MainArgs.USAGE)
 
 Changelog
 ======================================================================

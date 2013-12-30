@@ -22,6 +22,7 @@
         <tags>parser command line argument option library syntax shell beautiful posix python console command-line docopt</tags>
     </metadata>
     <files>
+        <file src="Main.usage.txt" target="content\Main.usage.txt" />
         <file src="..\T4DocoptNetHostApp\T4DocoptNet.tt" target="content\T4DocoptNet.tt" />
         <file src="..\T4DocoptNetHostApp\T4DocoptNet.tt.hooks.t4" target="content\T4DocoptNet.tt.hooks.t4" />
         <file src="..\T4DocoptNetHostApp\T4DocoptNet.tt.settings.xml" target="content\T4DocoptNet.tt.settings.xml" />

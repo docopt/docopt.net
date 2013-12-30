@@ -1,0 +1,39 @@
+﻿Example usage for T4 Docopt.NET
+
+Usage:
+  prog command ARG <myarg> [OPTIONALARG] [-o -s=<arg> --long=ARG --switch]
+  prog files FILE...
+
+Options:
+ -o           Short switch.
+ -s=<arg>     Short option with arg.
+ --long=ARG   Long option with arg.
+ --swith      Long switch.
+
+Explanation:
+ This is an example usage file that needs to be customized.
+ Every time you change this file, run the Custom Tool command
+ on T4DocoptNet.tt to re-generate the MainArgs class
+ (defined in T4DocoptNet.cs).
+ You can then use the MainArgs classed as follows:
+
+    class Program
+    {
+
+       static void DoStuff(string arg, bool flagO, string longValue)
+       {
+         // ...
+       }
+
+        static void Main(string[] argv)
+        {
+            // Automatically exit(1) if invalid arguments
+            var args = new MainArgs(argv, exit: true);
+            if (args.CmdCommand)
+            {
+                Console.WriteLine("First command");
+                DoStuff(args.ArgArg, args.OptO, args.OptLong);
+            }
+        }
+    }
+
