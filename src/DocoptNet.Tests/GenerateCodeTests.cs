@@ -1,4 +1,6 @@
-﻿using NUnit.Framework;
+﻿using System;
+using System.Text.RegularExpressions;
+using NUnit.Framework;
 
 namespace DocoptNet.Tests
 {
@@ -39,6 +41,20 @@ public ArrayList ArgFile { get { return _args[""FILE""].AsList; } }
 ";
             var s = new Docopt().GenerateCode(USAGE);
             Assert.AreEqual(expected.Trim(), s.Trim());
+        }
+
+        [Test]
+        public void Short_and_long_option_lead_to_only_one_property()
+        {
+            const string usage = @"Usage:
+  naval_fate -h | --help
+
+Options:
+  -h --help     Show this screen.";
+
+            var generatedCode = new Docopt().GenerateCode(usage);
+
+            Assert.AreEqual(1, Regex.Matches(generatedCode, "OptHelp").Count);
         }
     }
 }
