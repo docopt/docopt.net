@@ -239,6 +239,7 @@ namespace DocoptNet
                     result.AddRange(seq);
                 }
             }
+            result = result.Distinct().ToList();
             if (result.Count > 1)
                 return new[] {new Either(result.ToArray())};
             return result;
