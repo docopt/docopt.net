@@ -20,7 +20,7 @@ Options:
  -o           Short switch.
  -s=<arg>     Short option with arg.
  --long=ARG   Long option with arg.
- --swith      Long switch.
+ --switch     Long switch.
 
 Explanation:
  This is a test usage file.
