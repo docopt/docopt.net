@@ -38,5 +38,5 @@ function Set-DocoptNetAssemblyPath($AssemblyPath, $ProjectDirectoryPath)
     }
 }
 
-$p = '$(SolutionDir)' + "packages\" + $package.Id + "." + $package.Version + "\lib\net40\DocoptNet.dll"
+$p =  $installPath + "DocoptNet.dll"
 Set-DocoptNetAssemblyPath -AssemblyPath $p -ProjectDirectoryPath ([System.IO.Directory]::GetParent($project.FullName))
