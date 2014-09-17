@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
     <metadata>
         <id>docopt.net</id>
-        <version>0.6.1.5</version>
+        <version>0.6.1.6</version>
         <title>docopt.net, a beautiful command-line parser</title>
         <authors>Dinh Doan Van Bien,Vladimir Keleshev</authors>
         <owners>voieducode</owners>
@@ -12,12 +12,11 @@
         <requireLicenseAcceptance>false</requireLicenseAcceptance>
         <description>docopt.net is the .net version of the docopt python beautiful command line parser.  docopt.net helps you define an interface for your command-line app, and automatically generate a parser for it. docopt.net is based on conventions that have been used for decades in help messages and man pages for program interface description.  Interface description in docopt.net is such a help message, but formalized. Check out http://docopt.org for a more detailed explanation.
          Quick example:  var arguments = new Docopt().Apply("Usage: prog [-a] [-b] FILE", args); if (arguments["-a"].IsTrue) { ... }
-         Release notes for 0.6.1.5:
-          - Added strongly typed arguments through T4 macro.
-          - ValueObject interface cleanup.
-          - Exit:true parameter behavior fix.</description>
+         Release notes for 0.6.1.6:
+          - Double creation of property bug fix.
+          - T4DocoptNet.tt assembly path fix. </description>
         <summary>A command-line interface description language and parser that will make you smile.</summary>
-        <copyright>Copyright (c) 2012-2013 Vladimir Keleshev, Dinh Doan Van Bien</copyright>
+        <copyright>Copyright (c) 2012-2014 Vladimir Keleshev, Dinh Doan Van Bien</copyright>
         <language>en-US</language>
         <tags>parser command line argument option library syntax shell beautiful posix python console command-line docopt</tags>
     </metadata>
