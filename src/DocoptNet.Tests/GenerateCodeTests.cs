@@ -40,7 +40,12 @@ public bool CmdFiles { get { return _args[""files""].IsTrue; } }
 public ArrayList ArgFile { get { return _args[""FILE""].AsList; } }
 ";
             var s = new Docopt().GenerateCode(USAGE);
-            Assert.AreEqual(expected.Trim(), s.Trim());
+            Assert.AreEqual(NormalizeNewLines(expected), NormalizeNewLines(s));
+        }
+
+        private static string NormalizeNewLines(string s)
+        {
+            return string.Join(Environment.NewLine, s.Split("\r\n".ToCharArray(), StringSplitOptions.RemoveEmptyEntries));
         }
 
         [Test]
