@@ -34,6 +34,11 @@ namespace DocoptNet
             return new SingleMatchResult();
         }
 
+        public override Node ToNode()
+        {
+            return new ArgumentNode(this.Name, (this.Value != null && this.Value.IsList) ? ValueType.List : ValueType.String);
+        }
+
         public override string GenerateCode()
         {
             var s = Name.Replace("<", "").Replace(">", " ").ToLowerInvariant();

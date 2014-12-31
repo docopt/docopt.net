@@ -60,6 +60,7 @@
     <Compile Include="Either.cs" />
     <Compile Include="LeafPattern.cs" />
     <Compile Include="MatchResult.cs" />
+    <Compile Include="Node.cs" />
     <Compile Include="OneOrMore.cs" />
     <Compile Include="Option.cs" />
     <Compile Include="Optional.cs" />

@@ -23,6 +23,8 @@ namespace DocoptNet
             return new SingleMatchResult();
         }
 
+        public override Node ToNode() { return new CommandNode(this.Name); }
+
         public override string GenerateCode()
         {
             var s = Name.ToLowerInvariant();
