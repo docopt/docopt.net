@@ -93,6 +93,25 @@ namespace DocoptNet
 
         public string GenerateCode(string doc)
         {
+            var res = GetFlatPatterns(doc);
+            var sb = new StringBuilder();
+            foreach (var p in res)
+            {
+                sb.AppendLine(p.GenerateCode());
+            }
+            return sb.ToString();
+        }
+
+        public IEnumerable<Node> GetNodes(string doc)
+        {
+            return GetFlatPatterns(doc)
+                .Select(p => p.ToNode())
+                .Where(p => p != null)
+                .ToArray();
+        }
+
+        static IEnumerable<Pattern> GetFlatPatterns(string doc)
+        {
             var usageSections = ParseSection("usage:", doc);
             if (usageSections.Length == 0)
                 throw new DocoptLanguageErrorException("\"usage:\" (case-insensitive) not found.");
@@ -108,13 +127,7 @@ namespace DocoptNet
                 var docOptions = ParseDefaults(doc);
                 optionsShortcut.Children = docOptions.Distinct().Except(patternOptions).ToList();
             }
-            var res = pattern.Fix();
-            var sb = new StringBuilder();
-            foreach (var p in res.Flat())
-            {
-                sb.AppendLine(p.GenerateCode());
-            }
-            return sb.ToString();
+            return pattern.Fix().Flat();
         }
 
         private void Extras(bool help, object version, ICollection<Pattern> options, string doc)

@@ -73,6 +73,7 @@
     <Compile Include="DefaultValueForPositionalArgumentsTests.cs" />
     <Compile Include="DocoptTests.cs" />
     <Compile Include="EitherMatchTests.cs" />
+    <Compile Include="GetNodesTests.cs" />
     <Compile Include="GenerateCodeTests.cs" />
     <Compile Include="LanguageAgnosticTests.cs" />
     <Compile Include="LanguageAgnosticTests.generated.cs">

@@ -30,6 +30,11 @@ namespace DocoptNet
             get { return LongName ?? ShortName; }
         }
 
+        public override Node ToNode()
+        {
+            return new OptionNode(this.Name.TrimStart('-'), this.ArgCount == 0 ? ValueType.Bool : ValueType.String);
+        }
+
         public override string GenerateCode()
         {
             var s = Name.Replace("-", "").ToLowerInvariant();
