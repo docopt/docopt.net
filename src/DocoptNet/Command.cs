@@ -28,7 +28,7 @@ namespace DocoptNet
         public override string GenerateCode()
         {
             var s = Name.ToLowerInvariant();
-            s = "Cmd" + char.ToUpperInvariant(s[0]) + s.Substring(1);
+            s = "Cmd" + GenerateCodeHelper.GenerateCode(s);
             return string.Format("public bool {0} {{ get {{ return _args[\"{1}\"].IsTrue; }} }}", s, Name);
         }
 

@@ -15,14 +15,14 @@ namespace DocoptNet.Tests
             const string USAGE = @"Test host app for T4 Docopt.NET
 
 Usage:
-  prog command ARG <myarg> [OPTIONALARG] [-o -s=<arg> --long=ARG --switch]
+  prog command ARG <myarg> [OPTIONALARG] [-o -s=<arg> --long=ARG --switch-dash]
   prog files FILE...
 
 Options:
- -o           Short switch.
- -s=<arg>     Short option with arg.
- --long=ARG   Long option with arg.
- --switch     Long switch.
+ -o                Short switch.
+ -s=<arg>          Short option with arg.
+ --long=ARG        Long option with arg.
+ --switch-dash     Long switch.
 
 Explanation:
  This is a test usage file.
@@ -35,7 +35,7 @@ public string ArgOptionalarg { get { return _args[""OPTIONALARG""].ToString(); }
 public bool OptO { get { return _args[""-o""].IsTrue; } }
 public string OptS { get { return _args[""-s""].ToString(); } }
 public string OptLong { get { return _args[""--long""].ToString(); } }
-public bool OptSwitch { get { return _args[""--switch""].IsTrue; } }
+public bool OptSwitchDash { get { return _args[""--switch-dash""].IsTrue; } }
 public bool CmdFiles { get { return _args[""files""].IsTrue; } }
 public ArrayList ArgFile { get { return _args[""FILE""].AsList; } }
 ";

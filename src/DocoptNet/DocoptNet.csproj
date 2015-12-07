@@ -58,6 +58,7 @@
     <Compile Include="DocoptInputErrorException.cs" />
     <Compile Include="DocoptLanguageErrorException.cs" />
     <Compile Include="Either.cs" />
+    <Compile Include="GenerateCodeHelper.cs" />
     <Compile Include="LeafPattern.cs" />
     <Compile Include="MatchResult.cs" />
     <Compile Include="Node.cs" />
