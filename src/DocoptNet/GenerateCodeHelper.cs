@@ -1,6 +1,6 @@
 ﻿namespace DocoptNet
 {
-    public class GenerateCodeHelper
+    public static class GenerateCodeHelper
     {
         public static string GenerateCode(string s)
         {
