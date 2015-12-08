@@ -2,7 +2,7 @@
 {
     public static class GenerateCodeHelper
     {
-        public static string GenerateCode(string s)
+        public static string ConvertDashesToCamelCase(string s)
         {
             // Start with uppercase char
             var makeUpperCase = true;

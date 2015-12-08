@@ -42,7 +42,7 @@ namespace DocoptNet
         public override string GenerateCode()
         {
             var s = Name.Replace("<", "").Replace(">", " ").ToLowerInvariant();
-            s = "Arg" + GenerateCodeHelper.GenerateCode(s);
+            s = "Arg" + GenerateCodeHelper.ConvertDashesToCamelCase(s);
 
             if (Value != null && Value.IsList)
             {

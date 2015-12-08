@@ -39,7 +39,7 @@ namespace DocoptNet
         public override string GenerateCode()
         {
             var s = Name.ToLowerInvariant();
-            s = "Opt" + GenerateCodeHelper.GenerateCode(s);
+            s = "Opt" + GenerateCodeHelper.ConvertDashesToCamelCase(s);
 
             if (ArgCount == 0)
             {
