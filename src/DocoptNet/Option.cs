@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Text.RegularExpressions;
 
 namespace DocoptNet
@@ -37,8 +38,8 @@ namespace DocoptNet
 
         public override string GenerateCode()
         {
-            var s = Name.Replace("-", "").ToLowerInvariant();
-            s = "Opt" + char.ToUpperInvariant(s[0]) + s.Substring(1);
+            var s = Name.ToLowerInvariant();
+            s = "Opt" + GenerateCodeHelper.ConvertDashesToCamelCase(s);
 
             if (ArgCount == 0)
             {
