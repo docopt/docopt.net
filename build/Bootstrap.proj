@@ -43,14 +43,12 @@ Public Targets:
   <Target Name="RestoreBuildPackages">
     <Message Importance="high" Text="** Restoring packages from build" />
     <PropertyGroup>
-      <NugetTargets>$(SrcDir)\.nuget\NuGet.targets</NugetTargets>
-	  <!-- Location of packages.config -->
-      <ProjectDir>$(TopDir)\build</ProjectDir>
-	  <!-- Location of .nuget -->
-      <SolutionDir>$(TopDir)\src</SolutionDir>
+      <PaketPaket>$(TopDir)\.paket\paket.targets</PaketPaket>
+			<!-- Location of .paket -->
+      <SolutionDir>$(TopDir)\.paket</SolutionDir>
     </PropertyGroup>
     <MSBuild
-      Projects="$(NugetTargets)"
+      Projects="$(PaketPaket)"
       Targets="RestorePackages"
       Properties="ProjectDir=$(ProjectDir);SolutionDir=$(SolutionDir)"
       />

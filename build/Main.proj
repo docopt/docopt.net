@@ -8,7 +8,7 @@
     <SrcDir>$(TopDir)\src</SrcDir>
     <ReportDir>$(TopDir)\_build\report</ReportDir>
     <BuildOutDir>$(TopDir)\_build\bin</BuildOutDir>
-    <PackageDir>$(TopDir)\src\packages</PackageDir>
+    <PackageDir>$(TopDir)\packages\Build</PackageDir>
     <SolutionFile>$(SrcDir)\DocoptNet.sln</SolutionFile>
   </PropertyGroup>
 
@@ -38,9 +38,9 @@ Public Targets:
   </Target>
 
   <PropertyGroup>
-    <MSBuildCommunityTasksPath>$(PackageDir)\MSBuildTasks.1.4.0.61\tools</MSBuildCommunityTasksPath>
+    <MSBuildCommunityTasksPath>$(PackageDir)\MSBuildTasks\tools</MSBuildCommunityTasksPath>
     <!-- Tool path for the NUnit task -->
-    <NUnit-ToolPath>$(PackageDir)\NUnit.Runners.2.6.2\tools</NUnit-ToolPath>
+    <NUnit-ToolPath>$(PackageDir)\NUnit.Runners\tools</NUnit-ToolPath>
     <NUnitReport>$(ReportDir)\nunit-result.xml</NUnitReport>
   </PropertyGroup>
 
