@@ -8,10 +8,6 @@
     <SrcDir>$(TopDir)\src</SrcDir>
   </PropertyGroup>
 
-  <ItemGroup>
-    <SrcPackageConfig Include="$(SrcDir)\**\packages.config" />
-  </ItemGroup>
-
   <Target Name="Help">
     <Message
       Text="
@@ -29,8 +25,6 @@ Public Targets:
 ---------------
 
  * RestorePackages (default) : restore all packages
- * RestoreBuildPackages : restore build packages only
- * RestoreSrcPackages : restore source packages only
  * Help : display this text
 
 "
@@ -38,33 +32,15 @@ Public Targets:
     />
   </Target>
 
-  <Target Name="RestorePackages" DependsOnTargets="RestoreBuildPackages;RestoreSrcPackages" />
-
-  <Target Name="RestoreBuildPackages">
-    <Message Importance="high" Text="** Restoring packages from build" />
+  <Target Name="RestorePackages">
+    <Message Importance="high" Text="** Restoring packages" />
     <PropertyGroup>
-      <PaketPaket>$(TopDir)\.paket\paket.targets</PaketPaket>
-			<!-- Location of .paket -->
+      <PaketTargets>$(TopDir)\.paket\paket.targets</PaketTargets>
+      <!-- Location of .paket -->
       <SolutionDir>$(TopDir)\.paket</SolutionDir>
     </PropertyGroup>
     <MSBuild
-      Projects="$(PaketPaket)"
-      Targets="RestorePackages"
-      Properties="ProjectDir=$(ProjectDir);SolutionDir=$(SolutionDir)"
-      />
-  </Target>
-
-  <Target Name="RestoreSrcPackages" Outputs="%(SrcPackageConfig.FullPath)" Condition="Exists('$(SrcDir)')">
-    <Message Importance="high" Text="** Restoring packages from %(SrcPackageConfig.FullPath)" />
-    <PropertyGroup>
-      <NugetTargets>$(TopDir)\src\.nuget\NuGet.targets</NugetTargets>
-	  <!-- Location of packages.config -->
-      <ProjectDir>%(SrcPackageConfig.RootDir)%(SrcPackageConfig.Directory)</ProjectDir>
-      <!-- Location of .nuget -->
-	  <SolutionDir>$(TopDir)\src</SolutionDir>
-    </PropertyGroup>
-    <MSBuild
-      Projects="$(NugetTargets)"
+      Projects="$(PaketTargets)"
       Targets="RestorePackages"
       Properties="ProjectDir=$(ProjectDir);SolutionDir=$(SolutionDir)"
       />
