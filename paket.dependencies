@@ -1,0 +1,11 @@
+source https://www.nuget.org/api/v2/
+
+nuget NuGet.CommandLine
+nuget Newtonsoft.Json
+nuget NSubstitute
+nuget NUnit
+
+group Build
+	source https://www.nuget.org/api/v2/
+	nuget NUnit.Runners
+	nuget MSBuildTasks

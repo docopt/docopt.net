@@ -9,9 +9,17 @@ IF NOT EXIST "%LOGDIR%" MKDIR %LOGDIR%
 SET LOGFILE=%LOGDIR%\build.log
 ECHO Outputing log to %LOGFILE%
 
-%MSBUILD% "%BUILDIR%\Bootstrap.proj" /target:RestorePackages /clp:minimal /flp:PerformanceSummary;verbosity=normal;logFile=%LOGFILE% /nologo
+..\.paket\paket.bootstrapper.exe
+if errorlevel 1 (
+  exit /b %errorlevel%
+)
+
+..\.paket\paket.exe restore
+if errorlevel 1 (
+  exit /b %errorlevel%
+)
 
 %MSBUILD% "%BUILDIR%\Main.proj" /target:Build /clp:minimal /flp:PerformanceSummary;verbosity=%VERBOSE%;logFile=%LOGFILE%;Append /nologo
 
 IF NOT EXIST %BUILDIR%\..\_build\dist MKDIR %BUILDIR%\..\_build\dist
-%BUILDIR%\..\src\.nuget\nuget.exe pack %BUILDIR%\..\src\NuGet\docopt.net.nuspec -OutputDirectory %BUILDIR%\..\_build\dist
+%BUILDIR%\..\packages\NuGet.CommandLine\tools\NuGet.exe pack %BUILDIR%\..\src\NuGet\docopt.net.nuspec -OutputDirectory %BUILDIR%\..\_build\dist
