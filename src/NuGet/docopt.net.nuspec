@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
     <metadata>
         <id>docopt.net</id>
-        <version>0.6.1.6</version>
+        <version>0.6.1.7-beta1</version>
         <title>docopt.net, a beautiful command-line parser</title>
         <authors>Dinh Doan Van Bien,Vladimir Keleshev</authors>
         <owners>voieducode</owners>
@@ -29,8 +29,10 @@
         <file src="..\T4DocoptNetHostApp\T4DocoptNet.tt" target="content\T4DocoptNet.tt" />
         <file src="..\T4DocoptNetHostApp\T4DocoptNet.tt.hooks.t4" target="content\T4DocoptNet.tt.hooks.t4" />
         <file src="..\T4DocoptNetHostApp\T4DocoptNet.tt.settings.xml" target="content\T4DocoptNet.tt.settings.xml" />
-        <file src="..\..\_build\bin\DocoptNet\DocoptNet.dll" target="lib\net40\DocoptNet.dll" />
-        <file src="..\..\_build\bin\DocoptNet\DocoptNet.pdb" target="lib\net40\DocoptNet.pdb" />
+        <file src="..\DocoptNet\bin\Release\net40\DocoptNet.dll" target="lib\net40\DocoptNet.dll" />
+        <file src="..\DocoptNet\bin\Release\net40\DocoptNet.pdb" target="lib\net40\DocoptNet.pdb" />
+        <file src="..\DocoptNet\bin\Release\netstandard1.5\DocoptNet.dll" target="lib\netstandard1.5\DocoptNet.dll" />
+        <file src="..\DocoptNet\bin\Release\netstandard1.5\DocoptNet.pdb" target="lib\netstandard1.5\DocoptNet.pdb" />
         <file src="install.ps1" target="tools\install.ps1" />
     </files>
 </package>

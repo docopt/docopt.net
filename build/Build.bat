@@ -19,6 +19,9 @@ if errorlevel 1 (
   exit /b %errorlevel%
 )
 
+dotnet restore %BUILDIR%\..\src\DocoptNet
+dotnet build %BUILDIR%\..\src\DocoptNet -c Release
+
 %MSBUILD% "%BUILDIR%\Main.proj" /target:Build /clp:minimal /flp:PerformanceSummary;verbosity=%VERBOSE%;logFile=%LOGFILE%;Append /nologo
 
 IF NOT EXIST %BUILDIR%\..\_build\dist MKDIR %BUILDIR%\..\_build\dist
