@@ -113,10 +113,9 @@
     <None Include="paket.references" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\DocoptNet\DocoptNet.csproj">
-      <Project>{98A9E0AA-D81F-4919-8582-2451087A757E}</Project>
-      <Name>DocoptNet</Name>
-    </ProjectReference>
+    <Reference Include="docopt.net">
+      <HintPath>..\DocoptNet\bin\$(Configuration)\net40\DocoptNet.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Service Include="{82A7F48D-3B50-4B1E-B82E-3ADA8210C358}" />

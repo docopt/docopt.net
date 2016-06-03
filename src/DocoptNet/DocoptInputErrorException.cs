@@ -3,7 +3,9 @@ using System.Runtime.Serialization;
 
 namespace DocoptNet
 {
+#if NET40
     [Serializable]
+#endif
     public class DocoptInputErrorException : DocoptBaseException
     {
         //
@@ -24,11 +26,13 @@ namespace DocoptNet
             : base(message, inner)
         {
         }
+#if NET40
         protected DocoptInputErrorException(
             SerializationInfo info,
             StreamingContext context)
             : base(info, context)
         {
         }
+#endif
     }
 }
