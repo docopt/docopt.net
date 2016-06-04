@@ -38,5 +38,5 @@ function Set-DocoptNetAssemblyPath($AssemblyPath, $ProjectDirectoryPath)
     }
 }
 
-$p =  $installPath + "DocoptNet.dll"
+$p = gci -Path $installPath -Filter net40 -recurse | select -First 1 | Join-Path -ChildPath "DocoptNet.dll"
 Set-DocoptNetAssemblyPath -AssemblyPath $p -ProjectDirectoryPath ([System.IO.Directory]::GetParent($project.FullName))
