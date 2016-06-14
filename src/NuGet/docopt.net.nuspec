@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
     <metadata>
         <id>docopt.net</id>
-        <version>0.6.1.7-beta3</version>
+        <version>0.6.1.7</version>
         <title>docopt.net, a beautiful command-line parser</title>
         <authors>Dinh Doan Van Bien,Vladimir Keleshev</authors>
         <owners>voieducode</owners>
