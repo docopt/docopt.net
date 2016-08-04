@@ -48,7 +48,7 @@ namespace DocoptNet
             {
                 return string.Format("public ArrayList {0} {{ get {{ return _args[\"{1}\"].AsList; }} }}", s, Name);
             }
-            return string.Format("public string {0} {{ get {{ return _args[\"{1}\"].ToString(); }} }}", s, Name);
+            return string.Format("public string {0} {{ get {{ return null == _args[\"{1}\"] ? null : _args[\"{1}\"].ToString(); }} }}", s, Name);
         }
     }
 }
