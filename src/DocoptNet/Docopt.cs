@@ -94,6 +94,9 @@ namespace DocoptNet
         public string GenerateCode(string doc)
         {
             var res = GetFlatPatterns(doc);
+            res = res
+                .GroupBy(pattern => pattern.Name)
+                .Select(group => group.First());
             var sb = new StringBuilder();
             foreach (var p in res)
             {
