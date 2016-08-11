@@ -16,6 +16,7 @@ namespace DocoptNet.Tests
 
 Usage:
   prog command ARG <myarg> [OPTIONALARG] [-o -s=<arg> --long=ARG --switch-dash]
+  prog command2 ARG <myarg>
   prog files FILE...
 
 Options:
@@ -36,6 +37,7 @@ public bool OptO { get { return _args[""-o""].IsTrue; } }
 public string OptS { get { return null == _args[""-s""] ? null : _args[""-s""].ToString(); } }
 public string OptLong { get { return null == _args[""--long""] ? null : _args[""--long""].ToString(); } }
 public bool OptSwitchDash { get { return _args[""--switch-dash""].IsTrue; } }
+public bool CmdCommand2 { get { return _args[""command2""].IsTrue; } }
 public bool CmdFiles { get { return _args[""files""].IsTrue; } }
 public ArrayList ArgFile { get { return _args[""FILE""].AsList; } }
 ";
