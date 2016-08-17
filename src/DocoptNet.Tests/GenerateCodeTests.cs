@@ -21,7 +21,7 @@ Usage:
 
 Options:
  -o                Short switch.
- -s=<arg>          Short option with arg.
+ -s=<arg>          Short option with arg. [default: 128]
  --long=ARG        Long option with arg.
  --switch-dash     Long switch.
 
@@ -34,7 +34,7 @@ public string ArgArg { get { return null == _args[""ARG""] ? null : _args[""ARG"
 public string ArgMyarg  { get { return null == _args[""<myarg>""] ? null : _args[""<myarg>""].ToString(); } }
 public string ArgOptionalarg { get { return null == _args[""OPTIONALARG""] ? null : _args[""OPTIONALARG""].ToString(); } }
 public bool OptO { get { return _args[""-o""].IsTrue; } }
-public string OptS { get { return null == _args[""-s""] ? null : _args[""-s""].ToString(); } }
+public string OptS { get { return null == _args[""-s""] ? ""128"" : _args[""-s""].ToString(); } }
 public string OptLong { get { return null == _args[""--long""] ? null : _args[""--long""].ToString(); } }
 public bool OptSwitchDash { get { return _args[""--switch-dash""].IsTrue; } }
 public bool CmdCommand2 { get { return _args[""command2""].IsTrue; } }
