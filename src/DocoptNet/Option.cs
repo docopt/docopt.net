@@ -45,7 +45,8 @@ namespace DocoptNet
             {
                 return string.Format("public bool {0} {{ get {{ return _args[\"{1}\"].IsTrue; }} }}", s, Name);
             }
-            return string.Format("public string {0} {{ get {{ return null == _args[\"{1}\"] ? null : _args[\"{1}\"].ToString(); }} }}", s, Name);
+            var defaultValue = Value == null ? "null" : string.Format("\"{0}\"", Value);
+            return string.Format("public string {0} {{ get {{ return null == _args[\"{1}\"] ? {2} : _args[\"{1}\"].ToString(); }} }}", s, Name, defaultValue);
         }
 
         public override SingleMatchResult SingleMatch(IList<Pattern> left)
