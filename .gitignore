@@ -29,3 +29,4 @@ packages/
 *.nupkg
 /_build
 .vs/
+.paket/Paket.Restore.targets

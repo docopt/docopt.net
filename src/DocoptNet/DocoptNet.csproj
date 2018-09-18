@@ -12,6 +12,24 @@
     <NetStandardImplicitPackageVersion Condition=" '$(TargetFramework)' == 'netstandard1.5' ">1.6.0</NetStandardImplicitPackageVersion>
     <GenerateAssemblyVersionAttribute>false</GenerateAssemblyVersionAttribute>
     <GenerateAssemblyFileVersionAttribute>false</GenerateAssemblyFileVersionAttribute>
+    <PackageId>docopt.net</PackageId>
+    <PackageLicenseUrl>https://github.com/docopt/docopt.net/blob/master/LICENSE-MIT</PackageLicenseUrl>
+    <PackageProjectUrl>https://github.com/docopt/docopt.net</PackageProjectUrl>
+    <PackageIconUrl>https://secure.gravatar.com/avatar/e82bc289285e348387313a00cfd84979?s=400&amp;d=https://a248.e.akamai.net/assets.github.com%2Fimages%2Fgravatars%2Fgravatar-user-420.png</PackageIconUrl>
+    <Title>docopt.net, a beautiful command-line parser</Title>
+    <Authors>Dinh Doan Van Bien;Vladimir Keleshev</Authors>
+    <Description>docopt.net is the .net version of the docopt python beautiful command line parser.  docopt.net helps you define an interface for your command-line app, and automatically generate a parser for it. docopt.net is based on conventions that have been used for decades in help messages and man pages for program interface description.  Interface description in docopt.net is such a help message, but formalized. Check out http://docopt.org for a more detailed explanation.
+        Quick example:
+            var arguments = new Docopt().Apply(&quot;Usage: prog [-a] [-b] FILE&quot;, args);
+            if (arguments[&quot;-a&quot;].IsTrue) {{ ... }}
+    </Description>
+    <PackageReleaseNotes>
+      - T4DocoptNet.tt assembly path fix.
+      - Added support for .net core RC2
+    </PackageReleaseNotes>
+    <Copyright>Copyright (c) 2012-2014 Vladimir Keleshev, Dinh Doan Van Bien</Copyright>
+    <PackageTags>parser;command line argument;option library;syntax;shell;beautiful;posix;python;console;command-line;docopt</PackageTags>
+    <NetStandardImplicitPackageVersion Condition=" '$(TargetFramework)' == 'netstandard1.5' ">1.6.0</NetStandardImplicitPackageVersion>
   </PropertyGroup>
 
   <ItemGroup Condition=" '$(TargetFramework)' == 'net40' ">
@@ -22,6 +40,29 @@
   <ItemGroup Condition=" '$(TargetFramework)' == 'netstandard1.5' ">
     <PackageReference Include="System.Collections.NonGeneric" Version="4.0.1" />
     <PackageReference Include="System.Runtime.Serialization.Primitives" Version="4.1.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="..\NuGet\Main.usage.txt">
+      <PackagePath>content\Main.usage.txt</PackagePath>
+      <Pack>true</Pack>
+    </Content>
+    <Content Include="..\T4DocoptNetHostApp\T4DocoptNet.tt">
+      <PackagePath>content\T4DocoptNet.tt</PackagePath>
+      <Pack>true</Pack>
+    </Content>
+    <Content Include="..\T4DocoptNetHostApp\T4DocoptNet.tt.hooks.t4">
+      <PackagePath>content\T4DocoptNet.tt.hooks.t4</PackagePath>
+      <Pack>true</Pack>
+    </Content>
+    <Content Include="..\T4DocoptNetHostApp\T4DocoptNet.tt.settings.xml">
+      <PackagePath>content\T4DocoptNet.tt.settings.xml</PackagePath>
+      <Pack>true</Pack>
+    </Content>
+    <Content Include="..\NuGet\install.ps1">
+      <PackagePath>tools\install.ps1</PackagePath>
+      <Pack>true</Pack>
+    </Content>
   </ItemGroup>
 
 </Project>
