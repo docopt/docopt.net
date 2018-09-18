@@ -1,0 +1,12 @@
+version: 1.1.{build}
+image: Visual Studio 2017 Preview
+configuration: Release
+build_script:
+- cmd: dotnet build src\DocoptNet.sln --configuration Release
+- cmd: IF NOT EXIST dist MKDIR dist
+- cmd: dotnet pack --configuration Release src\DocoptNet
+test_script:
+- cmd: dotnet test src\DocoptNet.Tests
+artifacts:
+- path: '**\docopt.net*.nupkg'
+  name: Nuget
