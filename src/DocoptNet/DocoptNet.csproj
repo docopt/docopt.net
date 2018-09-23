@@ -3,7 +3,7 @@
   <PropertyGroup>
     <TargetFrameworks>net40;netstandard1.5</TargetFrameworks>
     <AssemblyName>DocoptNet</AssemblyName>
-    <Version>0.6.1.9</Version>
+    <Version>0.6.1.10</Version>
     <AssemblyOriginatorKeyFile>DocoptNet.snk</AssemblyOriginatorKeyFile>
     <SignAssembly>true</SignAssembly>
     <PublicSign Condition=" '$(OS)' != 'Windows_NT' ">true</PublicSign>
