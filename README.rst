@@ -90,10 +90,10 @@ API
 .. code:: c#
 
   public IDictionary<string, ValueObject> Apply(string doc, string cmdLine, bool help = true,
-    object version = null, bool optionsFirst = false, bool exit = false)
+    object version = null, bool optionsFirst = false, bool exit = false);
 
   public IDictionary<string, ValueObject> Apply(string doc, ICollection<string> argv, bool help = true,
-    object version = null, bool optionsFirst = false, bool exit = false)
+    object version = null, bool optionsFirst = false, bool exit = false);
 
 ``Apply`` takes 1 required and 5 optional arguments:
 
