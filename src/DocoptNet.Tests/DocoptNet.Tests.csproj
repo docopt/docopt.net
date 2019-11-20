@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>netcoreapp2.0;netcoreapp1.1;net47</TargetFrameworks>
+    <TargetFrameworks>netcoreapp1.1;netcoreapp2.1;net47</TargetFrameworks>
     <AssemblyOriginatorKeyFile>..\DocoptNet\DocoptNet.snk</AssemblyOriginatorKeyFile>
     <SignAssembly>true</SignAssembly>
     <PublicSign Condition=" '$(OS)' != 'Windows_NT' ">true</PublicSign>
