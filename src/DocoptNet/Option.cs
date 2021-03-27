@@ -74,7 +74,7 @@ namespace DocoptNet
             string longName = null;
             var argCount = 0;
             var value = new ValueObject(false);
-            var p = new StringPartition(optionDescription, DESC_SEPARATOR);
+            var p = new StringPartition(optionDescription.Trim(), DESC_SEPARATOR);
             var options = p.LeftString;
             var description = p.RightString;
             foreach (var s in options.Split(" \t,=".ToCharArray(), StringSplitOptions.RemoveEmptyEntries))
