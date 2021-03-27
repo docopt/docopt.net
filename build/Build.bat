@@ -1,4 +1,5 @@
 @ECHO OFF
+SETLOCAL
 SET MSBUILD=C:\Windows\Microsoft.NET\Framework\v4.0.30319\MSBuild.exe
 SET VERBOSE=normal
 SET BUILDIR=%~dp0
