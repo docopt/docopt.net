@@ -5,13 +5,14 @@ namespace DocoptNet.Tests
     [TestFixture]
     public class StringPartitionTests
     {
-        [Test]
-        public void Should_partition_string()
+        [TestCase("left=right", "left", "=", "right")]
+        [TestCase("=right", "", "=", "right")]
+        public void Should_partition_string(string input, string left, string separator, string right)
         {
-            var p = new StringPartition("left=right", "=");
-            Assert.AreEqual("left", p.LeftString);
-            Assert.AreEqual("=", p.Separator);
-            Assert.AreEqual("right", p.RightString);
+            var p = new StringPartition(input, separator);
+            Assert.AreEqual(left, p.LeftString);
+            Assert.AreEqual(separator, p.Separator);
+            Assert.AreEqual(right, p.RightString);
         }
 
         [Test]

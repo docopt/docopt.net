@@ -20,7 +20,7 @@
             RightString = "";
 
             var i = stringToPartition.IndexOf(separator, System.StringComparison.Ordinal);
-            if (i > 0)
+            if (i >= 0)
             {
                 LeftString = stringToPartition.Substring(0, i);
                 Separator = separator;
