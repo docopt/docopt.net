@@ -73,7 +73,7 @@ Installation
 
 Use nuget
 
-    nuget install Docopt.net -Version 0.6.1.5
+    nuget install Docopt.net -Version 0.6.1.11
 
 Alternatively, you can just drop ``DocoptNet.dll`` file into your
 project--it is self-contained.
@@ -458,8 +458,9 @@ first release with stable API will be 1.0.0 (soon).  Until then, you
 are encouraged to specify explicitly the version in your dependency
 tools, e.g.::
 
-    nuget install docopt.net -Version 0.6.1.8
+    nuget install docopt.net -Version 0.6.1.11
 
+- 0.6.1.11 Bug fix.
 - 0.6.1.8 Added support for .net core RC2.
 - 0.6.1.6 Double creation of property bug fix. T4DocoptNet.tt assembly path fix.
 - 0.6.1.5 Added strongly typed arguments through T4 macro. ValueObject interface cleanup. exit:true parameter behavior fix.
