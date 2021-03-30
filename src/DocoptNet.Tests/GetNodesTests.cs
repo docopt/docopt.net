@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Text.RegularExpressions;
 using NUnit.Framework;
 
@@ -27,7 +27,7 @@ Explanation:
 ";
 
             var actual = new Docopt().GetNodes(USAGE);
-            
+
             CollectionAssert.AreEqual(
                 new Node[]
                 {
@@ -51,7 +51,7 @@ Explanation:
             const string USAGE = @"Test for duplicate commands and arguments.
 Usage:
   prog command ARG <myarg> [OPTIONALARG] [-o -s=<arg> --long=ARG --switch]
-  prog command ARG <myarg> [OPTIONALARG] [-o -s=<arg> --long=ARG --switch] FILE... 
+  prog command ARG <myarg> [OPTIONALARG] [-o -s=<arg> --long=ARG --switch] FILE...
   prog diff-command <myarg> [OPTIONALARG] ARG
 
 Options:

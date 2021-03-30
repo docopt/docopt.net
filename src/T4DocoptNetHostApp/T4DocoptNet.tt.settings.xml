@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <DocoptSettings>
   <!--The namespace used by some of T4DocoptNet's generated code-->
   <T4DocoptNetNamespace>T4DocoptNet</T4DocoptNetNamespace>

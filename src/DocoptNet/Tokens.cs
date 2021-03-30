@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -32,7 +32,6 @@ namespace DocoptNet
         {
             get { return ErrorType == typeof (DocoptInputErrorException); }
         }
-
 
         public static Tokens FromPattern(string pattern)
         {

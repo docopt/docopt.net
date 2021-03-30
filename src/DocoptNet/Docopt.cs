@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -282,7 +282,7 @@ namespace DocoptNet
         private static IEnumerable<Pattern> ParseAtom(Tokens tokens, ICollection<Option> options)
         {
             // atom ::= '(' expr ')' | '[' expr ']' | 'options'
-            //  | long | shorts | argument | command ;            
+            //  | long | shorts | argument | command ;
 
             var token = tokens.Current();
             var result = new List<Pattern>();
@@ -447,7 +447,7 @@ namespace DocoptNet
             var defaults = new List<Option>();
             foreach (var s in ParseSection("options:", doc))
             {
-                // FIXME corner case "bla: options: --foo"   
+                // FIXME corner case "bla: options: --foo"
 
                 var p = new StringPartition(s, ":"); // get rid of "options:"
                 var optionsText = p.RightString;

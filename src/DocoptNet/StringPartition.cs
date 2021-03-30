@@ -1,4 +1,4 @@
-﻿namespace DocoptNet
+namespace DocoptNet
 {
     public struct StringPartition
     {
@@ -28,7 +28,7 @@
             }
         }
 
-        public bool NoSeparatorFound 
+        public bool NoSeparatorFound
         {
             get { return Separator=="" && RightString == ""; }
         }

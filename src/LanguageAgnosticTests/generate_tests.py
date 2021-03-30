@@ -3,7 +3,7 @@
 #
 # Quick and dirty script to generate a C# test suite
 # out of testcases.docopt
-# 
+#
 # e.g. generate_tests >LanguageAgnosticTests.generated.cs
 #
 
@@ -36,7 +36,7 @@ namespace DocoptNet.Tests
     public partial class LanguageAgnosticTests
     {
       #region Language agnostic tests generated code
-    """)
+""")
 
 index = 0
 for fixture in fixtures.split('r"""'):
@@ -54,6 +54,6 @@ for fixture in fixtures.split('r"""'):
         print (fmt % (index,doc,argv,expect))
 
 print ("""
-      #endregion    
+      #endregion
     }
 }""")

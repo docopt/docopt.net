@@ -1,4 +1,4 @@
-﻿namespace DocoptNet
+namespace DocoptNet
 {
     public static class GenerateCodeHelper
     {

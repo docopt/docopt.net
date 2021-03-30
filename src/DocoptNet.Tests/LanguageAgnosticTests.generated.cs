@@ -7,7 +7,6 @@ namespace DocoptNet.Tests
     public partial class LanguageAgnosticTests
     {
       #region Language agnostic tests generated code
-    
 
       [Test]
       public void Test_1()
@@ -2243,6 +2242,6 @@ other options:
       }
 
 
-      #endregion    
+      #endregion
     }
 }

@@ -1,4 +1,4 @@
-﻿using System.Linq;
+using System.Linq;
 using NUnit.Framework;
 
 namespace DocoptNet.Tests
@@ -9,7 +9,7 @@ namespace DocoptNet.Tests
         [Test]
         public void Test_formal_usage()
         {
-            const string DOC = 
+            const string DOC =
 "Usage: prog [-hv] ARG\r\n" +
 "       prog N M\r\n" +
 "\r\n" +
@@ -39,7 +39,6 @@ PROGRAM USAGE:
 BAZZ
 usage: pit stop
 ";
-
 
             Assert.AreEqual(new string[] {}, Docopt.ParseSection("usage:", "foo bar fizz buzz"), "No usage");
 

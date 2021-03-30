@@ -15,7 +15,7 @@ function Set-DocoptNetAssemblyPath($AssemblyPath, $ProjectDirectoryPath)
     if (Test-Path -Path $t4FilePath)
     {
         Write-Debug "Found T4 file at '$t4FilePath'."
-    
+
         # Load the packages.config xml document and grab all of the <package> elements.
         $wholeFile = [System.IO.File]::ReadAllText($t4FilePath)
         $searchString = '\$\(ProjectDir\)\$\(OutDir\)DocoptNet.dll'
@@ -24,10 +24,10 @@ function Set-DocoptNetAssemblyPath($AssemblyPath, $ProjectDirectoryPath)
             Write-Debug "Could not find search string in '$t4FilePath'."
             return
         }
-        
+
         Write-Debug "Setting assembly path '$AssemblyPath' in '$t4FilePath'."
         $wholeFile = $wholeFile -replace $searchString, $AssemblyPath
-  
+
         # Save the T4 file back now that we've changed it.
         [System.IO.File]::WriteAllText($t4FilePath, $wholeFile)
     }

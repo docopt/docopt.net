@@ -61,10 +61,10 @@ information in it to make a parser*.
 
 Differences from reference python implementation
 ======================================================================
-- This port should be fully Docopt language compatible with the 
+- This port should be fully Docopt language compatible with the
   python reference implementation.
-  
-- Because C# is statically typed, the return dictionary is of type 
+
+- Because C# is statically typed, the return dictionary is of type
   ``IDictionary<string,ValueObject>`` where ``ValueObject`` is a simple wrapper
   class around entry values.
 
@@ -104,7 +104,7 @@ API
 
 .. code:: c#
 
-    const string USAGE = 
+    const string USAGE =
     @"Usage: my_program [-hso FILE] [--quiet | --verbose] [INPUT ...]
 
     -h --help    show this
@@ -127,12 +127,12 @@ API
 
     Note, you can override the print and exit behaviour by providing
     a custom handler for the ``Docopt.PrintExit`` event. e.g.
-    
+
 .. code:: c#
 
     var docopt = new Docopt();
     docopt.PrintExit += MyCustomPrintExit;
-   
+
 - ``version``, by default ``null``, is an optional argument that
   specifies the version of your program. If supplied, then, (assuming
   ``--version`` option is mentioned in usage pattern) when parser
@@ -157,8 +157,8 @@ API
   not print or exit.
   If set to ``true``  any occurence of ``DocoptBaseException`` will be
   caught by ``Docopt.Apply()``, the error message or the usage will be
-  printed, and the program will exit with error code 0 if it's a ``DocoptExitException``, 1 otherwise.  
-  
+  printed, and the program will exit with error code 0 if it's a ``DocoptExitException``, 1 otherwise.
+
 The **return** value is a simple dictionary with options, arguments
 and commands as keys, spelled exactly like in your help message.  Long
 versions of options are given priority. For example, if you invoke the
@@ -215,10 +215,9 @@ exclusive patterns:
 
 .. code:: c#
 
-    const string USAGE = 
+    const string USAGE =
     @"Usage: my_program FILE
              my_program COUNT FILE";
-
 
 Each pattern can consist of the following elements:
 
@@ -287,7 +286,6 @@ collected into a list::
 I.e. invoked with ``my_program file1 file2 --path=./here
 --path=./there`` the returned dict will contain ``args['<file>'] ==
 ['file1', 'file2']`` and ``args['--path'] == ['./here', './there']``.
-
 
 Option descriptions format
 ----------------------------------------------------------------------
@@ -363,7 +361,7 @@ It will publish the following members:
 
  - `USAGE` public string constant that returns the usage document.
 
- - A set of properties that correspond to the commands, arguments, switches and options defined in the 
+ - A set of properties that correspond to the commands, arguments, switches and options defined in the
    usage document.
 
 Note that if you name the usage file `Foo.usage.txt`, the generated class will be called `FooArgs`.
@@ -412,7 +410,6 @@ as a string constant e.g. `MainArgs.USAGE`.
     public ArrayList ArgFiles { get { return _args["FILES"].AsList; } }
 
   }
-
 
 Using the generated code
 ----------------------------------------------------------------------

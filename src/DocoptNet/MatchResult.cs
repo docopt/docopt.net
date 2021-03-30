@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -23,9 +23,9 @@ namespace DocoptNet
 
         public override bool Equals(object obj)
         {
-            //       
+            //
             // See the full list of guidelines at
-            //   http://go.microsoft.com/fwlink/?LinkID=85237  
+            //   http://go.microsoft.com/fwlink/?LinkID=85237
             // and also the guidance for operator== at
             //   http://go.microsoft.com/fwlink/?LinkId=85238
             //

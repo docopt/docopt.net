@@ -1,4 +1,4 @@
-﻿namespace DocoptNet
+namespace DocoptNet
 {
     /// <summary>
     ///     Marker/placeholder for [options] shortcut.

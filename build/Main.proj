@@ -57,7 +57,7 @@ Public Targets:
     RunUnitTests
     </BuildDependsOn>
   </PropertyGroup>
-  
+
   <Target Name="Build" DependsOnTargets="$(BuildDependsOn)" />
 
   <Target Name="Clean">
@@ -81,5 +81,5 @@ Public Targets:
       OutputXmlFile="$(NUnitReport)"
       Framework="4.0"
     />
-</Target>  
+</Target>
 </Project>

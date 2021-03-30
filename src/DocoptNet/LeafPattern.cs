@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -61,7 +61,7 @@ namespace DocoptNet
                 {
                     increment = match.Value.IsString ? new ValueObject(new [] {match.Value})  : match.Value;
                 }
-                if (sameName.Count == 0) 
+                if (sameName.Count == 0)
                 {
                     match.Value = increment;
                     var res = new List<Pattern>(coll) {match};

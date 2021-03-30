@@ -1,4 +1,4 @@
-﻿Test host app for T4 Docopt.NET
+Test host app for T4 Docopt.NET
 
 Usage:
   other command1 ARG [-o --long=ARG --switch -v]

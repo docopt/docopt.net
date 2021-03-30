@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using NUnit.Framework;
 
 namespace DocoptNet.Tests
@@ -11,7 +11,7 @@ namespace DocoptNet.Tests
         {
             Assert.Throws<DocoptLanguageErrorException>(
                 () => new Docopt().Apply("Usage: prog [a [b]"));
-            
+
         }
 
         [Test]

@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 
 namespace DocoptNet
 {
@@ -6,7 +6,7 @@ namespace DocoptNet
     {
         public Optional(params Pattern[] patterns) : base(patterns)
         {
-            
+
         }
 
         public override MatchResult Match(IList<Pattern> left, IEnumerable<Pattern> collected = null)

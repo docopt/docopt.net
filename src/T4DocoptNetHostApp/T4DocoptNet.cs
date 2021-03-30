@@ -1,4 +1,3 @@
-﻿
 using System.Collections;
 using System.Collections.Generic;
 using DocoptNet;
@@ -36,7 +35,7 @@ Options:
 		public bool OptSwitch { get { return _args["--switch"].IsTrue; } }
 		public bool OptV { get { return _args["-v"].IsTrue; } }
 		public bool CmdCommand2 { get { return _args["command2"].IsTrue; } }
-	
+
 	}
 
     // Generated class for Main.usage.txt
@@ -79,9 +78,7 @@ Explanation:
 		public bool OptSwitch { get { return _args["--switch"].IsTrue; } }
 		public bool CmdFiles { get { return _args["files"].IsTrue; } }
 		public ArrayList ArgFile { get { return _args["FILE"].AsList; } }
-	
+
 	}
 
-	
 }
-

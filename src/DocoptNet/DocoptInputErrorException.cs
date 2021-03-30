@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 #if NET40
 using System.Runtime.Serialization;
 #endif

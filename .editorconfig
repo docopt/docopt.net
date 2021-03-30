@@ -1,0 +1,31 @@
+# http://editorconfig.org/
+
+root = true
+
+[*]
+charset = utf-8
+indent_style = space
+insert_final_newline = true
+trim_trailing_whitespace = true
+
+[*.{bat,cmd}]
+end_of_line = crlf
+
+[*.sh]
+end_of_line = lf
+
+[*.{csproj,proj,props,targets}]
+indent_size = 2
+
+[*.{sln}]
+indent_style = tab
+
+[*.{json,yml,xml}]
+indent_size = 2
+
+[*.{cs,tt,t4}]
+indent_size = 4
+max_line_length = 100
+
+[{App,app}.config]
+indent_size = 4
