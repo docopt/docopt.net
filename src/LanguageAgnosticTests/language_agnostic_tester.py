@@ -24,25 +24,25 @@ for fixture in fixtures.split('r"""'):
         assert prog == 'prog', repr(prog)
         p = Popen(testee + ' ' + argv,
                   stdout=PIPE, stdin=PIPE, stderr=STDOUT, shell=True)
-        result = p.communicate(input=doc)[0]
+        result = p.communicate(input=bytes(doc, 'utf-8'))[0]
         try:
             py_result = json.loads(result)
             py_expect = json.loads(expect)
         except:
             summary += 'J'
-            print (' %d: BAD JSON ' % index).center(79, '=')
-            print 'result>', result
-            print 'expect>', expect
+            print((' %d: BAD JSON ' % index).center(79, '='))
+            print('result>', result)
+            print('expect>', expect)
             continue
         if py_result == py_expect:
             summary += '.'
         else:
-            print (' %d: FAILED ' % index).center(79, '=')
-            print 'r"""%s"""' % doc
-            print '$ prog %s\n' % argv
-            print 'result>', result
-            print 'expect>', expect
+            print((' %d: FAILED ' % index).center(79, '='))
+            print('r"""%s"""' % doc)
+            print('$ prog %s\n' % argv)
+            print('result>', result)
+            print('expect>', expect)
             summary += 'F'
 
-print (' %d / %d ' % (summary.count('.'), len(summary))).center(79, '=')
-print summary
+print((' %d / %d ' % (summary.count('.'), len(summary))).center(79, '='))
+print(summary)
