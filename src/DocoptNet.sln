@@ -25,7 +25,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "NuGet", "NuGet", "{B5A8AA26
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DocoptNet", "DocoptNet\DocoptNet.csproj", "{D87F19B8-A15F-4BC2-8E1C-47CC6038A0DF}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DocoptNet.Tests", "DocoptNet.Tests\DocoptNet.Tests.csproj", "{80A9BB30-873C-47E9-8314-5E53AC66E8B7}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DocoptNet.Tests", "DocoptNet.Tests\DocoptNet.Tests.csproj", "{80A9BB30-873C-47E9-8314-5E53AC66E8B7}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NavalFate", "Examples\NavalFate\NavalFate.csproj", "{2B454F8B-D702-4281-80DF-367142007B0C}"
 EndProject
