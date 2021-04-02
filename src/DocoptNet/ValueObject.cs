@@ -4,7 +4,7 @@ using System.Linq;
 
 namespace DocoptNet
 {
-    public class ValueObject
+    public class ValueObject // TODO : IEquatable<ValueObject>
     {
         public object Value { get; private set; }
 
@@ -74,28 +74,17 @@ namespace DocoptNet
 
         public override bool Equals(object obj)
         {
-            //
-            // See the full list of guidelines at
-            //   http://go.microsoft.com/fwlink/?LinkID=85237
-            // and also the guidance for operator== at
-            //   http://go.microsoft.com/fwlink/?LinkId=85238
-            //
-
-            if (obj == null || GetType() != obj.GetType())
-            {
-                return false;
-            }
-
-            var v = (obj as ValueObject).Value;
-            if (Value == null && v == null) return true;
-            if (Value == null || v == null) return false;
-            if (IsList || (obj as ValueObject).IsList)
-                return Value.ToString().Equals(v.ToString());
-            return Value.Equals(v);
+            return obj is ValueObject { Value: var v } other
+                && (Value == null && v == null
+                    || Value != null && v != null
+                    // TODO avoid string allocations during equality check
+                    && (IsList || other.IsList ? Value.ToString().Equals(v.ToString())
+                                               : Value.Equals(v)));
         }
 
         public override int GetHashCode()
         {
+            // TODO avoid string allocations when getting hash code
             return ToString().GetHashCode();
         }
 
@@ -120,7 +109,7 @@ namespace DocoptNet
             if (increment.IsOfTypeInt)
             {
                 if (IsList)
-                    (Value as ArrayList).Add(increment.AsInt);
+                    ((ArrayList)Value).Add(increment.AsInt);
                 else
                     Value = increment.AsInt + AsInt;
             }
