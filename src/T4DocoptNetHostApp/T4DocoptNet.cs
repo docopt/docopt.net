@@ -1,3 +1,4 @@
+
 using System.Collections;
 using System.Collections.Generic;
 using DocoptNet;
@@ -29,13 +30,12 @@ Options:
         }
 
 		public bool CmdCommand1 { get { return _args["command1"].IsTrue; } }
-		public string ArgArg { get { return _args["ARG"].ToString(); } }
+		public string ArgArg { get { return null == _args["ARG"] ? null : _args["ARG"].ToString(); } }
 		public bool OptO { get { return _args["-o"].IsTrue; } }
-		public string OptLong { get { return _args["--long"].ToString(); } }
+		public string OptLong { get { return null == _args["--long"] ? null : _args["--long"].ToString(); } }
 		public bool OptSwitch { get { return _args["--switch"].IsTrue; } }
 		public bool OptV { get { return _args["-v"].IsTrue; } }
 		public bool CmdCommand2 { get { return _args["command2"].IsTrue; } }
-
 	}
 
     // Generated class for Main.usage.txt
@@ -69,16 +69,15 @@ Explanation:
         }
 
 		public bool CmdCommand { get { return _args["command"].IsTrue; } }
-		public string ArgArg { get { return _args["ARG"].ToString(); } }
-		public string ArgMyarg  { get { return _args["<myarg>"].ToString(); } }
-		public string ArgOptionalarg { get { return _args["OPTIONALARG"].ToString(); } }
+		public string ArgArg { get { return null == _args["ARG"] ? null : _args["ARG"].ToString(); } }
+		public string ArgMyarg  { get { return null == _args["<myarg>"] ? null : _args["<myarg>"].ToString(); } }
+		public string ArgOptionalarg { get { return null == _args["OPTIONALARG"] ? null : _args["OPTIONALARG"].ToString(); } }
 		public bool OptO { get { return _args["-o"].IsTrue; } }
-		public string OptS { get { return _args["-s"].ToString(); } }
-		public string OptLong { get { return _args["--long"].ToString(); } }
+		public string OptS { get { return null == _args["-s"] ? null : _args["-s"].ToString(); } }
+		public string OptLong { get { return null == _args["--long"] ? null : _args["--long"].ToString(); } }
 		public bool OptSwitch { get { return _args["--switch"].IsTrue; } }
 		public bool CmdFiles { get { return _args["files"].IsTrue; } }
 		public ArrayList ArgFile { get { return _args["FILE"].AsList; } }
-
 	}
 
 }
