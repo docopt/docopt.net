@@ -6,7 +6,7 @@ Method 1: testee app
 1. Compile the Testee project
 2. Run the following commands
 	cd src\LanguageAgnosticTests
-    python language_agnostic_tester.py ..\Testee\bin\Debug\Testee.exe
+    python language_agnostic_tester.py ..\Testee\bin\Debug\net45\Testee.exe
 
 Method 2: generated unit tests
 ------------------------------

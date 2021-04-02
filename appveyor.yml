@@ -2,11 +2,11 @@ version: 1.1.{build}
 image: Visual Studio 2019
 configuration: Release
 build_script:
-- cmd: dotnet build src\DocoptNet.sln --configuration Release
+- cmd: dotnet build --configuration Release
 - cmd: IF NOT EXIST dist MKDIR dist
-- cmd: dotnet pack --configuration Release src\DocoptNet
+- cmd: dotnet pack --configuration Release
 test_script:
-- cmd: dotnet test src\DocoptNet.Tests
+- cmd: dotnet test
 artifacts:
 - path: '**\docopt.net*.nupkg'
   name: Nuget
