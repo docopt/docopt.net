@@ -2,6 +2,15 @@
 
   <PropertyGroup>
     <TargetFrameworks>netstandard1.5;netstandard2.0</TargetFrameworks>
+    <!--
+    TODO Remove the suppression of the following warnings after addressing them:
+    - error NU5125: The 'licenseUrl' element will be deprecated.
+      Consider using the 'license' element instead.
+    - error NU5048: The 'PackageIconUrl'/'iconUrl' element is deprecated.
+      Consider using the 'PackageIcon'/'icon' element instead.
+      Learn more at https://aka.ms/deprecateIconUrl
+    -->
+    <NoWarn>$(NoWarn);NU5125;NU5048</NoWarn>
     <AssemblyName>DocoptNet</AssemblyName>
     <Version>0.6.1.11</Version>
     <AssemblyOriginatorKeyFile>DocoptNet.snk</AssemblyOriginatorKeyFile>
