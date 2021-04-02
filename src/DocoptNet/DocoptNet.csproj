@@ -9,8 +9,7 @@
     <PublicSign Condition=" '$(OS)' != 'Windows_NT' ">true</PublicSign>
     <PackageId>DocoptNet</PackageId>
     <Copyright>Copyright (c) 2013 Dinh Doan Van Bien, dinh@doanvanbien.com</Copyright>
-    <NetStandardImplicitPackageVersion Condition=" '$(TargetFramework)' == 'netstandard2.0'">1.6.0</NetStandardImplicitPackageVersion>
-    <NetStandardImplicitPackageVersion Condition=" '$(TargetFramework)' == 'netstandard1.5'">1.6.0</NetStandardImplicitPackageVersion>
+    <NetStandardImplicitPackageVersion>2.0.3</NetStandardImplicitPackageVersion>
     <GenerateAssemblyVersionAttribute>false</GenerateAssemblyVersionAttribute>
     <GenerateAssemblyFileVersionAttribute>false</GenerateAssemblyFileVersionAttribute>
     <PackageId>docopt.net</PackageId>
@@ -30,8 +29,6 @@
     </PackageReleaseNotes>
     <Copyright>Copyright (c) 2012-2014 Vladimir Keleshev, Dinh Doan Van Bien</Copyright>
     <PackageTags>parser;command line argument;option library;syntax;shell;beautiful;posix;python;console;command-line;docopt</PackageTags>
-    <NetStandardImplicitPackageVersion Condition=" '$(TargetFramework)' == 'netstandard1.5' ">1.6.0</NetStandardImplicitPackageVersion>
-    <NetStandardImplicitPackageVersion Condition=" '$(TargetFramework)' == 'netstandard2.0' ">1.6.0</NetStandardImplicitPackageVersion>
   </PropertyGroup>
 
   <ItemGroup>
