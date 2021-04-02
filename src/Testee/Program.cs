@@ -3,8 +3,9 @@ using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
+using System.Text.Encodings.Web;
+using System.Text.Json;
 using DocoptNet;
-using Newtonsoft.Json;
 
 namespace Testee
 {
@@ -35,7 +36,23 @@ namespace Testee
                     else
                         dict[argument.Key] = argument.Value.Value;
                 }
-                return JsonConvert.SerializeObject(dict);
+                return JsonSerializer.Serialize(dict, new JsonSerializerOptions
+                {
+                    WriteIndented = true,
+                    //
+                    // Compared to the default encoder, the UnsafeRelaxedJsonEscaping encoder is
+                    // more permissive about allowing characters to pass through unescaped:
+                    //
+                    // - It doesn't escape HTML-sensitive characters such as "<", ">", "&", and "'".
+                    // - It doesn't offer any additional defense-in-depth protections against XSS or
+                    //   information disclosure attacks, such as those which might result from the
+                    //   client and server disagreeing on the charset.
+                    //
+                    // Since this is not expected to be used in the web context, the more relaxed
+                    // escaping is acceptable and less surprising.
+                    //
+                    Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping,
+                });
             }
             catch (Exception)
             {
