@@ -58,7 +58,7 @@ namespace DocoptNet
             get
             {
                 int value;
-                return Value != null && (Value is int || Int32.TryParse(Value.ToString(), out value));
+                return Value != null && (Value is int || int.TryParse(Value.ToString(), out value));
             }
         }
 
@@ -93,7 +93,7 @@ namespace DocoptNet
             if (IsList)
             {
                 var l = (from object v in AsList select v.ToString()).ToList();
-                return string.Format("[{0}]", String.Join(", ", l));
+                return string.Format("[{0}]", string.Join(", ", l));
             }
             return (Value ?? "").ToString();
         }
