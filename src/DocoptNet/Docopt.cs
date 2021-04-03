@@ -467,8 +467,8 @@ namespace DocoptNet
 
         internal static string[] ParseSection(string name, string source)
         {
-            var pattern = new Regex(@"^([^\r\n]*" + name + @"[^\r\n]*\r?\n?(?:[ \t].*?(?:\r?\n|$))*)",
-                RegexOptions.IgnoreCase | RegexOptions.Multiline);
+            var pattern = new Regex(@"^([^\r\n]*" + Regex.Escape(name) + @"[^\r\n]*\r?\n?(?:[ \t].*?(?:\r?\n|$))*)",
+                                    RegexOptions.IgnoreCase | RegexOptions.Multiline);
             return (from Match match in pattern.Matches(source) select match.Value.Trim()).ToArray();
         }
     }
