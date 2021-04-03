@@ -208,7 +208,7 @@ namespace DocoptNet
             var pu = section.Split(new char[0], StringSplitOptions.RemoveEmptyEntries);
             var join = new StringBuilder();
             join.Append("( ");
-            for (int i = 1; i < pu.Length; i++)
+            for (var i = 1; i < pu.Length; i++)
             {
                 var s = pu[i];
                 if (i > 1) join.Append(" ");
@@ -453,7 +453,7 @@ namespace DocoptNet
                 var optionsText = p.RightString;
                 var a = Regex.Split("\n" + optionsText, @"\r?\n[ \t]*(-\S+?)");
                 var split = new List<string>();
-                for (int i = 1; i < a.Length - 1; i += 2)
+                for (var i = 1; i < a.Length - 1; i += 2)
                 {
                     var s1 = a[i];
                     var s2 = a[i + 1];

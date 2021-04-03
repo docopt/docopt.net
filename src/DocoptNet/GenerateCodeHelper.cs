@@ -7,7 +7,7 @@ namespace DocoptNet
             // Start with uppercase char
             var makeUpperCase = true;
             var result = "";
-            for (int i = 0; i < s.Length; i++)
+            for (var i = 0; i < s.Length; i++)
             {
                 if(s[i] == '-')
                 {

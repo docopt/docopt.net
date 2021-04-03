@@ -70,7 +70,7 @@ namespace DocoptNet
         public void FixIdentities(ICollection<Pattern> uniq = null)
         {
             var listUniq = uniq ?? Flat().Distinct().ToList();
-            for (int i = 0; i < Children.Count; i++)
+            for (var i = 0; i < Children.Count; i++)
             {
                 var child = Children[i];
                 if (!child.HasChildren)
