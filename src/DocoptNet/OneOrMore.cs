@@ -22,10 +22,7 @@ namespace DocoptNet
             while (matched)
             {
                 // could it be that something didn't match but changed l or c?
-                var res = Children[0].Match(l, c);
-                matched = res.Matched;
-                l = res.Left;
-                c = res.Collected;
+                (matched, l, c) = Children[0].Match(l, c);
                 times += matched ? 1 : 0;
                 if (l_ != null && l_.Equals(l))
                     break;
