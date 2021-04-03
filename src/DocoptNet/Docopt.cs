@@ -204,7 +204,7 @@ namespace DocoptNet
 
         internal static string FormalUsage(string exitUsage)
         {
-            var section = new StringPartition(exitUsage, ":").RightString; // drop "usage:"
+            var (_, _, section) = exitUsage.Partition(":"); // drop "usage:"
             var pu = section.Split(new char[0], StringSplitOptions.RemoveEmptyEntries);
             var join = new StringBuilder();
             join.Append("( ");
@@ -393,10 +393,12 @@ namespace DocoptNet
         private static IEnumerable<Pattern> ParseLong(Tokens tokens, ICollection<Option> options)
         {
             // long ::= '--' chars [ ( ' ' | '=' ) chars ] ;
-            var p = new StringPartition(tokens.Move(), "=");
-            var longName = p.LeftString;
+            var (longName, eq, value) = tokens.Move().Partition("=") switch
+            {
+                (var ln, "", _) => (ln, false, null),
+                var (ln, _, vs) => (ln, true, new ValueObject(vs))
+            };
             Debug.Assert(longName.StartsWith("--"));
-            var value = (p.NoSeparatorFound) ? null : new ValueObject(p.RightString);
             var similar = options.Where(o => o.LongName == longName).ToList();
             if (tokens.ThrowsInputError && similar.Count == 0)
             {
@@ -413,7 +415,7 @@ namespace DocoptNet
             Option option = null;
             if (similar.Count < 1)
             {
-                var argCount = p.Separator == "=" ? 1 : 0;
+                var argCount = eq ? 1 : 0;
                 option = new Option(null, longName, argCount);
                 options.Add(option);
                 if (tokens.ThrowsInputError)
@@ -449,8 +451,7 @@ namespace DocoptNet
             {
                 // FIXME corner case "bla: options: --foo"
 
-                var p = new StringPartition(s, ":"); // get rid of "options:"
-                var optionsText = p.RightString;
+                var (_, _, optionsText) = s.Partition(":"); // get rid of "options:"
                 var a = Regex.Split("\n" + optionsText, @"\r?\n[ \t]*(-\S+?)");
                 var split = new List<string>();
                 for (var i = 1; i < a.Length - 1; i += 2)
