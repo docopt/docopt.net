@@ -96,7 +96,7 @@ namespace DocoptNet
 
                 foreach (var e in l)
                 {
-                    if (e is Argument || (e is Option && (e as Option).ArgCount > 0))
+                    if (e is Argument || e is Option { ArgCount: > 0 })
                     {
                         if (e.Value == null)
                         {
@@ -109,7 +109,7 @@ namespace DocoptNet
                                                  .Split(new char[0], StringSplitOptions.RemoveEmptyEntries));
                         }
                     }
-                    if (e is Command || (e is Option && (e as Option).ArgCount == 0))
+                    if (e is Command || e is Option { ArgCount: 0 })
                     {
                         e.Value = new ValueObject(0);
                     }
@@ -141,20 +141,20 @@ namespace DocoptNet
                 {
                     var child = children.First(c => parents.Contains(c.GetType()));
                     children.Remove(child);
-                    if (child is Either)
+                    if (child is Either either)
                     {
-                        foreach (var c in (child as Either).Children)
+                        foreach (var c in either.Children)
                         {
                             var l = new List<Pattern> {c};
                             l.AddRange(children);
                             groups.Add(l);
                         }
                     }
-                    else if (child is OneOrMore)
+                    else if (child is OneOrMore oneOrMore)
                     {
                         var l = new List<Pattern>();
-                        l.AddRange((child as OneOrMore).Children);
-                        l.AddRange((child as OneOrMore).Children); // add twice
+                        l.AddRange(oneOrMore.Children);
+                        l.AddRange(oneOrMore.Children); // add twice
                         l.AddRange(children);
                         groups.Add(l);
                     }

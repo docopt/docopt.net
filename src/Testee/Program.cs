@@ -24,12 +24,9 @@ namespace Testee
                     else if (argument.Value.IsList)
                     {
                         var l = new ArrayList();
-                        foreach (var v in argument.Value.AsList)
+                        foreach (var item in argument.Value.AsList)
                         {
-                            if (v is ValueObject)
-                                l.Add(((v) as ValueObject).Value);
-                            else
-                                l.Add(v);
+                            l.Add(item is ValueObject { Value: var v } ? v : item);
                         }
                         dict[argument.Key] = l;
                     }
