@@ -40,6 +40,10 @@
     <PackageTags>parser;command line argument;option library;syntax;shell;beautiful;posix;python;console;command-line;docopt</PackageTags>
   </PropertyGroup>
 
+  <PropertyGroup Condition="'$(TargetFramework)' == 'netstandard2.0'">
+    <DefineConstants>$(DefineConstants);RUNTIME_SERIALIZATION</DefineConstants>
+  </PropertyGroup>
+
   <ItemGroup>
     <Content Include="..\NuGet\Main.usage.txt">
       <PackagePath>content\Main.usage.txt</PackagePath>

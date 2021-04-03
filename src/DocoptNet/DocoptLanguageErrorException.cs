@@ -1,14 +1,8 @@
-using System;
-#if NET40
-using System.Runtime.Serialization;
-#endif
-
 namespace DocoptNet
 {
-#if NET40
-    [Serializable]
-#endif
-    public class DocoptLanguageErrorException : DocoptBaseException
+    using System;
+
+    public partial class DocoptLanguageErrorException : DocoptBaseException
     {
         //
         // For guidelines regarding the creation of new exception types, see
@@ -26,12 +20,24 @@ namespace DocoptNet
         public DocoptLanguageErrorException(string message, Exception inner) : base(message, inner)
         {
         }
-#if NET40
-        protected DocoptLanguageErrorException(
-            SerializationInfo info,
-            StreamingContext context) : base(info, context)
-        {
-        }
-#endif
     }
 }
+
+#if RUNTIME_SERIALIZATION
+
+namespace DocoptNet
+{
+    using System;
+    using System.Runtime.Serialization;
+
+    [Serializable]
+    partial class DocoptLanguageErrorException
+    {
+        protected DocoptLanguageErrorException(SerializationInfo info, StreamingContext context)
+            : base(info, context)
+        {
+        }
+    }
+}
+
+#endif
