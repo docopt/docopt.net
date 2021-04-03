@@ -1,4 +1,5 @@
 using NUnit.Framework;
+using static DocoptNet.Tests.PatternFactory;
 
 namespace DocoptNet.Tests
 {
@@ -10,9 +11,9 @@ namespace DocoptNet.Tests
         {
             Assert.AreEqual(
                 new MatchResult(true,
-                                new LeafPattern[0],
-                                new LeafPattern[] {new Command("c", new ValueObject(true))}),
-                new Command("c").Match(new LeafPattern[] {new Argument(null, new ValueObject("c"))})
+                                Leaves(),
+                                Leaves(new Command("c", new ValueObject(true)))),
+                new Command("c").Match(new Argument(null, new ValueObject("c")))
                 );
         }
 
@@ -21,9 +22,9 @@ namespace DocoptNet.Tests
         {
             Assert.AreEqual(
                 new MatchResult(false,
-                                new LeafPattern[] {new Option("-x")},
-                                new LeafPattern[0]),
-                new Command("c").Match(new LeafPattern[] {new Option("-x")})
+                                Leaves(new Option("-x")),
+                                Leaves()),
+                new Command("c").Match(new Option("-x"))
                 );
         }
 
@@ -32,9 +33,9 @@ namespace DocoptNet.Tests
         {
             Assert.AreEqual(
                 new MatchResult(true,
-                                new LeafPattern[] { new Option("-x"), new Option("-a") },
-                                new LeafPattern[] { new Command("c", new ValueObject(true)) }),
-                new Command("c").Match(new LeafPattern[] { new Option("-x"), new Option("-a"), new Argument(null, new ValueObject("c"))   })
+                                Leaves(new Option("-x"), new Option("-a") ),
+                                Leaves(new Command("c", new ValueObject(true)) )),
+                new Command("c").Match(new Option("-x"), new Option("-a"), new Argument(null, new ValueObject("c")))
                 );
         }
 
@@ -43,9 +44,9 @@ namespace DocoptNet.Tests
         {
             Assert.AreEqual(
                 new MatchResult(true,
-                                new LeafPattern[0],
-                                new LeafPattern[] { new Command("rm", new ValueObject(true)) }),
-                new Either(new Command("add"), new Command("rm")).Match(new LeafPattern[] { new Argument(null, new ValueObject("rm")) })
+                                Leaves(),
+                                Leaves(new Command("rm", new ValueObject(true)) )),
+                new Either(new Command("add"), new Command("rm")).Match(new Argument(null, new ValueObject("rm")))
                 );
         }
 

@@ -1,4 +1,5 @@
 using NUnit.Framework;
+using static DocoptNet.Tests.PatternFactory;
 
 namespace DocoptNet.Tests
 {
@@ -10,9 +11,9 @@ namespace DocoptNet.Tests
         {
             Assert.AreEqual(
                 new MatchResult(true,
-                                new LeafPattern[0],
-                                new LeafPattern[] {new Option("-a")}),
-                new Optional(new Option("-a")).Match(new LeafPattern[] {new Option("-a")})
+                                Leaves(),
+                                Leaves(new Option("-a"))),
+                new Optional(new Option("-a")).Match(new Option("-a"))
                 );
         }
 
@@ -21,9 +22,9 @@ namespace DocoptNet.Tests
         {
             Assert.AreEqual(
                 new MatchResult(true,
-                                new LeafPattern[0],
-                                new LeafPattern[0]),
-                new Optional(new Option("-a")).Match(new LeafPattern[0])
+                                Leaves(),
+                                Leaves()),
+                new Optional(new Option("-a")).Match()
                 );
         }
 
@@ -32,10 +33,10 @@ namespace DocoptNet.Tests
         {
             Assert.AreEqual(
                 new MatchResult(true,
-                                new LeafPattern[] {new Option("-x")},
-                                new LeafPattern[0]
+                                Leaves(new Option("-x")),
+                                Leaves()
                     ),
-                new Optional(new Option("-a")).Match(new LeafPattern[] {new Option("-x")})
+                new Optional(new Option("-a")).Match(new Option("-x"))
                 );
         }
 
@@ -44,9 +45,9 @@ namespace DocoptNet.Tests
         {
             Assert.AreEqual(
                 new MatchResult(true,
-                                new LeafPattern[0],
-                                new LeafPattern[] {new Option("-a")}),
-                new Optional(new Option("-a"), new Option("-b")).Match(new LeafPattern[] {new Option("-a")})
+                                Leaves(),
+                                Leaves(new Option("-a"))),
+                new Optional(new Option("-a"), new Option("-b")).Match(new Option("-a"))
                 );
         }
 
@@ -55,9 +56,9 @@ namespace DocoptNet.Tests
         {
             Assert.AreEqual(
                 new MatchResult(true,
-                                new LeafPattern[] {new Option("-x")},
-                                new LeafPattern[0]),
-                new Optional(new Option("-a"), new Option("-b")).Match(new LeafPattern[] {new Option("-x")})
+                                Leaves(new Option("-x")),
+                                Leaves()),
+                new Optional(new Option("-a"), new Option("-b")).Match(new Option("-x"))
                 );
         }
 
@@ -66,9 +67,9 @@ namespace DocoptNet.Tests
         {
             Assert.AreEqual(
                 new MatchResult(true,
-                                new LeafPattern[0],
-                                new LeafPattern[] { new Argument("N", new ValueObject(9)) }),
-                new Optional(new Argument("N")).Match(new LeafPattern[] { new Argument(null, new ValueObject(9))  })
+                                Leaves(),
+                                Leaves(new Argument("N", new ValueObject(9)) )),
+                new Optional(new Argument("N")).Match(new Argument(null, new ValueObject(9)))
                 );
         }
 
@@ -77,10 +78,9 @@ namespace DocoptNet.Tests
         {
             Assert.AreEqual(
                 new MatchResult(true,
-                                new LeafPattern[] { new Option("-x") },
-                                new LeafPattern[] { new Option("-a"), new Option("-b") }),
-                new Optional(new Option("-a"), new Option("-b")).Match(
-                    new LeafPattern[] { new Option("-b"), new Option("-x"), new Option("-a") })
+                                Leaves(new Option("-x") ),
+                                Leaves(new Option("-a"), new Option("-b") )),
+                new Optional(new Option("-a"), new Option("-b")).Match(new Option("-b"), new Option("-x"), new Option("-a"))
                 );
         }
     }
