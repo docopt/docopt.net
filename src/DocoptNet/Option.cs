@@ -67,7 +67,7 @@ namespace DocoptNet
 
         public static Option Parse(string optionDescription)
         {
-            if (optionDescription == null) throw new ArgumentNullException("optionDescription");
+            if (optionDescription == null) throw new ArgumentNullException(nameof(optionDescription));
 
             string shortName = null;
             string longName = null;

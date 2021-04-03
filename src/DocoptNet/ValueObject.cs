@@ -100,7 +100,7 @@ namespace DocoptNet
 
         internal void Add(ValueObject increment)
         {
-            if (increment == null) throw new ArgumentNullException("increment");
+            if (increment == null) throw new ArgumentNullException(nameof(increment));
 
             if (increment.Value == null) throw new InvalidOperationException("increment.Value is null");
 

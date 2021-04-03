@@ -28,7 +28,7 @@ namespace DocoptNet
 
         public override ICollection<Pattern> Flat(params Type[] types)
         {
-            if (types == null) throw new ArgumentNullException("types");
+            if (types == null) throw new ArgumentNullException(nameof(types));
             if (types.Length == 0 || types.Contains(this.GetType()))
             {
                 return new Pattern[] { this };

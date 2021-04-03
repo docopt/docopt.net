@@ -33,7 +33,7 @@ namespace DocoptNet
 
         protected Node(string name, ValueType valueType)
         {
-            if (name == null) throw new ArgumentNullException("name");
+            if (name == null) throw new ArgumentNullException(nameof(name));
 
             this.Name = name;
             this.ValueType = valueType;
