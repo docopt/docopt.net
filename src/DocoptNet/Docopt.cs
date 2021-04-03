@@ -222,7 +222,7 @@ namespace DocoptNet
             var tokens = Tokens.FromPattern(source);
             var result = ParseExpr(tokens, options);
             if (tokens.Current() != null)
-                throw tokens.CreateException("unexpected ending: " + String.Join(" ", tokens.ToArray()));
+                throw tokens.CreateException("unexpected ending: " + string.Join(" ", tokens.ToArray()));
             return new Required(result.ToArray());
         }
 
@@ -319,7 +319,7 @@ namespace DocoptNet
                     {
                         return ParseShorts(tokens, options);
                     }
-                    if ((token.StartsWith("<") && token.EndsWith(">")) || token.All(c => Char.IsUpper(c)))
+                    if ((token.StartsWith("<") && token.EndsWith(">")) || token.All(c => char.IsUpper(c)))
                     {
                         result.Add(new Argument(tokens.Move()));
                     }
@@ -403,7 +403,7 @@ namespace DocoptNet
             {
                 // If not exact match
                 similar =
-                    options.Where(o => !String.IsNullOrEmpty(o.LongName) && o.LongName.StartsWith(longName)).ToList();
+                    options.Where(o => !string.IsNullOrEmpty(o.LongName) && o.LongName.StartsWith(longName)).ToList();
             }
             if (similar.Count > 1)
             {

@@ -35,7 +35,7 @@ namespace DocoptNet
 
         public override string ToString()
         {
-            return string.Format("{0}({1})", GetType().Name, String.Join(", ", Children.Select(c => c == null ? "None" : c.ToString())));
+            return string.Format("{0}({1})", GetType().Name, string.Join(", ", Children.Select(c => c == null ? "None" : c.ToString())));
         }
     }
 }
