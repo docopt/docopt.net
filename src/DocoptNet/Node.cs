@@ -21,16 +21,6 @@ namespace DocoptNet
 
     public abstract class Node : IEquatable<Node>
     {
-        private class EmptyNode : Node
-        {
-            public EmptyNode() : base("", (ValueType)0) { }
-        }
-
-        /// <summary>
-        /// Indicates an empty or non-existant node.
-        /// </summary>
-        public static readonly Node Empty = new EmptyNode();
-
         protected Node(string name, ValueType valueType)
         {
             if (name == null) throw new ArgumentNullException(nameof(name));
