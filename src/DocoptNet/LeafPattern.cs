@@ -36,23 +36,22 @@ namespace DocoptNet
             return new Pattern[] {};
         }
 
-        public virtual SingleMatchResult SingleMatch(IList<Pattern> patterns)
+        public virtual (int Index, Pattern Match) SingleMatch(IList<Pattern> patterns)
         {
-            return new SingleMatchResult();
+            return default;
         }
 
         public override MatchResult Match(IList<Pattern> left, IEnumerable<Pattern> collected = null)
         {
             var coll = collected ?? new List<Pattern>();
-            var sresult = SingleMatch(left);
-            var match = sresult.Match;
+            var (index, match) = SingleMatch(left);
             if (match == null)
             {
                 return new MatchResult(false, left, coll);
             }
             var left_ = new List<Pattern>();
-            left_.AddRange(left.Take(sresult.Position));
-            left_.AddRange(left.Skip(sresult.Position + 1));
+            left_.AddRange(left.Take(index));
+            left_.AddRange(left.Skip(index + 1));
             var sameName = coll.Where(a => a.Name == Name).ToList();
             if (Value != null && (Value.IsList || Value.IsOfTypeInt))
             {
@@ -80,21 +79,5 @@ namespace DocoptNet
         {
             return string.Format("{0}({1}, {2})", GetType().Name, Name, Value);
         }
-    }
-
-    internal class SingleMatchResult
-    {
-        public SingleMatchResult(int index, Pattern match)
-        {
-            Position = index;
-            Match = match;
-        }
-
-        public SingleMatchResult()
-        {
-        }
-
-        public int Position { get; set; }
-        public Pattern Match { get; set; }
     }
 }

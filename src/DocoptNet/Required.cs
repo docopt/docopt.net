@@ -17,10 +17,9 @@ namespace DocoptNet
             var c = coll;
             foreach (var pattern in Children)
             {
-                var res = pattern.Match(l, c);
-                l = res.Left;
-                c = res.Collected;
-                if (!res.Matched)
+                bool matched;
+                (matched, l, c) = pattern.Match(l, c);
+                if (!matched)
                     return new MatchResult(false, left, coll);
             }
             return new MatchResult(true, l, c);

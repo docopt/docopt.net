@@ -9,19 +9,19 @@ namespace DocoptNet.Tests
         [TestCase("=right", "", "=", "right")]
         public void Should_partition_string(string input, string left, string separator, string right)
         {
-            var p = new StringPartition(input, separator);
-            Assert.AreEqual(left, p.LeftString);
-            Assert.AreEqual(separator, p.Separator);
-            Assert.AreEqual(right, p.RightString);
+            var (actualLeft, actualSeparator, actualRight) = input.Partition(separator);
+            Assert.AreEqual(left, actualLeft);
+            Assert.AreEqual(separator, actualSeparator);
+            Assert.AreEqual(right, actualRight);
         }
 
         [Test]
         public void Should_partition_string_no_sep_match()
         {
-            var p = new StringPartition("left", "=");
-            Assert.AreEqual("left", p.LeftString);
-            Assert.AreEqual("", p.Separator);
-            Assert.AreEqual("", p.RightString);
+            var (actualLeft, actualSeparator, actualRight) = "left".Partition("=");
+            Assert.AreEqual("left", actualLeft);
+            Assert.AreEqual("", actualSeparator);
+            Assert.AreEqual("", actualRight);
         }
     }
 }

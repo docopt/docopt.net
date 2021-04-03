@@ -24,14 +24,14 @@ namespace DocoptNet
         {
         }
 
-        public override SingleMatchResult SingleMatch(IList<Pattern> left)
+        public override (int Index, Pattern Match) SingleMatch(IList<Pattern> left)
         {
             for (var i = 0; i < left.Count; i++)
             {
                 if (left[i] is Argument)
-                    return new SingleMatchResult(i, new Argument(Name, left[i].Value));
+                    return (i, new Argument(Name, left[i].Value));
             }
-            return new SingleMatchResult();
+            return default;
         }
 
         public override Node ToNode()

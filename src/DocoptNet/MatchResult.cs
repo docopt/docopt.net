@@ -18,8 +18,6 @@ namespace DocoptNet
             Collected = collected;
         }
 
-        public bool LeftIsEmpty { get { return Left.Count == 0; } }
-
         public override bool Equals(object obj)
         {
             //
@@ -49,6 +47,11 @@ namespace DocoptNet
                 Left == null ? "" : string.Join(", ", Left.Select(p => p.ToString())),
                 Collected == null ? "" : string.Join(", ", Collected.Select(p => p.ToString()))
             );
+        }
+
+        public void Deconstruct(out bool matched, out IList<Pattern> left, out IEnumerable<Pattern> collected)
+        {
+            (matched, left, collected) = (Matched, Left, Collected);
         }
     }
 }
