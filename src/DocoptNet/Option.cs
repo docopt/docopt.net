@@ -48,14 +48,14 @@ namespace DocoptNet
             return string.Format("public string {0} {{ get {{ return null == _args[\"{1}\"] ? {2} : _args[\"{1}\"].ToString(); }} }}", s, Name, defaultValue);
         }
 
-        public override SingleMatchResult SingleMatch(IList<Pattern> left)
+        public override (int Index, Pattern Match) SingleMatch(IList<Pattern> left)
         {
             for (var i = 0; i < left.Count; i++)
             {
                 if (left[i].Name == Name)
-                    return new SingleMatchResult(i, left[i]);
+                    return (i, left[i]);
             }
-            return new SingleMatchResult();
+            return default;
         }
 
         public override string ToString()

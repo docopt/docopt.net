@@ -8,7 +8,7 @@ namespace DocoptNet
         {
         }
 
-        public override SingleMatchResult SingleMatch(IList<Pattern> left)
+        public override (int Index, Pattern Match) SingleMatch(IList<Pattern> left)
         {
             for (var i = 0; i < left.Count; i++)
             {
@@ -16,11 +16,11 @@ namespace DocoptNet
                 if (pattern is Argument)
                 {
                     if (pattern.Value.ToString() == Name)
-                        return new SingleMatchResult(i, new Command(Name, new ValueObject(true)));
+                        return (i, new Command(Name, new ValueObject(true)));
                     break;
                 }
             }
-            return new SingleMatchResult();
+            return default;
         }
 
         public override Node ToNode() { return new CommandNode(this.Name); }
