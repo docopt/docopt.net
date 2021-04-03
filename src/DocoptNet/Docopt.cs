@@ -55,7 +55,7 @@ namespace DocoptNet
                 if (pattern.Fix().Match(arguments) is (true, { Count: 0 }, _) res)
                 {
                     var dict = new Dictionary<string, ValueObject>();
-                    foreach (var p in pattern.Flat())
+                    foreach (var p in pattern.Flat().OfType<LeafPattern>())
                     {
                         dict[p.Name] = p.Value;
                     }
@@ -132,7 +132,7 @@ namespace DocoptNet
             return pattern.Fix().Flat();
         }
 
-        private void Extras(bool help, object version, ICollection<Pattern> options, string doc)
+        private void Extras(bool help, object version, ICollection<LeafPattern> options, string doc)
         {
             if (help && options.Any(o => (o.Name == "-h" || o.Name == "--help") && !o.Value.IsNullOrEmpty))
             {
@@ -163,7 +163,7 @@ namespace DocoptNet
         /// <param name="options"></param>
         /// <param name="optionsFirst"></param>
         /// <returns></returns>
-        internal static IList<Pattern> ParseArgv(Tokens tokens, ICollection<Option> options,
+        internal static IList<LeafPattern> ParseArgv(Tokens tokens, ICollection<Option> options,
             bool optionsFirst = false)
         {
             //    If options_first:
@@ -171,7 +171,7 @@ namespace DocoptNet
             //    else:
             //        argv ::= [ long | shorts | argument ]* [ '--' [ argument ]* ] ;
 
-            var parsed = new List<Pattern>();
+            var parsed = new List<LeafPattern>();
             while (tokens.Current() != null)
             {
                 if (tokens.Current() == "--")
@@ -332,14 +332,14 @@ namespace DocoptNet
             return result;
         }
 
-        private static IEnumerable<Pattern> ParseShorts(Tokens tokens, ICollection<Option> options)
+        private static IEnumerable<Option> ParseShorts(Tokens tokens, ICollection<Option> options)
         {
             // shorts ::= '-' ( chars )* [ [ ' ' ] chars ] ;
 
             var token = tokens.Move();
             Debug.Assert(token.StartsWith("-") && !token.StartsWith("--"));
             var left = token.TrimStart(new[] {'-'});
-            var parsed = new List<Pattern>();
+            var parsed = new List<Option>();
             while (left != "")
             {
                 var shortName = "-" + left[0];
@@ -389,7 +389,7 @@ namespace DocoptNet
             return parsed;
         }
 
-        private static IEnumerable<Pattern> ParseLong(Tokens tokens, ICollection<Option> options)
+        private static IEnumerable<Option> ParseLong(Tokens tokens, ICollection<Option> options)
         {
             // long ::= '--' chars [ ( ' ' | '=' ) chars ] ;
             var (longName, eq, value) = tokens.Move().Partition("=") switch

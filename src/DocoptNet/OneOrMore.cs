@@ -10,13 +10,14 @@ namespace DocoptNet
         {
         }
 
-        public override MatchResult Match(IList<Pattern> left, IEnumerable<Pattern> collected = null)
+        public override MatchResult Match(IList<LeafPattern> left,
+                                          IEnumerable<LeafPattern> collected = null)
         {
             Debug.Assert(Children.Count == 1);
-            var coll = collected ?? new List<Pattern>();
+            var coll = collected ?? new List<LeafPattern>();
             var l = left;
             var c = coll;
-            IList<Pattern> l_ = null;
+            IList<LeafPattern> l_ = null;
             var matched = true;
             var times = 0;
             while (matched)

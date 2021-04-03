@@ -10,9 +10,9 @@ namespace DocoptNet.Tests
         {
             Assert.AreEqual(
                 new MatchResult(true,
-                                new Pattern[0],
-                                new Pattern[] {new Command("c", new ValueObject(true))}),
-                new Command("c").Match(new Pattern[] {new Argument(null, new ValueObject("c"))})
+                                new LeafPattern[0],
+                                new LeafPattern[] {new Command("c", new ValueObject(true))}),
+                new Command("c").Match(new LeafPattern[] {new Argument(null, new ValueObject("c"))})
                 );
         }
 
@@ -21,9 +21,9 @@ namespace DocoptNet.Tests
         {
             Assert.AreEqual(
                 new MatchResult(false,
-                                new Pattern[] {new Option("-x")},
-                                new Pattern[0]),
-                new Command("c").Match(new Pattern[] {new Option("-x")})
+                                new LeafPattern[] {new Option("-x")},
+                                new LeafPattern[0]),
+                new Command("c").Match(new LeafPattern[] {new Option("-x")})
                 );
         }
 
@@ -32,9 +32,9 @@ namespace DocoptNet.Tests
         {
             Assert.AreEqual(
                 new MatchResult(true,
-                                new Pattern[] { new Option("-x"), new Option("-a") },
-                                new Pattern[] { new Command("c", new ValueObject(true)) }),
-                new Command("c").Match(new Pattern[] { new Option("-x"), new Option("-a"), new Argument(null, new ValueObject("c"))   })
+                                new LeafPattern[] { new Option("-x"), new Option("-a") },
+                                new LeafPattern[] { new Command("c", new ValueObject(true)) }),
+                new Command("c").Match(new LeafPattern[] { new Option("-x"), new Option("-a"), new Argument(null, new ValueObject("c"))   })
                 );
         }
 
@@ -43,9 +43,9 @@ namespace DocoptNet.Tests
         {
             Assert.AreEqual(
                 new MatchResult(true,
-                                new Pattern[0],
-                                new Pattern[] { new Command("rm", new ValueObject(true)) }),
-                new Either(new Command("add"), new Command("rm")).Match(new Pattern[] { new Argument(null, new ValueObject("rm")) })
+                                new LeafPattern[0],
+                                new LeafPattern[] { new Command("rm", new ValueObject(true)) }),
+                new Either(new Command("add"), new Command("rm")).Match(new LeafPattern[] { new Argument(null, new ValueObject("rm")) })
                 );
         }
 

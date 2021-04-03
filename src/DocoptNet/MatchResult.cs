@@ -6,12 +6,12 @@ namespace DocoptNet
     internal class MatchResult
     {
         public bool Matched;
-        public IList<Pattern> Left;
-        public IEnumerable<Pattern> Collected;
+        public IList<LeafPattern> Left;
+        public IEnumerable<LeafPattern> Collected;
 
         public MatchResult() { }
 
-        public MatchResult(bool matched, IList<Pattern> left, IEnumerable<Pattern> collected)
+        public MatchResult(bool matched, IList<LeafPattern> left, IEnumerable<LeafPattern> collected)
         {
             Matched = matched;
             Left = left;
@@ -49,7 +49,7 @@ namespace DocoptNet
             );
         }
 
-        public void Deconstruct(out bool matched, out IList<Pattern> left, out IEnumerable<Pattern> collected)
+        public void Deconstruct(out bool matched, out IList<LeafPattern> left, out IEnumerable<LeafPattern> collected)
         {
             (matched, left, collected) = (Matched, Left, Collected);
         }

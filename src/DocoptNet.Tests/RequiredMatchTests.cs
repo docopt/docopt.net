@@ -10,9 +10,9 @@ namespace DocoptNet.Tests
         {
             Assert.AreEqual(
                 new MatchResult(true,
-                                new Pattern[0],
-                                new Pattern[] {new Option("-a")}),
-                new Required(new Option("-a")).Match(new Pattern[] {new Option("-a")})
+                                new LeafPattern[0],
+                                new LeafPattern[] {new Option("-a")}),
+                new Required(new Option("-a")).Match(new LeafPattern[] {new Option("-a")})
                 );
         }
 
@@ -21,9 +21,9 @@ namespace DocoptNet.Tests
         {
             Assert.AreEqual(
                 new MatchResult(false,
-                                new Pattern[0],
-                                new Pattern[0]),
-                new Required(new Option("-a")).Match(new Pattern[0])
+                                new LeafPattern[0],
+                                new LeafPattern[0]),
+                new Required(new Option("-a")).Match(new LeafPattern[0])
                 );
         }
 
@@ -32,10 +32,10 @@ namespace DocoptNet.Tests
         {
             Assert.AreEqual(
                 new MatchResult(false,
-                                new Pattern[] {new Option("-x")},
-                                new Pattern[0]
+                                new LeafPattern[] {new Option("-x")},
+                                new LeafPattern[0]
                     ),
-                new Required(new Option("-a")).Match(new Pattern[] {new Option("-x")})
+                new Required(new Option("-a")).Match(new LeafPattern[] {new Option("-x")})
                 );
         }
 
@@ -44,10 +44,10 @@ namespace DocoptNet.Tests
         {
             Assert.AreEqual(
                 new MatchResult(false,
-                                new Pattern[] { new Option("-a") },
-                                new Pattern[0]
+                                new LeafPattern[] { new Option("-a") },
+                                new LeafPattern[0]
                     ),
-                new Required(new Option("-a"), new Option("-b")).Match(new Pattern[] { new Option("-a") })
+                new Required(new Option("-a"), new Option("-b")).Match(new LeafPattern[] { new Option("-a") })
                 );
         }
     }

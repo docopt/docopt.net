@@ -8,8 +8,6 @@ namespace DocoptNet
 {
     internal abstract class Pattern
     {
-        public ValueObject Value { get; set; }
-
         public virtual string Name
         {
             get { return ToString(); }
@@ -94,7 +92,7 @@ namespace DocoptNet
                 var cx = aCase.ToList();
                 var l = aCase.Where(e => cx.Count(c2 => c2.Equals(e)) > 1).ToList();
 
-                foreach (var e in l)
+                foreach (var e in l.OfType<LeafPattern>())
                 {
                     if (e is Argument || e is Option { ArgCount: > 0 })
                     {
@@ -175,7 +173,8 @@ namespace DocoptNet
             return new Either(result.Select(r => new Required(r.ToArray()) as Pattern).ToArray());
         }
 
-        public virtual MatchResult Match(IList<Pattern> left, IEnumerable<Pattern> collected = null)
+        public virtual MatchResult Match(IList<LeafPattern> left,
+                                         IEnumerable<LeafPattern> collected = null)
         {
             return new MatchResult();
         }
