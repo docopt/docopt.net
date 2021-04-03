@@ -62,7 +62,7 @@ namespace Testee
             Stream inputStream = Console.OpenStandardInput();
             var bytes = new byte[100];
             var sb = new StringBuilder();
-            int outputLength = inputStream.Read(bytes, 0, 100);
+            var outputLength = inputStream.Read(bytes, 0, 100);
             while (outputLength > 0)
             {
                 char[] chars = Encoding.UTF8.GetChars(bytes, 0, outputLength);
