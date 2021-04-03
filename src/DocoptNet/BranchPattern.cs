@@ -12,7 +12,7 @@ namespace DocoptNet
 
         public BranchPattern(params Pattern[] children)
         {
-            if (children == null) throw new ArgumentNullException("children");
+            if (children == null) throw new ArgumentNullException(nameof(children));
             Children = children;
         }
 
@@ -25,7 +25,7 @@ namespace DocoptNet
 
         public override ICollection<Pattern> Flat(params Type[] types)
         {
-            if (types == null) throw new ArgumentNullException("types");
+            if (types == null) throw new ArgumentNullException(nameof(types));
             if (types.Contains(this.GetType()))
             {
                 return new Pattern[] { this };
