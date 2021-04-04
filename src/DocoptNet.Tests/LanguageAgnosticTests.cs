@@ -1,16 +1,24 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using NUnit.Framework;
+using System.Diagnostics;
+using System.IO;
+using System.Linq;
+using System.Text.RegularExpressions;
 using Newtonsoft.Json;
+using NUnit.Framework;
 
 namespace DocoptNet.Tests
 {
     [TestFixture]
-    public partial class LanguageAgnosticTests
+    public class LanguageAgnosticTests
     {
-        public string Docopt(string doc, string cmdLine)
+        [Test]
+        [TestCaseSource(nameof(Docopt), new object[] { "testcases.docopt" })]
+        public void Test(string doc, string cmdLine, string expected)
         {
+            string actual;
+
             try
             {
                 var arguments = new Docopt().Apply(doc, cmdLine);
@@ -31,27 +39,50 @@ namespace DocoptNet.Tests
                     else
                         dict[argument.Key] = argument.Value.Value;
                 }
-                return JsonConvert.SerializeObject(dict);
+                actual = JsonConvert.SerializeObject(dict);
             }
             catch (Exception)
             {
-                return "\"user-error\"";
+                actual = "\"user-error\"";
             }
-        }
 
-        public void CheckResult(string expectedJson, string resultJson)
-        {
-            if (expectedJson.StartsWith("{"))
+            if (expected.StartsWith("{"))
             {
-                var expectedDict = JsonConvert.DeserializeObject<Dictionary<string, dynamic>>(expectedJson);
-                var actualDict = JsonConvert.DeserializeObject<Dictionary<string, dynamic>>(resultJson);
+                var expectedDict = JsonConvert.DeserializeObject<Dictionary<string, object>>(expected);
+                var actualDict = JsonConvert.DeserializeObject<Dictionary<string, object>>(actual);
                 Assert.AreEqual(expectedDict, actualDict);
             }
             else
             {
-                var expected = JsonConvert.DeserializeObject(expectedJson).ToString();
-                var actual = JsonConvert.DeserializeObject(resultJson).ToString();
-                Assert.AreEqual(expected, actual);
+                var expected1 = JsonConvert.DeserializeObject(expected).ToString();
+                var actual1 = JsonConvert.DeserializeObject(actual).ToString();
+                Assert.AreEqual(expected1, actual1);
+            }
+        }
+
+        /// <remarks>
+        /// If <paramref name="path"/> is a relative path then it is resolved against
+        /// <seealso cref="TestContext.WorkDirectory"/>.
+        /// </remarks>
+
+        static IEnumerable<TestCaseData> Docopt(string path)
+        {
+            // quick and dirty "*.docopt" to test cases conversion
+
+            var fixtures = File.ReadAllText(Path.Combine(TestContext.CurrentContext.WorkDirectory, path));
+            fixtures = Regex.Replace(fixtures, @"#.*$", string.Empty, RegexOptions.Multiline);
+            foreach (var fixture in Regex.Split(fixtures, @"r""{3}"))
+            {
+                const string quote = "\"";
+                var (doc, _, body) = fixture.Partition(quote + quote + quote);
+                foreach (var @case in body.Split('$').Skip(1))
+                {
+                    var (argv, _, expect) = @case.Trim().Partition("\n");
+                    string prog;
+                    (prog, _, argv) = argv.Trim().Partition(" ");
+                    Debug.Assert(prog == "prog", prog);
+                    yield return new TestCaseData(doc, argv, expect);
+                }
             }
         }
     }
