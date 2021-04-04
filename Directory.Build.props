@@ -4,6 +4,7 @@
     <LangVersion>9</LangVersion>
     <Nullable>warnings</Nullable>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <IsPackable>false</IsPackable>
   </PropertyGroup>
 
 </Project>
