@@ -1,8 +1,8 @@
-using System.Collections;
-using NUnit.Framework;
-
 namespace DocoptNet.Tests
 {
+    using System.Collections;
+    using NUnit.Framework;
+
     [TestFixture]
     public class PatternFixRepeatingArgumentsTests
     {

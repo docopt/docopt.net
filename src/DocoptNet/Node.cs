@@ -1,7 +1,7 @@
-using System;
-
 namespace DocoptNet
 {
+    using System;
+
     public enum ValueType { Bool, List, String, }
 
     public class ArgumentNode : Node

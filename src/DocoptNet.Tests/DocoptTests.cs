@@ -1,9 +1,9 @@
-using System.Collections.Generic;
-using System.Linq;
-using NUnit.Framework;
-
 namespace DocoptNet.Tests
 {
+    using System.Collections.Generic;
+    using System.Linq;
+    using NUnit.Framework;
+
     [TestFixture]
     public class DocoptTests
     {

@@ -1,8 +1,8 @@
-using System.Linq;
-using NUnit.Framework;
-
 namespace DocoptNet.Tests
 {
+    using System.Linq;
+    using NUnit.Framework;
+
     [TestFixture]
     public class UsageTests
     {

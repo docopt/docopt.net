@@ -1,8 +1,8 @@
-using System;
-using NUnit.Framework;
-
 namespace DocoptNet.Tests
 {
+    using System;
+    using NUnit.Framework;
+
     /// <summary>
     ///     Set of tests to validate assumptions about the BCL or other APIs.
     /// </summary>
