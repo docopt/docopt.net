@@ -1,4 +1,5 @@
 using NUnit.Framework;
+using static DocoptNet.Tests.PatternFactory;
 
 namespace DocoptNet.Tests
 {
@@ -10,9 +11,9 @@ namespace DocoptNet.Tests
         {
             Assert.AreEqual(
                 new MatchResult(true,
-                                new Pattern[0],
-                                new Pattern[] {new Argument("N", new ValueObject(9))}),
-                new OneOrMore(new Argument("N")).Match(new Pattern[] {new Argument(null, new ValueObject(9))})
+                                Leaves(),
+                                Leaves(new Argument("N", new ValueObject(9)))),
+                new OneOrMore(new Argument("N")).Match(new Argument(null, new ValueObject(9)))
                 );
         }
 
@@ -21,9 +22,9 @@ namespace DocoptNet.Tests
         {
             Assert.AreEqual(
                 new MatchResult(false,
-                                new Pattern[0],
-                                new Pattern[0]),
-                new OneOrMore(new Argument("N")).Match(new Pattern[0])
+                                Leaves(),
+                                Leaves()),
+                new OneOrMore(new Argument("N")).Match()
                 );
         }
 
@@ -32,10 +33,10 @@ namespace DocoptNet.Tests
         {
             Assert.AreEqual(
                 new MatchResult(false,
-                                new Pattern[] {new Option("-x")},
-                                new Pattern[0]
+                                Leaves(new Option("-x")),
+                                Leaves()
                     ),
-                new OneOrMore(new Argument("N")).Match(new Pattern[] {new Option("-x")})
+                new OneOrMore(new Argument("N")).Match(new Option("-x"))
                 );
         }
 
@@ -44,11 +45,9 @@ namespace DocoptNet.Tests
         {
             Assert.AreEqual(
                 new MatchResult(true,
-                                new Pattern[0],
-                                new Pattern[]
-                                    {new Argument("N", new ValueObject(9)), new Argument("N", new ValueObject(8))}),
-                new OneOrMore(new Argument("N")).Match(new Pattern[]
-                    {new Argument(null, new ValueObject(9)), new Argument(null, new ValueObject(8))})
+                                Leaves(),
+                                Leaves(new Argument("N", new ValueObject(9)), new Argument("N", new ValueObject(8)))),
+                new OneOrMore(new Argument("N")).Match(new Argument(null, new ValueObject(9)), new Argument(null, new ValueObject(8)))
                 );
         }
 
@@ -57,11 +56,9 @@ namespace DocoptNet.Tests
         {
             Assert.AreEqual(
                 new MatchResult(true,
-                                new Pattern[] {new Option("-x")},
-                                new Pattern[]
-                                    {new Argument("N", new ValueObject(9)), new Argument("N", new ValueObject(8))}),
-                new OneOrMore(new Argument("N")).Match(new Pattern[]
-                    {new Argument(null, new ValueObject(9)), new Option("-x"), new Argument(null, new ValueObject(8))})
+                                Leaves(new Option("-x")),
+                                Leaves(new Argument("N", new ValueObject(9)), new Argument("N", new ValueObject(8)))),
+                new OneOrMore(new Argument("N")).Match(new Argument(null, new ValueObject(9)), new Option("-x"), new Argument(null, new ValueObject(8)))
                 );
         }
 
@@ -70,11 +67,10 @@ namespace DocoptNet.Tests
         {
             Assert.AreEqual(
                 new MatchResult(true,
-                                new Pattern[] {new Argument(null, new ValueObject(8))},
-                                new Pattern[] {new Option("-a"), new Option("-a")}
+                                Leaves(new Argument(null, new ValueObject(8))),
+                                Leaves(new Option("-a"), new Option("-a"))
                     ),
-                new OneOrMore(new Option("-a")).Match(new Pattern[]
-                    {new Option("-a"), new Argument(null, new ValueObject(8)), new Option("-a")})
+                new OneOrMore(new Option("-a")).Match(new Option("-a"), new Argument(null, new ValueObject(8)), new Option("-a"))
                 );
         }
 
@@ -83,10 +79,9 @@ namespace DocoptNet.Tests
         {
             Assert.AreEqual(
                 new MatchResult(false,
-                                new Pattern[] {new Argument(null, new ValueObject(98)), new Option("-x")},
-                                new Pattern[0]),
-                new OneOrMore(new Option("-a")).Match(new Pattern[]
-                    {new Argument(null, new ValueObject(98)), new Option("-x")})
+                                Leaves(new Argument(null, new ValueObject(98)), new Option("-x")),
+                                Leaves()),
+                new OneOrMore(new Option("-a")).Match(new Argument(null, new ValueObject(98)), new Option("-x"))
                 );
         }
 
@@ -95,19 +90,11 @@ namespace DocoptNet.Tests
         {
             Assert.AreEqual(
                 new MatchResult(true,
-                                new Pattern[] {new Option("-x")},
-                                new Pattern[]
-                                    {
-                                        new Option("-a"), new Argument("N", new ValueObject(1)),
-                                        new Option("-a"), new Argument("N", new ValueObject(2))
-                                    }
+                                Leaves(new Option("-x")),
+                                Leaves(new Option("-a"), new Argument("N", new ValueObject(1)),
+                                       new Option("-a"), new Argument("N", new ValueObject(2)))
                     ),
-                new OneOrMore(new Required(new Option("-a"), new Argument("N"))).Match(new Pattern[]
-                    {
-                        new Option("-a"), new Argument(null, new ValueObject(1)),
-                        new Option("-x"),
-                        new Option("-a"), new Argument(null, new ValueObject(2))
-                    })
+                new OneOrMore(new Required(new Option("-a"), new Argument("N"))).Match(new Option("-a"), new Argument(null, new ValueObject(1)), new Option("-x"), new Option("-a"), new Argument(null, new ValueObject(2)))
                 );
         }
 
@@ -116,11 +103,10 @@ namespace DocoptNet.Tests
         {
             Assert.AreEqual(
                 new MatchResult(true,
-                                new Pattern[0],
-                                new Pattern[] {new Argument("N", new ValueObject(9))}
+                                Leaves(),
+                                Leaves(new Argument("N", new ValueObject(9)))
                     ),
-                new OneOrMore(new Optional(new Argument("N"))).Match(new Pattern[]
-                    {new Argument(null, new ValueObject(9))})
+                new OneOrMore(new Optional(new Argument("N"))).Match(new Argument(null, new ValueObject(9)))
                 );
         }
     }

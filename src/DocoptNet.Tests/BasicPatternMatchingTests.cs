@@ -1,4 +1,5 @@
 using NUnit.Framework;
+using static DocoptNet.Tests.PatternFactory;
 
 namespace DocoptNet.Tests
 {
@@ -15,9 +16,9 @@ namespace DocoptNet.Tests
             // -a N
             Assert.AreEqual(
                 new MatchResult(true,
-                                new Pattern[0],
-                                new Pattern[] {new Option("-a"), new Argument("N", "9")}),
-                _pattern.Match(new Pattern[] {new Option("-a"), new Argument(null, "9")})
+                                Leaves(),
+                                Leaves(new Option("-a"), new Argument("N", "9"))),
+                _pattern.Match(new Option("-a"), new Argument(null, "9"))
                 );
         }
 
@@ -27,14 +28,10 @@ namespace DocoptNet.Tests
             // -a -x N Z
             Assert.AreEqual(
                 new MatchResult(true,
-                                new Pattern[0],
-                                new Pattern[]
-                                    {
-                                        new Option("-a"), new Argument("N", "9"),
-                                        new Option("-x"), new Argument("Z", "5")
-                                    }),
-                _pattern.Match(new Pattern[]
-                    {new Option("-a"), new Option("-x"), new Argument(null, "9"), new Argument(null, "5")})
+                                Leaves(),
+                                Leaves(new Option("-a"), new Argument("N", "9"),
+                                       new Option("-x"), new Argument("Z", "5"))),
+                _pattern.Match(new Option("-a"), new Option("-x"), new Argument(null, "9"), new Argument(null, "5"))
                 );
         }
 
@@ -44,13 +41,10 @@ namespace DocoptNet.Tests
             // -x N Z
             Assert.AreEqual(
                 new MatchResult(false,
-                                new Pattern[]
-                                    {
-                                        new Option("-x"), new Argument(null, "9"), new Argument(null, "5")
-                                    },
-                                new Pattern[0]
+                                Leaves(new Option("-x"), new Argument(null, "9"), new Argument(null, "5")),
+                                Leaves()
                     ),
-                _pattern.Match(new Pattern[] {new Option("-x"), new Argument(null, "9"), new Argument(null, "5")})
+                _pattern.Match(new Option("-x"), new Argument(null, "9"), new Argument(null, "5"))
                 );
         }
     }

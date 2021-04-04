@@ -1,4 +1,5 @@
 using NUnit.Framework;
+using static DocoptNet.Tests.PatternFactory;
 
 namespace DocoptNet.Tests
 {
@@ -10,9 +11,9 @@ namespace DocoptNet.Tests
         {
             Assert.AreEqual(
                 new MatchResult(true,
-                                new Pattern[0],
-                                new Pattern[] {new Command("c", new ValueObject(true))}),
-                new Command("c").Match(new Pattern[] {new Argument(null, new ValueObject("c"))})
+                                Leaves(),
+                                Leaves(new Command("c", new ValueObject(true)))),
+                new Command("c").Match(new Argument(null, new ValueObject("c")))
                 );
         }
 
@@ -21,9 +22,9 @@ namespace DocoptNet.Tests
         {
             Assert.AreEqual(
                 new MatchResult(false,
-                                new Pattern[] {new Option("-x")},
-                                new Pattern[0]),
-                new Command("c").Match(new Pattern[] {new Option("-x")})
+                                Leaves(new Option("-x")),
+                                Leaves()),
+                new Command("c").Match(new Option("-x"))
                 );
         }
 
@@ -32,9 +33,9 @@ namespace DocoptNet.Tests
         {
             Assert.AreEqual(
                 new MatchResult(true,
-                                new Pattern[] { new Option("-x"), new Option("-a") },
-                                new Pattern[] { new Command("c", new ValueObject(true)) }),
-                new Command("c").Match(new Pattern[] { new Option("-x"), new Option("-a"), new Argument(null, new ValueObject("c"))   })
+                                Leaves(new Option("-x"), new Option("-a") ),
+                                Leaves(new Command("c", new ValueObject(true)) )),
+                new Command("c").Match(new Option("-x"), new Option("-a"), new Argument(null, new ValueObject("c")))
                 );
         }
 
@@ -43,9 +44,9 @@ namespace DocoptNet.Tests
         {
             Assert.AreEqual(
                 new MatchResult(true,
-                                new Pattern[0],
-                                new Pattern[] { new Command("rm", new ValueObject(true)) }),
-                new Either(new Command("add"), new Command("rm")).Match(new Pattern[] { new Argument(null, new ValueObject("rm")) })
+                                Leaves(),
+                                Leaves(new Command("rm", new ValueObject(true)) )),
+                new Either(new Command("add"), new Command("rm")).Match(new Argument(null, new ValueObject("rm")))
                 );
         }
 

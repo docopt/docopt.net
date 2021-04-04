@@ -8,14 +8,13 @@ namespace DocoptNet
         {
         }
 
-        public override (int Index, Pattern Match) SingleMatch(IList<Pattern> left)
+        public override (int Index, LeafPattern Match) SingleMatch(IList<LeafPattern> left)
         {
             for (var i = 0; i < left.Count; i++)
             {
-                var pattern = left[i];
-                if (pattern is Argument)
+                if (left[i] is Argument arg)
                 {
-                    if (pattern.Value.ToString() == Name)
+                    if (arg.Value.ToString() == Name)
                         return (i, new Command(Name, new ValueObject(true)));
                     break;
                 }

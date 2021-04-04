@@ -24,12 +24,12 @@ namespace DocoptNet
         {
         }
 
-        public override (int Index, Pattern Match) SingleMatch(IList<Pattern> left)
+        public override (int Index, LeafPattern Match) SingleMatch(IList<LeafPattern> left)
         {
             for (var i = 0; i < left.Count; i++)
             {
-                if (left[i] is Argument)
-                    return (i, new Argument(Name, left[i].Value));
+                if (left[i] is Argument arg)
+                    return (i, new Argument(Name, arg.Value));
             }
             return default;
         }

@@ -48,7 +48,7 @@ namespace DocoptNet
             return string.Format("public string {0} {{ get {{ return null == _args[\"{1}\"] ? {2} : _args[\"{1}\"].ToString(); }} }}", s, Name, defaultValue);
         }
 
-        public override (int Index, Pattern Match) SingleMatch(IList<Pattern> left)
+        public override (int Index, LeafPattern Match) SingleMatch(IList<LeafPattern> left)
         {
             for (var i = 0; i < left.Count; i++)
             {

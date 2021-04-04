@@ -9,10 +9,10 @@ namespace DocoptNet
         {
         }
 
-        public override MatchResult Match(IList<Pattern> left,
-                                          IEnumerable<Pattern> collected = null)
+        public override MatchResult Match(IList<LeafPattern> left,
+                                          IEnumerable<LeafPattern> collected = null)
         {
-            var coll = collected ?? new List<Pattern>();
+            var coll = collected ?? new List<LeafPattern>();
             var l = left;
             var c = coll;
             foreach (var pattern in Children)

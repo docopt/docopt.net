@@ -1,4 +1,5 @@
 using NUnit.Framework;
+using static DocoptNet.Tests.PatternFactory;
 
 namespace DocoptNet.Tests
 {
@@ -10,9 +11,9 @@ namespace DocoptNet.Tests
         {
             Assert.AreEqual(
                 new MatchResult(true,
-                                new Pattern[0],
-                                new Pattern[] { new Argument("N", new [] { "1", "2"}) }),
-                new Required(new Argument("N"), new Argument("N")).Fix().Match(new Pattern[] { new Argument(null, "1"), new Argument(null, "2") })
+                                Leaves(),
+                                Leaves(new Argument("N", new [] { "1", "2"}) )),
+                new Required(new Argument("N"), new Argument("N")).Fix().Match(new Argument(null, "1"), new Argument(null, "2"))
                 );
         }
 
@@ -21,9 +22,9 @@ namespace DocoptNet.Tests
         {
             Assert.AreEqual(
                 new MatchResult(true,
-                                new Pattern[0],
-                                new Pattern[] { new Argument("N", new[] { "1", "2", "3" }) }),
-                new OneOrMore(new Argument("N")).Fix().Match(new Pattern[] { new Argument(null, "1"), new Argument(null, "2"), new Argument(null, "3") })
+                                Leaves(),
+                                Leaves(new Argument("N", new[] { "1", "2", "3" }) )),
+                new OneOrMore(new Argument("N")).Fix().Match(new Argument(null, "1"), new Argument(null, "2"), new Argument(null, "3"))
                 );
         }
 
@@ -32,9 +33,9 @@ namespace DocoptNet.Tests
         {
             Assert.AreEqual(
                 new MatchResult(true,
-                                new Pattern[0],
-                                new Pattern[] { new Argument("N", new[] { "1", "2", "3" }) }),
-                    new Required(new Argument("N"), new OneOrMore(new Argument("N"))).Fix().Match(new Pattern[] { new Argument(null, "1"), new Argument(null, "2"), new Argument(null, "3") })
+                                Leaves(),
+                                Leaves(new Argument("N", new[] { "1", "2", "3" }) )),
+                    new Required(new Argument("N"), new OneOrMore(new Argument("N"))).Fix().Match(new Argument(null, "1"), new Argument(null, "2"), new Argument(null, "3"))
                 );
         }
 
@@ -43,9 +44,9 @@ namespace DocoptNet.Tests
         {
             Assert.AreEqual(
                 new MatchResult(true,
-                                new Pattern[0],
-                                new Pattern[] { new Argument("N", new[] { "1", "2" }) }),
-                    new Required(new Argument("N"), new Required(new Argument("N"))).Fix().Match(new Pattern[] { new Argument(null, "1"), new Argument(null, "2")})
+                                Leaves(),
+                                Leaves(new Argument("N", new[] { "1", "2" }) )),
+                    new Required(new Argument("N"), new Required(new Argument("N"))).Fix().Match(new Argument(null, "1"), new Argument(null, "2"))
                 );
         }
     }
