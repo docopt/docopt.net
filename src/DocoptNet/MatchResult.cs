@@ -42,11 +42,9 @@ namespace DocoptNet
 
         public override string ToString()
         {
-            return string.Format("matched={0} left=[{1}], collected=[{2}]",
-                Matched,
-                Left == null ? "" : string.Join(", ", Left.Select(p => p.ToString())),
-                Collected == null ? "" : string.Join(", ", Collected.Select(p => p.ToString()))
-            );
+            var left = string.Join(", ", Left ?? Array<LeafPattern>.Empty);
+            var collected = string.Join(", ", Collected ?? Array<LeafPattern>.Empty);
+            return $"matched={Matched} left=[{left}], collected=[{collected}]";
         }
 
         public void Deconstruct(out bool matched, out IList<LeafPattern> left, out IEnumerable<LeafPattern> collected)

@@ -93,7 +93,7 @@ namespace DocoptNet
             if (IsList)
             {
                 var l = (from object v in AsList select v.ToString()).ToList();
-                return string.Format("[{0}]", string.Join(", ", l));
+                return $"[{string.Join(", ", l)}]";
             }
             return (Value ?? "").ToString();
         }
