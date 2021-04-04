@@ -1,8 +1,8 @@
-using System;
-using DocoptNet;
-
 namespace NavalFate
 {
+    using System;
+    using DocoptNet;
+
     internal class Program
     {
         private const string usage = @"Naval Fate.

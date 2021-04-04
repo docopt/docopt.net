@@ -1,8 +1,8 @@
-using NUnit.Framework;
-using static DocoptNet.Tests.PatternFactory;
-
 namespace DocoptNet.Tests
 {
+    using NUnit.Framework;
+    using static DocoptNet.Tests.PatternFactory;
+
     [TestFixture]
     public class BasicPatternMatchingTests
     {

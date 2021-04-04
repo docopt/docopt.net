@@ -1,8 +1,8 @@
-using System.Collections.Generic;
-using NUnit.Framework;
-
 namespace DocoptNet.Tests
 {
+    using System.Collections.Generic;
+    using NUnit.Framework;
+
     [TestFixture]
     public class SyntaxTests
     {
