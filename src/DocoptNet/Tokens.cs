@@ -6,7 +6,7 @@ namespace DocoptNet
     using System.Linq;
     using System.Text.RegularExpressions;
 
-    public class Tokens: IEnumerable<string>
+    partial class Tokens: IEnumerable<string>
     {
         private readonly Type _errorType;
         private readonly List<string> _tokens = new List<string>();

@@ -2,7 +2,7 @@ namespace DocoptNet
 {
     using System;
 
-    public partial class DocoptLanguageErrorException : DocoptBaseException
+    partial class DocoptLanguageErrorException : DocoptBaseException
     {
         //
         // For guidelines regarding the creation of new exception types, see

@@ -1,6 +1,6 @@
 namespace DocoptNet
 {
-    public static class GenerateCodeHelper
+    static class GenerateCodeHelper
     {
         public static string ConvertDashesToCamelCase(string s)
         {

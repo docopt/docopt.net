@@ -3,7 +3,7 @@ namespace DocoptNet
     using System.Collections.Generic;
     using System.Linq;
 
-    internal class MatchResult
+    class MatchResult
     {
         public bool Matched;
         public IList<LeafPattern> Left;
