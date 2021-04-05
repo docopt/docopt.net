@@ -1,7 +1,6 @@
 namespace DocoptNet
 {
     using System;
-    using System.Collections.Generic;
     using System.Text.RegularExpressions;
 
     class Option : LeafPattern
@@ -46,16 +45,6 @@ namespace DocoptNet
             }
             var defaultValue = Value == null ? "null" : string.Format("\"{0}\"", Value);
             return string.Format("public string {0} {{ get {{ return null == _args[\"{1}\"] ? {2} : _args[\"{1}\"].ToString(); }} }}", s, Name, defaultValue);
-        }
-
-        public override (int Index, LeafPattern Match) SingleMatch(IList<LeafPattern> left)
-        {
-            for (var i = 0; i < left.Count; i++)
-            {
-                if (left[i].Name == Name)
-                    return (i, left[i]);
-            }
-            return default;
         }
 
         public override string ToString()

@@ -9,7 +9,6 @@ namespace DocoptNet
     /// </summary>
     class BranchPattern : Pattern
     {
-
         public BranchPattern(params Pattern[] children)
         {
             if (children == null) throw new ArgumentNullException(nameof(children));
@@ -37,5 +36,28 @@ namespace DocoptNet
         {
             return string.Format("{0}({1})", GetType().Name, string.Join(", ", Children.Select(c => c == null ? "None" : c.ToString())));
         }
+    }
+
+    class Required : BranchPattern
+    {
+        public Required(params Pattern[] patterns) : base(patterns) { }
+    }
+
+    class Optional : BranchPattern
+    {
+        public Optional(params Pattern[] patterns) : base(patterns) { }
+    }
+
+    // Marker/placeholder for [options] shortcut.
+    class OptionsShortcut : Optional { }
+
+    class Either : BranchPattern
+    {
+        public Either(params Pattern[] patterns) : base(patterns) { }
+    }
+
+    class OneOrMore : BranchPattern
+    {
+        public OneOrMore(params Pattern[] patterns) : base(patterns) { }
     }
 }
