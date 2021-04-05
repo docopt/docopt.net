@@ -1,9 +1,9 @@
-using System.Collections.Generic;
-using System.Diagnostics;
-
 namespace DocoptNet
 {
-    internal class OneOrMore : BranchPattern
+    using System.Collections.Generic;
+    using System.Diagnostics;
+
+    class OneOrMore : BranchPattern
     {
         public OneOrMore(params Pattern[] patterns)
             : base(patterns)

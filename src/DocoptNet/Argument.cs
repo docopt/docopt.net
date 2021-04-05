@@ -1,9 +1,9 @@
-using System.Collections;
-using System.Collections.Generic;
-
 namespace DocoptNet
 {
-    internal class Argument: LeafPattern
+    using System.Collections;
+    using System.Collections.Generic;
+
+    class Argument: LeafPattern
     {
         public Argument(string name, ValueObject value = null) : base(name, value)
         {

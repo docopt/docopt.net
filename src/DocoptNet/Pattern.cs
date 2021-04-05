@@ -1,12 +1,12 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-
 namespace DocoptNet
 {
-    internal abstract class Pattern
+    using System;
+    using System.Collections;
+    using System.Collections.Generic;
+    using System.Diagnostics;
+    using System.Linq;
+
+    abstract class Pattern
     {
         public virtual string Name
         {

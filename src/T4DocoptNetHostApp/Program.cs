@@ -1,7 +1,7 @@
-using System;
-
 namespace T4DocoptNetHostApp
 {
+    using System;
+
     class Program
     {
         static void Main(string[] args)

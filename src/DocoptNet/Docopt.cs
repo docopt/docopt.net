@@ -1,13 +1,13 @@
-using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Text;
-using System.Text.RegularExpressions;
-
 namespace DocoptNet
 {
-    public class Docopt
+    using System;
+    using System.Collections.Generic;
+    using System.Diagnostics;
+    using System.Linq;
+    using System.Text;
+    using System.Text.RegularExpressions;
+
+    partial class Docopt
     {
         public event EventHandler<PrintExitEventArgs> PrintExit;
 
@@ -473,7 +473,7 @@ namespace DocoptNet
         }
     }
 
-    public class PrintExitEventArgs : EventArgs
+    partial class PrintExitEventArgs : EventArgs
     {
         public PrintExitEventArgs(string msg, int errorCode)
         {

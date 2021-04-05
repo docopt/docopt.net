@@ -1,10 +1,10 @@
-using System;
-using System.Collections;
-using System.Linq;
-
 namespace DocoptNet
 {
-    public class ValueObject // TODO : IEquatable<ValueObject>
+    using System;
+    using System.Collections;
+    using System.Linq;
+
+    partial class ValueObject // TODO : IEquatable<ValueObject>
     {
         public object Value { get; private set; }
 

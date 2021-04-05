@@ -1,8 +1,8 @@
-using System.Collections.Generic;
-
 namespace DocoptNet
 {
-    internal class Command : Argument
+    using System.Collections.Generic;
+
+    class Command : Argument
     {
         public Command(string name, ValueObject value = null) : base(name, value ?? new ValueObject(false))
         {

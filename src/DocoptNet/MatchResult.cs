@@ -1,9 +1,9 @@
-using System.Collections.Generic;
-using System.Linq;
-
 namespace DocoptNet
 {
-    internal class MatchResult
+    using System.Collections.Generic;
+    using System.Linq;
+
+    class MatchResult
     {
         public bool Matched;
         public IList<LeafPattern> Left;

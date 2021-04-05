@@ -1,9 +1,9 @@
-using System.Collections.Generic;
-using System.Linq;
-
 namespace DocoptNet
 {
-    internal class Either : BranchPattern
+    using System.Collections.Generic;
+    using System.Linq;
+
+    class Either : BranchPattern
     {
         public Either(params Pattern[] patterns) : base(patterns)
         {

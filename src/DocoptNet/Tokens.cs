@@ -1,12 +1,12 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text.RegularExpressions;
-
 namespace DocoptNet
 {
-    public class Tokens: IEnumerable<string>
+    using System;
+    using System.Collections;
+    using System.Collections.Generic;
+    using System.Linq;
+    using System.Text.RegularExpressions;
+
+    partial class Tokens: IEnumerable<string>
     {
         private readonly Type _errorType;
         private readonly List<string> _tokens = new List<string>();
