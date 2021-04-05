@@ -9,11 +9,12 @@ namespace DocoptNet
     {
         public static MatchResult Match(this Pattern pattern, IList<LeafPattern> left, IEnumerable<LeafPattern> collected)
         {
+            var coll = collected ?? new List<LeafPattern>();
+
             switch (pattern)
             {
                 case Required required:
                 {
-                    var coll = collected ?? new List<LeafPattern>();
                     var l = left;
                     var c = coll;
                     foreach (var child in required.Children)
@@ -27,7 +28,6 @@ namespace DocoptNet
                 }
                 case Either either:
                 {
-                    var coll = collected ?? new List<LeafPattern>();
                     var outcomes =
                         either.Children.Select(pattern => Match(pattern, left, coll))
                               .Where(outcome => outcome.Matched)
@@ -41,8 +41,8 @@ namespace DocoptNet
                 }
                 case Optional optional:
                 {
-                    var c = collected ?? new List<LeafPattern>();
                     var l = left;
+                    var c = coll;
                     foreach (var child in optional.Children)
                         (_, l, c) = child.Match(l, c);
                     return new MatchResult(true, l, c);
@@ -50,7 +50,6 @@ namespace DocoptNet
                 case OneOrMore oneOrMore:
                 {
                     Debug.Assert(oneOrMore.Children.Count == 1);
-                    var coll = collected ?? new List<LeafPattern>();
                     var l = left;
                     var c = coll;
                     IList<LeafPattern> l_ = null;
@@ -73,7 +72,6 @@ namespace DocoptNet
                 }
                 case LeafPattern leaf:
                 {
-                    var coll = collected ?? new List<LeafPattern>();
                     var (index, match) = SingleMatch(leaf, left);
                     if (match == null)
                     {
