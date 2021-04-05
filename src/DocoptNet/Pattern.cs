@@ -173,12 +173,6 @@ namespace DocoptNet
             return new Either(result.Select(r => new Required(r.ToArray()) as Pattern).ToArray());
         }
 
-        public virtual MatchResult Match(IList<LeafPattern> left,
-                                         IEnumerable<LeafPattern> collected = null)
-        {
-            return new MatchResult();
-        }
-
         public abstract ICollection<Pattern> Flat(params Type[] types);
 
         /// <summary>
