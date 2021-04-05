@@ -43,6 +43,12 @@ namespace DocoptNet.CodeGeneration
             return this;
         }
 
+        public IndentingStringBuilder Append(char value, int repeatCount)
+        {
+            OnAppending().Append(value, repeatCount);
+            return this;
+        }
+
         public IndentingStringBuilder Append(string value)
         {
             OnAppending().Append(value);

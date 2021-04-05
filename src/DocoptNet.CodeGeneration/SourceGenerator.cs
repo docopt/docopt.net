@@ -118,8 +118,24 @@ namespace DocoptNet.CodeGeneration
               .Append(quote).Append(usage.Replace(quote, quote + quote)).Append(quote).Append(";")
               .AppendLine();
 
-            foreach (var node in new Docopt().GetNodes(usage))
-                sb.Append("// ").Append(node.ToString()).AppendLine();
+            void AppendTree(Pattern pattern, int level = 0)
+            {
+                sb.Append("// ").Append(' ', level * 2);
+                switch (pattern)
+                {
+                    case BranchPattern { Children: var children } branch:
+                        sb.Append(branch.GetType().Name).Append(":").AppendLine();
+                        foreach (var child in children)
+                            AppendTree(child, level + 1);
+                        break;
+                    case LeafPattern leaf:
+                        sb.Append(leaf.ToString()).Append(" -> ").Append(leaf.ToNode().ToString()).AppendLine();
+                        break;
+                }
+            }
+
+            AppendTree(new Docopt().ParsePattern(usage));
+            sb.AppendLine();
 
             using (var reader = new StringReader(new Docopt().GenerateCode(usage)))
             {
