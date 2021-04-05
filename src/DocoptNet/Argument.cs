@@ -1,7 +1,6 @@
 namespace DocoptNet
 {
     using System.Collections;
-    using System.Collections.Generic;
 
     class Argument: LeafPattern
     {
@@ -22,16 +21,6 @@ namespace DocoptNet
         public Argument(string name, int value)
             : base(name, new ValueObject(value))
         {
-        }
-
-        public override (int Index, LeafPattern Match) SingleMatch(IList<LeafPattern> left)
-        {
-            for (var i = 0; i < left.Count; i++)
-            {
-                if (left[i] is Argument arg)
-                    return (i, new Argument(Name, arg.Value));
-            }
-            return default;
         }
 
         public override Node ToNode()
