@@ -91,16 +91,12 @@ namespace DocoptNet
                         if (sameName.Count == 0)
                         {
                             match.Value = increment;
-                            var res = new List<LeafPattern>(coll) {match};
-                            return new MatchResult(true, left_, res);
+                            return new MatchResult(true, left_, new List<LeafPattern>(coll) { match });
                         }
                         sameName[0].Value.Add(increment);
                         return new MatchResult(true, left_, coll);
                     }
-                    var resColl = new List<LeafPattern>();
-                    resColl.AddRange(coll);
-                    resColl.Add(match);
-                    return new MatchResult(true, left_, resColl);
+                    return new MatchResult(true, left_, new List<LeafPattern>(coll) { match });
                 }
                 default: throw new ArgumentException(nameof(pattern));
             }
