@@ -29,8 +29,6 @@ DocoptNet.DocoptLanguageErrorException
 DocoptNet.DocoptLanguageErrorException.DocoptLanguageErrorException() -> void
 DocoptNet.DocoptLanguageErrorException.DocoptLanguageErrorException(string message) -> void
 DocoptNet.DocoptLanguageErrorException.DocoptLanguageErrorException(string message, System.Exception inner) -> void
-DocoptNet.Extensions
-DocoptNet.GenerateCodeHelper
 DocoptNet.Node
 DocoptNet.Node.Equals(DocoptNet.Node other) -> bool
 DocoptNet.Node.Name.get -> string
@@ -74,6 +72,4 @@ override DocoptNet.Tokens.ToString() -> string
 override DocoptNet.ValueObject.Equals(object obj) -> bool
 override DocoptNet.ValueObject.GetHashCode() -> int
 override DocoptNet.ValueObject.ToString() -> string
-static DocoptNet.Extensions.Partition(this string input, string separator) -> (string, string, string)
-static DocoptNet.GenerateCodeHelper.ConvertDashesToCamelCase(string s) -> string
 static DocoptNet.Tokens.FromPattern(string pattern) -> DocoptNet.Tokens
