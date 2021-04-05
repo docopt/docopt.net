@@ -4,6 +4,7 @@ T4DocopNet Version 0.1.0
 */
 #>
 <#@ template language="C#" debug="true" hostspecific="true" #>
+<#@ assembly name="NetStandard" #>
 <#@ assembly name="System.Core" #>
 <#@ assembly name="System.Runtime" #>
 <#@ assembly name="Microsoft.VisualStudio.Shell.Interop" #>
