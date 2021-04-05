@@ -9,18 +9,18 @@ namespace DocoptNet
     partial class Tokens: IEnumerable<string>
     {
         private readonly Type _errorType;
-        private readonly List<string> _tokens = new List<string>();
+        private readonly Queue<string> _tokens;
 
         public Tokens(IEnumerable<string> source, Type errorType)
         {
             _errorType = errorType ?? typeof(DocoptInputErrorException);
-            _tokens.AddRange(source);
+            _tokens = new Queue<string>(source);
         }
 
         public Tokens(string source, Type errorType)
         {
             _errorType = errorType ?? typeof(DocoptInputErrorException);
-            _tokens.AddRange(source.Split(new char[0], StringSplitOptions.RemoveEmptyEntries));
+            _tokens = new Queue<string>(source.Split(new char[0], StringSplitOptions.RemoveEmptyEntries));
         }
 
         public Type ErrorType
@@ -52,18 +52,12 @@ namespace DocoptNet
 
         public string Move()
         {
-            string s = null;
-            if (_tokens.Count > 0)
-            {
-                s = _tokens[0];
-                _tokens.RemoveAt(0);
-            }
-            return s;
+            return _tokens.Count > 0 ? _tokens.Dequeue() : null;
         }
 
         public string Current()
         {
-            return (_tokens.Count > 0) ? _tokens[0] : null;
+            return _tokens.Count > 0 ? _tokens.Peek() : null;
         }
 
         public Exception CreateException(string message)
