@@ -17,12 +17,14 @@
 namespace DocoptNet.CodeGeneration
 {
     using System;
+    using System.Globalization;
     using System.IO;
     using System.Linq;
     using System.Text;
     using System.Text.RegularExpressions;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.Text;
+    using static Microsoft.CodeAnalysis.CSharp.SyntaxFactory;
 
     [Generator]
     public sealed class SourceGenerator : ISourceGenerator
@@ -71,18 +73,44 @@ namespace DocoptNet.CodeGeneration
                 where t is not null
                 select t;
 
+            var added = false;
+
             foreach (var t in templates)
             {
                 try
                 {
                     if (Generate(ns, t.Name, t.Text) is { Length: > 0 } source)
+                    {
+                        added = true;
                         context.AddSource(t.Name + ".cs", source);
+                    }
                 }
                 catch (DocoptLanguageErrorException e)
                 {
                     var args = Regex.Replace(e.Message, @"\r?\n", @"\n");
                     context.ReportDiagnostic(Diagnostic.Create(SyntaxError, Location.None, args));
                 }
+            }
+
+            if (added)
+            {
+                context.AddSource("Common.cs", @"
+using System.Collections.Immutable;
+
+abstract record Pattern;
+
+abstract record BranchPattern(ImmutableArray<Pattern> Children) : Pattern;
+record Required(ImmutableArray<Pattern> Children) : BranchPattern(Children);
+record Optional(ImmutableArray<Pattern> Children) : BranchPattern(Children);
+record OptionsShortcut() : Optional(ImmutableArray<Pattern>.Empty);
+record Either(ImmutableArray<Pattern> Children) : BranchPattern(Children);
+record OneOrMore(Pattern Pattern) : BranchPattern(ImmutableArray.Create(Pattern));
+abstract record LeftPattern() : Pattern;
+
+record Command(string Name) : LeftPattern;
+record Argument(string Name, string Value) : LeftPattern;
+record Option(string ShortName, string LongName, int ArgCount, object Value) : LeftPattern;
+");
             }
         }
 
@@ -100,7 +128,8 @@ namespace DocoptNet.CodeGeneration
             var usage = text.ToString();
             var sb = new IndentingStringBuilder();
 
-            sb.Append("using System.Collections;").AppendLine()
+            sb.Append("using System.Collections;").AppendLine();
+            sb.Append("using System.Collections.Immutable;").AppendLine()
                 .AppendLine();
 
             var isNamespaced = !string.IsNullOrEmpty(ns);
@@ -134,9 +163,66 @@ namespace DocoptNet.CodeGeneration
                 }
             }
 
-            AppendTree(new Docopt().ParsePattern(usage));
             sb.AppendLine();
+            var pattern = new Docopt().ParsePattern(usage);
+            AppendTree(pattern);
 
+            void AppendTreeCode(Pattern pattern, int level = 0)
+            {
+                sb.Append(' ', level * 4);
+                switch (pattern)
+                {
+                    case OneOrMore { Children: { Count: 1 } children }:
+                        sb.Append("new OneOrMore(").AppendLine();
+                        AppendTreeCode(children[0], level + 1);
+                        sb.Append(")");
+                        break;
+                    case BranchPattern { Children: { Count: > 0 } children } branch:
+                        sb.Append("new ").Append(branch.GetType().Name).Append("(ImmutableArray.Create<Pattern>(").AppendLine();
+                        var i = 0;
+                        foreach (var child in children)
+                        {
+                            AppendTreeCode(child, level + 1);
+                            if (++i < children.Count)
+                            {
+                                sb.Append(',');
+                                sb.AppendLine();
+                            }
+                        }
+                        sb.Append("))");
+                        break;
+                    case Command command:
+                        sb.Append("new Command(")
+                          .Append(Literal(command.Name).ToString())
+                          .Append(')');
+                        break;
+                    case Argument { Name: var name }:
+                        sb.Append("new Argument(")
+                          .Append(Literal(name).ToString())
+                          .Append(", null)");
+                        break;
+                    case Option option:
+                        sb.Append("new Option(")
+                          .Append(Literal(option.ShortName ?? string.Empty).ToString())
+                          .Append(", ")
+                          .Append(Literal(option.LongName ?? string.Empty).ToString())
+                          .Append(", ")
+                          .Append(option.ArgCount.ToString(CultureInfo.InvariantCulture))
+                          .Append(", null")
+                          .Append(')');
+                        break;
+                }
+            }
+
+            sb.AppendLine();
+            sb.Append("static readonly Pattern Pattern =").AppendLine();
+            sb.Indent();
+            AppendTreeCode(pattern);
+            sb.Append(';');
+            sb.AppendLine();
+            sb.Outdent();
+
+            sb.AppendLine();
             using (var reader = new StringReader(new Docopt().GenerateCode(usage)))
             {
                 while (reader.ReadLine() is { } line)
