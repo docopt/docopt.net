@@ -12,11 +12,11 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "NuGet", "NuGet", "{B5A8AA26
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DocoptNet", "src\DocoptNet\DocoptNet.csproj", "{D87F19B8-A15F-4BC2-8E1C-47CC6038A0DF}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DocoptNet.Tests", "src\DocoptNet.Tests\DocoptNet.Tests.csproj", "{80A9BB30-873C-47E9-8314-5E53AC66E8B7}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DocoptNet.Tests", "tests\DocoptNet.Tests\DocoptNet.Tests.csproj", "{80A9BB30-873C-47E9-8314-5E53AC66E8B7}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NavalFate", "src\Examples\NavalFate\NavalFate.csproj", "{2B454F8B-D702-4281-80DF-367142007B0C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NavalFate", "eg\NavalFate\NavalFate.csproj", "{2B454F8B-D702-4281-80DF-367142007B0C}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Testee", "src\Testee\Testee.csproj", "{C3490CAE-5A69-4852-BD61-50179D587D0D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Testee", "tests\Testee\Testee.csproj", "{C3490CAE-5A69-4852-BD61-50179D587D0D}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "T4DocoptNetHostApp", "src\T4DocoptNetHostApp\T4DocoptNetHostApp.csproj", "{5A641DFB-CB1A-4044-AF52-554CC8904449}"
 EndProject

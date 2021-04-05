@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <TargetFrameworks>net5.0;netcoreapp3.1;netcoreapp2.1;net47</TargetFrameworks>
-    <AssemblyOriginatorKeyFile>..\DocoptNet\DocoptNet.snk</AssemblyOriginatorKeyFile>
+    <AssemblyOriginatorKeyFile>..\..\src\DocoptNet\DocoptNet.snk</AssemblyOriginatorKeyFile>
     <SignAssembly>true</SignAssembly>
     <PublicSign Condition=" '$(OS)' != 'Windows_NT' ">true</PublicSign>
     <IsPackable>false</IsPackable>
@@ -24,7 +24,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\DocoptNet\DocoptNet.csproj" />
+    <ProjectReference Include="..\..\src\DocoptNet\DocoptNet.csproj" />
   </ItemGroup>
 
 </Project>
