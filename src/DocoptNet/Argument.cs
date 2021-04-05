@@ -3,7 +3,7 @@ namespace DocoptNet
     using System.Collections;
     using System.Collections.Generic;
 
-    internal class Argument: LeafPattern
+    class Argument: LeafPattern
     {
         public Argument(string name, ValueObject value = null) : base(name, value)
         {

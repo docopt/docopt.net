@@ -2,7 +2,7 @@ namespace DocoptNet
 {
     using System.Collections.Generic;
 
-    internal class Required : BranchPattern
+    class Required : BranchPattern
     {
         public Required(params Pattern[] patterns)
             : base(patterns)

@@ -7,7 +7,7 @@ namespace DocoptNet
     /// <summary>
     ///     Branch/inner node of a pattern tree.
     /// </summary>
-    internal class BranchPattern : Pattern
+    class BranchPattern : Pattern
     {
 
         public BranchPattern(params Pattern[] children)

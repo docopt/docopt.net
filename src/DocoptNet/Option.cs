@@ -4,7 +4,7 @@ namespace DocoptNet
     using System.Collections.Generic;
     using System.Text.RegularExpressions;
 
-    internal class Option : LeafPattern
+    class Option : LeafPattern
     {
         public string ShortName { get; private set; }
         public string LongName { get; private set; }

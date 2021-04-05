@@ -2,24 +2,27 @@ namespace DocoptNet
 {
     using System;
 
-    public enum ValueType { Bool, List, String, }
+    #if DOCNETOPT_PUBLIC
+    public
+    #endif
+         enum ValueType { Bool, List, String, }
 
-    public class ArgumentNode : Node
+    partial class ArgumentNode : Node
     {
         public ArgumentNode(string name, ValueType valueType) : base(name, valueType) { }
     }
 
-    public class OptionNode : Node
+    partial class OptionNode : Node
     {
         public OptionNode(string name, ValueType valueType) : base(name, valueType) { }
     }
 
-    public class CommandNode : Node
+    partial class CommandNode : Node
     {
         public CommandNode(string name) : base(name, ValueType.Bool) { }
     }
 
-    public abstract class Node : IEquatable<Node>
+    abstract partial class Node : IEquatable<Node>
     {
         protected Node(string name, ValueType valueType)
         {

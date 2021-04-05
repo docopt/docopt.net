@@ -7,7 +7,7 @@ namespace DocoptNet
     using System.Text;
     using System.Text.RegularExpressions;
 
-    public class Docopt
+    partial class Docopt
     {
         public event EventHandler<PrintExitEventArgs> PrintExit;
 
@@ -473,7 +473,7 @@ namespace DocoptNet
         }
     }
 
-    public class PrintExitEventArgs : EventArgs
+    partial class PrintExitEventArgs : EventArgs
     {
         public PrintExitEventArgs(string msg, int errorCode)
         {

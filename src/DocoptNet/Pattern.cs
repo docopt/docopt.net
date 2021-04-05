@@ -6,7 +6,7 @@ namespace DocoptNet
     using System.Diagnostics;
     using System.Linq;
 
-    internal abstract class Pattern
+    abstract class Pattern
     {
         public virtual string Name
         {

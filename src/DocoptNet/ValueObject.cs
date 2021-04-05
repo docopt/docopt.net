@@ -4,7 +4,7 @@ namespace DocoptNet
     using System.Collections;
     using System.Linq;
 
-    public class ValueObject // TODO : IEquatable<ValueObject>
+    partial class ValueObject // TODO : IEquatable<ValueObject>
     {
         public object Value { get; private set; }
 

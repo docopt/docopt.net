@@ -2,7 +2,7 @@ namespace DocoptNet
 {
     using System;
 
-    public partial class DocoptInputErrorException : DocoptBaseException
+    partial class DocoptInputErrorException : DocoptBaseException
     {
         //
         // For guidelines regarding the creation of new exception types, see
