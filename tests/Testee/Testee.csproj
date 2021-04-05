@@ -6,7 +6,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\DocoptNet\DocoptNet.csproj" />
+    <ProjectReference Include="..\..\src\DocoptNet\DocoptNet.csproj" />
   </ItemGroup>
 
 </Project>
