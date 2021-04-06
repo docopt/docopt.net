@@ -17,7 +17,6 @@
 namespace DocoptNet.CodeGeneration
 {
     using System;
-    using System.Globalization;
     using System.IO;
     using System.Linq;
     using System.Text;
@@ -207,7 +206,7 @@ record Option(string ShortName, string LongName, int ArgCount, object Value) : L
                           .Append(", ")
                           .Append(Literal(option.LongName ?? string.Empty).ToString())
                           .Append(", ")
-                          .Append(option.ArgCount.ToString(CultureInfo.InvariantCulture))
+                          .Append(option.ArgCount.ToInvariantString())
                           .Append(", null")
                           .Append(')');
                         break;
