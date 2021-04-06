@@ -207,7 +207,15 @@ record Option(string ShortName, string LongName, int ArgCount, object Value) : L
                           .Append(Literal(option.LongName ?? string.Empty).ToString())
                           .Append(", ")
                           .Append(option.ArgCount.ToInvariantString())
-                          .Append(", null")
+                          .Append(", ")
+                          .Append(option.Value switch
+                           {
+                               { IsInt: true, AsInt: var n } => Literal(n).ToString(),
+                               { Value: string v } => Literal(v).ToString(),
+                               { IsTrue: true } => "true",
+                               { IsFalse: true } => "false",
+                               _ => throw new NotSupportedException(), // todo emit diagnostic
+                           })
                           .Append(')');
                         break;
                 }
