@@ -1,3 +1,5 @@
+#nullable enable
+
 namespace DocoptNet
 {
     using System;
@@ -7,9 +9,14 @@ namespace DocoptNet
 
     static class PatternMatcher
     {
-        public static MatchResult Match(this Pattern pattern, IList<LeafPattern> left, IEnumerable<LeafPattern> collected)
+        public static MatchResult Match(this Pattern pattern, IList<LeafPattern> left)
         {
-            var coll = collected ?? new List<LeafPattern>();
+            return pattern.Match(left, new List<LeafPattern>());
+        }
+
+        static MatchResult Match(this Pattern pattern, IList<LeafPattern> left, IEnumerable<LeafPattern> collected)
+        {
+            var coll = collected;
 
             switch (pattern)
             {
@@ -28,11 +35,11 @@ namespace DocoptNet
                 }
                 case Either either:
                 {
-                    MatchResult match = null;
+                    MatchResult? match = null;
                     foreach (var child in either.Children)
                     {
                         if (child.Match(left, coll) is (true, var l, var c)
-                            && (match is null || match is { Left: { Count: var mlc } } && l.Count < mlc))
+                            && (match is null || l.Count < match.Left.Count))
                         {
                             match = new MatchResult(true, l, c);
                         }
@@ -52,7 +59,7 @@ namespace DocoptNet
                     Debug.Assert(oneOrMore.Children.Count == 1);
                     var l = left;
                     var c = coll;
-                    IList<LeafPattern> l_ = null;
+                    IList<LeafPattern>? l_ = null;
                     var matched = true;
                     var times = 0;
                     while (matched)
@@ -81,7 +88,7 @@ namespace DocoptNet
                     left_.AddRange(left.Take(index));
                     left_.AddRange(left.Skip(index + 1));
                     var sameName = coll.Where(a => a.Name == leaf.Name).ToList();
-                    if (leaf.Value != null && (leaf.Value.IsList || leaf.Value.IsOfTypeInt))
+                    if (leaf.Value is { IsList: true } or { IsOfTypeInt: true })
                     {
                         var increment = new ValueObject(1);
                         if (!leaf.Value.IsOfTypeInt)
@@ -101,7 +108,7 @@ namespace DocoptNet
                 default: throw new ArgumentException(nameof(pattern));
             }
 
-            static (int, LeafPattern) SingleMatch(LeafPattern pattern, IList<LeafPattern> left)
+            static (int, LeafPattern?) SingleMatch(LeafPattern pattern, IList<LeafPattern> left)
             {
                 switch (pattern)
                 {
