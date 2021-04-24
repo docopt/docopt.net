@@ -16,20 +16,18 @@ namespace DocoptNet
 
         static MatchResult Match(this Pattern pattern, IList<LeafPattern> left, IEnumerable<LeafPattern> collected)
         {
-            var coll = collected;
-
             switch (pattern)
             {
                 case Required required:
                 {
                     var l = left;
-                    var c = coll;
+                    var c = collected;
                     foreach (var child in required.Children)
                     {
                         bool matched;
                         (matched, l, c) = child.Match(l, c);
                         if (!matched)
-                            return new MatchResult(false, left, coll);
+                            return new MatchResult(false, left, collected);
                     }
                     return new MatchResult(true, l, c);
                 }
@@ -38,18 +36,18 @@ namespace DocoptNet
                     MatchResult? match = null;
                     foreach (var child in either.Children)
                     {
-                        if (child.Match(left, coll) is (true, var l, var c)
+                        if (child.Match(left, collected) is (true, var l, var c)
                             && (match is null || l.Count < match.Left.Count))
                         {
                             match = new MatchResult(true, l, c);
                         }
                     }
-                    return match ?? new MatchResult(false, left, coll);
+                    return match ?? new MatchResult(false, left, collected);
                 }
                 case Optional optional:
                 {
                     var l = left;
-                    var c = coll;
+                    var c = collected;
                     foreach (var child in optional.Children)
                         (_, l, c) = child.Match(l, c);
                     return new MatchResult(true, l, c);
@@ -58,7 +56,7 @@ namespace DocoptNet
                 {
                     Debug.Assert(oneOrMore.Children.Count == 1);
                     var l = left;
-                    var c = coll;
+                    var c = collected;
                     IList<LeafPattern>? l_ = null;
                     var matched = true;
                     var times = 0;
@@ -75,19 +73,19 @@ namespace DocoptNet
                     {
                         return new MatchResult(true, l, c);
                     }
-                    return new MatchResult(false, left, coll);
+                    return new MatchResult(false, left, collected);
                 }
                 case LeafPattern leaf:
                 {
                     var (index, match) = SingleMatch(leaf, left);
                     if (match == null)
                     {
-                        return new MatchResult(false, left, coll);
+                        return new MatchResult(false, left, collected);
                     }
                     var left_ = new List<LeafPattern>();
                     left_.AddRange(left.Take(index));
                     left_.AddRange(left.Skip(index + 1));
-                    var sameName = coll.Where(a => a.Name == leaf.Name).ToList();
+                    var sameName = collected.Where(a => a.Name == leaf.Name).ToList();
                     if (leaf.Value is { IsList: true } or { IsOfTypeInt: true })
                     {
                         var increment = new ValueObject(1);
@@ -98,12 +96,12 @@ namespace DocoptNet
                         if (sameName.Count == 0)
                         {
                             match.Value = increment;
-                            return new MatchResult(true, left_, new List<LeafPattern>(coll) { match });
+                            return new MatchResult(true, left_, new List<LeafPattern>(collected) { match });
                         }
                         sameName[0].Value.Add(increment);
-                        return new MatchResult(true, left_, coll);
+                        return new MatchResult(true, left_, collected);
                     }
-                    return new MatchResult(true, left_, new List<LeafPattern>(coll) { match });
+                    return new MatchResult(true, left_, new List<LeafPattern>(collected) { match });
                 }
                 default: throw new ArgumentException(nameof(pattern));
             }
