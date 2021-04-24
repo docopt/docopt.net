@@ -28,16 +28,16 @@ namespace DocoptNet
                 }
                 case Either either:
                 {
-                    var outcomes =
-                        either.Children.Select(pattern => Match(pattern, left, coll))
-                              .Where(outcome => outcome.Matched)
-                              .ToList();
-                    if (outcomes.Count != 0)
+                    MatchResult match = null;
+                    foreach (var child in either.Children)
                     {
-                        var minCount = outcomes.Min(x => x.Left.Count);
-                        return outcomes.First(x => x.Left.Count == minCount);
+                        if (child.Match(left, coll) is (true, var l, var c)
+                            && (match is null || match is { Left: { Count: var mlc } } && l.Count < mlc))
+                        {
+                            match = new MatchResult(true, l, c);
+                        }
                     }
-                    return new MatchResult(false, left, coll);
+                    return match ?? new MatchResult(false, left, coll);
                 }
                 case Optional optional:
                 {

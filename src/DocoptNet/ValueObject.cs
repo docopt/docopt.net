@@ -8,68 +8,47 @@ namespace DocoptNet
     {
         public object Value { get; private set; }
 
-        internal ValueObject(object obj)
+        internal ValueObject(object obj) =>
+            Value = obj is ICollection collection ? new ArrayList(collection) : obj;
+
+        internal ValueObject() => Value = null;
+
+        public bool IsNullOrEmpty => Value == null || Value.ToString().Length == 0;
+        public bool IsFalse => Value as bool? == false;
+        public bool IsTrue => Value as bool? == true;
+        public bool IsList => Value is ArrayList;
+        internal bool IsOfTypeInt => Value is int;
+        public bool IsInt => Value != null && (Value is int || int.TryParse(Value.ToString(), out _));
+        public bool IsString => Value is string;
+        public int AsInt => IsList ? 0 : Convert.ToInt32(Value);
+        public ArrayList AsList => IsList ? Value as ArrayList : new ArrayList { Value };
+
+        internal void Add(ValueObject increment)
         {
-            if (obj is ArrayList)
+            if (increment == null) throw new ArgumentNullException(nameof(increment));
+            if (increment.Value == null) throw new ArgumentException(nameof(increment));
+            if (Value == null) throw new InvalidOperationException();
+
+            if (increment.IsOfTypeInt)
             {
-                Value = new ArrayList(obj as ArrayList);
-                return;
+                if (IsList)
+                    ((ArrayList)Value).Add(increment.AsInt);
+                else
+                    Value = increment.AsInt + AsInt;
             }
-            if (obj is ICollection)
+            else
             {
-                Value = new ArrayList(obj as ICollection);
-                return;
+                var list = new ArrayList();
+                if (IsList)
+                    list.AddRange(AsList);
+                else
+                    list.Add(Value);
+                if (increment.IsList)
+                    list.AddRange(increment.AsList);
+                else
+                    list.Add(increment);
+                Value = list;
             }
-            Value = obj;
-        }
-
-        internal ValueObject()
-        {
-            Value = null;
-        }
-
-        public bool IsNullOrEmpty
-        {
-            get { return Value == null || Value.ToString() == ""; }
-        }
-
-        public bool IsFalse
-        {
-            get { return (Value as bool?) == false; }
-        }
-
-        public bool IsTrue
-        {
-            get { return (Value as bool?) == true; }
-        }
-
-        public bool IsList
-        {
-            get { return Value is ArrayList; }
-        }
-
-        internal bool IsOfTypeInt
-        {
-            get { return Value is int?; }
-        }
-
-        public bool IsInt
-        {
-            get
-            {
-                int value;
-                return Value != null && (Value is int || int.TryParse(Value.ToString(), out value));
-            }
-        }
-
-        public int AsInt
-        {
-            get { return IsList ? 0 : Convert.ToInt32(Value); }
-        }
-
-        public bool IsString
-        {
-            get { return Value is string; }
         }
 
         public override bool Equals(object obj)
@@ -90,55 +69,8 @@ namespace DocoptNet
 
         public override string ToString()
         {
-            if (IsList)
-            {
-                var l = (from object v in AsList select v.ToString()).ToList();
-                return string.Format("[{0}]", string.Join(", ", l));
-            }
-            return (Value ?? "").ToString();
-        }
-
-        internal void Add(ValueObject increment)
-        {
-            if (increment == null) throw new ArgumentNullException(nameof(increment));
-
-            if (increment.Value == null) throw new InvalidOperationException("increment.Value is null");
-
-            if (Value == null) throw new InvalidOperationException("Value is null");
-
-            if (increment.IsOfTypeInt)
-            {
-                if (IsList)
-                    ((ArrayList)Value).Add(increment.AsInt);
-                else
-                    Value = increment.AsInt + AsInt;
-            }
-            else
-            {
-                var l = new ArrayList();
-                if (IsList)
-                {
-                    l.AddRange(AsList);
-                }
-                else
-                {
-                    l.Add(Value);
-                }
-                if (increment.IsList)
-                {
-                    l.AddRange(increment.AsList);
-                }
-                else
-                {
-                    l.Add(increment);
-                }
-                Value = l;
-            }
-        }
-
-        public ArrayList AsList
-        {
-            get { return IsList ? (Value as ArrayList) : (new ArrayList(new[] {Value})); }
+            return IsList ? $"[{string.Join(", ", AsList.Cast<object>())}]"
+                 : (Value ?? string.Empty).ToString();
         }
     }
 }
