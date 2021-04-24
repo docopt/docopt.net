@@ -102,47 +102,48 @@ namespace DocoptNet
                         return new MatchResult(true, left_, collected);
                     }
                     return new MatchResult(true, left_, new List<LeafPattern>(collected) { match });
-                }
-                default: throw new ArgumentException(nameof(pattern));
-            }
 
-            static (int, LeafPattern?) SingleMatch(LeafPattern pattern, IList<LeafPattern> left)
-            {
-                switch (pattern)
-                {
-                    case Command command:
+                    static (int, LeafPattern?) SingleMatch(LeafPattern pattern, IList<LeafPattern> left)
                     {
-                        for (var i = 0; i < left.Count; i++)
+                        switch (pattern)
                         {
-                            if (left[i] is Argument { Value: { } value })
+                            case Command command:
                             {
-                                if (value.ToString() == command.Name)
-                                    return (i, new Command(command.Name, new ValueObject(true)));
-                                break;
+                                for (var i = 0; i < left.Count; i++)
+                                {
+                                    if (left[i] is Argument { Value: { } value })
+                                    {
+                                        if (value.ToString() == command.Name)
+                                            return (i, new Command(command.Name, new ValueObject(true)));
+                                        break;
+                                    }
+                                }
+                                return default;
                             }
+                            case Argument argument:
+                            {
+                                for (var i = 0; i < left.Count; i++)
+                                {
+                                    if (left[i] is Argument { Value: var value })
+                                        return (i, new Argument(argument.Name, value));
+                                }
+                                return default;
+                            }
+                            case Option option:
+                            {
+                                for (var i = 0; i < left.Count; i++)
+                                {
+                                    if (left[i].Name == option.Name)
+                                        return (i, left[i]);
+                                }
+                                return default;
+                            }
+                            default: throw new ArgumentException(nameof(pattern));
                         }
-                        return default;
                     }
-                    case Argument argument:
-                    {
-                        for (var i = 0; i < left.Count; i++)
-                        {
-                            if (left[i] is Argument { Value: var value })
-                                return (i, new Argument(argument.Name, value));
-                        }
-                        return default;
-                    }
-                    case Option option:
-                    {
-                        for (var i = 0; i < left.Count; i++)
-                        {
-                            if (left[i].Name == option.Name)
-                                return (i, left[i]);
-                        }
-                        return default;
-                    }
-                    default: throw new ArgumentException(nameof(pattern));
                 }
+                default:
+                    throw new ArgumentException(nameof(pattern));
             }
         }
     }
