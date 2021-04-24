@@ -1,3 +1,5 @@
+#nullable enable
+
 namespace DocoptNet
 {
     using System;
@@ -7,42 +9,45 @@ namespace DocoptNet
 
     static class PatternMatcher
     {
-        public static MatchResult Match(this Pattern pattern, IList<LeafPattern> left, IEnumerable<LeafPattern> collected)
+        public static MatchResult Match(this Pattern pattern, IList<LeafPattern> left)
         {
-            var coll = collected ?? new List<LeafPattern>();
+            return pattern.Match(left, new List<LeafPattern>());
+        }
 
+        static MatchResult Match(this Pattern pattern, IList<LeafPattern> left, IEnumerable<LeafPattern> collected)
+        {
             switch (pattern)
             {
                 case Required required:
                 {
                     var l = left;
-                    var c = coll;
+                    var c = collected;
                     foreach (var child in required.Children)
                     {
                         bool matched;
                         (matched, l, c) = child.Match(l, c);
                         if (!matched)
-                            return new MatchResult(false, left, coll);
+                            return new MatchResult(false, left, collected);
                     }
                     return new MatchResult(true, l, c);
                 }
                 case Either either:
                 {
-                    MatchResult match = null;
+                    MatchResult? match = null;
                     foreach (var child in either.Children)
                     {
-                        if (child.Match(left, coll) is (true, var l, var c)
-                            && (match is null || match is { Left: { Count: var mlc } } && l.Count < mlc))
+                        if (child.Match(left, collected) is (true, var l, var c)
+                            && (match is null || l.Count < match.Left.Count))
                         {
                             match = new MatchResult(true, l, c);
                         }
                     }
-                    return match ?? new MatchResult(false, left, coll);
+                    return match ?? new MatchResult(false, left, collected);
                 }
                 case Optional optional:
                 {
                     var l = left;
-                    var c = coll;
+                    var c = collected;
                     foreach (var child in optional.Children)
                         (_, l, c) = child.Match(l, c);
                     return new MatchResult(true, l, c);
@@ -51,8 +56,8 @@ namespace DocoptNet
                 {
                     Debug.Assert(oneOrMore.Children.Count == 1);
                     var l = left;
-                    var c = coll;
-                    IList<LeafPattern> l_ = null;
+                    var c = collected;
+                    IList<LeafPattern>? l_ = null;
                     var matched = true;
                     var times = 0;
                     while (matched)
@@ -68,76 +73,65 @@ namespace DocoptNet
                     {
                         return new MatchResult(true, l, c);
                     }
-                    return new MatchResult(false, left, coll);
+                    return new MatchResult(false, left, collected);
                 }
-                case LeafPattern leaf:
+                case Command command:
                 {
-                    var (index, match) = SingleMatch(leaf, left);
-                    if (match == null)
+                    for (var i = 0; i < left.Count; i++)
                     {
-                        return new MatchResult(false, left, coll);
-                    }
-                    var left_ = new List<LeafPattern>();
-                    left_.AddRange(left.Take(index));
-                    left_.AddRange(left.Skip(index + 1));
-                    var sameName = coll.Where(a => a.Name == leaf.Name).ToList();
-                    if (leaf.Value != null && (leaf.Value.IsList || leaf.Value.IsOfTypeInt))
-                    {
-                        var increment = new ValueObject(1);
-                        if (!leaf.Value.IsOfTypeInt)
+                        if (left[i] is Argument { Value: { } value })
                         {
-                            increment = match.Value.IsString ? new ValueObject(new [] {match.Value})  : match.Value;
+                            if (value.ToString() == command.Name)
+                                return MatchLeaf(command, i, new Command(command.Name, new ValueObject(true)));
+                            break;
                         }
-                        if (sameName.Count == 0)
-                        {
-                            match.Value = increment;
-                            return new MatchResult(true, left_, new List<LeafPattern>(coll) { match });
-                        }
-                        sameName[0].Value.Add(increment);
-                        return new MatchResult(true, left_, coll);
                     }
-                    return new MatchResult(true, left_, new List<LeafPattern>(coll) { match });
+                    return new MatchResult(false, left, collected);
                 }
-                default: throw new ArgumentException(nameof(pattern));
+                case Argument argument:
+                {
+                    for (var i = 0; i < left.Count; i++)
+                    {
+                        if (left[i] is Argument { Value: var value })
+                            return MatchLeaf(argument, i, new Argument(argument.Name, value));
+                    }
+                    return new MatchResult(false, left, collected);
+                }
+                case Option option:
+                {
+                    for (var i = 0; i < left.Count; i++)
+                    {
+                        if (left[i].Name == option.Name)
+                            return MatchLeaf(option, i, left[i]);
+                    }
+                    return new MatchResult(false, left, collected);
+                }
+                default:
+                    throw new ArgumentException(nameof(pattern));
             }
 
-            static (int, LeafPattern) SingleMatch(LeafPattern pattern, IList<LeafPattern> left)
+            MatchResult MatchLeaf(LeafPattern leaf, int index, LeafPattern match)
             {
-                switch (pattern)
+                var left_ = new List<LeafPattern>();
+                left_.AddRange(left.Take(index));
+                left_.AddRange(left.Skip(index + 1));
+                var sameName = collected.Where(a => a.Name == leaf.Name).ToList();
+                if (leaf.Value is { IsList: true } or { IsOfTypeInt: true })
                 {
-                    case Command command:
+                    var increment = new ValueObject(1);
+                    if (!leaf.Value.IsOfTypeInt)
                     {
-                        for (var i = 0; i < left.Count; i++)
-                        {
-                            if (left[i] is Argument { Value: { } value })
-                            {
-                                if (value.ToString() == command.Name)
-                                    return (i, new Command(command.Name, new ValueObject(true)));
-                                break;
-                            }
-                        }
-                        return default;
+                        increment = match.Value.IsString ? new ValueObject(new [] { match.Value }) : match.Value;
                     }
-                    case Argument argument:
+                    if (sameName.Count == 0)
                     {
-                        for (var i = 0; i < left.Count; i++)
-                        {
-                            if (left[i] is Argument { Value: var value })
-                                return (i, new Argument(argument.Name, value));
-                        }
-                        return default;
+                        match.Value = increment;
+                        return new MatchResult(true, left_, new List<LeafPattern>(collected) { match });
                     }
-                    case Option option:
-                    {
-                        for (var i = 0; i < left.Count; i++)
-                        {
-                            if (left[i].Name == option.Name)
-                                return (i, left[i]);
-                        }
-                        return default;
-                    }
-                    default: throw new ArgumentException(nameof(pattern));
+                    sameName[0].Value.Add(increment);
+                    return new MatchResult(true, left_, collected);
                 }
+                return new MatchResult(true, left_, new List<LeafPattern>(collected) { match });
             }
         }
     }
