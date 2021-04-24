@@ -77,11 +77,52 @@ namespace DocoptNet
                 }
                 case LeafPattern leaf:
                 {
-                    var (index, match) = SingleMatch(leaf, left);
-                    if (match == null)
+                    var (index, match) = (0, (LeafPattern?)null);
+                    switch (leaf)
                     {
-                        return new MatchResult(false, left, collected);
+                        case Command command:
+                        {
+                            for (var i = 0; i < left.Count; i++)
+                            {
+                                if (left[i] is Argument { Value: { } value })
+                                {
+                                    if (value.ToString() == command.Name)
+                                        (index, match) = (i, new Command(command.Name, new ValueObject(true)));
+                                    break;
+                                }
+                            }
+                            break;
+                        }
+                        case Argument argument:
+                        {
+                            for (var i = 0; i < left.Count; i++)
+                            {
+                                if (left[i] is Argument { Value: var value })
+                                {
+                                    (index, match) = (i, new Argument(argument.Name, value));
+                                    break;
+                                }
+                            }
+                            break;
+                        }
+                        case Option option:
+                        {
+                            for (var i = 0; i < left.Count; i++)
+                            {
+                                if (left[i].Name == option.Name)
+                                {
+                                    (index, match) = (i, left[i]);
+                                    break;
+                                }
+                            }
+                            break;
+                        }
+                        default: throw new ArgumentException(nameof(pattern));
                     }
+
+                    if (match is null)
+                        return new MatchResult(false, left, collected);
+
                     var left_ = new List<LeafPattern>();
                     left_.AddRange(left.Take(index));
                     left_.AddRange(left.Skip(index + 1));
@@ -102,45 +143,6 @@ namespace DocoptNet
                         return new MatchResult(true, left_, collected);
                     }
                     return new MatchResult(true, left_, new List<LeafPattern>(collected) { match });
-
-                    static (int, LeafPattern?) SingleMatch(LeafPattern pattern, IList<LeafPattern> left)
-                    {
-                        switch (pattern)
-                        {
-                            case Command command:
-                            {
-                                for (var i = 0; i < left.Count; i++)
-                                {
-                                    if (left[i] is Argument { Value: { } value })
-                                    {
-                                        if (value.ToString() == command.Name)
-                                            return (i, new Command(command.Name, new ValueObject(true)));
-                                        break;
-                                    }
-                                }
-                                return default;
-                            }
-                            case Argument argument:
-                            {
-                                for (var i = 0; i < left.Count; i++)
-                                {
-                                    if (left[i] is Argument { Value: var value })
-                                        return (i, new Argument(argument.Name, value));
-                                }
-                                return default;
-                            }
-                            case Option option:
-                            {
-                                for (var i = 0; i < left.Count; i++)
-                                {
-                                    if (left[i].Name == option.Name)
-                                        return (i, left[i]);
-                                }
-                                return default;
-                            }
-                            default: throw new ArgumentException(nameof(pattern));
-                        }
-                    }
                 }
                 default:
                     throw new ArgumentException(nameof(pattern));
