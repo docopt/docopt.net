@@ -40,7 +40,7 @@ namespace DocoptNet
 
         public override string ToString()
         {
-            return string.Format("{0}({1}, {2})", GetType().Name, Name, Value);
+            return $"{GetType().Name}({Name}, {Value})";
         }
     }
 }

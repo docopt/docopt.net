@@ -41,15 +41,15 @@ namespace DocoptNet
 
             if (ArgCount == 0)
             {
-                return string.Format("public bool {0} {{ get {{ return _args[\"{1}\"].IsTrue; }} }}", s, Name);
+                return $"public bool {s} {{ get {{ return _args[\"{Name}\"].IsTrue; }} }}";
             }
-            var defaultValue = Value == null ? "null" : string.Format("\"{0}\"", Value);
+            var defaultValue = Value == null ? "null" : $"\"{Value}\"";
             return string.Format("public string {0} {{ get {{ return null == _args[\"{1}\"] ? {2} : _args[\"{1}\"].ToString(); }} }}", s, Name, defaultValue);
         }
 
         public override string ToString()
         {
-            return string.Format("Option({0},{1},{2},{3})", ShortName, LongName, ArgCount, Value);
+            return $"Option({ShortName},{LongName},{ArgCount},{Value})";
         }
 
         private const string DESC_SEPARATOR = "  ";

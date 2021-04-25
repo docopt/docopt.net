@@ -37,7 +37,7 @@ namespace DocoptNet
 
         public override string ToString()
         {
-            return string.Format("{0} {1} {2}", GetType().Name, Name, ValueType);
+            return $"{GetType().Name} {Name} {ValueType}";
         }
 
         public override int GetHashCode()
