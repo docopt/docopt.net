@@ -348,8 +348,7 @@ namespace DocoptNet
                 Option option = null;
                 if (similar.Count > 1)
                 {
-                    throw tokens.CreateException(string.Format("{0} is specified ambiguously {1} times", shortName,
-                        similar.Count));
+                    throw tokens.CreateException($"{shortName} is specified ambiguously {similar.Count} times");
                 }
                 if (similar.Count < 1)
                 {
@@ -408,8 +407,7 @@ namespace DocoptNet
             if (similar.Count > 1)
             {
                 // Might be simply specified ambiguously 2+ times?
-                throw tokens.CreateException(string.Format("{0} is not a unique prefix: {1}?", longName,
-                    string.Join(", ", similar.Select(o => o.LongName))));
+                throw tokens.CreateException($"{longName} is not a unique prefix: {string.Join(", ", similar.Select(o => o.LongName))}?");
             }
             Option option = null;
             if (similar.Count < 1)

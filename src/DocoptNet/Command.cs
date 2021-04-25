@@ -12,7 +12,7 @@ namespace DocoptNet
         {
             var s = Name.ToLowerInvariant();
             s = "Cmd" + GenerateCodeHelper.ConvertDashesToCamelCase(s);
-            return string.Format("public bool {0} {{ get {{ return _args[\"{1}\"].IsTrue; }} }}", s, Name);
+            return $"public bool {s} {{ get {{ return _args[\"{Name}\"].IsTrue; }} }}";
         }
 
     }

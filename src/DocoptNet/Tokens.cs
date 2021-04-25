@@ -67,7 +67,7 @@ namespace DocoptNet
 
         public override string ToString()
         {
-            return string.Format("current={0},count={1}", Current(), _tokens.Count);
+            return $"current={Current()},count={_tokens.Count}";
         }
     }
 }
