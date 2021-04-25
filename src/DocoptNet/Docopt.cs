@@ -52,7 +52,7 @@ namespace DocoptNet
                     optionsShortcut.Children = docOptions.Distinct().Except(patternOptions).ToList();
                 }
                 Extras(help, version, arguments, doc);
-                if (pattern.Fix().Match(arguments, null) is (true, { Count: 0 }, _) res)
+                if (pattern.Fix().Match(arguments) is (true, { Count: 0 }, _) res)
                 {
                     var dict = new Dictionary<string, ValueObject>();
                     foreach (var p in pattern.Flat().OfType<LeafPattern>())
