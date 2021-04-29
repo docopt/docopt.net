@@ -52,17 +52,11 @@ namespace DocoptNet
                     optionsShortcut.Children = docOptions.Distinct().Except(patternOptions).ToList();
                 }
                 Extras(help, version, arguments, doc);
-                if (pattern.Fix().Match(arguments) is (true, { Count: 0 }, _) res)
+                if (pattern.Fix().Match(arguments) is (true, { Count: 0 }, var collected))
                 {
                     var dict = new Dictionary<string, ValueObject>();
-                    foreach (var p in pattern.Flat().OfType<LeafPattern>())
-                    {
+                    foreach (var p in pattern.Flat().OfType<LeafPattern>().Concat(collected))
                         dict[p.Name] = p.Value;
-                    }
-                    foreach (var p in res.Collected)
-                    {
-                        dict[p.Name] = p.Value;
-                    }
                     return dict;
                 }
                 throw new DocoptInputErrorException(exitUsage);
