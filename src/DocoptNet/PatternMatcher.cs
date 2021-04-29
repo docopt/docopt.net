@@ -9,12 +9,12 @@ namespace DocoptNet
 
     static class PatternMatcher
     {
-        public static MatchResult Match(this Pattern pattern, IList<LeafPattern> left)
+        public static MatchResult Match(this Pattern pattern, IReadOnlyList<LeafPattern> left)
         {
             return pattern.Match(left, new List<LeafPattern>());
         }
 
-        static MatchResult Match(this Pattern pattern, IList<LeafPattern> left, IEnumerable<LeafPattern> collected)
+        static MatchResult Match(this Pattern pattern, IReadOnlyList<LeafPattern> left, IReadOnlyList<LeafPattern> collected)
         {
             switch (pattern)
             {
@@ -57,7 +57,7 @@ namespace DocoptNet
                     Debug.Assert(oneOrMore.Children.Count == 1);
                     var l = left;
                     var c = collected;
-                    IList<LeafPattern>? l_ = null;
+                    IReadOnlyList<LeafPattern>? l_ = null;
                     var matched = true;
                     var times = 0;
                     while (matched)

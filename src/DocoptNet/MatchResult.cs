@@ -5,13 +5,13 @@ namespace DocoptNet
 
     class MatchResult
     {
-        public bool Matched;
-        public IList<LeafPattern> Left;
-        public IEnumerable<LeafPattern> Collected;
+        public readonly bool Matched;
+        public readonly IReadOnlyList<LeafPattern> Left;
+        public readonly IReadOnlyList<LeafPattern> Collected;
 
         public MatchResult() { }
 
-        public MatchResult(bool matched, IList<LeafPattern> left, IEnumerable<LeafPattern> collected)
+        public MatchResult(bool matched, IReadOnlyList<LeafPattern> left, IReadOnlyList<LeafPattern> collected)
         {
             Matched = matched;
             Left = left;
@@ -47,7 +47,7 @@ namespace DocoptNet
             return $"matched={Matched} left=[{left}], collected=[{collected}]";
         }
 
-        public void Deconstruct(out bool matched, out IList<LeafPattern> left, out IEnumerable<LeafPattern> collected)
+        public void Deconstruct(out bool matched, out IReadOnlyList<LeafPattern> left, out IReadOnlyList<LeafPattern> collected)
         {
             (matched, left, collected) = (Matched, Left, Collected);
         }
