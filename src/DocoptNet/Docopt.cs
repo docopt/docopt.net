@@ -153,10 +153,6 @@ namespace DocoptNet
         /// <summary>
         ///     Parse command-line argument vector.
         /// </summary>
-        /// <param name="tokens"></param>
-        /// <param name="options"></param>
-        /// <param name="optionsFirst"></param>
-        /// <returns></returns>
         internal static IList<LeafPattern> ParseArgv(Tokens tokens, ICollection<Option> options,
             bool optionsFirst = false)
         {
