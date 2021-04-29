@@ -132,7 +132,7 @@ namespace DocoptNet
             return pattern.Fix().Flat();
         }
 
-        private void Extras(bool help, object version, IReadOnlyList<LeafPattern> options, string doc)
+        private void Extras(bool help, object version, ReadOnlyList<LeafPattern> options, string doc)
         {
             if (help && options.Any(o => (o.Name == "-h" || o.Name == "--help") && !o.Value.IsNullOrEmpty))
             {
