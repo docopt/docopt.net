@@ -52,10 +52,10 @@ namespace DocoptNet
                     optionsShortcut.Children = docOptions.Distinct().Except(patternOptions).ToList();
                 }
 
-                if (help && arguments.Any(o => (o.Name == "-h" || o.Name == "--help") && !o.Value.IsNullOrEmpty))
+                if (help && arguments.Any(o => o is { Name: "-h" or "--help", Value: { IsNullOrEmpty: false } }))
                     OnPrintExit(doc);
 
-                if (version != null && arguments.Any(o => (o.Name == "--version") && !o.Value.IsNullOrEmpty))
+                if (version is not null && arguments.Any(o => o is { Name: "--version", Value: { IsNullOrEmpty: false } }))
                     OnPrintExit(version.ToString());
 
                 if (pattern.Fix().Match(arguments) is (true, { Count: 0 }, var collected))
