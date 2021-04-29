@@ -2,7 +2,6 @@ namespace DocoptNet
 {
     using System;
     using System.Collections.Generic;
-    using System.Collections.ObjectModel;
     using System.Diagnostics;
     using System.Linq;
     using System.Text;
@@ -44,7 +43,7 @@ namespace DocoptNet
                 var exitUsage = usageSections[0];
                 var options = ParseDefaults(doc);
                 var pattern = ParsePattern(FormalUsage(exitUsage), options);
-                var arguments = new ReadOnlyCollection<LeafPattern>(ParseArgv(tokens, options, optionsFirst));
+                var arguments = ParseArgv(tokens, options, optionsFirst).AsReadOnly();
                 var patternOptions = pattern.Flat<Option>().Distinct().ToList();
                 // [default] syntax for argument is disabled
                 foreach (OptionsShortcut optionsShortcut in pattern.Flat(typeof (OptionsShortcut)))

@@ -9,12 +9,14 @@ namespace DocoptNet
 
     static class PatternMatcher
     {
-        public static MatchResult Match(this Pattern pattern, IReadOnlyList<LeafPattern> left)
+        public static MatchResult Match(this Pattern pattern, ReadOnlyList<LeafPattern> left)
         {
-            return pattern.Match(left, new List<LeafPattern>());
+            return pattern.Match(left, new ReadOnlyList<LeafPattern>());
         }
 
-        static MatchResult Match(this Pattern pattern, IReadOnlyList<LeafPattern> left, IReadOnlyList<LeafPattern> collected)
+        static MatchResult Match(this Pattern pattern,
+                                 ReadOnlyList<LeafPattern> left,
+                                 ReadOnlyList<LeafPattern> collected)
         {
             switch (pattern)
             {
@@ -57,7 +59,7 @@ namespace DocoptNet
                     Debug.Assert(oneOrMore.Children.Count == 1);
                     var l = left;
                     var c = collected;
-                    IReadOnlyList<LeafPattern>? l_ = null;
+                    ReadOnlyList<LeafPattern>? l_ = null;
                     var matched = true;
                     var times = 0;
                     while (matched)
@@ -112,9 +114,7 @@ namespace DocoptNet
 
             MatchResult MatchLeaf(LeafPattern leaf, int index, LeafPattern match)
             {
-                var left_ = new List<LeafPattern>();
-                left_.AddRange(left.Take(index));
-                left_.AddRange(left.Skip(index + 1));
+                var left_ = left.RemoveAt(index);
                 var sameName = collected.Where(a => a.Name == leaf.Name).ToList();
                 if (leaf.Value is { IsList: true } or { IsOfTypeInt: true })
                 {
@@ -126,12 +126,12 @@ namespace DocoptNet
                     if (sameName.Count == 0)
                     {
                         match.Value = increment;
-                        return new MatchResult(true, left_, new List<LeafPattern>(collected) { match });
+                        return new MatchResult(true, left_, collected.Append(match));
                     }
                     sameName[0].Value.Add(increment);
                     return new MatchResult(true, left_, collected);
                 }
-                return new MatchResult(true, left_, new List<LeafPattern>(collected) { match });
+                return new MatchResult(true, left_, collected.Append(match));
             }
         }
     }
