@@ -1,17 +1,14 @@
 namespace DocoptNet
 {
-    using System.Collections.Generic;
-    using System.Linq;
-
     class MatchResult
     {
-        public bool Matched;
-        public IList<LeafPattern> Left;
-        public IEnumerable<LeafPattern> Collected;
+        public readonly bool Matched;
+        public readonly ReadOnlyList<LeafPattern> Left;
+        public readonly ReadOnlyList<LeafPattern> Collected;
 
         public MatchResult() { }
 
-        public MatchResult(bool matched, IList<LeafPattern> left, IEnumerable<LeafPattern> collected)
+        public MatchResult(bool matched, ReadOnlyList<LeafPattern> left, ReadOnlyList<LeafPattern> collected)
         {
             Matched = matched;
             Left = left;
@@ -42,12 +39,12 @@ namespace DocoptNet
 
         public override string ToString()
         {
-            var left = string.Join(", ", Left ?? Array<LeafPattern>.Empty);
-            var collected = string.Join(", ", Collected ?? Array<LeafPattern>.Empty);
+            var left = string.Join(", ", Left);
+            var collected = string.Join(", ", Collected);
             return $"matched={Matched} left=[{left}], collected=[{collected}]";
         }
 
-        public void Deconstruct(out bool matched, out IList<LeafPattern> left, out IEnumerable<LeafPattern> collected)
+        public void Deconstruct(out bool matched, out ReadOnlyList<LeafPattern> left, out ReadOnlyList<LeafPattern> collected)
         {
             (matched, left, collected) = (Matched, Left, Collected);
         }

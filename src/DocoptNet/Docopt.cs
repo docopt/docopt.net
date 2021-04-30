@@ -43,7 +43,7 @@ namespace DocoptNet
                 var exitUsage = usageSections[0];
                 var options = ParseDefaults(doc);
                 var pattern = ParsePattern(FormalUsage(exitUsage), options);
-                var arguments = ParseArgv(tokens, options, optionsFirst);
+                var arguments = ParseArgv(tokens, options, optionsFirst).AsReadOnly();
                 var patternOptions = pattern.Flat<Option>().Distinct().ToList();
                 // [default] syntax for argument is disabled
                 foreach (OptionsShortcut optionsShortcut in pattern.Flat(typeof (OptionsShortcut)))
@@ -51,18 +51,18 @@ namespace DocoptNet
                     var docOptions = ParseDefaults(doc);
                     optionsShortcut.Children = docOptions.Distinct().Except(patternOptions).ToList();
                 }
-                Extras(help, version, arguments, doc);
-                if (pattern.Fix().Match(arguments) is (true, { Count: 0 }, _) res)
+
+                if (help && arguments.Any(o => o is { Name: "-h" or "--help", Value: { IsNullOrEmpty: false } }))
+                    OnPrintExit(doc);
+
+                if (version is not null && arguments.Any(o => o is { Name: "--version", Value: { IsNullOrEmpty: false } }))
+                    OnPrintExit(version.ToString());
+
+                if (pattern.Fix().Match(arguments) is (true, { Count: 0 }, var collected))
                 {
                     var dict = new Dictionary<string, ValueObject>();
-                    foreach (var p in pattern.Flat().OfType<LeafPattern>())
-                    {
+                    foreach (var p in pattern.Flat().OfType<LeafPattern>().Concat(collected))
                         dict[p.Name] = p.Value;
-                    }
-                    foreach (var p in res.Collected)
-                    {
-                        dict[p.Name] = p.Value;
-                    }
                     return dict;
                 }
                 throw new DocoptInputErrorException(exitUsage);
@@ -153,18 +153,6 @@ namespace DocoptNet
             return pattern.Fix().Flat();
         }
 
-        private void Extras(bool help, object version, ICollection<LeafPattern> options, string doc)
-        {
-            if (help && options.Any(o => (o.Name == "-h" || o.Name == "--help") && !o.Value.IsNullOrEmpty))
-            {
-                OnPrintExit(doc);
-            }
-            if (version != null && options.Any(o => (o.Name == "--version") && !o.Value.IsNullOrEmpty))
-            {
-                OnPrintExit(version.ToString());
-            }
-        }
-
         protected void OnPrintExit(string doc, int errorCode = 0)
         {
             if (PrintExit == null)
@@ -180,10 +168,6 @@ namespace DocoptNet
         /// <summary>
         ///     Parse command-line argument vector.
         /// </summary>
-        /// <param name="tokens"></param>
-        /// <param name="options"></param>
-        /// <param name="optionsFirst"></param>
-        /// <returns></returns>
         internal static IList<LeafPattern> ParseArgv(Tokens tokens, ICollection<Option> options,
             bool optionsFirst = false)
         {

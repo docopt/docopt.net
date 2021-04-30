@@ -64,7 +64,6 @@ namespace DocoptNet
         /// <summary>
         ///     Make pattern-tree tips point to same object if they are equal.
         /// </summary>
-        /// <param name="uniq"></param>
         public void FixIdentities(ICollection<Pattern> uniq = null)
         {
             var listUniq = uniq ?? Flat().Distinct().ToList();
@@ -121,8 +120,6 @@ namespace DocoptNet
         ///     Example: ((-a | -b) (-c | -d)) => (-a -c | -a -d | -b -c | -b -d)
         ///     Quirks: [-a] => (-a), (-a...) => (-a -a)
         /// </summary>
-        /// <param name="pattern"></param>
-        /// <returns></returns>
         public static Either Transform(Pattern pattern)
         {
             var result = new List<IList<Pattern>>();
@@ -178,7 +175,6 @@ namespace DocoptNet
         /// <summary>
         ///     Flattens the current patterns to the leaves only
         /// </summary>
-        /// <returns></returns>
         public IEnumerable<Pattern> Flat()
         {
             return Flat(new Type[0]);
