@@ -43,7 +43,7 @@ namespace DocoptNet
                 var exitUsage = usageSections[0];
                 var options = ParseDefaults(doc);
                 var pattern = ParsePattern(FormalUsage(exitUsage), options);
-                var arguments = ParseArgv(tokens, options, optionsFirst);
+                var arguments = ParseArgv(tokens, options, optionsFirst).AsReadOnly();
                 var patternOptions = pattern.Flat<Option>().Distinct().ToList();
                 // [default] syntax for argument is disabled
                 foreach (OptionsShortcut optionsShortcut in pattern.Flat(typeof (OptionsShortcut)))
