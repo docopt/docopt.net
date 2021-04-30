@@ -51,7 +51,13 @@ namespace DocoptNet
                     var docOptions = ParseDefaults(doc);
                     optionsShortcut.Children = docOptions.Distinct().Except(patternOptions).ToList();
                 }
-                Extras(help, version, arguments, doc);
+
+                if (help && arguments.Any(o => o is { Name: "-h" or "--help", Value: { IsNullOrEmpty: false } }))
+                    OnPrintExit(doc);
+
+                if (version is not null && arguments.Any(o => o is { Name: "--version", Value: { IsNullOrEmpty: false } }))
+                    OnPrintExit(version.ToString());
+
                 if (pattern.Fix().Match(arguments) is (true, { Count: 0 }, var collected))
                 {
                     var dict = new Dictionary<string, ValueObject>();
@@ -124,18 +130,6 @@ namespace DocoptNet
                 optionsShortcut.Children = docOptions.Distinct().Except(patternOptions).ToList();
             }
             return pattern.Fix().Flat();
-        }
-
-        private void Extras(bool help, object version, ReadOnlyList<LeafPattern> options, string doc)
-        {
-            if (help && options.Any(o => (o.Name == "-h" || o.Name == "--help") && !o.Value.IsNullOrEmpty))
-            {
-                OnPrintExit(doc);
-            }
-            if (version != null && options.Any(o => (o.Name == "--version") && !o.Value.IsNullOrEmpty))
-            {
-                OnPrintExit(version.ToString());
-            }
         }
 
         protected void OnPrintExit(string doc, int errorCode = 0)
