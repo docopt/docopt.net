@@ -37,6 +37,12 @@ namespace DocoptNet.CodeGeneration
             return StringBuilder;
         }
 
+        public IndentingStringBuilder Append(int value)
+        {
+            OnAppending().Append(value); // TODO invariant formatting
+            return this;
+        }
+
         public IndentingStringBuilder Append(char value)
         {
             OnAppending().Append(value);
@@ -67,6 +73,9 @@ namespace DocoptNet.CodeGeneration
             IsNewLine = true;
             return this;
         }
+
+        public IndentingStringBuilder AppendLine(string value) =>
+            Append(value).AppendLine();
 
         public override string ToString() => StringBuilder.ToString();
     }
