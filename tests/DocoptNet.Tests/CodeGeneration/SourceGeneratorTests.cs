@@ -85,7 +85,7 @@ namespace DocoptNet.Tests.CodeGeneration
             var driver =
                 CSharpGeneratorDriver.Create(new[] { generator },
                                              new[] { additionalText },
-                                             parseOptions: null,
+                                             parseOptions: CSharpParseOptions.Default.WithPreprocessorSymbols("DOCNETOPT_GENERATED"),
                                              new AnalyzerConfigOptionsProvider(KeyValuePair.Create(additionalText, options)));
 
             driver.RunGeneratorsAndUpdateCompilation(compilation,

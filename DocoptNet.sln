@@ -36,6 +36,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "SourceGenerator", "SourceGe
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NavalFate", "eg\SourceGenerator\NavalFate\NavalFate.csproj", "{E41419E5-251C-4093-ADDE-77EF694964E3}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DocoptNet.Generated", "src\DocoptNet.Generated\DocoptNet.Generated.csproj", "{AC6B83C1-50E1-4C69-AFBE-49F27D71EE8F}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -122,6 +124,18 @@ Global
 		{E41419E5-251C-4093-ADDE-77EF694964E3}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{E41419E5-251C-4093-ADDE-77EF694964E3}.Release|x86.ActiveCfg = Release|Any CPU
 		{E41419E5-251C-4093-ADDE-77EF694964E3}.Release|x86.Build.0 = Release|Any CPU
+		{AC6B83C1-50E1-4C69-AFBE-49F27D71EE8F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AC6B83C1-50E1-4C69-AFBE-49F27D71EE8F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AC6B83C1-50E1-4C69-AFBE-49F27D71EE8F}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{AC6B83C1-50E1-4C69-AFBE-49F27D71EE8F}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{AC6B83C1-50E1-4C69-AFBE-49F27D71EE8F}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{AC6B83C1-50E1-4C69-AFBE-49F27D71EE8F}.Debug|x86.Build.0 = Debug|Any CPU
+		{AC6B83C1-50E1-4C69-AFBE-49F27D71EE8F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AC6B83C1-50E1-4C69-AFBE-49F27D71EE8F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AC6B83C1-50E1-4C69-AFBE-49F27D71EE8F}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{AC6B83C1-50E1-4C69-AFBE-49F27D71EE8F}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{AC6B83C1-50E1-4C69-AFBE-49F27D71EE8F}.Release|x86.ActiveCfg = Release|Any CPU
+		{AC6B83C1-50E1-4C69-AFBE-49F27D71EE8F}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
