@@ -6,8 +6,6 @@ namespace DocoptNet
         public readonly ReadOnlyList<LeafPattern> Left;
         public readonly ReadOnlyList<LeafPattern> Collected;
 
-        public MatchResult() { }
-
         public MatchResult(bool matched, ReadOnlyList<LeafPattern> left, ReadOnlyList<LeafPattern> collected)
         {
             Matched = matched;
