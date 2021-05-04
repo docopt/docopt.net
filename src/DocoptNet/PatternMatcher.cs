@@ -34,16 +34,16 @@ namespace DocoptNet
                 }
                 case Either either:
                 {
-                    MatchResult? match = null;
+                    var match = new MatchResult(false, left, collected);
                     foreach (var child in either.Children)
                     {
                         if (child.Match(left, collected) is (true, var l, var c)
-                            && (match is null || l.Count < match.Left.Count))
+                            && (!match.Matched || l.Count < match.Left.Count))
                         {
                             match = new MatchResult(true, l, c);
                         }
                     }
-                    return match ?? new MatchResult(false, left, collected);
+                    return match;
                 }
                 case Optional optional:
                 {
