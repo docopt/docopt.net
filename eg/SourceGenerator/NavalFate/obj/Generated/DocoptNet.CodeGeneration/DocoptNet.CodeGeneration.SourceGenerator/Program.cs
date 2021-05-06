@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using DocoptNet.Generated;
 using Leaves = DocoptNet.Generated.ReadOnlyList<DocoptNet.Generated.LeafPattern>;
 using static DocoptNet.Generated.Module;
@@ -145,6 +146,14 @@ namespace NavalFate
         {
             var tokens = new Tokens(args, typeof(DocoptInputErrorException));
             var arguments = Docopt.ParseArgv(tokens, Options, optionsFirst).AsReadOnly();;
+            if (help && arguments.Any(o => o is { Name: "-h" or "--help", Value: { IsNullOrEmpty: false } }))
+            {
+                throw new DocoptExitException(Usage);
+            }
+            if (version is not null && arguments.Any(o => o is { Name: "--version", Value: { IsNullOrEmpty: false } }))
+            {
+                throw new DocoptExitException(version.ToString());
+            }
             var left = arguments;
             var collected = new Leaves();
             var rm = false; var rl = left; var rc = collected;

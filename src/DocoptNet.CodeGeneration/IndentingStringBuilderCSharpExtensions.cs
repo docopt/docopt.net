@@ -17,6 +17,9 @@ namespace DocoptNet.CodeGeneration
         public static IndentingStringBuilder Break(this IndentingStringBuilder sb) =>
             sb.Append("break;").AppendLine();
 
+        public static IndentingStringBuilder Throw(this IndentingStringBuilder sb, string expression) =>
+            sb.Append("throw ").Append(expression).Append(';').AppendLine();
+
         public static IndentingStringBuilder Switch(this IndentingStringBuilder sb, string expr) =>
             sb.Append("switch (").Append(expr).Append(')').AppendLine();
 
