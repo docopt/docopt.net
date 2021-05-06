@@ -17,6 +17,7 @@
 namespace DocoptNet.CodeGeneration
 {
     using System;
+    using System.Collections.Generic;
     using System.IO;
     using System.Linq;
     using System.Text;
@@ -127,7 +128,7 @@ namespace DocoptNet.CodeGeneration
             var sb = new IndentingStringBuilder();
 
             sb.Append("using System.Collections;").AppendLine()
-              .Append("using System.Collections.Immutable;").AppendLine()
+              .Append("using System.Collections.Generic;").AppendLine()
               .Append("using DocoptNet.Generated;").AppendLine()
               .Append("using Leaves = DocoptNet.Generated.ReadOnlyList<DocoptNet.Generated.LeafPattern>;").AppendLine()
               .Append("using static DocoptNet.Generated.Module;").AppendLine()
@@ -377,8 +378,22 @@ namespace DocoptNet.CodeGeneration
             }
 
             sb.AppendLine();
-            sb.Append("static void Apply(Leaves left, Leaves collected)").AppendLine()
+            sb.AppendLine("static readonly ICollection<Option> Options = new[]")
+              .BlockStart();
+            foreach (var option in Docopt.ParseDefaults(usage))
+            {
+                AppendTreeCode(option);
+                sb.AppendLine(",");
+            }
+            sb.BlockEnd().AppendLine(";");
+
+            sb.AppendLine();
+            sb.Append("static void Apply(string[] args, bool help = true, object version = null, bool optionsFirst = false, bool exit = false)").AppendLine()
               .BlockStart()
+              .DeclareAssigned("tokens", "new Tokens(args, typeof(DocoptInputErrorException))")
+              .DeclareAssigned("arguments", "Docopt.ParseArgv(tokens, Options, optionsFirst).AsReadOnly();")
+              .DeclareAssigned("left", "arguments")
+              .DeclareAssigned("collected", "new Leaves()")
               .Append("var rm = false; var rl = left; var rc = collected;").AppendLine()
               .AppendLine("do")
               .BlockStart();

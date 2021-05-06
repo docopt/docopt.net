@@ -1,5 +1,5 @@
 using System.Collections;
-using System.Collections.Immutable;
+using System.Collections.Generic;
 using DocoptNet.Generated;
 using Leaves = DocoptNet.Generated.ReadOnlyList<DocoptNet.Generated.LeafPattern>;
 using static DocoptNet.Generated.Module;
@@ -131,8 +131,22 @@ namespace NavalFate
                 })
             });
 
-        static void Apply(Leaves left, Leaves collected)
+        static readonly ICollection<Option> Options = new[]
         {
+            new Option("-h", "--help", 0, new ValueObject(false)),
+            new Option("", "--version", 0, new ValueObject(false)),
+            new Option("", "--speed", 1, new ValueObject(10)),
+            new Option("", "--moored", 0, new ValueObject(false)),
+            new Option("", "--drifting", 0, new ValueObject(false)),
+        }
+        ;
+
+        static void Apply(string[] args, bool help = true, object version = null, bool optionsFirst = false, bool exit = false)
+        {
+            var tokens = new Tokens(args, typeof(DocoptInputErrorException));
+            var arguments = Docopt.ParseArgv(tokens, Options, optionsFirst).AsReadOnly();;
+            var left = arguments;
+            var collected = new Leaves();
             var rm = false; var rl = left; var rc = collected;
             do
             {
