@@ -2,6 +2,11 @@ namespace DocoptNet.CodeGeneration
 {
     static class IndentingStringBuilderCSharpExtensions
     {
+        const string Quote = "\"";
+
+        public static IndentingStringBuilder Literal(this IndentingStringBuilder sb, string value) =>
+            sb.Append('@').Append(Quote).Append(value.Replace(Quote, Quote + Quote)).Append(Quote);
+
         public static IndentingStringBuilder DeclareAssigned(this IndentingStringBuilder sb, string name, string rhs) =>
             sb.Append("var ").Append(name).Append(" = ").Append(rhs).Append(";").AppendLine();
 

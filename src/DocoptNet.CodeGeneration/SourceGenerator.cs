@@ -145,10 +145,7 @@ namespace DocoptNet.CodeGeneration
             sb.Append("partial class ").Append(name).AppendLine();
             sb.BlockStart();
 
-            const string quote = "\"";
-            sb.Append("public const string Usage = @")
-              .Append(quote).Append(usage.Replace(quote, quote + quote)).Append(quote).Append(";")
-              .AppendLine();
+            sb.Append("public const string Usage = ").Literal(usage).Append(';').AppendLine();
 
             void AppendTree(Pattern pattern, int level = 0)
             {
