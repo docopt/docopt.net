@@ -2,12 +2,11 @@
 
   <PropertyGroup>
     <TargetFramework>net5.0</TargetFramework>
-    <DefineConstants>$(DefineConstants);DOCNETOPT_GENERATED</DefineConstants>
+    <Nullable>annotations</Nullable>
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Include="..\DocoptNet\ReadOnlyList.cs" Link="ReadOnlyList.cs" />
-    <Compile Include="..\DocoptNet\ValueObject.cs" Link="ValueObject.cs" />
+    <Compile Include="..\DocoptNet\*.cs" Link="%(Filename)%(Extension)" />
   </ItemGroup>
 
 </Project>

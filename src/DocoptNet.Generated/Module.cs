@@ -22,7 +22,11 @@ namespace DocoptNet.Generated
                 if (!isInt)
                     increment = match.Value.IsString ? new ValueObject(new [] {match.Value})  : match.Value;
                 if (sameName.Count == 0)
-                    return (true, left_, collected.Append(match with { Value = increment }));
+                {
+                    match.Value = increment;
+                    return (true, left_, collected.Append(match));
+                }
+
                 sameName[0].Value.Add(increment);
                 return (true, left_, collected);
             }

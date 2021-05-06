@@ -1,10 +1,6 @@
 #nullable enable
 
-#if DOCNETOPT_GENERATED
-namespace DocoptNet.Generated
-#else
 namespace DocoptNet
-#endif
 {
     using System.Collections;
     using System.Collections.Generic;

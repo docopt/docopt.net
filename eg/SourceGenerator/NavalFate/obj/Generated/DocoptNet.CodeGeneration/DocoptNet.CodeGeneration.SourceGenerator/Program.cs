@@ -65,43 +65,71 @@ namespace NavalFate
         //       Option(,--version,0,False) -> OptionNode version Bool
 
         static readonly Pattern Pattern =
-            new Required(ImmutableArray.Create<Pattern>(
-                new Either(ImmutableArray.Create<Pattern>(
-                    new Required(ImmutableArray.Create<Pattern>(
+            new Required(new Pattern[]
+            {
+                new Either(new Pattern[]
+                {
+                    new Required(new Pattern[]
+                    {
                         new Command("ship"),
                         new Command("new"),
                         new OneOrMore(
-                            new Argument("<name>", null)))),
-                    new Required(ImmutableArray.Create<Pattern>(
+                        new Argument("<name>", (ValueObject)null))
+                    }),
+                    new Required(new Pattern[]
+                    {
                         new Command("ship"),
-                        new Argument("<name>", null),
+                        new Argument("<name>", (ValueObject)null),
                         new Command("move"),
-                        new Argument("<x>", null),
-                        new Argument("<y>", null),
-                        new Optional(ImmutableArray.Create<Pattern>(
-                            new Option("", "--speed", 1, new ValueObject(10)))))),
-                    new Required(ImmutableArray.Create<Pattern>(
+                        new Argument("<x>", (ValueObject)null),
+                        new Argument("<y>", (ValueObject)null),
+                        new Optional(new Pattern[]
+                        {
+                            new Option("", "--speed", 1, new ValueObject(10))
+                        })
+                    }),
+                    new Required(new Pattern[]
+                    {
                         new Command("ship"),
                         new Command("shoot"),
-                        new Argument("<x>", null),
-                        new Argument("<y>", null))),
-                    new Required(ImmutableArray.Create<Pattern>(
+                        new Argument("<x>", (ValueObject)null),
+                        new Argument("<y>", (ValueObject)null)
+                    }),
+                    new Required(new Pattern[]
+                    {
                         new Command("mine"),
-                        new Required(ImmutableArray.Create<Pattern>(
-                            new Either(ImmutableArray.Create<Pattern>(
+                        new Required(new Pattern[]
+                        {
+                            new Either(new Pattern[]
+                            {
                                 new Command("set"),
-                                new Command("remove"))))),
-                        new Argument("<x>", null),
-                        new Argument("<y>", null),
-                        new Optional(ImmutableArray.Create<Pattern>(
-                            new Either(ImmutableArray.Create<Pattern>(
+                                new Command("remove")
+                            })
+                        }),
+                        new Argument("<x>", (ValueObject)null),
+                        new Argument("<y>", (ValueObject)null),
+                        new Optional(new Pattern[]
+                        {
+                            new Either(new Pattern[]
+                            {
                                 new Option("", "--moored", 0, new ValueObject(false)),
-                                new Option("", "--drifting", 0, new ValueObject(false)))))))),
-                    new Required(ImmutableArray.Create<Pattern>(
-                        new Required(ImmutableArray.Create<Pattern>(
-                            new Option("-h", "--help", 0, new ValueObject(false)))))),
-                    new Required(ImmutableArray.Create<Pattern>(
-                        new Option("", "--version", 0, new ValueObject(false))))))));
+                                new Option("", "--drifting", 0, new ValueObject(false))
+                            })
+                        })
+                    }),
+                    new Required(new Pattern[]
+                    {
+                        new Required(new Pattern[]
+                        {
+                            new Option("-h", "--help", 0, new ValueObject(false))
+                        })
+                    }),
+                    new Required(new Pattern[]
+                    {
+                        new Option("", "--version", 0, new ValueObject(false))
+                    })
+                })
+            });
 
         static void Apply(Leaves left, Leaves collected)
         {

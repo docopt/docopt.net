@@ -100,7 +100,9 @@ namespace DocoptNet.CodeGeneration
                                          select (rn, rn.Substring(resourceNamespace.Length)))
                 {
                     using var stream = assembly.GetManifestResourceStream(rn)!;
-                    context.AddSource(fn, SourceText.From(stream, Utf8BomlessEncoding, canBeEmbedded: true));
+                    using var reader = new StreamReader(stream);
+                    var source = Regex.Replace(reader.ReadToEnd(), @"(?<=\bnamespace\s+)DocoptNet(?:\.Generated)?\b", "DocoptNet.Generated");
+                    context.AddSource(fn, SourceText.From(source, Utf8BomlessEncoding));
                 }
             }
         }
@@ -166,29 +168,28 @@ namespace DocoptNet.CodeGeneration
             var pattern = new Docopt().ParsePattern(usage);
             AppendTree(pattern);
 
-            void AppendTreeCode(Pattern pattern, int level = 0)
+            void AppendTreeCode(Pattern pattern)
             {
-                sb.Append(' ', level * 4);
                 switch (pattern)
                 {
                     case OneOrMore { Children: { Count: 1 } children }:
                         sb.Append("new OneOrMore(").AppendLine();
-                        AppendTreeCode(children[0], level + 1);
+                        AppendTreeCode(children[0]);
                         sb.Append(")");
                         break;
                     case BranchPattern { Children: { Count: > 0 } children } branch:
-                        sb.Append("new ").Append(branch.GetType().Name).Append("(ImmutableArray.Create<Pattern>(").AppendLine();
+                        sb.Append("new ").Append(branch.GetType().Name).Append("(new Pattern[]").AppendLine().Append('{').AppendLine().Indent();
                         var i = 0;
                         foreach (var child in children)
                         {
-                            AppendTreeCode(child, level + 1);
+                            AppendTreeCode(child);
                             if (++i < children.Count)
                             {
                                 sb.Append(',');
                                 sb.AppendLine();
                             }
                         }
-                        sb.Append("))");
+                        sb.AppendLine().Outdent().Append("})");
                         break;
                     case Command command:
                         sb.Append("new Command(")
@@ -198,7 +199,7 @@ namespace DocoptNet.CodeGeneration
                     case Argument { Name: var name }:
                         sb.Append("new Argument(")
                           .Append(Literal(name).ToString())
-                          .Append(", null)");
+                          .Append(", (ValueObject)null)");
                         break;
                     case Option option:
                         sb.Append("new Option(")
