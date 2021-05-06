@@ -8,10 +8,7 @@ namespace DocoptNet
 
     abstract class Pattern
     {
-        public virtual string Name
-        {
-            get { return ToString(); }
-        }
+        public abstract string Name { get; }
 
         public virtual string GenerateCode()
         {

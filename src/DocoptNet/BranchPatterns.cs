@@ -15,6 +15,11 @@ namespace DocoptNet
             Children = children;
         }
 
+        public override string Name
+        {
+            get { return ToString(); }
+        }
+
         public override bool HasChildren { get { return true; } }
 
         public IEnumerable<Pattern> Flat<T>() where T: Pattern
