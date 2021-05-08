@@ -3,12 +3,13 @@
 namespace DocoptNet
 {
     using System;
-    using System.Diagnostics;
+    using System.Collections.Generic;
     using System.Linq;
     using Leaves = ReadOnlyList<LeafPattern>;
 
     interface IMatcher
     {
+        IEnumerable<Pattern> Children(IList<Pattern> children);
         bool Match(Pattern pattern);
         MatchResult Result { get; }
     }
@@ -23,6 +24,8 @@ namespace DocoptNet
 
         public RequiredMatcher(Leaves left, Leaves collected) : this() =>
             (this.left, this.collected, l, c) = (left, collected, left, collected);
+
+        public IEnumerable<Pattern> Children(IList<Pattern> children) => children;
 
         public bool Match(Pattern pattern) =>
             OnMatch(pattern.Match(l, c));
@@ -53,6 +56,8 @@ namespace DocoptNet
             match = new MatchResult(false, left, collected);
         }
 
+        public IEnumerable<Pattern> Children(IList<Pattern> children) => children;
+
         public bool Match(Pattern pattern) =>
             OnMatch(pattern.Match(left, collected));
 
@@ -72,6 +77,8 @@ namespace DocoptNet
 
         public OptionalMatcher(Leaves left, Leaves collected) : this() =>
             (l, c) = (left, collected);
+
+        public IEnumerable<Pattern> Children(IList<Pattern> children) => children;
 
         public bool Match(Pattern pattern) =>
             OnMatch(pattern.Match(l, c));
@@ -96,6 +103,12 @@ namespace DocoptNet
         {
             (this.left, this.collected) = (left, collected);
             (l, c) = (left, collected);
+        }
+
+        public IEnumerable<Pattern> Children(IList<Pattern> children)
+        {
+            while (true)
+                yield return children[0];
         }
 
         public bool Match(Pattern pattern) =>
@@ -126,48 +139,10 @@ namespace DocoptNet
         {
             switch (pattern)
             {
-                case Required required:
-                {
-                    var m = new RequiredMatcher(left, collected);
-                    foreach (var child in required.Children)
-                    {
-                        if (!m.Match(child))
-                            break;
-                    }
-                    return m.Result;
-                }
-                case Either either:
-                {
-                    var m = new EitherMatcher(left, collected);
-                    foreach (var child in either.Children)
-                    {
-                        if (!m.Match(child))
-                            break;
-                    }
-                    return m.Result;
-                }
-                case Optional optional:
-                {
-                    var m = new OptionalMatcher(left, collected);
-                    foreach (var child in optional.Children)
-                    {
-                        if (!m.Match(child))
-                            break;
-                    }
-                    return m.Result;
-                }
-                case OneOrMore oneOrMore:
-                {
-                    Debug.Assert(oneOrMore.Children.Count == 1);
-                    var child = oneOrMore.Children[0];
-                    var m = new OneOrMoreMatcher(left, collected);
-                    while (true)
-                    {
-                        if (!m.Match(child))
-                            break;
-                    }
-                    return m.Result;
-                }
+                case Required  { Children: var children }: return MatchBranch(children, new RequiredMatcher(left, collected));
+                case Either    { Children: var children }: return MatchBranch(children, new EitherMatcher(left, collected));
+                case Optional  { Children: var children }: return MatchBranch(children, new OptionalMatcher(left, collected));
+                case OneOrMore { Children: var children }: return MatchBranch(children, new OneOrMoreMatcher(left, collected));
                 case Command command:
                 {
                     for (var i = 0; i < left.Count; i++)
@@ -201,6 +176,16 @@ namespace DocoptNet
                 }
                 default:
                     throw new ArgumentException(nameof(pattern));
+            }
+
+            static MatchResult MatchBranch<T>(IList<Pattern> children, T matcher) where T : IMatcher
+            {
+                foreach (var child in matcher.Children(children))
+                {
+                    if (!matcher.Match(child))
+                        break;
+                }
+                return matcher.Result;
             }
 
             MatchResult MatchLeaf(LeafPattern leaf, int index, LeafPattern match)
