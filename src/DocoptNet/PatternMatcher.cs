@@ -5,76 +5,168 @@ namespace DocoptNet
     using System;
     using System.Diagnostics;
     using System.Linq;
+    using Leaves = ReadOnlyList<LeafPattern>;
+
+    interface IMatcher
+    {
+        bool Match(Pattern pattern);
+        MatchResult Result { get; }
+    }
+
+    struct RequiredMatcher : IMatcher
+    {
+        readonly Leaves left;
+        readonly Leaves collected;
+        Leaves l;
+        Leaves c;
+        MatchResult? result;
+
+        public RequiredMatcher(Leaves left, Leaves collected) : this() =>
+            (this.left, this.collected, l, c) = (left, collected, left, collected);
+
+        public bool Match(Pattern pattern) =>
+            OnMatch(pattern.Match(l, c));
+
+        public bool OnMatch(MatchResult match)
+        {
+            if (!match.Matched)
+            {
+                result = new MatchResult(false, left, collected);
+                return false;
+            }
+            (_, l, c) = match;
+            return true;
+        }
+
+        public MatchResult Result => result ?? new MatchResult(true, l, c);
+    }
+
+    struct EitherMatcher : IMatcher
+    {
+        readonly Leaves left;
+        readonly Leaves collected;
+        MatchResult match;
+
+        public EitherMatcher(Leaves left, Leaves collected) : this()
+        {
+            (this.left, this.collected) = (left, collected);
+            match = new MatchResult(false, left, collected);
+        }
+
+        public bool Match(Pattern pattern) =>
+            OnMatch(pattern.Match(left, collected));
+
+        public bool OnMatch(MatchResult match)
+        {
+            if (match is (true, var l, var c) && (!this.match.Matched || l.Count < this.match.Left.Count))
+                this.match = new MatchResult(true, l, c);
+            return true;
+        }
+
+        public MatchResult Result => match;
+    }
+
+    struct OptionalMatcher : IMatcher
+    {
+        Leaves l, c;
+
+        public OptionalMatcher(Leaves left, Leaves collected) : this() =>
+            (l, c) = (left, collected);
+
+        public bool Match(Pattern pattern) =>
+            OnMatch(pattern.Match(l, c));
+
+        public bool OnMatch(MatchResult match)
+        {
+            (_, l, c) = match;
+            return true;
+        }
+
+        public MatchResult Result => new(true, l, c);
+    }
+
+    struct OneOrMoreMatcher : IMatcher
+    {
+        readonly Leaves left, collected;
+        Leaves l, c;
+        int times;
+        Leaves? l_;
+
+        public OneOrMoreMatcher(Leaves left, Leaves collected) : this()
+        {
+            (this.left, this.collected) = (left, collected);
+            (l, c) = (left, collected);
+        }
+
+        public bool Match(Pattern pattern) =>
+            OnMatch(pattern.Match(l, c));
+
+        public bool OnMatch(MatchResult match)
+        {
+            bool matched;
+            (matched, l, c) = match;
+            times += matched ? 1 : 0;
+            if (l_ != null && l_.Equals(l))
+                return false;
+            l_ = l;
+            return true;
+        }
+
+        public MatchResult Result => times >= 1 ? new MatchResult(true, l, c) : new MatchResult(false, left, collected);
+    }
 
     static class PatternMatcher
     {
-        public static MatchResult Match(this Pattern pattern, ReadOnlyList<LeafPattern> left)
+        public static MatchResult Match(this Pattern pattern, Leaves left)
         {
-            return pattern.Match(left, new ReadOnlyList<LeafPattern>());
+            return pattern.Match(left, new Leaves());
         }
 
-        static MatchResult Match(this Pattern pattern,
-                                 ReadOnlyList<LeafPattern> left,
-                                 ReadOnlyList<LeafPattern> collected)
+        public static MatchResult Match(this Pattern pattern, Leaves left, Leaves collected)
         {
             switch (pattern)
             {
                 case Required required:
                 {
-                    var l = left;
-                    var c = collected;
+                    var m = new RequiredMatcher(left, collected);
                     foreach (var child in required.Children)
                     {
-                        bool matched;
-                        (matched, l, c) = child.Match(l, c);
-                        if (!matched)
-                            return new MatchResult(false, left, collected);
+                        if (!m.Match(child))
+                            break;
                     }
-                    return new MatchResult(true, l, c);
+                    return m.Result;
                 }
                 case Either either:
                 {
-                    var match = new MatchResult(false, left, collected);
+                    var m = new EitherMatcher(left, collected);
                     foreach (var child in either.Children)
                     {
-                        if (child.Match(left, collected) is (true, var l, var c)
-                            && (!match.Matched || l.Count < match.Left.Count))
-                        {
-                            match = new MatchResult(true, l, c);
-                        }
+                        if (!m.Match(child))
+                            break;
                     }
-                    return match;
+                    return m.Result;
                 }
                 case Optional optional:
                 {
-                    var l = left;
-                    var c = collected;
+                    var m = new OptionalMatcher(left, collected);
                     foreach (var child in optional.Children)
-                        (_, l, c) = child.Match(l, c);
-                    return new MatchResult(true, l, c);
+                    {
+                        if (!m.Match(child))
+                            break;
+                    }
+                    return m.Result;
                 }
                 case OneOrMore oneOrMore:
                 {
                     Debug.Assert(oneOrMore.Children.Count == 1);
-                    var l = left;
-                    var c = collected;
-                    ReadOnlyList<LeafPattern>? l_ = null;
-                    var matched = true;
-                    var times = 0;
-                    while (matched)
+                    var child = oneOrMore.Children[0];
+                    var m = new OneOrMoreMatcher(left, collected);
+                    while (true)
                     {
-                        // could it be that something didn't match but changed l or c?
-                        (matched, l, c) = oneOrMore.Children[0].Match(l, c);
-                        times += matched ? 1 : 0;
-                        if (l_ != null && l_.Equals(l))
+                        if (!m.Match(child))
                             break;
-                        l_ = l;
                     }
-                    if (times >= 1)
-                    {
-                        return new MatchResult(true, l, c);
-                    }
-                    return new MatchResult(false, left, collected);
+                    return m.Result;
                 }
                 case Command command:
                 {
