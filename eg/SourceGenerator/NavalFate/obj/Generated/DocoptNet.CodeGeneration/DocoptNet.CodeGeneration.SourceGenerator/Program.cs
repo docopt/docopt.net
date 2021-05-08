@@ -142,7 +142,7 @@ namespace NavalFate
         }
         ;
 
-        static void Apply(string[] args, bool help = true, object version = null, bool optionsFirst = false, bool exit = false)
+        static Dictionary<string, ValueObject> Apply(IEnumerable<string> args, bool help = true, object version = null, bool optionsFirst = false, bool exit = false)
         {
             var tokens = new Tokens(args, typeof(DocoptInputErrorException));
             var arguments = Docopt.ParseArgv(tokens, Options, optionsFirst).AsReadOnly();;
@@ -209,6 +209,9 @@ namespace NavalFate
                                                 td += rm ? 0 : 1;
                                                 if (lld is {} l_ && l_.Equals(ld))
                                                     break;
+                                                lld = ld;
+                                                ld = rl;
+                                                cd = rc;
                                             }
                                             if (td >= 0)
                                             {
@@ -572,6 +575,52 @@ namespace NavalFate
                 }
             }
             while (false);
+
+            if (!rm)
+            {
+                const string exitUsage = @"Usage:
+      naval_fate.exe ship new <name>...
+      naval_fate.exe ship <name> move <x> <y> [--speed=<kn>]
+      naval_fate.exe ship shoot <x> <y>
+      naval_fate.exe mine (set|remove) <x> <y> [--moored | --drifting]
+      naval_fate.exe (-h | --help)
+      naval_fate.exe --version";
+                throw new DocoptInputErrorException(exitUsage);
+            }
+
+            var dict = new Dictionary<string, ValueObject>
+            {
+                [@"ship"] = new ValueObject(false),
+                [@"new"] = new ValueObject(false),
+                [@"<name>"] = new ValueObject(new ArrayList()),
+                [@"ship"] = new ValueObject(false),
+                [@"<name>"] = new ValueObject(new ArrayList()),
+                [@"move"] = new ValueObject(false),
+                [@"<x>"] = new ValueObject(null),
+                [@"<y>"] = new ValueObject(null),
+                [@"--speed"] = new ValueObject(10),
+                [@"ship"] = new ValueObject(false),
+                [@"shoot"] = new ValueObject(false),
+                [@"<x>"] = new ValueObject(null),
+                [@"<y>"] = new ValueObject(null),
+                [@"mine"] = new ValueObject(false),
+                [@"set"] = new ValueObject(false),
+                [@"remove"] = new ValueObject(false),
+                [@"<x>"] = new ValueObject(null),
+                [@"<y>"] = new ValueObject(null),
+                [@"--moored"] = new ValueObject(false),
+                [@"--drifting"] = new ValueObject(false),
+                [@"--help"] = new ValueObject(false),
+                [@"--version"] = new ValueObject(false),
+            };
+
+            collected = rc;
+            foreach (var p in collected)
+            {
+                dict[p.Name] = p.Value;
+            }
+
+            return dict;
         }
 
         public bool CmdShip { get { return _args["ship"].IsTrue; } }

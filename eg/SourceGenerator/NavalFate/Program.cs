@@ -1,10 +1,20 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using DocoptNet;
+using DocoptNet.Generated;
 using NavalFate;
 
-var program = new Program(args, version: "Naval Fate 2.0", exit: true);
+Program program;
+
+try
+{
+    program = new Program(args, version: "Naval Fate 2.0", exit: true);
+}
+catch (DocoptInputErrorException e)
+{
+    Console.Error.WriteLine(e);
+    return 0xbd;
+}
 
 foreach (var (name, value) in program.Args)
     Console.WriteLine("{0} = {1}", name, value);
@@ -27,6 +37,8 @@ Console.WriteLine($@"{{
     Version  = {program.OptVersion },
 }}");
 
+return 0;
+
 namespace NavalFate
 {
     partial class Program
@@ -36,7 +48,7 @@ namespace NavalFate
         public Program(ICollection<string> argv, bool help = true,
                        object version = null, bool optionsFirst = false, bool exit = false)
         {
-            _args = new Docopt().Apply(Usage, argv, help, version, optionsFirst, exit);
+            _args = Apply(argv, help, version, optionsFirst);
         }
 
         public IDictionary<string, ValueObject> Args => _args;

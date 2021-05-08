@@ -11,7 +11,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\..\src\DocoptNet.CodeGeneration\DocoptNet.CodeGeneration.csproj" ReferenceOutputAssembly="false" OutputItemType="Analyzer" />
-    <ProjectReference Include="..\..\..\src\DocoptNet\DocoptNet.csproj" />
   </ItemGroup>
 
   <Target Name="_InjectAdditionalFiles" BeforeTargets="PrepareForBuild;CompileDesignTime;GenerateMSBuildEditorConfigFileShouldRun">

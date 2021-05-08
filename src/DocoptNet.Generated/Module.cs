@@ -40,7 +40,7 @@ namespace DocoptNet.Generated
                 if (left[i] is Argument { Value: { } value })
                 {
                     if (value.ToString() == command)
-                        return (i, new Command(command));
+                        return (i, new Command(command, new ValueObject(true)));
                     break;
                 }
             }

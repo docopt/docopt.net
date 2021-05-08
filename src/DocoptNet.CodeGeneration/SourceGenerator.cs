@@ -164,7 +164,7 @@ namespace DocoptNet.CodeGeneration
             }
 
             sb.AppendLine();
-            var pattern = new Docopt().ParsePattern(usage);
+            var (pattern, exitUsage) = new Docopt().ParsePattern(usage);
             AppendTree(pattern);
 
             void AppendTreeCode(Pattern pattern)
@@ -322,6 +322,9 @@ namespace DocoptNet.CodeGeneration
                                 sb.Append(times).AppendLine(" += rm ? 0 : 1;");
                                 sb.Append("if (").Append(l_).Append(" is {} l_ && l_.Equals(").Append(l).AppendLine("))")
                                   .Indent().Break().Outdent();
+                                sb.Assign(l_, l)
+                                  .Assign(l, "rl")
+                                  .Assign(c, "rc");
                                 sb.BlockEnd(); // while
                                 sb.Append("if (").Append(times).Append(" >= 0)").AppendLine()
                                   .BlockStart()
@@ -386,7 +389,7 @@ namespace DocoptNet.CodeGeneration
             sb.BlockEnd().AppendLine(";");
 
             sb.AppendLine();
-            sb.Append("static void Apply(string[] args, bool help = true, object version = null, bool optionsFirst = false, bool exit = false)").AppendLine()
+            sb.Append("static Dictionary<string, ValueObject> Apply(IEnumerable<string> args, bool help = true, object version = null, bool optionsFirst = false, bool exit = false)").AppendLine()
               .BlockStart()
               .DeclareAssigned("tokens", "new Tokens(args, typeof(DocoptInputErrorException))")
               .DeclareAssigned("arguments", "Docopt.ParseArgv(tokens, Options, optionsFirst).AsReadOnly();")
@@ -406,6 +409,45 @@ namespace DocoptNet.CodeGeneration
             AppendCode(pattern, "left", "collected");
             sb.BlockEnd()
               .AppendLine("while (false);")
+              .AppendLine()
+              .AppendLine("if (!rm)")
+              .BlockStart()
+              .Const("exitUsage", exitUsage)
+              .Throw("new DocoptInputErrorException(exitUsage)")
+              .BlockEnd()
+              .AppendLine();
+
+            sb.DeclareAssigned("dict", "new Dictionary<string, ValueObject>", unterminated: true).AppendLine()
+              .BlockStart();
+
+            foreach (var leaf in pattern.Flat().OfType<LeafPattern>())
+            {
+                sb.Append("[").Literal(leaf.Name).Append("] = new ValueObject(")
+                  .Append(leaf.Value switch
+                  {
+                      null => "null",
+                      { Value: null     } => "null",
+                      { IsList: true    } => "new ArrayList()",
+                      { IsInt: true, AsInt: var n } => Literal(n).ToString(),
+                      { Value: string v } => Literal(v).ToString(),
+                      { IsTrue: true    } => "true",
+                      { IsFalse: true   } => "false",
+                      _ => throw new NotSupportedException(leaf.Value?.ToString() ?? "(null)"), // todo emit diagnostic
+                  })
+                  .Append("),").AppendLine();
+            }
+
+            sb.BlockEnd(noNewLine: true).EndStatement();
+
+            sb.AppendLine()
+              .Assign("collected", "rc")
+              .AppendLine("foreach (var p in collected)")
+              .BlockStart()
+              .Append("dict[p.Name] = p.Value").EndStatement()
+              .BlockEnd();
+
+            sb.AppendLine()
+              .Return("dict")
               .BlockEnd();
 
             sb.AppendLine();
