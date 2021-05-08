@@ -31,13 +31,13 @@ namespace NavalFate
 {
     partial class Program
     {
-	    readonly IDictionary<string, ValueObject> _args;
+        readonly IDictionary<string, ValueObject> _args;
 
         public Program(ICollection<string> argv, bool help = true,
                        object version = null, bool optionsFirst = false, bool exit = false)
-	    {
-		    _args = new Docopt().Apply(Usage, argv, help, version, optionsFirst, exit);
-	    }
+        {
+            _args = new Docopt().Apply(Usage, argv, help, version, optionsFirst, exit);
+        }
 
         public IDictionary<string, ValueObject> Args => _args;
     }
