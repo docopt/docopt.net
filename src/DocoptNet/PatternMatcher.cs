@@ -38,7 +38,7 @@ namespace DocoptNet
                     foreach (var child in either.Children)
                     {
                         if (child.Match(left, collected) is (true, var l, var c)
-                            && (!match.Matched || l.Count < match.Left.Count))
+                            && (!match || l.Count < match.Left.Count))
                         {
                             match = new MatchResult(true, l, c);
                         }

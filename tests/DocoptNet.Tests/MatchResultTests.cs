@@ -38,5 +38,47 @@ namespace DocoptNet.Tests
             Assert.That(left, Is.EqualTo(match.Left));
             Assert.That(collected, Is.EqualTo(match.Collected));
         }
+
+        [Test]
+        public void Definitely_True_When_Matched()
+        {
+            var match = new MatchResult(true, Leaves(), Leaves());
+
+            if (match)
+                Assert.Pass();
+            else
+                Assert.Fail();
+        }
+
+        [Test]
+        public void Not_Definitely_True_When_Not_Matched()
+        {
+            var match = new MatchResult(false, Leaves(), Leaves());
+
+            if (match)
+                Assert.Fail();
+            else
+                Assert.Pass();
+        }
+
+        [TestCase(false)]
+        [TestCase(true)]
+        public void Definitely_False(bool matched)
+        {
+            var match = new MatchResult(matched, Leaves(), Leaves());
+            // Direct invocation of some operators is forbidden:
+            //     MatchResult.op_False(match);
+            // The compiler emits the following error:
+            //     error CS0571: 'MatchResult.operator false(MatchResult)': cannot explicitly call operator or accessor
+            // Therefore resort to run-time reflection...
+            var method = typeof(MatchResult).GetMethod("op_False");
+            Assert.That(method, Is.Not.Null);
+            var result = (bool?)method!.Invoke(null, new object[] { match });
+
+            if (result == !matched)
+                Assert.Pass();
+            else
+                Assert.Fail();
+        }
     }
 }
