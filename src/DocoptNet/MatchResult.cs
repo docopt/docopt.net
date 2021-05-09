@@ -46,5 +46,9 @@ namespace DocoptNet
         {
             (matched, left, collected) = (Matched, Left, Collected);
         }
+
+        public static bool operator true(MatchResult result) => result.Matched;
+        public static bool operator false(MatchResult result) => !result;
+        public static bool operator !(MatchResult result) => result ? false : true;
     }
 }
