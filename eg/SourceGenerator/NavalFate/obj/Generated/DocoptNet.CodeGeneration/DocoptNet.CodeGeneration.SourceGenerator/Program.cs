@@ -156,427 +156,310 @@ namespace NavalFate
             }
             var left = arguments;
             var collected = new Leaves();
-            var rm = false; var rl = left; var rc = collected;
+            var a = new RequiredMatcher(1, left, collected);
             do
             {
                 // Required(Either(Required(Command(ship, False), Command(new, False), OneOrMore(Argument(<name>, []))), Required(Command(ship, False), Argument(<name>, []), Command(move, False), Argument(<x>, ), Argument(<y>, ), Optional(Option(,--speed,1,10))), Required(Command(ship, False), Command(shoot, False), Argument(<x>, ), Argument(<y>, )), Required(Command(mine, False), Required(Either(Command(set, False), Command(remove, False))), Argument(<x>, ), Argument(<y>, ), Optional(Either(Option(,--moored,0,False), Option(,--drifting,0,False)))), Required(Required(Option(-h,--help,0,False))), Required(Option(,--version,0,False))))
-                var la = left;
-                var ca = collected;
+                var b = new RequiredMatcher(1, a.Left, a.Collected);
+                while (b.Next())
                 {
                     // Either(Required(Command(ship, False), Command(new, False), OneOrMore(Argument(<name>, []))), Required(Command(ship, False), Argument(<name>, []), Command(move, False), Argument(<x>, ), Argument(<y>, ), Optional(Option(,--speed,1,10))), Required(Command(ship, False), Command(shoot, False), Argument(<x>, ), Argument(<y>, )), Required(Command(mine, False), Required(Either(Command(set, False), Command(remove, False))), Argument(<x>, ), Argument(<y>, ), Optional(Either(Option(,--moored,0,False), Option(,--drifting,0,False)))), Required(Required(Option(-h,--help,0,False))), Required(Option(,--version,0,False)))
-                    var emb = false;
-                    var elb = la;
-                    var ecb = ca;
-                    for (var iib = 0; iib < 6; iib++)
+                    var c = new EitherMatcher(6, b.Left, b.Collected);
+                    while (c.Next())
                     {
-                        switch (iib)
+                        switch (c.Index)
                         {
                             case 0:
                             {
                                 // Required(Command(ship, False), Command(new, False), OneOrMore(Argument(<name>, [])))
-                                var lc = la;
-                                var cc = ca;
-                                for (var iic = 0; iic < 3; iic++)
+                                var d = new RequiredMatcher(3, c.Left, c.Collected);
+                                while (d.Next())
                                 {
-                                    switch (iic)
+                                    switch (d.Index)
                                     {
                                         case 0:
                                         {
                                             // Command(ship, False)
-                                            var (i, match) = Command(lc, "ship");
-                                            (rm, rl, rc) = Leaf(lc, cc, "ship", value: false, isList: false, isInt: false, i, match);
+                                            d.Match(Command, "ship", value: false, isList: false, isInt: false);
                                             break;
                                         }
                                         case 1:
                                         {
                                             // Command(new, False)
-                                            var (i, match) = Command(lc, "new");
-                                            (rm, rl, rc) = Leaf(lc, cc, "new", value: false, isList: false, isInt: false, i, match);
+                                            d.Match(Command, "new", value: false, isList: false, isInt: false);
                                             break;
                                         }
                                         case 2:
                                         {
                                             // OneOrMore(Argument(<name>, []))
-                                            var ld = lc;
-                                            var cd = cc;
-                                            var td = 0;
-                                            var lld = default(Leaves?);
-                                            while (true)
+                                            var e = new OneOrMoreMatcher(1, d.Left, d.Collected);
+                                            while (e.Next())
                                             {
                                                 // Argument(<name>, [])
-                                                var (i, match) = Argument(ld, "<name>");
-                                                (rm, rl, rc) = Leaf(ld, cd, "<name>", value: new ArrayList(), isList: true, isInt: false, i, match);
-                                                td += rm ? 0 : 1;
-                                                if (lld is {} l_ && l_.Equals(ld))
+                                                e.Match(Argument, "<name>", value: new ArrayList(), isList: true, isInt: false);
+                                                if (!e.LastMatched)
                                                     break;
-                                                lld = ld;
-                                                ld = rl;
-                                                cd = rc;
                                             }
-                                            if (td >= 0)
-                                            {
-                                                rm = true;
-                                                rl = ld;
-                                                rc = cd;
-                                            }
-                                            else
-                                            {
-                                                rm = true;
-                                                rl = lc;
-                                                rc = cc;
-                                            }
+                                            d.OnMatch(e.Result);
                                             break;
                                         }
                                     }
-                                    if (!rm)
-                                    {
-                                        rl = la;
-                                        rc = ca;
+                                    if (!d.LastMatched)
                                         break;
-                                    }
-                                    lc = rl;
-                                    cc = rc;
                                 }
+                                c.OnMatch(d.Result);
                                 break;
                             }
                             case 1:
                             {
                                 // Required(Command(ship, False), Argument(<name>, []), Command(move, False), Argument(<x>, ), Argument(<y>, ), Optional(Option(,--speed,1,10)))
-                                var lc = la;
-                                var cc = ca;
-                                for (var iic = 0; iic < 6; iic++)
+                                var d = new RequiredMatcher(6, c.Left, c.Collected);
+                                while (d.Next())
                                 {
-                                    switch (iic)
+                                    switch (d.Index)
                                     {
                                         case 0:
                                         {
                                             // Command(ship, False)
-                                            var (i, match) = Command(lc, "ship");
-                                            (rm, rl, rc) = Leaf(lc, cc, "ship", value: false, isList: false, isInt: false, i, match);
+                                            d.Match(Command, "ship", value: false, isList: false, isInt: false);
                                             break;
                                         }
                                         case 1:
                                         {
                                             // Argument(<name>, [])
-                                            var (i, match) = Argument(lc, "<name>");
-                                            (rm, rl, rc) = Leaf(lc, cc, "<name>", value: new ArrayList(), isList: true, isInt: false, i, match);
+                                            d.Match(Argument, "<name>", value: new ArrayList(), isList: true, isInt: false);
                                             break;
                                         }
                                         case 2:
                                         {
                                             // Command(move, False)
-                                            var (i, match) = Command(lc, "move");
-                                            (rm, rl, rc) = Leaf(lc, cc, "move", value: false, isList: false, isInt: false, i, match);
+                                            d.Match(Command, "move", value: false, isList: false, isInt: false);
                                             break;
                                         }
                                         case 3:
                                         {
                                             // Argument(<x>, )
-                                            var (i, match) = Argument(lc, "<x>");
-                                            (rm, rl, rc) = Leaf(lc, cc, "<x>", value: null, isList: false, isInt: false, i, match);
+                                            d.Match(Argument, "<x>", value: null, isList: false, isInt: false);
                                             break;
                                         }
                                         case 4:
                                         {
                                             // Argument(<y>, )
-                                            var (i, match) = Argument(lc, "<y>");
-                                            (rm, rl, rc) = Leaf(lc, cc, "<y>", value: null, isList: false, isInt: false, i, match);
+                                            d.Match(Argument, "<y>", value: null, isList: false, isInt: false);
                                             break;
                                         }
                                         case 5:
                                         {
                                             // Optional(Option(,--speed,1,10))
-                                            var ld = lc;
-                                            var cd = cc;
+                                            var e = new OptionalMatcher(1, d.Left, d.Collected);
+                                            while (e.Next())
                                             {
                                                 // Option(,--speed,1,10)
-                                                var (i, match) = Option(ld, "--speed");
-                                                (rm, rl, rc) = Leaf(ld, cd, "--speed", value: 10, isList: false, isInt: false, i, match);
-                                                ld = rl;
-                                                cd = rc;
+                                                e.Match(Option, "--speed", value: 10, isList: false, isInt: false);
+                                                if (!e.LastMatched)
+                                                    break;
                                             }
-                                            rm = true;
-                                            rl = ld;
-                                            rc = cd;
+                                            d.OnMatch(e.Result);
                                             break;
                                         }
                                     }
-                                    if (!rm)
-                                    {
-                                        rl = la;
-                                        rc = ca;
+                                    if (!d.LastMatched)
                                         break;
-                                    }
-                                    lc = rl;
-                                    cc = rc;
                                 }
+                                c.OnMatch(d.Result);
                                 break;
                             }
                             case 2:
                             {
                                 // Required(Command(ship, False), Command(shoot, False), Argument(<x>, ), Argument(<y>, ))
-                                var lc = la;
-                                var cc = ca;
-                                for (var iic = 0; iic < 4; iic++)
+                                var d = new RequiredMatcher(4, c.Left, c.Collected);
+                                while (d.Next())
                                 {
-                                    switch (iic)
+                                    switch (d.Index)
                                     {
                                         case 0:
                                         {
                                             // Command(ship, False)
-                                            var (i, match) = Command(lc, "ship");
-                                            (rm, rl, rc) = Leaf(lc, cc, "ship", value: false, isList: false, isInt: false, i, match);
+                                            d.Match(Command, "ship", value: false, isList: false, isInt: false);
                                             break;
                                         }
                                         case 1:
                                         {
                                             // Command(shoot, False)
-                                            var (i, match) = Command(lc, "shoot");
-                                            (rm, rl, rc) = Leaf(lc, cc, "shoot", value: false, isList: false, isInt: false, i, match);
+                                            d.Match(Command, "shoot", value: false, isList: false, isInt: false);
                                             break;
                                         }
                                         case 2:
                                         {
                                             // Argument(<x>, )
-                                            var (i, match) = Argument(lc, "<x>");
-                                            (rm, rl, rc) = Leaf(lc, cc, "<x>", value: null, isList: false, isInt: false, i, match);
+                                            d.Match(Argument, "<x>", value: null, isList: false, isInt: false);
                                             break;
                                         }
                                         case 3:
                                         {
                                             // Argument(<y>, )
-                                            var (i, match) = Argument(lc, "<y>");
-                                            (rm, rl, rc) = Leaf(lc, cc, "<y>", value: null, isList: false, isInt: false, i, match);
+                                            d.Match(Argument, "<y>", value: null, isList: false, isInt: false);
                                             break;
                                         }
                                     }
-                                    if (!rm)
-                                    {
-                                        rl = la;
-                                        rc = ca;
+                                    if (!d.LastMatched)
                                         break;
-                                    }
-                                    lc = rl;
-                                    cc = rc;
                                 }
+                                c.OnMatch(d.Result);
                                 break;
                             }
                             case 3:
                             {
                                 // Required(Command(mine, False), Required(Either(Command(set, False), Command(remove, False))), Argument(<x>, ), Argument(<y>, ), Optional(Either(Option(,--moored,0,False), Option(,--drifting,0,False))))
-                                var lc = la;
-                                var cc = ca;
-                                for (var iic = 0; iic < 5; iic++)
+                                var d = new RequiredMatcher(5, c.Left, c.Collected);
+                                while (d.Next())
                                 {
-                                    switch (iic)
+                                    switch (d.Index)
                                     {
                                         case 0:
                                         {
                                             // Command(mine, False)
-                                            var (i, match) = Command(lc, "mine");
-                                            (rm, rl, rc) = Leaf(lc, cc, "mine", value: false, isList: false, isInt: false, i, match);
+                                            d.Match(Command, "mine", value: false, isList: false, isInt: false);
                                             break;
                                         }
                                         case 1:
                                         {
                                             // Required(Either(Command(set, False), Command(remove, False)))
-                                            var ld = lc;
-                                            var cd = cc;
+                                            var e = new RequiredMatcher(1, d.Left, d.Collected);
+                                            while (e.Next())
                                             {
                                                 // Either(Command(set, False), Command(remove, False))
-                                                var eme = false;
-                                                var ele = ld;
-                                                var ece = cd;
-                                                for (var iie = 0; iie < 2; iie++)
+                                                var f = new EitherMatcher(2, e.Left, e.Collected);
+                                                while (f.Next())
                                                 {
-                                                    switch (iie)
+                                                    switch (f.Index)
                                                     {
                                                         case 0:
                                                         {
                                                             // Command(set, False)
-                                                            var (i, match) = Command(ld, "set");
-                                                            (rm, rl, rc) = Leaf(ld, cd, "set", value: false, isList: false, isInt: false, i, match);
+                                                            f.Match(Command, "set", value: false, isList: false, isInt: false);
                                                             break;
                                                         }
                                                         case 1:
                                                         {
                                                             // Command(remove, False)
-                                                            var (i, match) = Command(ld, "remove");
-                                                            (rm, rl, rc) = Leaf(ld, cd, "remove", value: false, isList: false, isInt: false, i, match);
+                                                            f.Match(Command, "remove", value: false, isList: false, isInt: false);
                                                             break;
                                                         }
                                                     }
-                                                    if (rm && (eme || rl.Count < ele.Count))
-                                                    {
-                                                        eme = true;
-                                                        ele = rl;
-                                                        ece = rc;
-                                                    }
+                                                    if (!f.LastMatched)
+                                                        break;
                                                 }
-                                                rm = eme;
-                                                rl = ele;
-                                                rc = ece;
-                                                if (!rm)
-                                                {
-                                                    rl = lc;
-                                                    rc = cc;
+                                                e.OnMatch(f.Result);
+                                                if (!e.LastMatched)
                                                     break;
-                                                }
-                                                ld = rl;
-                                                cd = rc;
                                             }
+                                            d.OnMatch(e.Result);
                                             break;
                                         }
                                         case 2:
                                         {
                                             // Argument(<x>, )
-                                            var (i, match) = Argument(lc, "<x>");
-                                            (rm, rl, rc) = Leaf(lc, cc, "<x>", value: null, isList: false, isInt: false, i, match);
+                                            d.Match(Argument, "<x>", value: null, isList: false, isInt: false);
                                             break;
                                         }
                                         case 3:
                                         {
                                             // Argument(<y>, )
-                                            var (i, match) = Argument(lc, "<y>");
-                                            (rm, rl, rc) = Leaf(lc, cc, "<y>", value: null, isList: false, isInt: false, i, match);
+                                            d.Match(Argument, "<y>", value: null, isList: false, isInt: false);
                                             break;
                                         }
                                         case 4:
                                         {
                                             // Optional(Either(Option(,--moored,0,False), Option(,--drifting,0,False)))
-                                            var ld = lc;
-                                            var cd = cc;
+                                            var e = new OptionalMatcher(1, d.Left, d.Collected);
+                                            while (e.Next())
                                             {
                                                 // Either(Option(,--moored,0,False), Option(,--drifting,0,False))
-                                                var eme = false;
-                                                var ele = ld;
-                                                var ece = cd;
-                                                for (var iie = 0; iie < 2; iie++)
+                                                var f = new EitherMatcher(2, e.Left, e.Collected);
+                                                while (f.Next())
                                                 {
-                                                    switch (iie)
+                                                    switch (f.Index)
                                                     {
                                                         case 0:
                                                         {
                                                             // Option(,--moored,0,False)
-                                                            var (i, match) = Option(ld, "--moored");
-                                                            (rm, rl, rc) = Leaf(ld, cd, "--moored", value: false, isList: false, isInt: false, i, match);
+                                                            f.Match(Option, "--moored", value: false, isList: false, isInt: false);
                                                             break;
                                                         }
                                                         case 1:
                                                         {
                                                             // Option(,--drifting,0,False)
-                                                            var (i, match) = Option(ld, "--drifting");
-                                                            (rm, rl, rc) = Leaf(ld, cd, "--drifting", value: false, isList: false, isInt: false, i, match);
+                                                            f.Match(Option, "--drifting", value: false, isList: false, isInt: false);
                                                             break;
                                                         }
                                                     }
-                                                    if (rm && (eme || rl.Count < ele.Count))
-                                                    {
-                                                        eme = true;
-                                                        ele = rl;
-                                                        ece = rc;
-                                                    }
+                                                    if (!f.LastMatched)
+                                                        break;
                                                 }
-                                                rm = eme;
-                                                rl = ele;
-                                                rc = ece;
-                                                ld = rl;
-                                                cd = rc;
+                                                e.OnMatch(f.Result);
+                                                if (!e.LastMatched)
+                                                    break;
                                             }
-                                            rm = true;
-                                            rl = ld;
-                                            rc = cd;
+                                            d.OnMatch(e.Result);
                                             break;
                                         }
                                     }
-                                    if (!rm)
-                                    {
-                                        rl = la;
-                                        rc = ca;
+                                    if (!d.LastMatched)
                                         break;
-                                    }
-                                    lc = rl;
-                                    cc = rc;
                                 }
+                                c.OnMatch(d.Result);
                                 break;
                             }
                             case 4:
                             {
                                 // Required(Required(Option(-h,--help,0,False)))
-                                var lc = la;
-                                var cc = ca;
+                                var d = new RequiredMatcher(1, c.Left, c.Collected);
+                                while (d.Next())
                                 {
                                     // Required(Option(-h,--help,0,False))
-                                    var ld = lc;
-                                    var cd = cc;
+                                    var e = new RequiredMatcher(1, d.Left, d.Collected);
+                                    while (e.Next())
                                     {
                                         // Option(-h,--help,0,False)
-                                        var (i, match) = Option(ld, "--help");
-                                        (rm, rl, rc) = Leaf(ld, cd, "--help", value: false, isList: false, isInt: false, i, match);
-                                        if (!rm)
-                                        {
-                                            rl = lc;
-                                            rc = cc;
+                                        e.Match(Option, "--help", value: false, isList: false, isInt: false);
+                                        if (!e.LastMatched)
                                             break;
-                                        }
-                                        ld = rl;
-                                        cd = rc;
                                     }
-                                    if (!rm)
-                                    {
-                                        rl = la;
-                                        rc = ca;
+                                    d.OnMatch(e.Result);
+                                    if (!d.LastMatched)
                                         break;
-                                    }
-                                    lc = rl;
-                                    cc = rc;
                                 }
+                                c.OnMatch(d.Result);
                                 break;
                             }
                             case 5:
                             {
                                 // Required(Option(,--version,0,False))
-                                var lc = la;
-                                var cc = ca;
+                                var d = new RequiredMatcher(1, c.Left, c.Collected);
+                                while (d.Next())
                                 {
                                     // Option(,--version,0,False)
-                                    var (i, match) = Option(lc, "--version");
-                                    (rm, rl, rc) = Leaf(lc, cc, "--version", value: false, isList: false, isInt: false, i, match);
-                                    if (!rm)
-                                    {
-                                        rl = la;
-                                        rc = ca;
+                                    d.Match(Option, "--version", value: false, isList: false, isInt: false);
+                                    if (!d.LastMatched)
                                         break;
-                                    }
-                                    lc = rl;
-                                    cc = rc;
                                 }
+                                c.OnMatch(d.Result);
                                 break;
                             }
                         }
-                        if (rm && (emb || rl.Count < elb.Count))
-                        {
-                            emb = true;
-                            elb = rl;
-                            ecb = rc;
-                        }
+                        if (!c.LastMatched)
+                            break;
                     }
-                    rm = emb;
-                    rl = elb;
-                    rc = ecb;
-                    if (!rm)
-                    {
-                        rl = left;
-                        rc = collected;
+                    b.OnMatch(c.Result);
+                    if (!b.LastMatched)
                         break;
-                    }
-                    la = rl;
-                    ca = rc;
                 }
+                a.OnMatch(b.Result);
             }
             while (false);
 
-            if (!rm)
+            if (!a.Result)
             {
                 const string exitUsage = @"Usage:
       naval_fate.exe ship new <name>...
@@ -614,7 +497,7 @@ namespace NavalFate
                 [@"--version"] = new ValueObject(false),
             };
 
-            collected = rc;
+            collected = a.Collected;
             foreach (var p in collected)
             {
                 dict[p.Name] = p.Value;

@@ -17,7 +17,6 @@
 namespace DocoptNet.CodeGeneration
 {
     using System;
-    using System.Collections.Generic;
     using System.IO;
     using System.Linq;
     using System.Text;
@@ -111,10 +110,7 @@ namespace DocoptNet.CodeGeneration
         static readonly SourceText EmptySourceText = SourceText.From(string.Empty);
         static readonly Encoding Utf8BomlessEncoding = new UTF8Encoding(encoderShouldEmitUTF8Identifier: false);
 
-        const int I = 0, L = 1, C = 2, EM = 3, EL = 4, EC = 5, T = 6, LL = 7;
-        static readonly string[][] Vars =
-            "abcdefghijklmnopqrstuvwxyz".Select(x => new[] { "ii", "l", "c", "em", "el", "ec", "t", "ll" }.Select(y => y + x).ToArray())
-                                        .ToArray();
+        static readonly string[] Vars = "abcdefghijklmnopqrstuvwxyz".Select(ch => ch.ToString()).ToArray();
 
         public static SourceText Generate(string? ns, string name, SourceText text) =>
             Generate(ns, name, text, null);
@@ -228,7 +224,7 @@ namespace DocoptNet.CodeGeneration
             sb.Append(';').AppendLine()
               .Outdent();
 
-            void AppendCode(Pattern pattern, string left, string collected, int level = 0)
+            void AppendCode(Pattern pattern, string pm, int level = 0)
             {
                 if (level >= 26) // todo proper diagnostics reporting
                     throw new NotSupportedException();
@@ -239,110 +235,45 @@ namespace DocoptNet.CodeGeneration
                 {
                     case BranchPattern { Children: { } children }:
                     {
-                        var iv = Vars[level][I];
-                        var (l, c) = (Vars[level][L], Vars[level][C]);
-                        var (em, el, ec) = (Vars[level][EM], Vars[level][EL], Vars[level][EC]);
-                        var times = Vars[level][T];
-                        var l_ = Vars[level][LL];
-                        level++;
-                        void BeginChildrenLoop(string left, string collected)
+                        var matcher = pattern switch
                         {
-                            if (children.Count == 1)
-                            {
-                                sb.BlockStart();
-                                AppendCode(children[0], left, collected, level);
-                                return;
-                            }
-                            sb.Append("for (var ").Append(iv).Append(" = 0; ")
-                              .Append(iv).Append(" < ").Append(children.Count).Append("; ")
-                              .Append(iv).Append("++)").AppendLine()
-                              .BlockStart();
-                            sb.Switch(iv)
+                            Either => nameof(EitherMatcher),
+                            OneOrMore => nameof(OneOrMoreMatcher),
+                            Optional => nameof(OptionalMatcher),
+                            Required => nameof(RequiredMatcher),
+                            _ => throw new ArgumentOutOfRangeException(nameof(pattern))
+                        };
+                        level++;
+                        var m = Vars[level];
+                        sb.Append("var ").Append(m).Append(" = ").Append("new ").Append(matcher).Append("(").Append(children.Count).Append(", ").Append(pm).Append(".Left, ").Append(pm).Append(".Collected);").AppendLine();
+                        sb.Append("while (").Append(m).Append(".Next())").AppendLine()
+                          .BlockStart();
+                        if (pattern.Children.Count > 1)
+                        {
+                            sb.Append("switch (").Append(m).Append(".Index)").AppendLine()
                               .BlockStart();
                             var i = 0;
                             foreach (var child in children)
                             {
                                 sb.Case(i)
                                   .BlockStart();
-                                AppendCode(child, left, collected, level);
+                                AppendCode(child, m, level);
                                 sb.Break()
                                   .BlockEnd();
                                 i++;
                             }
                             sb.BlockEnd();
                         }
-                        switch (pattern)
+                        else
                         {
-                            case Required:
-                            {
-                                sb.DeclareAssigned(l, left).DeclareAssigned(c, collected);
-                                BeginChildrenLoop(l, c);
-                                sb.Append("if (!rm)").AppendLine()
-                                  .BlockStart()
-                                  .Assign("rl", left).Assign("rc", collected)
-                                  .Break()
-                                  .BlockEnd();
-                                sb.Assign(l, "rl").Assign(c, "rc");
-                                sb.BlockEnd();
-                                break;
-                            }
-                            case Optional:
-                            {
-                                sb.DeclareAssigned(l, left).DeclareAssigned(c, collected);
-                                BeginChildrenLoop(l, c);
-                                sb.Assign(l, "rl").Assign(c, "rc");
-                                sb.BlockEnd();
-                                sb.Assign("rm", "true").Assign("rl", l).Assign("rc", c);
-                                break;
-                            }
-                            case Either:
-                            {
-                                sb.DeclareAssigned(em, "false");
-                                sb.DeclareAssigned(el, left);
-                                sb.DeclareAssigned(ec, collected);
-                                BeginChildrenLoop(left, collected);
-                                sb.Append("if (rm && (").Append(em).Append(" || rl.Count < ").Append(el).Append(".Count))").AppendLine()
-                                  .BlockStart()
-                                  .Assign(em, "true")
-                                  .Assign(el, "rl")
-                                  .Assign(ec, "rc")
-                                  .BlockEnd();
-                                sb.BlockEnd();
-                                sb.Assign("rm", em).Assign("rl", el).Assign("rc", ec);
-                                break;
-                            }
-                            case OneOrMore:
-                            {
-                                sb.DeclareAssigned(l, left).DeclareAssigned(c, collected);
-                                sb.DeclareAssigned(times, "0");
-                                sb.DeclareAssigned(l_, "default(Leaves?)");
-                                sb.AppendLine("while (true)")
-                                  .BlockStart();
-                                AppendCode(pattern.Children[0], l, c, level);
-                                sb.Append(times).AppendLine(" += rm ? 0 : 1;");
-                                sb.Append("if (").Append(l_).Append(" is {} l_ && l_.Equals(").Append(l).AppendLine("))")
-                                  .Indent().Break().Outdent();
-                                sb.Assign(l_, l)
-                                  .Assign(l, "rl")
-                                  .Assign(c, "rc");
-                                sb.BlockEnd(); // while
-                                sb.Append("if (").Append(times).Append(" >= 0)").AppendLine()
-                                  .BlockStart()
-                                  .Assign("rm", "true")
-                                  .Assign("rl", l)
-                                  .Assign("rc", c)
-                                  .BlockEnd()
-                                  .AppendLine("else")
-                                  .BlockStart()
-                                  .Assign("rm", "true")
-                                  .Assign("rl", left)
-                                  .Assign("rc", collected)
-                                  .BlockEnd();
-                                break;
-                            }
-                            default:
-                                throw new NotSupportedException($"Unsupported pattern: {pattern}");
+                            AppendCode(children[0], m, level);
                         }
+                        sb.Append("if (!").Append(m).Append(".LastMatched)").AppendLine()
+                          .Indent()
+                          .Break()
+                          .Outdent()
+                          .BlockEnd()
+                          .Append(pm).Append(".OnMatch(").Append(m).Append(".Result);").AppendLine();
                         break;
                     }
                     case LeafPattern { Name: var name } leaf:
@@ -354,10 +285,8 @@ namespace DocoptNet.CodeGeneration
                             Option => "Option",
                             _ => throw new NotImplementedException()
                         };
-                        sb.Append("var (i, match) = ").Append(lfn).Append("(").Append(left).Append(", ").Append(Literal(name).ToString()).Append(");").AppendLine();
-                        sb.Append("(rm, rl, rc) = Leaf(")
-                          .Append(left).Append(", ")
-                          .Append(collected).Append(", ")
+                        sb.Append(pm).Append(".Match(")
+                          .Append(lfn).Append(", ")
                           .Append(Literal(name).ToString()).Append(", ")
                           .Append("value: ").Append(leaf.Value switch
                            {
@@ -372,7 +301,7 @@ namespace DocoptNet.CodeGeneration
                            }).Append(", ")
                           .Append("isList: ").Append(leaf.Value is { IsList: true } ? "true" : "false").Append(", ")
                           .Append("isInt: ").Append(leaf.Value is { IsOfTypeInt: true } ? "true" : "false")
-                          .Append(", i, match);").AppendLine();
+                          .Append(");").AppendLine();
                         break;
                     }
                 }
@@ -403,14 +332,14 @@ namespace DocoptNet.CodeGeneration
               .BlockEnd()
               .DeclareAssigned("left", "arguments")
               .DeclareAssigned("collected", "new Leaves()")
-              .Append("var rm = false; var rl = left; var rc = collected;").AppendLine()
+              .DeclareAssigned("a", "new RequiredMatcher(1, left, collected)")
               .AppendLine("do")
               .BlockStart();
-            AppendCode(pattern, "left", "collected");
+            AppendCode(pattern, "a");
             sb.BlockEnd()
               .AppendLine("while (false);")
               .AppendLine()
-              .AppendLine("if (!rm)")
+              .AppendLine("if (!a.Result)")
               .BlockStart()
               .Const("exitUsage", exitUsage)
               .Throw("new DocoptInputErrorException(exitUsage)")
@@ -440,7 +369,7 @@ namespace DocoptNet.CodeGeneration
             sb.BlockEnd(noNewLine: true).EndStatement();
 
             sb.AppendLine()
-              .Assign("collected", "rc")
+              .Assign("collected", "a.Collected")
               .AppendLine("foreach (var p in collected)")
               .BlockStart()
               .Append("dict[p.Name] = p.Value").EndStatement()

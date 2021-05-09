@@ -7,12 +7,51 @@ namespace DocoptNet
     using System.Linq;
     using Leaves = ReadOnlyList<LeafPattern>;
 
+    delegate (int Index, LeafPattern Match) LeafMatcher(Leaves left, string name);
+
     interface IMatcher
     {
         int Index { get; }
         bool Next();
+        Leaves Left { get; }
+        Leaves Collected { get; }
+        bool Match(LeafMatcher matcher, string name, object? value, bool isList, bool isInt);
         bool Match(Pattern pattern);
+        bool OnMatch(MatchResult match);
+        bool LastMatched { get; }
         MatchResult Result { get; }
+    }
+
+    static class LeafMatcherExtensions
+    {
+        public static MatchResult
+            Match(this LeafMatcher matcher,
+                  Leaves left, Leaves collected,
+                  string name, object? value, bool isList, bool isInt)
+        {
+            var (index, match) = matcher(left, name);
+            if (match == null)
+            {
+                return new MatchResult(false, left, collected);
+            }
+            var left_ = left.RemoveAt(index);
+            var sameName = collected.Where(a => a.Name == name).ToList();
+            if (value != null && (isList || isInt))
+            {
+                var increment = new ValueObject(1);
+                if (!isInt)
+                    increment = match.Value.IsString ? new ValueObject(new [] {match.Value})  : match.Value;
+                if (sameName.Count == 0)
+                {
+                    match.Value = increment;
+                    return new MatchResult(true, left_, collected.Append(match));
+                }
+
+                sameName[0].Value.Add(increment);
+                return new MatchResult(true, left_, collected);
+            }
+            return new MatchResult(true, left_, collected.Append(match));
+        }
     }
 
     struct RequiredMatcher : IMatcher
@@ -38,19 +77,27 @@ namespace DocoptNet
             return true;
         }
 
+        public Leaves Left => l;
+        public Leaves Collected => c;
+
+        public bool Match(LeafMatcher matcher, string name, object? value, bool isList, bool isInt) =>
+            OnMatch(matcher.Match(l, c, name, value, isList, isInt));
+
         public bool Match(Pattern pattern) =>
             OnMatch(pattern.Match(l, c));
 
         public bool OnMatch(MatchResult match)
         {
-            if (!match.Matched)
+            if (!match)
             {
                 result = new MatchResult(false, left, collected);
-                return false;
+                return LastMatched = false;
             }
             (_, l, c) = match;
-            return true;
+            return LastMatched = true;
         }
+
+        public bool LastMatched { get; private set; }
 
         public MatchResult Result => result ?? new MatchResult(true, l, c);
     }
@@ -80,15 +127,23 @@ namespace DocoptNet
             return true;
         }
 
+        public Leaves Left => left;
+        public Leaves Collected => collected;
+
+        public bool Match(LeafMatcher matcher, string name, object? value, bool isList, bool isInt) =>
+            OnMatch(matcher.Match(left, collected, name, value, isList, isInt));
+
         public bool Match(Pattern pattern) =>
             OnMatch(pattern.Match(left, collected));
 
         public bool OnMatch(MatchResult match)
         {
-            if (match is (true, var l, var c) && (!this.match.Matched || l.Count < this.match.Left.Count))
+            if (match is (true, var l, var c) && (!this.match || l.Count < this.match.Left.Count))
                 this.match = new MatchResult(true, l, c);
             return true;
         }
+
+        public bool LastMatched => true;
 
         public MatchResult Result => match;
     }
@@ -112,6 +167,12 @@ namespace DocoptNet
             return true;
         }
 
+        public Leaves Left => l;
+        public Leaves Collected => c;
+
+        public bool Match(LeafMatcher matcher, string name, object? value, bool isList, bool isInt) =>
+            OnMatch(matcher.Match(l, c, name, value, isList, isInt));
+
         public bool Match(Pattern pattern) =>
             OnMatch(pattern.Match(l, c));
 
@@ -120,6 +181,8 @@ namespace DocoptNet
             (_, l, c) = match;
             return true;
         }
+
+        public bool LastMatched => true;
 
         public MatchResult Result => new(true, l, c);
     }
@@ -140,6 +203,12 @@ namespace DocoptNet
         public int Index => 0;
         public bool Next() => true;
 
+        public Leaves Left => l;
+        public Leaves Collected => c;
+
+        public bool Match(LeafMatcher matcher, string name, object? value, bool isList, bool isInt) =>
+            OnMatch(matcher.Match(l, c, name, value, isList, isInt));
+
         public bool Match(Pattern pattern) =>
             OnMatch(pattern.Match(l, c));
 
@@ -149,10 +218,12 @@ namespace DocoptNet
             (matched, l, c) = match;
             times += matched ? 1 : 0;
             if (l_ != null && l_.Equals(l))
-                return false;
+                return LastMatched = false;
             l_ = l;
-            return true;
+            return LastMatched = true;
         }
+
+        public bool LastMatched { get; private set; }
 
         public MatchResult Result => times >= 1 ? new MatchResult(true, l, c) : new MatchResult(false, left, collected);
     }
