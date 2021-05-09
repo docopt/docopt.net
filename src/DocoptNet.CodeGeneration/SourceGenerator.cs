@@ -121,45 +121,41 @@ namespace DocoptNet.CodeGeneration
                 return EmptySourceText;
 
             var usage = text.ToString();
-            var sb = new IndentingStringBuilder();
+            var code = new CSharpSourceBuilder();
 
-            sb.Append("using System.Collections;").AppendLine()
-              .Append("using System.Collections.Generic;").AppendLine()
-              .Append("using System.Linq;").AppendLine()
-              .Append("using DocoptNet.Generated;").AppendLine()
-              .Append("using Leaves = DocoptNet.Generated.ReadOnlyList<DocoptNet.Generated.LeafPattern>;").AppendLine()
-              .Append("using static DocoptNet.Generated.Module;").AppendLine()
-              .AppendLine();
+            _ = code.Using("System.Collections")
+                    .Using("System.Collections.Generic")
+                    .Using("System.Linq")
+                    .Using("DocoptNet.Generated")
+                    .Using("Leaves", "DocoptNet.Generated.ReadOnlyList<DocoptNet.Generated.LeafPattern>")
+                    .UsingStatic("DocoptNet.Generated.Module")
+                    .NewLine;
 
             var isNamespaced = !string.IsNullOrEmpty(ns);
             if (isNamespaced)
-            {
-                sb.Append("namespace ").Append(ns).AppendLine();
-                sb.BlockStart();
-            }
+                code.Namespace(ns);
 
-            sb.Append("partial class ").Append(name).AppendLine();
-            sb.BlockStart();
+            _ = code["partial class "][name].NewLine.Block;
 
-            sb.Append("public const string Usage = ").Literal(usage).Append(';').AppendLine();
+            _ = code["public const string Usage = "].Literal(usage).EndStatement;
 
             void AppendTree(Pattern pattern, int level = 0)
             {
-                sb.Append("// ").Append(' ', level * 2);
+                _ = code["// "][' ', level * 2];
                 switch (pattern)
                 {
                     case BranchPattern { Children: var children } branch:
-                        sb.Append(branch.GetType().Name).Append(":").AppendLine();
+                        _ = code[branch.GetType().Name][':'].NewLine;
                         foreach (var child in children)
                             AppendTree(child, level + 1);
                         break;
                     case LeafPattern leaf:
-                        sb.Append(leaf.ToString()).Append(" -> ").Append(leaf.ToNode().ToString()).AppendLine();
+                        _ = code[leaf][" -> "][leaf.ToNode()].NewLine;
                         break;
                 }
             }
 
-            sb.AppendLine();
+            _ = code.NewLine;
             var (pattern, exitUsage) = new Docopt().ParsePattern(usage);
             AppendTree(pattern);
 
@@ -168,68 +164,56 @@ namespace DocoptNet.CodeGeneration
                 switch (pattern)
                 {
                     case OneOrMore { Children: { Count: 1 } children }:
-                        sb.Append("new OneOrMore(").AppendLine();
+                        _ = code["new OneOrMore("].NewLine;
                         AppendTreeCode(children[0]);
-                        sb.Append(")");
+                        _ = code[')'];
                         break;
                     case BranchPattern { Children: { Count: > 0 } children } branch:
-                        sb.Append("new ").Append(branch.GetType().Name).Append("(new Pattern[]").AppendLine().Append('{').AppendLine().Indent();
+                        _ = code["new "][branch.GetType().Name]["(new Pattern[]"].NewLine.Block;
                         var i = 0;
                         foreach (var child in children)
                         {
                             AppendTreeCode(child);
                             if (++i < children.Count)
-                            {
-                                sb.Append(',');
-                                sb.AppendLine();
-                            }
+                                _ = code[','].NewLine;
                         }
-                        sb.AppendLine().Outdent().Append("})");
+                        _ = code.NewLine.Outdent["})"];
                         break;
                     case Command command:
-                        sb.Append("new Command(")
-                          .Append(Literal(command.Name).ToString())
-                          .Append(')');
+                        _ = code["new Command("][Literal(command.Name)][')'];
                         break;
                     case Argument { Name: var name }:
-                        sb.Append("new Argument(")
-                          .Append(Literal(name).ToString())
-                          .Append(", (ValueObject)null)");
+                        _ = code["new Argument("][Literal(name)][", (ValueObject)null)"];
                         break;
                     case Option option:
-                        sb.Append("new Option(")
-                          .Append(Literal(option.ShortName ?? string.Empty).ToString())
-                          .Append(", ")
-                          .Append(Literal(option.LongName ?? string.Empty).ToString())
-                          .Append(", ")
-                          .Append(option.ArgCount)
-                          .Append(", new ValueObject(")
-                          .Append(option.Value switch
-                           {
-                               { IsInt: true, AsInt: var n } => Literal(n).ToString(),
-                               { Value: string v } => Literal(v).ToString(),
-                               { IsTrue: true } => "true",
-                               { IsFalse: true } => "false",
-                               _ => throw new NotSupportedException(), // todo emit diagnostic
-                           })
-                          .Append("))");
+                        _ = code["new Option("]
+                                    [Literal(option.ShortName ?? string.Empty)][", "]
+                                    [Literal(option.LongName ?? string.Empty)][", "]
+                                    [option.ArgCount][", "]
+                                    ["new ValueObject("][option.Value switch
+                                    {
+                                        { IsInt: true, AsInt: var n } => Literal(n),
+                                        { Value: string v } => Literal(v),
+                                        { IsTrue: true } => "true",
+                                        { IsFalse: true } => "false",
+                                        _ => throw new NotSupportedException(), // todo emit diagnostic
+                                    }][')']
+                                [')'];
                         break;
                 }
             }
 
-            sb.AppendLine()
-              .Append("static readonly Pattern Pattern =").AppendLine()
-              .Indent();
+            _ = code.NewLine
+                ["static readonly Pattern Pattern ="].NewLine.Indent;
             AppendTreeCode(pattern);
-            sb.Append(';').AppendLine()
-              .Outdent();
+            _ = code.EndStatement.Outdent;
 
             void AppendCode(Pattern pattern, string pm, int level = 0)
             {
                 if (level >= 26) // todo proper diagnostics reporting
                     throw new NotSupportedException();
 
-                sb.Append("// ").Append(pattern?.ToString() ?? string.Empty).AppendLine();
+                _ = code["// "][pattern?.ToString() ?? string.Empty].NewLine;
 
                 switch (pattern)
                 {
@@ -245,35 +229,28 @@ namespace DocoptNet.CodeGeneration
                         };
                         level++;
                         var m = Vars[level];
-                        sb.Append("var ").Append(m).Append(" = ").Append("new ").Append(matcher).Append("(").Append(children.Count).Append(", ").Append(pm).Append(".Left, ").Append(pm).Append(".Collected);").AppendLine();
-                        sb.Append("while (").Append(m).Append(".Next())").AppendLine()
-                          .BlockStart();
+                        _ = code["var "][m][" = "]["new "][matcher]['('][children.Count][", "][pm][".Left, "][pm][".Collected)"].EndStatement;
+                        _ = code["while ("][m][".Next())"].NewLine.Block;
                         if (pattern.Children.Count > 1)
                         {
-                            sb.Append("switch (").Append(m).Append(".Index)").AppendLine()
-                              .BlockStart();
+                            _ = code["switch ("][m][".Index)"].NewLine.Block;
                             var i = 0;
                             foreach (var child in children)
                             {
-                                sb.Case(i)
-                                  .BlockStart();
+                                _ = code.Case(i).Block;
                                 AppendCode(child, m, level);
-                                sb.Break()
-                                  .BlockEnd();
+                                _ = code.Break.BlockEnd;
                                 i++;
                             }
-                            sb.BlockEnd();
+                            _ = code.BlockEnd;
                         }
                         else
                         {
                             AppendCode(children[0], m, level);
                         }
-                        sb.Append("if (!").Append(m).Append(".LastMatched)").AppendLine()
-                          .Indent()
-                          .Break()
-                          .Outdent()
-                          .BlockEnd()
-                          .Append(pm).Append(".OnMatch(").Append(m).Append(".Result);").AppendLine();
+                        _ = code["if (!"][m][".LastMatched)"].NewLine.Indent.Break.Outdent;
+                        _ = code.BlockEnd;
+                        _ = code[pm][".OnMatch("][m][".Result)"].EndStatement;
                         break;
                     }
                     case LeafPattern { Name: var name } leaf:
@@ -285,113 +262,101 @@ namespace DocoptNet.CodeGeneration
                             Option => "Option",
                             _ => throw new NotImplementedException()
                         };
-                        sb.Append(pm).Append(".Match(")
-                          .Append(lfn).Append(", ")
-                          .Append(Literal(name).ToString()).Append(", ")
-                          .Append("value: ").Append(leaf.Value switch
-                           {
-                               null => "null",
-                               { Value: null     } => "null",
-                               { IsList: true    } => "new ArrayList()",
-                               { IsInt: true, AsInt: var n } => Literal(n).ToString(),
-                               { Value: string v } => Literal(v).ToString(),
-                               { IsTrue: true    } => "true",
-                               { IsFalse: true   } => "false",
-                               _ => throw new NotSupportedException(leaf.Value?.ToString() ?? "(null)"), // todo emit diagnostic
-                           }).Append(", ")
-                          .Append("isList: ").Append(leaf.Value is { IsList: true } ? "true" : "false").Append(", ")
-                          .Append("isInt: ").Append(leaf.Value is { IsOfTypeInt: true } ? "true" : "false")
-                          .Append(");").AppendLine();
+                        _ = code[pm]
+                                [".Match("]
+                                    [lfn][", "]
+                                    [Literal(name)][", "]
+                                    ["value: "][leaf.Value switch
+                                    {
+                                        null => "null",
+                                        { Value: null     } => "null",
+                                        { IsList: true    } => "new ArrayList()",
+                                        { IsInt: true, AsInt: var n } => Literal(n).ToString(),
+                                        { Value: string v } => Literal(v).ToString(),
+                                        { IsTrue: true    } => "true",
+                                        { IsFalse: true   } => "false",
+                                        _ => throw new NotSupportedException(leaf.Value?.ToString() ?? "(null)"), // todo emit diagnostic
+                                    }][", "]
+                                    ["isList: "][leaf.Value is { IsList: true } ? "true" : "false"][", "]
+                                    ["isInt: "][leaf.Value is { IsOfTypeInt: true } ? "true" : "false"][')'].EndStatement;
                         break;
                     }
                 }
             }
 
-            sb.AppendLine();
-            sb.AppendLine("static readonly ICollection<Option> Options = new[]")
-              .BlockStart();
+            _ = code.NewLine;
+            _ = code["static readonly ICollection<Option> Options = new[]"].NewLine.Block;
             foreach (var option in Docopt.ParseDefaults(usage))
             {
                 AppendTreeCode(option);
-                sb.AppendLine(",");
+                _ = code[','].NewLine;
             }
-            sb.BlockEnd().AppendLine(";");
+            _ = code.SkipNextNewLine.BlockEnd.EndStatement;
 
-            sb.AppendLine();
-            sb.Append("static Dictionary<string, ValueObject> Apply(IEnumerable<string> args, bool help = true, object version = null, bool optionsFirst = false, bool exit = false)").AppendLine()
-              .BlockStart()
-              .DeclareAssigned("tokens", "new Tokens(args, typeof(DocoptInputErrorException))")
-              .DeclareAssigned("arguments", "Docopt.ParseArgv(tokens, Options, optionsFirst).AsReadOnly();")
-              .AppendLine(@"if (help && arguments.Any(o => o is { Name: ""-h"" or ""--help"", Value: { IsNullOrEmpty: false } }))")
-              .BlockStart()
-              .Throw("new DocoptExitException(Usage)")
-              .BlockEnd()
-              .AppendLine(@"if (version is not null && arguments.Any(o => o is { Name: ""--version"", Value: { IsNullOrEmpty: false } }))")
-              .BlockStart()
-              .Throw("new DocoptExitException(version.ToString())")
-              .BlockEnd()
-              .DeclareAssigned("left", "arguments")
-              .DeclareAssigned("collected", "new Leaves()")
-              .DeclareAssigned("a", "new RequiredMatcher(1, left, collected)")
-              .AppendLine("do")
-              .BlockStart();
+            _ = code.NewLine;
+            _ = code["static Dictionary<string, ValueObject> Apply(IEnumerable<string> args, bool help = true, object version = null, bool optionsFirst = false, bool exit = false)"].NewLine.Block
+                .DeclareAssigned("tokens", "new Tokens(args, typeof(DocoptInputErrorException))")
+                .DeclareAssigned("arguments", "Docopt.ParseArgv(tokens, Options, optionsFirst).AsReadOnly();")
+                .If(@"help && arguments.Any(o => o is { Name: ""-h"" or ""--help"", Value: { IsNullOrEmpty: false } })")
+                .Block
+                .Throw("new DocoptExitException(Usage)").BlockEnd
+                .If(@"version is not null && arguments.Any(o => o is { Name: ""--version"", Value: { IsNullOrEmpty: false } })")
+                .Block
+                .Throw("new DocoptExitException(version.ToString())").BlockEnd
+                .DeclareAssigned("left", "arguments")
+                .DeclareAssigned("collected", "new Leaves()")
+                .DeclareAssigned("a", "new RequiredMatcher(1, left, collected)")
+                .Do.Block;
             AppendCode(pattern, "a");
-            sb.BlockEnd()
-              .AppendLine("while (false);")
-              .AppendLine()
-              .AppendLine("if (!a.Result)")
-              .BlockStart()
-              .Const("exitUsage", exitUsage)
-              .Throw("new DocoptInputErrorException(exitUsage)")
-              .BlockEnd()
-              .AppendLine();
+            _ = code.BlockEnd
+                    .DoWhile("false")
+                    .NewLine
+                    .If("!a.Result").Block
+                    .Const("exitUsage", exitUsage)
+                    .Throw("new DocoptInputErrorException(exitUsage)").BlockEnd
+                    .NewLine;
 
-            sb.DeclareAssigned("dict", "new Dictionary<string, ValueObject>", unterminated: true).AppendLine()
-              .BlockStart();
+            _ = code.SkipStatementEnd.DeclareAssigned("dict", "new Dictionary<string, ValueObject>").NewLine.Block;
 
             foreach (var leaf in pattern.Flat().OfType<LeafPattern>())
             {
-                sb.Append("[").Literal(leaf.Name).Append("] = new ValueObject(")
-                  .Append(leaf.Value switch
-                  {
-                      null => "null",
-                      { Value: null     } => "null",
-                      { IsList: true    } => "new ArrayList()",
-                      { IsInt: true, AsInt: var n } => Literal(n).ToString(),
-                      { Value: string v } => Literal(v).ToString(),
-                      { IsTrue: true    } => "true",
-                      { IsFalse: true   } => "false",
-                      _ => throw new NotSupportedException(leaf.Value?.ToString() ?? "(null)"), // todo emit diagnostic
-                  })
-                  .Append("),").AppendLine();
+                _ = code['['].Literal(leaf.Name)["] = "]
+                        ["new ValueObject("]
+                            [leaf.Value switch
+                            {
+                                null => "null",
+                                { Value: null     } => "null",
+                                { IsList: true    } => "new ArrayList()",
+                                { IsInt: true, AsInt: var n } => Literal(n),
+                                { Value: string v } => Literal(v),
+                                { IsTrue: true    } => "true",
+                                { IsFalse: true   } => "false",
+                                _ => throw new NotSupportedException(leaf.Value?.ToString() ?? "(null)"), // todo emit diagnostic
+                            }]["),"].NewLine;
             }
 
-            sb.BlockEnd(noNewLine: true).EndStatement();
+            _ = code.SkipNextNewLine.BlockEnd.EndStatement;
 
-            sb.AppendLine()
-              .Assign("collected", "a.Collected")
-              .AppendLine("foreach (var p in collected)")
-              .BlockStart()
-              .Append("dict[p.Name] = p.Value").EndStatement()
-              .BlockEnd();
+            _ = code.NewLine
+                    .Assign("collected", "a.Collected")
+                    .ForEach("p", "collected").Block
+                    .Assign("dict[p.Name]", "p.Value").BlockEnd
+                    .NewLine
+                    .Return("dict").BlockEnd;
 
-            sb.AppendLine()
-              .Return("dict")
-              .BlockEnd();
-
-            sb.AppendLine();
+            _ = code.NewLine;
             using (var reader = new StringReader(new Docopt().GenerateCode(usage)))
             {
                 while (reader.ReadLine() is { } line)
-                    sb.Append(line).AppendLine();
+                    _ = code[line].NewLine;
             }
 
-            sb.BlockEnd();
+            _ = code.BlockEnd;
 
             if (isNamespaced)
-                sb.BlockEnd();
+                _ = code.BlockEnd;
 
-            return new StringBuilderSourceText(sb.StringBuilder, outputEncoding ?? text.Encoding ?? Utf8BomlessEncoding);
+            return new StringBuilderSourceText(code.StringBuilder, outputEncoding ?? text.Encoding ?? Utf8BomlessEncoding);
         }
     }
 }

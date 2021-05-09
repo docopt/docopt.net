@@ -139,8 +139,7 @@ namespace NavalFate
             new Option("", "--speed", 1, new ValueObject(10)),
             new Option("", "--moored", 0, new ValueObject(false)),
             new Option("", "--drifting", 0, new ValueObject(false)),
-        }
-        ;
+        };
 
         static Dictionary<string, ValueObject> Apply(IEnumerable<string> args, bool help = true, object version = null, bool optionsFirst = false, bool exit = false)
         {
