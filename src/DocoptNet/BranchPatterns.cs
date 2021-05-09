@@ -7,12 +7,17 @@ namespace DocoptNet
     /// <summary>
     ///     Branch/inner node of a pattern tree.
     /// </summary>
-    class BranchPattern : Pattern
+    abstract class BranchPattern : Pattern
     {
-        public BranchPattern(params Pattern[] children)
+        protected BranchPattern(params Pattern[] children)
         {
             if (children == null) throw new ArgumentNullException(nameof(children));
             Children = children;
+        }
+
+        public override string Name
+        {
+            get { return ToString(); }
         }
 
         public override bool HasChildren { get { return true; } }

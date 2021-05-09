@@ -1,6 +1,6 @@
 namespace DocoptNet
 {
-    class MatchResult
+    readonly struct MatchResult
     {
         public readonly bool Matched;
         public readonly ReadOnlyList<LeafPattern> Left;
