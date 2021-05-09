@@ -9,23 +9,34 @@ namespace DocoptNet
 
     interface IMatcher
     {
-        IEnumerable<Pattern> Children(IList<Pattern> children);
+        int Index { get; }
+        bool Next();
         bool Match(Pattern pattern);
         MatchResult Result { get; }
     }
 
     struct RequiredMatcher : IMatcher
     {
+        readonly int count;
         readonly Leaves left;
         readonly Leaves collected;
+        int i;
         Leaves l;
         Leaves c;
         MatchResult? result;
 
-        public RequiredMatcher(Leaves left, Leaves collected) : this() =>
-            (this.left, this.collected, l, c) = (left, collected, left, collected);
+        public RequiredMatcher(int count, Leaves left, Leaves collected) : this() =>
+            (this.count, this.left, this.collected, l, c) = (count, left, collected, left, collected);
 
-        public IEnumerable<Pattern> Children(IList<Pattern> children) => children;
+        public int Index => i - 1;
+
+        public bool Next()
+        {
+            if (i == count)
+                return false;
+            i++;
+            return true;
+        }
 
         public bool Match(Pattern pattern) =>
             OnMatch(pattern.Match(l, c));
@@ -46,17 +57,28 @@ namespace DocoptNet
 
     struct EitherMatcher : IMatcher
     {
+        readonly int count;
         readonly Leaves left;
         readonly Leaves collected;
+        int i;
         MatchResult match;
 
-        public EitherMatcher(Leaves left, Leaves collected) : this()
+        public EitherMatcher(int count, Leaves left, Leaves collected) : this()
         {
+            this.count = count;
             (this.left, this.collected) = (left, collected);
             match = new MatchResult(false, left, collected);
         }
 
-        public IEnumerable<Pattern> Children(IList<Pattern> children) => children;
+        public int Index => i - 1;
+
+        public bool Next()
+        {
+            if (i == count)
+                return false;
+            i++;
+            return true;
+        }
 
         public bool Match(Pattern pattern) =>
             OnMatch(pattern.Match(left, collected));
@@ -73,12 +95,22 @@ namespace DocoptNet
 
     struct OptionalMatcher : IMatcher
     {
+        readonly int count;
+        int i;
         Leaves l, c;
 
-        public OptionalMatcher(Leaves left, Leaves collected) : this() =>
-            (l, c) = (left, collected);
+        public OptionalMatcher(int count, Leaves left, Leaves collected) : this() =>
+            (this.count, l, c) = (count, left, collected);
 
-        public IEnumerable<Pattern> Children(IList<Pattern> children) => children;
+        public int Index => i - 1;
+
+        public bool Next()
+        {
+            if (i == count)
+                return false;
+            i++;
+            return true;
+        }
 
         public bool Match(Pattern pattern) =>
             OnMatch(pattern.Match(l, c));
@@ -99,17 +131,14 @@ namespace DocoptNet
         int times;
         Leaves? l_;
 
-        public OneOrMoreMatcher(Leaves left, Leaves collected) : this()
+        public OneOrMoreMatcher(int count, Leaves left, Leaves collected) : this()
         {
             (this.left, this.collected) = (left, collected);
             (l, c) = (left, collected);
         }
 
-        public IEnumerable<Pattern> Children(IList<Pattern> children)
-        {
-            while (true)
-                yield return children[0];
-        }
+        public int Index => 0;
+        public bool Next() => true;
 
         public bool Match(Pattern pattern) =>
             OnMatch(pattern.Match(l, c));
@@ -139,10 +168,10 @@ namespace DocoptNet
         {
             switch (pattern)
             {
-                case Required  { Children: var children }: return MatchBranch(children, new RequiredMatcher(left, collected));
-                case Either    { Children: var children }: return MatchBranch(children, new EitherMatcher(left, collected));
-                case Optional  { Children: var children }: return MatchBranch(children, new OptionalMatcher(left, collected));
-                case OneOrMore { Children: var children }: return MatchBranch(children, new OneOrMoreMatcher(left, collected));
+                case Required  { Children: { Count: var count } children }: return MatchBranch(children, new RequiredMatcher(count, left, collected));
+                case Either    { Children: { Count: var count } children }: return MatchBranch(children, new EitherMatcher(count, left, collected));
+                case Optional  { Children: { Count: var count } children }: return MatchBranch(children, new OptionalMatcher(count, left, collected));
+                case OneOrMore { Children: {} children }: return MatchBranch(children, new OneOrMoreMatcher(1, left, collected));
                 case Command command:
                 {
                     for (var i = 0; i < left.Count; i++)
@@ -180,9 +209,9 @@ namespace DocoptNet
 
             static MatchResult MatchBranch<T>(IList<Pattern> children, T matcher) where T : IMatcher
             {
-                foreach (var child in matcher.Children(children))
+                while (matcher.Next())
                 {
-                    if (!matcher.Match(child))
+                    if (!matcher.Match(children[matcher.Index]))
                         break;
                 }
                 return matcher.Result;
