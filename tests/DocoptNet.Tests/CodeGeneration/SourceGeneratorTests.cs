@@ -42,9 +42,11 @@ Naval Fate.
 namespace DocoptNet.Tests.CodeGeneration
 {
     using System;
+    using System.Collections;
     using System.Collections.Generic;
     using System.IO;
     using System.Linq;
+    using System.Runtime.Loader;
     using DocoptNet.CodeGeneration;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
@@ -57,16 +59,50 @@ namespace DocoptNet.Tests.CodeGeneration
         [Test]
         public void GenerateViaDriver()
         {
-            var source = GetGeneratedOutput(NavalFateUsage);
-            Assert.That(source, Is.Not.Empty);
+            var dict = GetGeneratedProgramArgs(NavalFateUsage, new[] { "ship", "new", "foo", "bar" });
+
+            Assert.That(dict.Count, Is.EqualTo(15));
+
+            Assert.That(Arg("ship", v => (bool?)v), Is.True);
+            Assert.That(Arg("new", v => (bool?)v), Is.True);
+
+            var name = Arg("<name>", v => (dynamic)v!);
+            Assert.That(name, Is.Not.Null);
+            Assert.That((int)name.Count, Is.EqualTo(2));
+            Assert.That((string)name[0].Value, Is.EqualTo("foo"));
+            Assert.That((string)name[1].Value, Is.EqualTo("bar"));
+
+            Assert.That(Arg("move", v => (bool?)v), Is.False);
+            Assert.That(Arg("<x>", v => v), Is.Null);
+            Assert.That(Arg("<y>", v => v), Is.Null);
+            Assert.That(Arg("--speed", v => (int?)v), Is.EqualTo(10));
+            Assert.That(Arg("shoot", v => (bool?)v), Is.False);
+            Assert.That(Arg("mine", v => (bool?)v), Is.False);
+            Assert.That(Arg("set", v => (bool?)v), Is.False);
+            Assert.That(Arg("remove", v => (bool?)v), Is.False);
+            Assert.That(Arg("--moored", v => (bool?)v), Is.False);
+            Assert.That(Arg("--drifting", v => (bool?)v), Is.False);
+            Assert.That(Arg("--help", v => (bool?)v), Is.False);
+            Assert.That(Arg("--version", v => (bool?)v), Is.False);
+
+            T Arg<T>(string key, Func<object?, T> selector) =>
+                dict.Contains(key)
+                ? dict[key] switch
+                  {
+                      null => throw new NullReferenceException(),
+                      {} v => selector((object?)((dynamic)v).Value),
+                  }
+                : throw new KeyNotFoundException("Key was not present in the dictionary: " + key);
         }
 
-        static string GetGeneratedOutput(string source)
+        static IDictionary GetGeneratedProgramArgs(string source, IList<string> argv,
+                                              bool help = true, object? version = null,
+                                              bool optionsFirst = false, bool exit = false)
         {
             var references =
-                from assembly in AppDomain.CurrentDomain.GetAssemblies()
-                where !assembly.IsDynamic && !string.IsNullOrWhiteSpace(assembly.Location)
-                select MetadataReference.CreateFromFile(assembly.Location);
+                from asm in AppDomain.CurrentDomain.GetAssemblies()
+                where !asm.IsDynamic && !string.IsNullOrWhiteSpace(asm.Location)
+                select MetadataReference.CreateFromFile(asm.Location);
 
             var compilation =
                 CSharpCompilation.Create("test.dll",
@@ -76,7 +112,7 @@ namespace DocoptNet.Tests.CodeGeneration
 
             ISourceGenerator generator = new SourceGenerator();
 
-            AdditionalText additionalText = new AdditionalTextString("Usage.docopt.txt", source);
+            AdditionalText additionalText = new AdditionalTextString("Program.docopt.txt", source);
 
             RsAnalyzerConfigOptions options =
                 new AnalyzerConfigOptions(
@@ -95,11 +131,56 @@ namespace DocoptNet.Tests.CodeGeneration
             Assert.False(generateDiagnostics.Any(d => d.Severity == DiagnosticSeverity.Error),
                          "Failed: " + generateDiagnostics.FirstOrDefault()?.GetMessage());
 
-            return outputCompilation.SyntaxTrees
-                                    .Single(t => "Usage.cs".Equals(Path.GetFileName(t.FilePath), StringComparison.OrdinalIgnoreCase))
-                                    .ToString();
-        }
+            using var ms = new MemoryStream();
 
+            var syntaxTrees = from t in outputCompilation.SyntaxTrees
+                              where !t.FilePath.EndsWith(".cs", StringComparison.OrdinalIgnoreCase)
+                              select t;
+
+            const string main = @"
+using System.Collections.Generic;
+using DocoptNet.Generated;
+
+public partial class Program
+{
+    readonly IDictionary<string, ValueObject> _args;
+
+    public Program(IList<string> argv, bool help = true,
+                   object version = null, bool optionsFirst = false, bool exit = false)
+    {
+        _args = Apply(argv, help, version, optionsFirst);
+    }
+
+    public IDictionary<string, ValueObject> Args => _args;
+}
+
+namespace DocoptNet.Generated
+{
+    public partial class ValueObject {}
+}
+";
+            var emitResult = outputCompilation.RemoveSyntaxTrees(syntaxTrees)
+                                              .AddSyntaxTrees(CSharpSyntaxTree.ParseText(main))
+                                              .Emit(ms);
+
+            Assert.False(emitResult.Diagnostics.Any(d => d.Severity == DiagnosticSeverity.Error),
+                         "Failed: " + emitResult.Diagnostics.FirstOrDefault());
+
+            ms.Position = 0;
+
+            var assembly = AssemblyLoadContext.Default.LoadFromStream(ms);
+
+            var programType = assembly.GetType("Program")!;
+            Assert.That(programType, Is.Not.Null);
+
+            dynamic program = Activator.CreateInstance(programType, argv,
+                                                       help, version, optionsFirst, exit)!;
+            Assert.That(program, Is.Not.Null);
+
+            var args = program.Args;
+            Assert.That(args, Is.Not.Null);
+            return (IDictionary)args;
+        }
     }
 }
 
