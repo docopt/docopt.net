@@ -4,6 +4,17 @@
     <LangVersion>9</LangVersion>
     <Nullable>warnings</Nullable>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <!--
+      > [CS8785] warning is emitted if a source generator failed to produce output
+      > due to an exception and there are no generated files. Since the warning
+      > is easy to miss among errors from missing sources it's useful to promote
+      > it to an error.
+      Credit:
+      - Andrey Dyatlov
+      - https://github.com/TessenR/BestPracticesSourceGeneratorsDemo
+      - b8be40f0e153f46ccc79682397680be1b2649b6d
+    -->
+    <MSBuildWarningsAsErrors>CS8785</MSBuildWarningsAsErrors>
     <IsPackable>false</IsPackable>
   </PropertyGroup>
 
