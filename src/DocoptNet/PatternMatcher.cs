@@ -7,15 +7,15 @@ namespace DocoptNet
     using System.Linq;
     using Leaves = ReadOnlyList<LeafPattern>;
 
-    delegate (int Index, LeafPattern Match) LeafMatcher(Leaves left, string name);
+    delegate (int Index, LeafPattern Match) LeafPatternMatcher(Leaves left, string name);
 
-    interface IMatcher
+    interface IBranchPatternMatcher
     {
         int Index { get; }
         bool Next();
         Leaves Left { get; }
         Leaves Collected { get; }
-        bool Match(LeafMatcher matcher, string name, object? value, bool isList, bool isInt);
+        bool Match(LeafPatternMatcher matcher, string name, object? value, bool isList, bool isInt);
         bool Match(Pattern pattern);
         bool OnMatch(MatchResult match);
         bool LastMatched { get; }
@@ -25,7 +25,7 @@ namespace DocoptNet
     static class LeafMatcherExtensions
     {
         public static MatchResult
-            Match(this LeafMatcher matcher,
+            Match(this LeafPatternMatcher matcher,
                   Leaves left, Leaves collected,
                   string name, object? value, bool isList, bool isInt)
         {
@@ -34,7 +34,7 @@ namespace DocoptNet
         }
     }
 
-    struct RequiredMatcher : IMatcher
+    struct RequiredMatcher : IBranchPatternMatcher
     {
         readonly int count;
         readonly Leaves left;
@@ -60,7 +60,7 @@ namespace DocoptNet
         public Leaves Left => l;
         public Leaves Collected => c;
 
-        public bool Match(LeafMatcher matcher, string name, object? value, bool isList, bool isInt) =>
+        public bool Match(LeafPatternMatcher matcher, string name, object? value, bool isList, bool isInt) =>
             OnMatch(matcher.Match(l, c, name, value, isList, isInt));
 
         public bool Match(Pattern pattern) =>
@@ -82,7 +82,7 @@ namespace DocoptNet
         public MatchResult Result => result ?? new MatchResult(true, l, c);
     }
 
-    struct EitherMatcher : IMatcher
+    struct EitherMatcher : IBranchPatternMatcher
     {
         readonly int count;
         readonly Leaves left;
@@ -110,7 +110,7 @@ namespace DocoptNet
         public Leaves Left => left;
         public Leaves Collected => collected;
 
-        public bool Match(LeafMatcher matcher, string name, object? value, bool isList, bool isInt) =>
+        public bool Match(LeafPatternMatcher matcher, string name, object? value, bool isList, bool isInt) =>
             OnMatch(matcher.Match(left, collected, name, value, isList, isInt));
 
         public bool Match(Pattern pattern) =>
@@ -128,7 +128,7 @@ namespace DocoptNet
         public MatchResult Result => match;
     }
 
-    struct OptionalMatcher : IMatcher
+    struct OptionalMatcher : IBranchPatternMatcher
     {
         readonly int count;
         int i;
@@ -150,7 +150,7 @@ namespace DocoptNet
         public Leaves Left => l;
         public Leaves Collected => c;
 
-        public bool Match(LeafMatcher matcher, string name, object? value, bool isList, bool isInt) =>
+        public bool Match(LeafPatternMatcher matcher, string name, object? value, bool isList, bool isInt) =>
             OnMatch(matcher.Match(l, c, name, value, isList, isInt));
 
         public bool Match(Pattern pattern) =>
@@ -167,7 +167,7 @@ namespace DocoptNet
         public MatchResult Result => new(true, l, c);
     }
 
-    struct OneOrMoreMatcher : IMatcher
+    struct OneOrMoreMatcher : IBranchPatternMatcher
     {
         readonly Leaves left, collected;
         Leaves l, c;
@@ -186,7 +186,7 @@ namespace DocoptNet
         public Leaves Left => l;
         public Leaves Collected => c;
 
-        public bool Match(LeafMatcher matcher, string name, object? value, bool isList, bool isInt) =>
+        public bool Match(LeafPatternMatcher matcher, string name, object? value, bool isList, bool isInt) =>
             OnMatch(matcher.Match(l, c, name, value, isList, isInt));
 
         public bool Match(Pattern pattern) =>
@@ -242,7 +242,7 @@ namespace DocoptNet
                     throw new ArgumentException(nameof(pattern));
             }
 
-            static MatchResult MatchBranch<T>(IList<Pattern> children, T matcher) where T : IMatcher
+            static MatchResult MatchBranch<T>(IList<Pattern> children, T matcher) where T : IBranchPatternMatcher
             {
                 while (matcher.Next())
                 {
@@ -281,9 +281,9 @@ namespace DocoptNet
             return new MatchResult(true, left_, collected.Append(match));
         }
 
-        public static readonly LeafMatcher CommandMatcher  = MatchCommand;
-        public static readonly LeafMatcher ArgumentMatcher = MatchArgument;
-        public static readonly LeafMatcher OptionMatcher   = MatchOption;
+        public static readonly LeafPatternMatcher CommandMatcher  = MatchCommand;
+        public static readonly LeafPatternMatcher ArgumentMatcher = MatchArgument;
+        public static readonly LeafPatternMatcher OptionMatcher   = MatchOption;
 
         public static (int, LeafPattern) MatchCommand(Leaves left, string command)
         {
