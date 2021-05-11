@@ -198,14 +198,14 @@ namespace NavalFate
                                                 if (!e.LastMatched)
                                                     break;
                                             }
-                                            d.OnMatch(e.Result);
+                                            d.Fold(e.Result);
                                             break;
                                         }
                                     }
                                     if (!d.LastMatched)
                                         break;
                                 }
-                                c.OnMatch(d.Result);
+                                c.Fold(d.Result);
                                 break;
                             }
                             case 1:
@@ -257,14 +257,14 @@ namespace NavalFate
                                                 if (!e.LastMatched)
                                                     break;
                                             }
-                                            d.OnMatch(e.Result);
+                                            d.Fold(e.Result);
                                             break;
                                         }
                                     }
                                     if (!d.LastMatched)
                                         break;
                                 }
-                                c.OnMatch(d.Result);
+                                c.Fold(d.Result);
                                 break;
                             }
                             case 2:
@@ -303,7 +303,7 @@ namespace NavalFate
                                     if (!d.LastMatched)
                                         break;
                                 }
-                                c.OnMatch(d.Result);
+                                c.Fold(d.Result);
                                 break;
                             }
                             case 3:
@@ -348,11 +348,11 @@ namespace NavalFate
                                                     if (!f.LastMatched)
                                                         break;
                                                 }
-                                                e.OnMatch(f.Result);
+                                                e.Fold(f.Result);
                                                 if (!e.LastMatched)
                                                     break;
                                             }
-                                            d.OnMatch(e.Result);
+                                            d.Fold(e.Result);
                                             break;
                                         }
                                         case 2:
@@ -395,18 +395,18 @@ namespace NavalFate
                                                     if (!f.LastMatched)
                                                         break;
                                                 }
-                                                e.OnMatch(f.Result);
+                                                e.Fold(f.Result);
                                                 if (!e.LastMatched)
                                                     break;
                                             }
-                                            d.OnMatch(e.Result);
+                                            d.Fold(e.Result);
                                             break;
                                         }
                                     }
                                     if (!d.LastMatched)
                                         break;
                                 }
-                                c.OnMatch(d.Result);
+                                c.Fold(d.Result);
                                 break;
                             }
                             case 4:
@@ -424,11 +424,11 @@ namespace NavalFate
                                         if (!e.LastMatched)
                                             break;
                                     }
-                                    d.OnMatch(e.Result);
+                                    d.Fold(e.Result);
                                     if (!d.LastMatched)
                                         break;
                                 }
-                                c.OnMatch(d.Result);
+                                c.Fold(d.Result);
                                 break;
                             }
                             case 5:
@@ -442,18 +442,18 @@ namespace NavalFate
                                     if (!d.LastMatched)
                                         break;
                                 }
-                                c.OnMatch(d.Result);
+                                c.Fold(d.Result);
                                 break;
                             }
                         }
                         if (!c.LastMatched)
                             break;
                     }
-                    b.OnMatch(c.Result);
+                    b.Fold(c.Result);
                     if (!b.LastMatched)
                         break;
                 }
-                a.OnMatch(b.Result);
+                a.Fold(b.Result);
             }
             while (false);
 

@@ -249,7 +249,7 @@ namespace DocoptNet.CodeGeneration
                         }
                         _ = code["if (!"][m][".LastMatched)"].NewLine.Indent.Break.Outdent;
                         _ = code.BlockEnd;
-                        _ = code[pm][".OnMatch("][m][".Result)"].EndStatement;
+                        _ = code[pm][".Fold("][m][".Result)"].EndStatement;
                         break;
                     }
                     case LeafPattern { Name: var name } leaf:

@@ -17,7 +17,7 @@ namespace DocoptNet
         Leaves Collected { get; }
         bool Match(LeafPatternMatcher matcher, string name, object? value, bool isList, bool isInt);
         bool Match(Pattern pattern);
-        bool OnMatch(MatchResult match);
+        bool Fold(MatchResult match);
         bool LastMatched { get; }
         MatchResult Result { get; }
     }
@@ -61,12 +61,12 @@ namespace DocoptNet
         public Leaves Collected => c;
 
         public bool Match(LeafPatternMatcher matcher, string name, object? value, bool isList, bool isInt) =>
-            OnMatch(matcher.Match(l, c, name, value, isList, isInt));
+            Fold(matcher.Match(l, c, name, value, isList, isInt));
 
         public bool Match(Pattern pattern) =>
-            OnMatch(pattern.Match(l, c));
+            Fold(pattern.Match(l, c));
 
-        public bool OnMatch(MatchResult match)
+        public bool Fold(MatchResult match)
         {
             if (!match)
             {
@@ -111,12 +111,12 @@ namespace DocoptNet
         public Leaves Collected => collected;
 
         public bool Match(LeafPatternMatcher matcher, string name, object? value, bool isList, bool isInt) =>
-            OnMatch(matcher.Match(left, collected, name, value, isList, isInt));
+            Fold(matcher.Match(left, collected, name, value, isList, isInt));
 
         public bool Match(Pattern pattern) =>
-            OnMatch(pattern.Match(left, collected));
+            Fold(pattern.Match(left, collected));
 
-        public bool OnMatch(MatchResult match)
+        public bool Fold(MatchResult match)
         {
             if (match is (true, var l, var c) && (!this.match || l.Count < this.match.Left.Count))
                 this.match = new MatchResult(true, l, c);
@@ -151,12 +151,12 @@ namespace DocoptNet
         public Leaves Collected => c;
 
         public bool Match(LeafPatternMatcher matcher, string name, object? value, bool isList, bool isInt) =>
-            OnMatch(matcher.Match(l, c, name, value, isList, isInt));
+            Fold(matcher.Match(l, c, name, value, isList, isInt));
 
         public bool Match(Pattern pattern) =>
-            OnMatch(pattern.Match(l, c));
+            Fold(pattern.Match(l, c));
 
-        public bool OnMatch(MatchResult match)
+        public bool Fold(MatchResult match)
         {
             (_, l, c) = match;
             return true;
@@ -187,12 +187,12 @@ namespace DocoptNet
         public Leaves Collected => c;
 
         public bool Match(LeafPatternMatcher matcher, string name, object? value, bool isList, bool isInt) =>
-            OnMatch(matcher.Match(l, c, name, value, isList, isInt));
+            Fold(matcher.Match(l, c, name, value, isList, isInt));
 
         public bool Match(Pattern pattern) =>
-            OnMatch(pattern.Match(l, c));
+            Fold(pattern.Match(l, c));
 
-        public bool OnMatch(MatchResult match)
+        public bool Fold(MatchResult match)
         {
             bool matched;
             (matched, l, c) = match;
