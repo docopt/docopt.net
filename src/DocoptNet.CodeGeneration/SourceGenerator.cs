@@ -128,7 +128,6 @@ namespace DocoptNet.CodeGeneration
                     .Using("System.Linq")
                     .Using("DocoptNet.Generated")
                     .Using("Leaves", "DocoptNet.Generated.ReadOnlyList<DocoptNet.Generated.LeafPattern>")
-                    .UsingStatic("DocoptNet.Generated.Module")
                     .NewLine;
 
             var isNamespaced = !string.IsNullOrEmpty(ns);
@@ -257,14 +256,14 @@ namespace DocoptNet.CodeGeneration
                     {
                         var lfn = leaf switch
                         {
-                            Command => "Command",
-                            DocoptNet.Argument => "Argument",
-                            Option => "Option",
+                            Command => "MatchCommand",
+                            DocoptNet.Argument => "MatchArgument",
+                            Option => "MatchOption",
                             _ => throw new NotImplementedException()
                         };
                         _ = code[pm]
                                 [".Match("]
-                                    [lfn][", "]
+                                    ["PatternMatcher."][lfn][", "]
                                     [Literal(name)][", "]
                                     ["value: "][leaf.Value switch
                                     {

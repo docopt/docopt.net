@@ -28,7 +28,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <EmbeddedResource Include="..\DocoptNet.Generated\*.cs" Link="Generated\%(Filename)%(Extension)" />
     <EmbeddedResource Include="..\DocoptNet\*.cs" Link="Generated\%(Filename)%(Extension)" />
   </ItemGroup>
 

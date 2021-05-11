@@ -107,9 +107,6 @@ namespace DocoptNet.CodeGeneration
         public CSharpSourceBuilder Using(string alias, string typeName) =>
             this["using "][alias][" = "][typeName][';'].NewLine;
 
-        public CSharpSourceBuilder UsingStatic(string typeName) =>
-            this["using static "][typeName][';'].NewLine;
-
         bool _skipStatementEnd;
 
         public CSharpSourceBuilder SkipStatementEnd { get { _skipStatementEnd = true; return this; } }
