@@ -180,9 +180,32 @@ namespace DocoptNet.Tests.CodeGeneration
                 where !asm.IsDynamic && !string.IsNullOrWhiteSpace(asm.Location)
                 select MetadataReference.CreateFromFile(asm.Location);
 
+            const string main = @"
+using System.Collections.Generic;
+using DocoptNet.Generated;
+
+public partial class Program
+{
+    readonly IDictionary<string, ValueObject> _args;
+
+    public Program(IList<string> argv, bool help = true,
+                   object version = null, bool optionsFirst = false, bool exit = false)
+    {
+        _args = Apply(argv, help, version, optionsFirst);
+    }
+
+    public IDictionary<string, ValueObject> Args => _args;
+}
+
+namespace DocoptNet.Generated
+{
+    public partial class ValueObject {}
+}
+";
+
             var compilation =
                 CSharpCompilation.Create("test.dll",
-                                         new[] { CSharpSyntaxTree.ParseText(source) },
+                                         new[] { CSharpSyntaxTree.ParseText(main) },
                                          references,
                                          new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary));
 
@@ -208,36 +231,7 @@ namespace DocoptNet.Tests.CodeGeneration
                          "Failed: " + generateDiagnostics.FirstOrDefault()?.GetMessage());
 
             using var ms = new MemoryStream();
-
-            var syntaxTrees = from t in outputCompilation.SyntaxTrees
-                              where !t.FilePath.EndsWith(".cs", StringComparison.OrdinalIgnoreCase)
-                              select t;
-
-            const string main = @"
-using System.Collections.Generic;
-using DocoptNet.Generated;
-
-public partial class Program
-{
-    readonly IDictionary<string, ValueObject> _args;
-
-    public Program(IList<string> argv, bool help = true,
-                   object version = null, bool optionsFirst = false, bool exit = false)
-    {
-        _args = Apply(argv, help, version, optionsFirst);
-    }
-
-    public IDictionary<string, ValueObject> Args => _args;
-}
-
-namespace DocoptNet.Generated
-{
-    public partial class ValueObject {}
-}
-";
-            var emitResult = outputCompilation.RemoveSyntaxTrees(syntaxTrees)
-                                              .AddSyntaxTrees(CSharpSyntaxTree.ParseText(main))
-                                              .Emit(ms);
+            var emitResult = outputCompilation.Emit(ms);
 
             Assert.False(emitResult.Diagnostics.Any(d => d.Severity == DiagnosticSeverity.Error),
                          "Failed: " + emitResult.Diagnostics.FirstOrDefault());
