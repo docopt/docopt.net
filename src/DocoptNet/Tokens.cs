@@ -17,12 +17,6 @@ namespace DocoptNet
             _tokens = new Queue<string>(source);
         }
 
-        public Tokens(string source, Type errorType)
-        {
-            _errorType = errorType ?? typeof(DocoptInputErrorException);
-            _tokens = new Queue<string>(source.Split(new char[0], StringSplitOptions.RemoveEmptyEntries));
-        }
-
         public Type ErrorType
         {
             get { return _errorType; }
