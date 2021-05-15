@@ -85,7 +85,7 @@ namespace NavalFate
                         new Argument("<y>", (ValueObject)null),
                         new Optional(new Pattern[]
                         {
-                            new Option("", "--speed", 1, new ValueObject(10))
+                            new Option(null, "--speed", 1, new ValueObject(10))
                         })
                     }),
                     new Required(new Pattern[]
@@ -112,8 +112,8 @@ namespace NavalFate
                         {
                             new Either(new Pattern[]
                             {
-                                new Option("", "--moored", 0, new ValueObject(false)),
-                                new Option("", "--drifting", 0, new ValueObject(false))
+                                new Option(null, "--moored", 0, new ValueObject(false)),
+                                new Option(null, "--drifting", 0, new ValueObject(false))
                             })
                         })
                     }),
@@ -126,7 +126,7 @@ namespace NavalFate
                     }),
                     new Required(new Pattern[]
                     {
-                        new Option("", "--version", 0, new ValueObject(false))
+                        new Option(null, "--version", 0, new ValueObject(false))
                     })
                 })
             });
@@ -134,10 +134,10 @@ namespace NavalFate
         static readonly ICollection<Option> Options = new[]
         {
             new Option("-h", "--help", 0, new ValueObject(false)),
-            new Option("", "--version", 0, new ValueObject(false)),
-            new Option("", "--speed", 1, new ValueObject(10)),
-            new Option("", "--moored", 0, new ValueObject(false)),
-            new Option("", "--drifting", 0, new ValueObject(false)),
+            new Option(null, "--version", 0, new ValueObject(false)),
+            new Option(null, "--speed", 1, new ValueObject(10)),
+            new Option(null, "--moored", 0, new ValueObject(false)),
+            new Option(null, "--drifting", 0, new ValueObject(false)),
         };
 
         static Dictionary<string, ValueObject> Apply(IEnumerable<string> args, bool help = true, object version = null, bool optionsFirst = false, bool exit = false)

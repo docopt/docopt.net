@@ -186,8 +186,8 @@ namespace DocoptNet.CodeGeneration
                         break;
                     case Option option:
                         _ = code["new Option("]
-                                    [Literal(option.ShortName ?? string.Empty)][", "]
-                                    [Literal(option.LongName ?? string.Empty)][", "]
+                                    [option.ShortName is {} sn ? Literal(sn) : "null"][", "]
+                                    [option.LongName is {} ln ? Literal(ln) : "null"][", "]
                                     [option.ArgCount][", "]
                                     ["new ValueObject("][option.Value switch
                                     {
