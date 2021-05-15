@@ -155,7 +155,7 @@ namespace DocoptNet.CodeGeneration
             }
 
             _ = code.NewLine;
-            var (pattern, exitUsage) = new Docopt().ParsePattern(usage);
+            var (pattern, options, exitUsage) = new Docopt().ParsePattern(usage);
             AppendTree(pattern);
 
             void AppendTreeCode(Pattern pattern)
@@ -278,7 +278,7 @@ namespace DocoptNet.CodeGeneration
 
             _ = code.NewLine;
             _ = code["static readonly ICollection<Option> Options = new Option[]"].NewLine.Block;
-            foreach (var option in Docopt.ParseDefaults(usage))
+            foreach (var option in options)
             {
                 AppendTreeCode(option);
                 _ = code[','].NewLine;

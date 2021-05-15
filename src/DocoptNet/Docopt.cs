@@ -73,7 +73,8 @@ namespace DocoptNet
         }
 
         // TODO consider consolidating duplication with portions of Apply above
-        internal (Pattern Pattern, string ExitUsage) ParsePattern(string doc)
+        internal (Pattern Pattern, ICollection<Option> Options, string ExitUsage)
+            ParsePattern(string doc)
         {
             var usageSections = ParseSection("usage:", doc);
             if (usageSections.Length == 0)
@@ -90,7 +91,7 @@ namespace DocoptNet
                 var docOptions = ParseDefaults(doc);
                 optionsShortcut.Children = docOptions.Distinct().Except(patternOptions).ToList();
             }
-            return (pattern.Fix(), exitUsage);
+            return (pattern.Fix(), options, exitUsage);
         }
 
         private void SetDefaultPrintExitHandlerIfNecessary(bool exit)
