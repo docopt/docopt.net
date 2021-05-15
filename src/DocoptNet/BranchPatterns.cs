@@ -54,7 +54,11 @@ namespace DocoptNet
     }
 
     // Marker/placeholder for [options] shortcut.
-    class OptionsShortcut : Optional { }
+    class OptionsShortcut : Optional
+    {
+        // TODO consider single pattern
+        public OptionsShortcut(params Pattern[] patterns) : base(patterns) { }
+    }
 
     class Either : BranchPattern
     {
@@ -63,6 +67,7 @@ namespace DocoptNet
 
     class OneOrMore : BranchPattern
     {
+        // TODO consider single pattern
         public OneOrMore(params Pattern[] patterns) : base(patterns) { }
     }
 }
