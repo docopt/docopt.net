@@ -284,7 +284,7 @@ namespace DocoptNet.CodeGeneration
             }
 
             _ = code.NewLine;
-            _ = code["static readonly ICollection<Option> Options = new[]"].NewLine.Block;
+            _ = code["static readonly ICollection<Option> Options = new Option[]"].NewLine.Block;
             foreach (var option in Docopt.ParseDefaults(usage))
             {
                 AppendTreeCode(option);

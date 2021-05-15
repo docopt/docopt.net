@@ -131,7 +131,7 @@ namespace NavalFate
                 })
             });
 
-        static readonly ICollection<Option> Options = new[]
+        static readonly ICollection<Option> Options = new Option[]
         {
             new Option("-h", "--help", 0, new ValueObject(false)),
             new Option(null, "--version", 0, new ValueObject(false)),
