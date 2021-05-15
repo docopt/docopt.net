@@ -167,7 +167,7 @@ namespace DocoptNet.CodeGeneration
                         AppendTreeCode(children[0]);
                         _ = code[')'];
                         break;
-                    case BranchPattern { Children: { Count: > 0 } children } branch:
+                    case BranchPattern { Children: {} children } branch:
                         _ = code["new "][branch.GetType().Name]["(new Pattern[]"].NewLine.Block;
                         var i = 0;
                         foreach (var child in children)
@@ -192,6 +192,8 @@ namespace DocoptNet.CodeGeneration
                                     ["new ValueObject("][option.Value][')']
                                 [')'];
                         break;
+                    default:
+                        throw new NotSupportedException("Unsupported: " + pattern);
                 }
             }
 
