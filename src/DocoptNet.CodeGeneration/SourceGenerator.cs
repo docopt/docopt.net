@@ -189,14 +189,7 @@ namespace DocoptNet.CodeGeneration
                                     [option.ShortName is {} sn ? Literal(sn) : "null"][", "]
                                     [option.LongName is {} ln ? Literal(ln) : "null"][", "]
                                     [option.ArgCount][", "]
-                                    ["new ValueObject("][option.Value switch
-                                    {
-                                        { IsInt: true, AsInt: var n } => Literal(n),
-                                        { Value: string v } => Literal(v),
-                                        { IsTrue: true } => "true",
-                                        { IsFalse: true } => "false",
-                                        _ => throw new NotSupportedException(), // todo emit diagnostic
-                                    }][')']
+                                    ["new ValueObject("][option.Value][')']
                                 [')'];
                         break;
                 }
@@ -321,17 +314,7 @@ namespace DocoptNet.CodeGeneration
             {
                 _ = code['['].Literal(leaf.Name)["] = "]
                         ["new ValueObject("]
-                            [leaf.Value switch
-                            {
-                                null => "null",
-                                { Value: null     } => "null",
-                                { IsList: true    } => "new ArrayList()",
-                                { IsInt: true, AsInt: var n } => Literal(n),
-                                { Value: string v } => Literal(v),
-                                { IsTrue: true    } => "true",
-                                { IsFalse: true   } => "false",
-                                _ => throw new NotSupportedException(leaf.Value?.ToString() ?? "(null)"), // todo emit diagnostic
-                            }]["),"].NewLine;
+                            [leaf.Value]["),"].NewLine;
             }
 
             _ = code.SkipNextNewLine.BlockEnd.EndStatement;

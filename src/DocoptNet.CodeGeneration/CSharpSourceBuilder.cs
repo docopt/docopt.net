@@ -1,7 +1,9 @@
 namespace DocoptNet.CodeGeneration
 {
     using System;
+    using System.Collections;
     using System.Text;
+    using Microsoft.CodeAnalysis.CSharp;
 
     sealed class CSharpSourceBuilder
     {
@@ -162,5 +164,43 @@ namespace DocoptNet.CodeGeneration
 
         public CSharpSourceBuilder ForEach(string var, string expression) =>
             this["foreach (var "][var][" in "][expression][')'].NewLine;
+
+        public CSharpSourceBuilder this[ValueObject value]
+        {
+            get
+            {
+                if (value is { IsList: true, Value: ArrayList { Count: var count and > 0 } items })
+                {
+                    _ = this["new ArrayList"].NewLine.Block;
+                    var i = 0;
+                    foreach (var item in items)
+                    {
+                        switch (item)
+                        {
+                            case string s: _ = Literal(s); break;
+                            case var v: throw new NotSupportedException("Unsupported value type: " + v?.GetType());
+                        }
+                        if (++i < count)
+                            _ = this[", "];
+                    }
+                    _ = NewLine.BlockEnd;
+                }
+                else
+                {
+                    _ = this[value switch
+                    {
+                        null => "null",
+                        { IsInt: true, AsInt: var n } => SyntaxFactory.Literal(n),
+                        { Value: string v } => SyntaxFactory.Literal(v),
+                        { IsTrue: true } => "true",
+                        { IsFalse: true } => "false",
+                        { IsList: true, Value: ArrayList { Count: 0 } } => "new ArrayList()",
+                        _ => throw new NotSupportedException(), // todo emit diagnostic
+                    }];
+                }
+
+                return this;
+            }
+        }
     }
 }
