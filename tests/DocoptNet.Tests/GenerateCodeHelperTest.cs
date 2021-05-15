@@ -5,37 +5,41 @@ namespace DocoptNet.Tests
     [TestFixture]
     public class GenerateCodeHelperTest
     {
-        [Test]
-        public void ConvertDashesToCamelCase_single_dashes()
+        [TestCase('-')]
+        [TestCase(' ')]
+        public void ConvertDashesToCamelCase_single_dashes(char sep)
         {
-            var actual = GenerateCodeHelper.ConvertDashesToCamelCase("string-with-dashes");
+            var actual = GenerateCodeHelper.ConvertToPascalCase("string" + sep + "with" + sep + "dashes");
             Assert.AreEqual("StringWithDashes", actual);
         }
 
-        [Test]
-        public void ConvertDashesToCamelCase_consecutive_dashes()
+        [TestCase('-')]
+        [TestCase(' ')]
+        public void ConvertDashesToCamelCase_consecutive_dashes(char sep)
         {
-            var input = "string--with----dashes";
+            var input = "string" + sep + sep + "with" + sep + sep + sep + sep + "dashes";
             var expected = "StringWithDashes";
-            var actual = GenerateCodeHelper.ConvertDashesToCamelCase(input);
+            var actual = GenerateCodeHelper.ConvertToPascalCase(input);
             Assert.AreEqual(expected, actual);
         }
 
-        [Test]
-        public void ConvertDashesToCamelCase_existing_uppercase_letters()
+        [TestCase('-')]
+        [TestCase(' ')]
+        public void ConvertDashesToCamelCase_existing_uppercase_letters(char sep)
         {
-            var input = "string-With-Dashes";
+            var input = "string" + sep + "With" + sep + "Dashes";
             var expected = "StringWithDashes";
-            var actual = GenerateCodeHelper.ConvertDashesToCamelCase(input);
+            var actual = GenerateCodeHelper.ConvertToPascalCase(input);
             Assert.AreEqual(expected, actual);
         }
 
-        [Test]
-        public void ConvertDashesToCamelCase_all_uppercase_letters()
+        [TestCase('-')]
+        [TestCase(' ')]
+        public void ConvertDashesToCamelCase_all_uppercase_letters(char sep)
         {
-            var input = "STRING-WITH-DASHES";
+            var input = "STRING" + sep + "WITH" + sep + "DASHES";
             var expected = "STRINGWITHDASHES";
-            var actual = GenerateCodeHelper.ConvertDashesToCamelCase(input);
+            var actual = GenerateCodeHelper.ConvertToPascalCase(input);
             Assert.AreEqual(expected, actual);
         }
     }
