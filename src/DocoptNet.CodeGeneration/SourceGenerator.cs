@@ -223,22 +223,23 @@ namespace DocoptNet.CodeGeneration
                         var m = Vars[level];
                         _ = code["var "][m][" = "]["new "][matcher]['('][children.Count][", "][pm][".Left, "][pm][".Collected)"].EndStatement;
                         _ = code["while ("][m][".Next())"].NewLine.Block;
-                        if (pattern.Children.Count > 1)
+                        switch (pattern.Children.Count)
                         {
-                            _ = code["switch ("][m][".Index)"].NewLine.Block;
-                            var i = 0;
-                            foreach (var child in children)
-                            {
-                                _ = code.Case(i).Block;
-                                AppendCode(child, m, level);
-                                _ = code.Break.BlockEnd;
-                                i++;
-                            }
-                            _ = code.BlockEnd;
-                        }
-                        else
-                        {
-                            AppendCode(children[0], m, level);
+                            case > 1:
+                                _ = code["switch ("][m][".Index)"].NewLine.Block;
+                                var i = 0;
+                                foreach (var child in children)
+                                {
+                                    _ = code.Case(i).Block;
+                                    AppendCode(child, m, level);
+                                    _ = code.Break.BlockEnd;
+                                    i++;
+                                }
+                                _ = code.BlockEnd;
+                                break;
+                            case 1:
+                                AppendCode(children[0], m, level);
+                                break;
                         }
                         _ = code["if (!"][m][".LastMatched)"].NewLine.Indent.Break.Outdent;
                         _ = code.BlockEnd;
