@@ -457,7 +457,7 @@ namespace NavalFate
             }
             while (false);
 
-            if (!a.Result)
+            if (!a.Result || a.Left.Count > 0)
             {
                 const string exitUsage = @"Usage:
       naval_fate.exe ship new <name>...

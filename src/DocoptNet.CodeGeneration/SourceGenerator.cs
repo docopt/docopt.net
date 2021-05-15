@@ -310,7 +310,7 @@ namespace DocoptNet.CodeGeneration
             _ = code.BlockEnd
                     .DoWhile("false")
                     .NewLine
-                    .If("!a.Result").Block
+                    .If("!a.Result || a.Left.Count > 0").Block
                     .Const("exitUsage", exitUsage)
                     .Throw("new DocoptInputErrorException(exitUsage)").BlockEnd
                     .NewLine;
