@@ -46,7 +46,9 @@ namespace DocoptNet.Tests.CodeGeneration
     using System.Collections.Generic;
     using System.IO;
     using System.Linq;
+    using System.Reflection;
     using System.Runtime.Loader;
+    using System.Threading;
     using DocoptNet.CodeGeneration;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
@@ -173,23 +175,19 @@ namespace DocoptNet.Tests.CodeGeneration
             }
         }
 
-        static Program GenerateProgram(string source)
+        static Program GenerateProgram(string usage)
         {
-            var references =
-                from asm in AppDomain.CurrentDomain.GetAssemblies()
-                where !asm.IsDynamic && !string.IsNullOrWhiteSpace(asm.Location)
-                select MetadataReference.CreateFromFile(asm.Location);
-
             const string main = @"
 using System.Collections.Generic;
 using DocoptNet.Generated;
 
-public partial class Program
+public partial class " + nameof(Program) + @"
 {
     readonly IDictionary<string, ValueObject> _args;
 
-    public Program(IList<string> argv, bool help = true,
-                   object version = null, bool optionsFirst = false, bool exit = false)
+    public " + nameof(Program) + @"(
+        IList<string> argv, bool help = true,
+        object version = null, bool optionsFirst = false, bool exit = false)
     {
         _args = Apply(argv, help, version, optionsFirst);
     }
@@ -203,15 +201,28 @@ namespace DocoptNet.Generated
 }
 ";
 
+            var assembly = GenerateProgram(usage, main);
+            return new Program(assembly.GetType(nameof(Program))!);
+        }
+
+        static int _assemblyUniqueCounter;
+
+        internal static Assembly GenerateProgram(string usage, string source)
+        {
+            var references =
+                from asm in AppDomain.CurrentDomain.GetAssemblies()
+                where !asm.IsDynamic && !string.IsNullOrWhiteSpace(asm.Location)
+                select MetadataReference.CreateFromFile(asm.Location);
+
             var compilation =
-                CSharpCompilation.Create("test.dll",
-                                         new[] { CSharpSyntaxTree.ParseText(main) },
+                CSharpCompilation.Create(FormattableString.Invariant($"test{Interlocked.Increment(ref _assemblyUniqueCounter)}.dll"),
+                                         new[] { CSharpSyntaxTree.ParseText(source) },
                                          references,
                                          new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary));
 
             ISourceGenerator generator = new SourceGenerator();
 
-            AdditionalText additionalText = new AdditionalTextString("Program.docopt.txt", source);
+            AdditionalText additionalText = new AdditionalTextString("Program.docopt.txt", usage);
 
             RsAnalyzerConfigOptions options =
                 new AnalyzerConfigOptions(
@@ -238,8 +249,7 @@ namespace DocoptNet.Generated
 
             ms.Position = 0;
 
-            var assembly = AssemblyLoadContext.Default.LoadFromStream(ms);
-            return new Program(assembly.GetType("Program")!);
+            return AssemblyLoadContext.Default.LoadFromStream(ms);
         }
     }
 }
