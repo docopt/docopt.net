@@ -5,7 +5,6 @@ DocoptNet.CommandNode.CommandNode(string name) -> void
 DocoptNet.Docopt
 DocoptNet.Docopt.Apply(string doc) -> System.Collections.Generic.IDictionary<string, DocoptNet.ValueObject>
 DocoptNet.Docopt.Apply(string doc, DocoptNet.Tokens tokens, bool help = true, object version = null, bool optionsFirst = false, bool exit = false) -> System.Collections.Generic.IDictionary<string, DocoptNet.ValueObject>
-DocoptNet.Docopt.Apply(string doc, string cmdLine, bool help = true, object version = null, bool optionsFirst = false, bool exit = false) -> System.Collections.Generic.IDictionary<string, DocoptNet.ValueObject>
 DocoptNet.Docopt.Apply(string doc, System.Collections.Generic.ICollection<string> argv, bool help = true, object version = null, bool optionsFirst = false, bool exit = false) -> System.Collections.Generic.IDictionary<string, DocoptNet.ValueObject>
 DocoptNet.Docopt.Docopt() -> void
 DocoptNet.Docopt.GenerateCode(string doc) -> string
@@ -49,7 +48,6 @@ DocoptNet.Tokens.ErrorType.get -> System.Type
 DocoptNet.Tokens.GetEnumerator() -> System.Collections.Generic.IEnumerator<string>
 DocoptNet.Tokens.Move() -> string
 DocoptNet.Tokens.ThrowsInputError.get -> bool
-DocoptNet.Tokens.Tokens(string source, System.Type errorType) -> void
 DocoptNet.Tokens.Tokens(System.Collections.Generic.IEnumerable<string> source, System.Type errorType) -> void
 DocoptNet.ValueObject
 DocoptNet.ValueObject.AsInt.get -> int

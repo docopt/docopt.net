@@ -1,5 +1,6 @@
 namespace DocoptNet.Tests
 {
+    using System;
     using NUnit.Framework;
 
     [TestFixture]
@@ -10,7 +11,7 @@ namespace DocoptNet.Tests
 
         private Tokens TS(string s)
         {
-            return new Tokens(s, typeof(DocoptInputErrorException));
+            return new Tokens(s.Split((char[])null, StringSplitOptions.RemoveEmptyEntries), typeof(DocoptInputErrorException));
         }
 
         [Test]
