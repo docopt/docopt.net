@@ -33,6 +33,10 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DocoptNet.CodeGeneration", "src\DocoptNet.CodeGeneration\DocoptNet.CodeGeneration.csproj", "{37D45A51-EB3E-4D6D-9943-EF2F3967343C}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "SourceGenerator", "SourceGenerator", "{99846126-1D88-42CC-897C-ACEA7C2DBB2B}"
+	ProjectSection(SolutionItems) = preProject
+		eg\SourceGenerator\Directory.Build.props = eg\SourceGenerator\Directory.Build.props
+		eg\SourceGenerator\Directory.Build.targets = eg\SourceGenerator\Directory.Build.targets
+	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NavalFate", "eg\SourceGenerator\NavalFate\NavalFate.csproj", "{E41419E5-251C-4093-ADDE-77EF694964E3}"
 EndProject
