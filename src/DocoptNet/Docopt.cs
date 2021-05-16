@@ -13,13 +13,7 @@ namespace DocoptNet
 
         public IDictionary<string, ValueObject> Apply(string doc)
         {
-            return Apply(doc, new Tokens("", typeof (DocoptInputErrorException)));
-        }
-
-        public IDictionary<string, ValueObject> Apply(string doc, string cmdLine, bool help = true,
-            object version = null, bool optionsFirst = false, bool exit = false)
-        {
-            return Apply(doc, new Tokens(cmdLine, typeof (DocoptInputErrorException)), help, version, optionsFirst, exit);
+            return Apply(doc, new Tokens(Enumerable.Empty<string>(), typeof (DocoptInputErrorException)));
         }
 
         public IDictionary<string, ValueObject> Apply(string doc, ICollection<string> argv, bool help = true,

@@ -506,10 +506,10 @@ namespace NavalFate
 
         public bool CmdShip { get { return _args["ship"].IsTrue; } }
         public bool CmdNew { get { return _args["new"].IsTrue; } }
-        public ArrayList ArgName  { get { return _args["<name>"].AsList; } }
+        public ArrayList ArgName { get { return _args["<name>"].AsList; } }
         public bool CmdMove { get { return _args["move"].IsTrue; } }
-        public string ArgX  { get { return null == _args["<x>"] ? null : _args["<x>"].ToString(); } }
-        public string ArgY  { get { return null == _args["<y>"] ? null : _args["<y>"].ToString(); } }
+        public string ArgX { get { return null == _args["<x>"] ? null : _args["<x>"].ToString(); } }
+        public string ArgY { get { return null == _args["<y>"] ? null : _args["<y>"].ToString(); } }
         public string OptSpeed { get { return null == _args["--speed"] ? "10" : _args["--speed"].ToString(); } }
         public bool CmdShoot { get { return _args["shoot"].IsTrue; } }
         public bool CmdMine { get { return _args["mine"].IsTrue; } }

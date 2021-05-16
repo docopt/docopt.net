@@ -30,8 +30,8 @@ namespace DocoptNet
 
         public override string GenerateCode()
         {
-            var s = Name.Replace("<", "").Replace(">", " ").ToLowerInvariant();
-            s = "Arg" + GenerateCodeHelper.ConvertDashesToCamelCase(s);
+            var s = Name.Replace("<", "").Replace(">", "").ToLowerInvariant();
+            s = "Arg" + GenerateCodeHelper.ConvertToPascalCase(s);
 
             if (Value != null && Value.IsList)
             {
