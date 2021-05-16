@@ -16,7 +16,7 @@ namespace DocoptNet.Tests
 
 Usage:
   prog command ARG <myarg> [OPTIONALARG] [-o -s=<arg> --long=ARG --switch-dash]
-  prog command2 ARG <myarg>
+  prog command2 ARG <myarg> <input file>
   prog files FILE...
 
 Options:
@@ -31,13 +31,14 @@ Explanation:
             const string expected = @"
 public bool CmdCommand { get { return _args[""command""].IsTrue; } }
 public string ArgArg { get { return null == _args[""ARG""] ? null : _args[""ARG""].ToString(); } }
-public string ArgMyarg  { get { return null == _args[""<myarg>""] ? null : _args[""<myarg>""].ToString(); } }
+public string ArgMyarg { get { return null == _args[""<myarg>""] ? null : _args[""<myarg>""].ToString(); } }
 public string ArgOptionalarg { get { return null == _args[""OPTIONALARG""] ? null : _args[""OPTIONALARG""].ToString(); } }
 public bool OptO { get { return _args[""-o""].IsTrue; } }
 public string OptS { get { return null == _args[""-s""] ? ""128"" : _args[""-s""].ToString(); } }
 public string OptLong { get { return null == _args[""--long""] ? null : _args[""--long""].ToString(); } }
 public bool OptSwitchDash { get { return _args[""--switch-dash""].IsTrue; } }
 public bool CmdCommand2 { get { return _args[""command2""].IsTrue; } }
+public string ArgInputFile { get { return null == _args[""<input file>""] ? null : _args[""<input file>""].ToString(); } }
 public bool CmdFiles { get { return _args[""files""].IsTrue; } }
 public ArrayList ArgFile { get { return _args[""FILE""].AsList; } }
 ";

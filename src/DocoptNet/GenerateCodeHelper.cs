@@ -2,14 +2,14 @@ namespace DocoptNet
 {
     static class GenerateCodeHelper
     {
-        public static string ConvertDashesToCamelCase(string s)
+        public static string ConvertToPascalCase(string s)
         {
             // Start with uppercase char
             var makeUpperCase = true;
             var result = "";
             for (var i = 0; i < s.Length; i++)
             {
-                if(s[i] == '-')
+                if(s[i] is '-' or ' ')
                 {
                     makeUpperCase = true;
                     continue;

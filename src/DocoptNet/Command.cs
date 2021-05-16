@@ -11,7 +11,7 @@ namespace DocoptNet
         public override string GenerateCode()
         {
             var s = Name.ToLowerInvariant();
-            s = "Cmd" + GenerateCodeHelper.ConvertDashesToCamelCase(s);
+            s = "Cmd" + GenerateCodeHelper.ConvertToPascalCase(s);
             return $"public bool {s} {{ get {{ return _args[\"{Name}\"].IsTrue; }} }}";
         }
 
