@@ -30,11 +30,11 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		README.rst = README.rst
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DocoptNet.CodeGeneration", "src\DocoptNet.CodeGeneration\DocoptNet.CodeGeneration.csproj", "{37D45A51-EB3E-4D6D-9943-EF2F3967343C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DocoptNet.CodeGeneration", "src\DocoptNet.CodeGeneration\DocoptNet.CodeGeneration.csproj", "{37D45A51-EB3E-4D6D-9943-EF2F3967343C}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "SourceGenerator", "SourceGenerator", "{99846126-1D88-42CC-897C-ACEA7C2DBB2B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NavalFate", "eg\SourceGenerator\NavalFate\NavalFate.csproj", "{E41419E5-251C-4093-ADDE-77EF694964E3}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NavalFate", "eg\SourceGenerator\NavalFate\NavalFate.csproj", "{E41419E5-251C-4093-ADDE-77EF694964E3}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ArgumentsExample", "eg\SourceGenerator\ArgumentsExample\ArgumentsExample.csproj", "{99A5B165-A15E-4CE1-B68E-E0992F4478D9}"
 EndProject
