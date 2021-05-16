@@ -1,0 +1,25 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net5.0</TargetFramework>
+    <EmitCompilerGeneratedFiles>true</EmitCompilerGeneratedFiles>
+    <CompilerGeneratedFilesOutputPath>$(BaseIntermediateOutputPath)Generated</CompilerGeneratedFilesOutputPath>
+    <DebugDocoptNet>false</DebugDocoptNet>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\src\DocoptNet.CodeGeneration\DocoptNet.CodeGeneration.csproj" ReferenceOutputAssembly="false" OutputItemType="Analyzer" />
+  </ItemGroup>
+
+  <Target Name="_InjectAdditionalFiles" BeforeTargets="PrepareForBuild;CompileDesignTime;GenerateMSBuildEditorConfigFileShouldRun">
+    <ItemGroup>
+      <CompilerVisibleProperty Include="RootNamespace" />
+      <CompilerVisibleProperty Include="DebugDocoptNet" />
+      <CompilerVisibleItemMetadata Include="AdditionalFiles" MetadataName="SourceItemType" />
+      <CompilerVisibleItemMetadata Include="AdditionalFiles" MetadataName="Name" />
+      <AdditionalFiles Include="@(None)" Condition="$([System.Text.RegularExpressions.Regex]::IsMatch('%(Filename)%(Extension)', 'docopt\.txt$'))" SourceItemType="Docopt" KeepMetadata="Name" />
+    </ItemGroup>
+  </Target>
+
+</Project>
