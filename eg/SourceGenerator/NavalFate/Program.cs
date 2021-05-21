@@ -48,7 +48,7 @@ namespace NavalFate
         public Program(ICollection<string> argv, bool help = true,
                        object version = null, bool optionsFirst = false, bool exit = false)
         {
-            _args = Apply(argv, help, version, optionsFirst);
+            _args = Apply(argv, help, version, optionsFirst, exit);
         }
 
         public IDictionary<string, ValueObject> Args => _args;
