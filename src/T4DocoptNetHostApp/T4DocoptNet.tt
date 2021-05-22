@@ -46,14 +46,14 @@ namespace <#= System.Runtime.Remoting.Messaging.CallContext.LogicalGetData("Name
 	public class <#= entry.Name #>Args
 	{
 		public const string USAGE = @"<#= entry.Usage #>";
-	    private readonly IDictionary<string, ValueObject> _args;
+	    private readonly IDictionary<string, object> _args;
 		public <#= entry.Name #>Args(ICollection<string> argv, bool help = true,
                                                       object version = null, bool optionsFirst = false, bool exit = false)
 		{
 			_args = new Docopt().Apply(USAGE, argv, help, version, optionsFirst, exit);
 		}
 
-        public IDictionary<string, ValueObject> Args
+        public IDictionary<string, object> Args
         {
             get { return _args; }
         }

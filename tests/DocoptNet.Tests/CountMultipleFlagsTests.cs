@@ -9,9 +9,9 @@ namespace DocoptNet.Tests
         [Test]
         public void Simple_flag()
         {
-            var expected = new Dictionary<string, ValueObject>
+            var expected = new Dictionary<string, object>
                 {
-                    {"-v", new ValueObject(true)}
+                    {"-v", true}
                 };
             var actual = new Docopt().Apply("Usage: prog [-v]", "-v");
             Assert.AreEqual(expected, actual);
@@ -20,9 +20,9 @@ namespace DocoptNet.Tests
         [Test]
         public void Flag_0()
         {
-            var expected = new Dictionary<string, ValueObject>
+            var expected = new Dictionary<string, object>
                 {
-                    {"-v", new ValueObject(0)}
+                    {"-v", 0}
                 };
             var actual = new Docopt().Apply("Usage: prog [-vv]", "");
             Assert.AreEqual(expected, actual);
@@ -31,9 +31,9 @@ namespace DocoptNet.Tests
         [Test]
         public void Flag_1()
         {
-            var expected = new Dictionary<string, ValueObject>
+            var expected = new Dictionary<string, object>
                 {
-                    {"-v", new ValueObject(1)}
+                    {"-v", 1}
                 };
             var actual = new Docopt().Apply("Usage: prog [-vv]", "-v");
             Assert.AreEqual(expected, actual);
@@ -42,9 +42,9 @@ namespace DocoptNet.Tests
         [Test]
         public void Flag_2()
         {
-            var expected = new Dictionary<string, ValueObject>
+            var expected = new Dictionary<string, object>
                 {
-                    {"-v", new ValueObject(2)}
+                    {"-v", 2}
                 };
             var actual = new Docopt().Apply("Usage: prog [-vv]", "-vv");
             Assert.AreEqual(expected, actual);
@@ -59,9 +59,9 @@ namespace DocoptNet.Tests
         [Test]
         public void Flag_3()
         {
-            var expected = new Dictionary<string, ValueObject>
+            var expected = new Dictionary<string, object>
                 {
-                    {"-v", new ValueObject(3)}
+                    {"-v", 3}
                 };
             var actual = new Docopt().Apply("Usage: prog [-v | -vv | -vvv]", "-vvv");
             Assert.AreEqual(expected, actual);
@@ -70,9 +70,9 @@ namespace DocoptNet.Tests
         [Test]
         public void Flag_one_or_more()
         {
-            var expected = new Dictionary<string, ValueObject>
+            var expected = new Dictionary<string, object>
                 {
-                    {"-v", new ValueObject(6)}
+                    {"-v", 6}
                 };
             var actual = new Docopt().Apply("Usage: prog -v...", "-vvvvvv");
             Assert.AreEqual(expected, actual);
@@ -81,9 +81,9 @@ namespace DocoptNet.Tests
         [Test]
         public void Flag_long_2()
         {
-            var expected = new Dictionary<string, ValueObject>
+            var expected = new Dictionary<string, object>
                 {
-                    {"--ver", new ValueObject(2)}
+                    {"--ver", 2}
                 };
             var actual = new Docopt().Apply("Usage: prog [--ver --ver]", "--ver --ver");
             Assert.AreEqual(expected, actual);

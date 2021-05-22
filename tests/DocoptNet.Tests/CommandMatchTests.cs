@@ -12,8 +12,8 @@ namespace DocoptNet.Tests
             Assert.AreEqual(
                 new MatchResult(true,
                                 Leaves(),
-                                Leaves(new Command("c", new ValueObject(true)))),
-                new Command("c").Match(new Argument(null, new ValueObject("c")))
+                                Leaves(new Command("c", true))),
+                new Command("c").Match(new Argument(null, "c"))
                 );
         }
 
@@ -34,8 +34,8 @@ namespace DocoptNet.Tests
             Assert.AreEqual(
                 new MatchResult(true,
                                 Leaves(new Option("-x"), new Option("-a") ),
-                                Leaves(new Command("c", new ValueObject(true)) )),
-                new Command("c").Match(new Option("-x"), new Option("-a"), new Argument(null, new ValueObject("c")))
+                                Leaves(new Command("c", true) )),
+                new Command("c").Match(new Option("-x"), new Option("-a"), new Argument(null, "c"))
                 );
         }
 
@@ -45,8 +45,8 @@ namespace DocoptNet.Tests
             Assert.AreEqual(
                 new MatchResult(true,
                                 Leaves(),
-                                Leaves(new Command("rm", new ValueObject(true)) )),
-                new Either(new Command("add"), new Command("rm")).Match(new Argument(null, new ValueObject("rm")))
+                                Leaves(new Command("rm", true) )),
+                new Either(new Command("add"), new Command("rm")).Match(new Argument(null, "rm"))
                 );
         }
 

@@ -1,6 +1,7 @@
 namespace DocoptNet
 {
     using System;
+    using System.Collections;
     using System.Collections.Generic;
     using System.Linq;
 
@@ -11,7 +12,7 @@ namespace DocoptNet
     {
         private readonly string _name;
 
-        protected LeafPattern(string name, ValueObject value=null)
+        protected LeafPattern(string name, object value = null)
         {
             _name = name;
             Value = value;
@@ -26,7 +27,34 @@ namespace DocoptNet
             get { return _name; }
         }
 
-        public ValueObject Value { get; set; }
+        public object Value { get;  set; }
+
+        internal void Add(object increment)
+        {
+            if (increment == null) throw new ArgumentNullException(nameof(increment));
+            if (Value == null) throw new InvalidOperationException();
+
+            if (increment is int n)
+            {
+                if (Value is IList list)
+                    list.Add(n);
+                else
+                    Value = n + (Value is ICollection ? 0 : Convert.ToInt32(Value));
+            }
+            else
+            {
+                var newList = new ArrayList();
+                if (Value is ICollection collection)
+                    newList.AddRange(collection);
+                else
+                    newList.Add(Value);
+                if (increment is ArrayList list)
+                    newList.AddRange(list);
+                else
+                    newList.Add(increment);
+                Value = newList;
+            }
+        }
 
         public override ICollection<Pattern> Flat(params Type[] types)
         {

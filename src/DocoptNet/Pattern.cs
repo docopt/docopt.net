@@ -94,18 +94,16 @@ namespace DocoptNet
                     {
                         if (e.Value == null)
                         {
-                            e.Value = new ValueObject(new ArrayList());
+                            e.Value = new ArrayList();
                         }
-                        else if (!e.Value.IsList)
+                        else if (e.Value is not ICollection)
                         {
-                            e.Value =
-                                new ValueObject(e.Value.ToString()
-                                                 .Split(new char[0], StringSplitOptions.RemoveEmptyEntries));
+                            e.Value = new ArrayList(e.Value.ToString().Split(new char[0], StringSplitOptions.RemoveEmptyEntries));
                         }
                     }
                     if (e is Command || e is Option { ArgCount: 0 })
                     {
-                        e.Value = new ValueObject(0);
+                        e.Value = Box.Zero;
                     }
                 }
             }

@@ -10,12 +10,12 @@ namespace DocoptNet.Tests
             return PatternMatcher.Match(pattern, left.AsReadOnly());
         }
 
-        public static IDictionary<string, ValueObject> Apply(this Docopt docopt,
-                                                             string doc, string cmdLine,
-                                                             bool help = true,
-                                                             object version = null,
-                                                             bool optionsFirst = false,
-                                                             bool exit = false)
+        public static IDictionary<string, object> Apply(this Docopt docopt,
+                                                        string doc, string cmdLine,
+                                                        bool help = true,
+                                                        object version = null,
+                                                        bool optionsFirst = false,
+                                                        bool exit = false)
         {
             // A very naive way to split a command line into individual
             // arguments but good enough for the test cases so far:
