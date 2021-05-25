@@ -505,20 +505,20 @@ namespace NavalFate
             return dict;
         }
 
-        public bool CmdShip { get { return _args["ship"].IsTrue; } }
-        public bool CmdNew { get { return _args["new"].IsTrue; } }
+        public bool CmdShip { get { ValueObject v = _args["ship"]; return v.IsTrue || v.IsOfTypeInt && v.AsInt > 0; } }
+        public bool CmdNew { get { ValueObject v = _args["new"]; return v.IsTrue || v.IsOfTypeInt && v.AsInt > 0; } }
         public ArrayList ArgName { get { return _args["<name>"].AsList; } }
-        public bool CmdMove { get { return _args["move"].IsTrue; } }
+        public bool CmdMove { get { ValueObject v = _args["move"]; return v.IsTrue || v.IsOfTypeInt && v.AsInt > 0; } }
         public string ArgX { get { return null == _args["<x>"] ? null : _args["<x>"].ToString(); } }
         public string ArgY { get { return null == _args["<y>"] ? null : _args["<y>"].ToString(); } }
         public string OptSpeed { get { return null == _args["--speed"] ? "10" : _args["--speed"].ToString(); } }
-        public bool CmdShoot { get { return _args["shoot"].IsTrue; } }
-        public bool CmdMine { get { return _args["mine"].IsTrue; } }
-        public bool CmdSet { get { return _args["set"].IsTrue; } }
-        public bool CmdRemove { get { return _args["remove"].IsTrue; } }
-        public bool OptMoored { get { return _args["--moored"].IsTrue; } }
-        public bool OptDrifting { get { return _args["--drifting"].IsTrue; } }
-        public bool OptHelp { get { return _args["--help"].IsTrue; } }
-        public bool OptVersion { get { return _args["--version"].IsTrue; } }
+        public bool CmdShoot { get { ValueObject v = _args["shoot"]; return v.IsTrue || v.IsOfTypeInt && v.AsInt > 0; } }
+        public bool CmdMine { get { ValueObject v = _args["mine"]; return v.IsTrue || v.IsOfTypeInt && v.AsInt > 0; } }
+        public bool CmdSet { get { ValueObject v = _args["set"]; return v.IsTrue || v.IsOfTypeInt && v.AsInt > 0; } }
+        public bool CmdRemove { get { ValueObject v = _args["remove"]; return v.IsTrue || v.IsOfTypeInt && v.AsInt > 0; } }
+        public bool OptMoored { get { ValueObject v = _args["--moored"]; return v.IsTrue || v.IsOfTypeInt && v.AsInt > 0; } }
+        public bool OptDrifting { get { ValueObject v = _args["--drifting"]; return v.IsTrue || v.IsOfTypeInt && v.AsInt > 0; } }
+        public bool OptHelp { get { ValueObject v = _args["--help"]; return v.IsTrue || v.IsOfTypeInt && v.AsInt > 0; } }
+        public bool OptVersion { get { ValueObject v = _args["--version"]; return v.IsTrue || v.IsOfTypeInt && v.AsInt > 0; } }
     }
 }

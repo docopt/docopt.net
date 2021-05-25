@@ -299,13 +299,13 @@ Options:
             return dict;
         }
 
-        public bool OptV { get { return _args["-v"].IsTrue; } }
-        public bool OptQ { get { return _args["-q"].IsTrue; } }
-        public bool OptR { get { return _args["-r"].IsTrue; } }
-        public bool OptHelp { get { return _args["--help"].IsTrue; } }
+        public bool OptV { get { ValueObject v = _args["-v"]; return v.IsTrue || v.IsOfTypeInt && v.AsInt > 0; } }
+        public bool OptQ { get { ValueObject v = _args["-q"]; return v.IsTrue || v.IsOfTypeInt && v.AsInt > 0; } }
+        public bool OptR { get { ValueObject v = _args["-r"]; return v.IsTrue || v.IsOfTypeInt && v.AsInt > 0; } }
+        public bool OptHelp { get { ValueObject v = _args["--help"]; return v.IsTrue || v.IsOfTypeInt && v.AsInt > 0; } }
         public ArrayList ArgFile { get { return _args["FILE"].AsList; } }
-        public bool OptLeft { get { return _args["--left"].IsTrue; } }
-        public bool OptRight { get { return _args["--right"].IsTrue; } }
+        public bool OptLeft { get { ValueObject v = _args["--left"]; return v.IsTrue || v.IsOfTypeInt && v.AsInt > 0; } }
+        public bool OptRight { get { ValueObject v = _args["--right"]; return v.IsTrue || v.IsOfTypeInt && v.AsInt > 0; } }
         public string ArgCorrection { get { return null == _args["CORRECTION"] ? null : _args["CORRECTION"].ToString(); } }
     }
 }
