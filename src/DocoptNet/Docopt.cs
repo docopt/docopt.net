@@ -11,18 +11,18 @@ namespace DocoptNet
     {
         public event EventHandler<PrintExitEventArgs> PrintExit;
 
-        public IDictionary<string, ValueObject> Apply(string doc)
+        public IDictionary<string, object> Apply(string doc)
         {
             return Apply(doc, new Tokens(Enumerable.Empty<string>(), typeof (DocoptInputErrorException)));
         }
 
-        public IDictionary<string, ValueObject> Apply(string doc, ICollection<string> argv, bool help = true,
+        public IDictionary<string, object> Apply(string doc, ICollection<string> argv, bool help = true,
             object version = null, bool optionsFirst = false, bool exit = false)
         {
             return Apply(doc, new Tokens(argv, typeof (DocoptInputErrorException)), help, version, optionsFirst, exit);
         }
 
-        protected IDictionary<string, ValueObject> Apply(string doc, Tokens tokens,
+        protected IDictionary<string, object> Apply(string doc, Tokens tokens,
             bool help = true,
             object version = null, bool optionsFirst = false, bool exit = false)
         {
@@ -46,15 +46,17 @@ namespace DocoptNet
                     optionsShortcut.Children = docOptions.Distinct().Except(patternOptions).ToList();
                 }
 
-                if (help && arguments.Any(o => o is { Name: "-h" or "--help", Value: { IsNullOrEmpty: false } }))
+                static bool IsNullOrEmptyString(object obj) => obj is null or string { Length: 0 };
+
+                if (help && arguments.Any(o => o is { Name: "-h" or "--help" } && !IsNullOrEmptyString(o.Value)))
                     OnPrintExit(doc);
 
-                if (version is not null && arguments.Any(o => o is { Name: "--version", Value: { IsNullOrEmpty: false } }))
+                if (version is not null && arguments.Any(o => o is { Name: "--version" } && !IsNullOrEmptyString(o.Value)))
                     OnPrintExit(version.ToString());
 
                 if (pattern.Fix().Match(arguments) is (true, { Count: 0 }, var collected))
                 {
-                    var dict = new Dictionary<string, ValueObject>();
+                    var dict = new Dictionary<string, object>();
                     foreach (var p in pattern.Flat().OfType<LeafPattern>().Concat(collected))
                         dict[p.Name] = p.Value;
                     return dict;
@@ -154,7 +156,7 @@ namespace DocoptNet
             {
                 if (tokens.Current() == "--")
                 {
-                    parsed.AddRange(tokens.Select(v => new Argument(null, new ValueObject(v))));
+                    parsed.AddRange(tokens.Select(v => new Argument(null, v)));
                     return parsed;
                 }
 
@@ -168,12 +170,12 @@ namespace DocoptNet
                 }
                 else if (optionsFirst)
                 {
-                    parsed.AddRange(tokens.Select(v => new Argument(null, new ValueObject(v))));
+                    parsed.AddRange(tokens.Select(v => new Argument(null, v)));
                     return parsed;
                 }
                 else
                 {
-                    parsed.Add(new Argument(null, new ValueObject(tokens.Move())));
+                    parsed.Add(new Argument(null, tokens.Move()));
                 }
             }
             return parsed;
@@ -334,14 +336,14 @@ namespace DocoptNet
                     options.Add(option);
                     if (tokens.ThrowsInputError)
                     {
-                        option = new Option(shortName, null, 0, new ValueObject(true));
+                        option = new Option(shortName, null, 0, Box.True);
                     }
                 }
                 else
                 {
                     // why is copying necessary here?
                     option = new Option(shortName, similar[0].LongName, similar[0].ArgCount, similar[0].Value);
-                    ValueObject value = null;
+                    object value = null;
                     if (option.ArgCount != 0)
                     {
                         if (left == "")
@@ -350,16 +352,16 @@ namespace DocoptNet
                             {
                                 throw tokens.CreateException(shortName + " requires argument");
                             }
-                            value = new ValueObject(tokens.Move());
+                            value = tokens.Move();
                         }
                         else
                         {
-                            value = new ValueObject(left);
+                            value = left;
                             left = "";
                         }
                     }
                     if (tokens.ThrowsInputError)
-                        option.Value = value ?? new ValueObject(true);
+                        option.Value = value ?? Box.True;
                 }
                 parsed.Add(option);
             }
@@ -372,7 +374,7 @@ namespace DocoptNet
             var (longName, eq, value) = tokens.Move().Partition("=") switch
             {
                 (var ln, "", _) => (ln, false, null),
-                var (ln, _, vs) => (ln, true, new ValueObject(vs))
+                var (ln, _, vs) => (ln, true, vs)
             };
             Debug.Assert(longName.StartsWith("--"));
             var similar = options.Where(o => o.LongName == longName).ToList();
@@ -394,7 +396,7 @@ namespace DocoptNet
                 option = new Option(null, longName, argCount);
                 options.Add(option);
                 if (tokens.ThrowsInputError)
-                    option = new Option(null, longName, argCount, argCount != 0 ? value : new ValueObject(true));
+                    option = new Option(null, longName, argCount, argCount != 0 ? value : Box.True);
             }
             else
             {
@@ -410,11 +412,11 @@ namespace DocoptNet
                     {
                         if (tokens.Current() == null || tokens.Current() == "--")
                             throw tokens.CreateException(option.LongName + " requires an argument");
-                        value = new ValueObject(tokens.Move());
+                        value = tokens.Move();
                     }
                 }
                 if (tokens.ThrowsInputError)
-                    option.Value = value ?? new ValueObject(true);
+                    option.Value = value ?? Box.True;
             }
             return new[] {option};
         }

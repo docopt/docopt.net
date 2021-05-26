@@ -21,17 +21,12 @@ namespace Testee
                 {
                     if (argument.Value == null)
                         dict[argument.Key] = null;
-                    else if (argument.Value.IsList)
+                    else if (argument.Value is ArrayList list)
                     {
-                        var l = new ArrayList();
-                        foreach (var item in argument.Value.AsList)
-                        {
-                            l.Add(item is ValueObject { Value: var v } ? v : item);
-                        }
-                        dict[argument.Key] = l;
+                        dict[argument.Key] = new ArrayList(list);
                     }
                     else
-                        dict[argument.Key] = argument.Value.Value;
+                        dict[argument.Key] = argument.Value;
                 }
                 return JsonSerializer.Serialize(dict, new JsonSerializerOptions
                 {

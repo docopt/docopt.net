@@ -3,6 +3,7 @@
 namespace DocoptNet
 {
     using System;
+    using System.Collections;
     using System.Diagnostics;
     using System.Linq;
 
@@ -83,7 +84,7 @@ namespace DocoptNet
                         if (left[i] is Argument { Value: { } value })
                         {
                             if (value.ToString() == command.Name)
-                                return MatchLeaf(command, i, new Command(command.Name, new ValueObject(true)));
+                                return MatchLeaf(command, i, new Command(command.Name, Box.True));
                             break;
                         }
                     }
@@ -115,19 +116,19 @@ namespace DocoptNet
             {
                 var left_ = left.RemoveAt(index);
                 var sameName = collected.Where(a => a.Name == leaf.Name).ToList();
-                if (leaf.Value is { IsList: true } or { IsOfTypeInt: true })
+                if (leaf is { Value: ICollection } or { Value: int })
                 {
-                    var increment = new ValueObject(1);
-                    if (!leaf.Value.IsOfTypeInt)
+                    var increment = Box.One;
+                    if (leaf.Value is not int)
                     {
-                        increment = match.Value.IsString ? new ValueObject(new [] { match.Value }) : match.Value;
+                        increment = match.Value is string ? new ArrayList { match.Value } : match.Value;
                     }
                     if (sameName.Count == 0)
                     {
                         match.Value = increment;
                         return new MatchResult(true, left_, collected.Append(match));
                     }
-                    sameName[0].Value.Add(increment);
+                    sameName[0].Add(increment);
                     return new MatchResult(true, left_, collected);
                 }
                 return new MatchResult(true, left_, collected.Append(match));

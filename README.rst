@@ -64,10 +64,6 @@ Differences from reference python implementation
 - This port should be fully Docopt language compatible with the
   python reference implementation.
 
-- Because C# is statically typed, the return dictionary is of type
-  ``IDictionary<string,ValueObject>`` where ``ValueObject`` is a simple wrapper
-  class around entry values.
-
 Installation
 ======================================================================
 
@@ -390,24 +386,24 @@ as a string constant e.g. `MainArgs.USAGE`.
 
   Usage: prog command ARG FILES... [-o --switch --long=ARG]
   ";
-    private readonly IDictionary<string, ValueObject> _args;
+    private readonly IDictionary<string, object> _args;
     public MainArgs(ICollection<string> argv, bool help = true,
                             object version = null, bool optionsFirst = false, bool exit = false)
     {
       _args = new Docopt().Apply(USAGE, argv, help, version, optionsFirst, exit);
     }
 
-    public IDictionary<string, ValueObject> Args
+    public IDictionary<string, object> Args
     {
       get { return _args; }
     }
 
-    public bool CmdCommand { get { return _args["command"].IsTrue; } }
+    public bool CmdCommand { get { return _args["command"] as bool? == true; } }
     public string ArgArg { get { return _args["ARG"].ToString(); } }
-    public bool OptO { get { return _args["-o"].IsTrue; } }
+    public bool OptO { get { return _args["-o"] as bool? == true; } }
     public string OptLong { get { return _args["--long"].ToString(); } }
     public bool OptSwitch { get { return _args["--switch"].IsTrue; } }
-    public ArrayList ArgFiles { get { return _args["FILES"].AsList; } }
+    public ArrayList ArgFiles { get { return (ArrayList)_args["FILES"]; } }
 
   }
 

@@ -68,8 +68,8 @@ namespace DocoptNet.Tests
             Assert.AreEqual(
                 new MatchResult(true,
                                 Leaves(),
-                                Leaves(new Argument("N", new ValueObject(9)) )),
-                new Optional(new Argument("N")).Match(new Argument(null, new ValueObject(9)))
+                                Leaves(new Argument("N", 9) )),
+                new Optional(new Argument("N")).Match(new Argument(null, 9))
                 );
         }
 

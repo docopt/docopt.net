@@ -25,11 +25,11 @@ namespace DocoptNet.Tests
         [Test]
         public void Detect_double_dash()
         {
-            var expected = new Dictionary<string, ValueObject>
+            var expected = new Dictionary<string, object>
                 {
-                    {"-o", new ValueObject(false)},
-                    {"<arg>", new ValueObject("-o")},
-                    {"--", new ValueObject(true)}
+                    {"-o", false},
+                    {"<arg>", "-o"},
+                    {"--", true}
                 };
             var actual = new Docopt().Apply("usage: prog [-o] [--] <arg>\nOptions: -o", "-- -o");
             Assert.AreEqual(expected, actual);
@@ -38,11 +38,11 @@ namespace DocoptNet.Tests
         [Test]
         public void No_double_dash()
         {
-            var expected = new Dictionary<string, ValueObject>
+            var expected = new Dictionary<string, object>
                 {
-                    {"-o", new ValueObject(true)},
-                    {"<arg>", new ValueObject("1")},
-                    {"--", new ValueObject(false)}
+                    {"-o", true},
+                    {"<arg>", "1"},
+                    {"--", false}
                 };
             var actual = new Docopt().Apply("usage: prog [-o] [--] <arg>\nOptions: -o", "-o 1");
             Assert.AreEqual(expected, actual);
