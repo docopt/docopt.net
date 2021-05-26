@@ -1,6 +1,8 @@
 version: 1.1.{build}
 image: Visual Studio 2019
 configuration: Release
+before_build:
+- dotnet --info
 build_script:
 - cmd: dotnet build --configuration Release
 - cmd: IF NOT EXIST dist MKDIR dist
