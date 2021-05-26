@@ -4,9 +4,9 @@ configuration: Release
 before_build:
 - dotnet --info
 build_script:
-- cmd: dotnet build --configuration $(configuration)
+- cmd: dotnet build --configuration %CONFIGURATION%
 - cmd: IF NOT EXIST dist MKDIR dist
-- cmd: dotnet pack --configuration $(configuration)
+- cmd: dotnet pack --configuration %CONFIGURATION%
 test_script:
 - cmd: dotnet test
 artifacts:
