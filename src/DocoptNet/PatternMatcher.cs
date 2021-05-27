@@ -84,7 +84,7 @@ namespace DocoptNet
                         if (left[i] is Argument { Value: { } value })
                         {
                             if (value.ToString() == command.Name)
-                                return MatchLeaf(command, i, new Command(command.Name, Box.True));
+                                return MatchLeaf(command, i, new Command(command.Name, Boxed.True));
                             break;
                         }
                     }
@@ -118,7 +118,7 @@ namespace DocoptNet
                 var sameName = collected.Where(a => a.Name == leaf.Name).ToList();
                 if (leaf is { Value: ICollection } or { Value: int })
                 {
-                    var increment = Box.One;
+                    var increment = Boxed.One;
                     if (leaf.Value is not int)
                     {
                         increment = match.Value is string ? new ArrayList { match.Value } : match.Value;

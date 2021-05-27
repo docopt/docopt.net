@@ -15,7 +15,7 @@ namespace DocoptNet
             ShortName = shortName;
             LongName = longName;
             ArgCount = argCount;
-            var v = value ?? Box.False;
+            var v = value ?? Boxed.False;
             Value = v is false && argCount > 0 ? null : v;
         }
 
@@ -61,7 +61,7 @@ namespace DocoptNet
             string shortName = null;
             string longName = null;
             var argCount = 0;
-            var value = Box.False;
+            var value = Boxed.False;
             var (options, _, description) = optionDescription.Trim().Partition(DESC_SEPARATOR);
             foreach (var s in options.Split(" \t,=".ToCharArray(), StringSplitOptions.RemoveEmptyEntries))
             {

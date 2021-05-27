@@ -103,7 +103,7 @@ namespace DocoptNet
                     }
                     if (e is Command || e is Option { ArgCount: 0 })
                     {
-                        e.Value = Box.Zero;
+                        e.Value = Boxed.Zero;
                     }
                 }
             }

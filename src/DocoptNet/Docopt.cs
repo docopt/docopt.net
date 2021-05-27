@@ -12,16 +12,16 @@ namespace DocoptNet
     {
         T Nil();
         T New();
-        T Command(T state, string name, in Var<bool> value);
-        T Command(T state, string name, in Var<int> value);
+        T Command(T state, string name, in Box<bool> value);
+        T Command(T state, string name, in Box<int> value);
         T Argument(T state, string name);
-        T Argument(T state, string name, in Var<string> value);
-        T Argument(T state, string name, in Var<ArrayList> value);
+        T Argument(T state, string name, in Box<string> value);
+        T Argument(T state, string name, in Box<ArrayList> value);
         T Option(T state, string name);
-        T Option(T state, string name, in Var<bool> value);
-        T Option(T state, string name, in Var<string> value);
-        T Option(T state, string name, in Var<int> value);
-        T Option(T state, string name, in Var<ArrayList> value);
+        T Option(T state, string name, in Box<bool> value);
+        T Option(T state, string name, in Box<string> value);
+        T Option(T state, string name, in Box<int> value);
+        T Option(T state, string name, in Box<ArrayList> value);
     }
 
     sealed class DictionaryBuilder : IBuilder<IDictionary<string, object>>
@@ -38,16 +38,16 @@ namespace DocoptNet
             return dict;
         }
 
-        public IDictionary<string, object> Command(IDictionary<string, object> state, string name, in Var<bool> value) => Adding(state, name, value.Object);
-        public IDictionary<string, object> Command(IDictionary<string, object> state, string name, in Var<int> value) => Adding(state, name, value.Object);
+        public IDictionary<string, object> Command(IDictionary<string, object> state, string name, in Box<bool> value) => Adding(state, name, value.Object);
+        public IDictionary<string, object> Command(IDictionary<string, object> state, string name, in Box<int> value) => Adding(state, name, value.Object);
         public IDictionary<string, object> Argument(IDictionary<string, object> state, string name) => Adding(state, name, null);
-        public IDictionary<string, object> Argument(IDictionary<string, object> state, string name, in Var<string> value) => Adding(state, name, value.Object);
-        public IDictionary<string, object> Argument(IDictionary<string, object> state, string name, in Var<ArrayList> value) => Adding(state, name, value.Object);
+        public IDictionary<string, object> Argument(IDictionary<string, object> state, string name, in Box<string> value) => Adding(state, name, value.Object);
+        public IDictionary<string, object> Argument(IDictionary<string, object> state, string name, in Box<ArrayList> value) => Adding(state, name, value.Object);
         public IDictionary<string, object> Option(IDictionary<string, object> state, string name) => Adding(state, name, null);
-        public IDictionary<string, object> Option(IDictionary<string, object> state, string name, in Var<bool> value) => Adding(state, name, value.Object);
-        public IDictionary<string, object> Option(IDictionary<string, object> state, string name, in Var<string> value) => Adding(state, name, value.Object);
-        public IDictionary<string, object> Option(IDictionary<string, object> state, string name, in Var<int> value) => Adding(state, name, value.Object);
-        public IDictionary<string, object> Option(IDictionary<string, object> state, string name, in Var<ArrayList> value) => Adding(state, name, value.Object);
+        public IDictionary<string, object> Option(IDictionary<string, object> state, string name, in Box<bool> value) => Adding(state, name, value.Object);
+        public IDictionary<string, object> Option(IDictionary<string, object> state, string name, in Box<string> value) => Adding(state, name, value.Object);
+        public IDictionary<string, object> Option(IDictionary<string, object> state, string name, in Box<int> value) => Adding(state, name, value.Object);
+        public IDictionary<string, object> Option(IDictionary<string, object> state, string name, in Box<ArrayList> value) => Adding(state, name, value.Object);
     }
 
     sealed class ValueObjectDictionaryBuilder : IBuilder<IDictionary<string, ValueObject>>
@@ -64,16 +64,16 @@ namespace DocoptNet
             return dict;
         }
 
-        public IDictionary<string, ValueObject> Command(IDictionary<string, ValueObject> state, string name, in Var<bool> value) => Adding(state, name, value.Object);
-        public IDictionary<string, ValueObject> Command(IDictionary<string, ValueObject> state, string name, in Var<int> value) => Adding(state, name, value.Object);
+        public IDictionary<string, ValueObject> Command(IDictionary<string, ValueObject> state, string name, in Box<bool> value) => Adding(state, name, value.Object);
+        public IDictionary<string, ValueObject> Command(IDictionary<string, ValueObject> state, string name, in Box<int> value) => Adding(state, name, value.Object);
         public IDictionary<string, ValueObject> Argument(IDictionary<string, ValueObject> state, string name) => Adding(state, name, null);
-        public IDictionary<string, ValueObject> Argument(IDictionary<string, ValueObject> state, string name, in Var<string> value) => Adding(state, name, value.Object);
-        public IDictionary<string, ValueObject> Argument(IDictionary<string, ValueObject> state, string name, in Var<ArrayList> value) => Adding(state, name, value.Object);
+        public IDictionary<string, ValueObject> Argument(IDictionary<string, ValueObject> state, string name, in Box<string> value) => Adding(state, name, value.Object);
+        public IDictionary<string, ValueObject> Argument(IDictionary<string, ValueObject> state, string name, in Box<ArrayList> value) => Adding(state, name, value.Object);
         public IDictionary<string, ValueObject> Option(IDictionary<string, ValueObject> state, string name) => Adding(state, name, null);
-        public IDictionary<string, ValueObject> Option(IDictionary<string, ValueObject> state, string name, in Var<bool> value) => Adding(state, name, value.Object);
-        public IDictionary<string, ValueObject> Option(IDictionary<string, ValueObject> state, string name, in Var<string> value) => Adding(state, name, value.Object);
-        public IDictionary<string, ValueObject> Option(IDictionary<string, ValueObject> state, string name, in Var<int> value) => Adding(state, name, value.Object);
-        public IDictionary<string, ValueObject> Option(IDictionary<string, ValueObject> state, string name, in Var<ArrayList> value) => Adding(state, name, value.Object);
+        public IDictionary<string, ValueObject> Option(IDictionary<string, ValueObject> state, string name, in Box<bool> value) => Adding(state, name, value.Object);
+        public IDictionary<string, ValueObject> Option(IDictionary<string, ValueObject> state, string name, in Box<string> value) => Adding(state, name, value.Object);
+        public IDictionary<string, ValueObject> Option(IDictionary<string, ValueObject> state, string name, in Box<int> value) => Adding(state, name, value.Object);
+        public IDictionary<string, ValueObject> Option(IDictionary<string, ValueObject> state, string name, in Box<ArrayList> value) => Adding(state, name, value.Object);
     }
 
     partial class Docopt
@@ -152,34 +152,34 @@ namespace DocoptNet
                         switch (p)
                         {
                             case Command { Value: bool } command:
-                                dict = builder.Command(dict, command.Name, Var<bool>.General(command.Value));
+                                dict = builder.Command(dict, command.Name, Box<bool>.General(command.Value));
                                 break;
                             case Command { Value: int } command:
-                                dict = builder.Command(dict, command.Name, Var<int>.General(command.Value));
+                                dict = builder.Command(dict, command.Name, Box<int>.General(command.Value));
                                 break;
                             case Argument { Value: null } argument:
                                 dict = builder.Argument(dict, argument.Name);
                                 break;
                             case Argument { Value: string value } argument:
-                                dict = builder.Argument(dict, argument.Name, Var.Specific(value));
+                                dict = builder.Argument(dict, argument.Name, Box.Specific(value));
                                 break;
                             case Argument { Value: ArrayList value } argument:
-                                dict = builder.Argument(dict, argument.Name, Var.Specific(value));
+                                dict = builder.Argument(dict, argument.Name, Box.Specific(value));
                                 break;
                             case Option { Value: bool } option:
-                                dict = builder.Option(dict, option.Name, Var<bool>.General(option.Value));
+                                dict = builder.Option(dict, option.Name, Box<bool>.General(option.Value));
                                 break;
                             case Option { Value: int } option:
-                                dict = builder.Option(dict, option.Name, Var<int>.General(option.Value));
+                                dict = builder.Option(dict, option.Name, Box<int>.General(option.Value));
                                 break;
                             case Option { Value: string value } option:
-                                dict = builder.Option(dict, option.Name, Var.Specific(value));
+                                dict = builder.Option(dict, option.Name, Box.Specific(value));
                                 break;
                             case Option { Value: null } option:
                                 dict = builder.Option(dict, option.Name);
                                 break;
                             case Option { Value: ArrayList value } option:
-                                dict = builder.Option(dict, option.Name, Var.Specific(value));
+                                dict = builder.Option(dict, option.Name, Box.Specific(value));
                                 break;
                             case var other:
                                 throw new NotSupportedException($"Unsupported pattern: {other}");
@@ -462,7 +462,7 @@ namespace DocoptNet
                     options.Add(option);
                     if (tokens.ThrowsInputError)
                     {
-                        option = new Option(shortName, null, 0, Box.True);
+                        option = new Option(shortName, null, 0, Boxed.True);
                     }
                 }
                 else
@@ -487,7 +487,7 @@ namespace DocoptNet
                         }
                     }
                     if (tokens.ThrowsInputError)
-                        option.Value = value ?? Box.True;
+                        option.Value = value ?? Boxed.True;
                 }
                 parsed.Add(option);
             }
@@ -522,7 +522,7 @@ namespace DocoptNet
                 option = new Option(null, longName, argCount);
                 options.Add(option);
                 if (tokens.ThrowsInputError)
-                    option = new Option(null, longName, argCount, argCount != 0 ? value : Box.True);
+                    option = new Option(null, longName, argCount, argCount != 0 ? value : Boxed.True);
             }
             else
             {
@@ -542,7 +542,7 @@ namespace DocoptNet
                     }
                 }
                 if (tokens.ThrowsInputError)
-                    option.Value = value ?? Box.True;
+                    option.Value = value ?? Boxed.True;
             }
             return new[] {option};
         }
