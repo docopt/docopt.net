@@ -1,11 +1,52 @@
 namespace DocoptNet
 {
     using System;
+    using System.Collections;
     using System.Collections.Generic;
     using System.Diagnostics;
     using System.Linq;
     using System.Text;
     using System.Text.RegularExpressions;
+
+    interface IBuilder<T>
+    {
+        T Nil();
+        T New();
+        T Command(T state, string name, bool value);
+        T Command(T state, string name, int value);
+        T Argument(T state, string name);
+        T Argument(T state, string name, string value);
+        T Argument(T state, string name, ArrayList value);
+        T Option(T state, string name, bool value);
+        T Option(T state, string name, string value);
+        T Option(T state, string name, int value);
+        T Option(T state, string name, ArrayList value);
+    }
+
+    sealed class DictionaryBuilder : IBuilder<IDictionary<string, object>>
+    {
+        public static readonly DictionaryBuilder Instance = new();
+
+        public IDictionary<string, object> Nil() => null;
+
+        public IDictionary<string, object> New() => new Dictionary<string, object>();
+
+        static IDictionary<string, object> Adding(IDictionary<string, object> dict, string name, object value)
+        {
+            dict[name] = value;
+            return dict;
+        }
+
+        public IDictionary<string, object> Command(IDictionary<string, object> state, string name, bool value) => Adding(state, name, value);
+        public IDictionary<string, object> Command(IDictionary<string, object> state, string name, int value) => Adding(state, name, value);
+        public IDictionary<string, object> Argument(IDictionary<string, object> state, string name) => Adding(state, name, null);
+        public IDictionary<string, object> Argument(IDictionary<string, object> state, string name, string value) => Adding(state, name, value);
+        public IDictionary<string, object> Argument(IDictionary<string, object> state, string name, ArrayList value) => Adding(state, name, value);
+        public IDictionary<string, object> Option(IDictionary<string, object> state, string name, bool value) => Adding(state, name, value);
+        public IDictionary<string, object> Option(IDictionary<string, object> state, string name, string value) => Adding(state, name, value);
+        public IDictionary<string, object> Option(IDictionary<string, object> state, string name, int value) => Adding(state, name, value);
+        public IDictionary<string, object> Option(IDictionary<string, object> state, string name, ArrayList value) => Adding(state, name, value);
+    }
 
     partial class Docopt
     {
@@ -24,7 +65,26 @@ namespace DocoptNet
 
         protected IDictionary<string, object> Apply(string doc, Tokens tokens,
             bool help = true,
-            object version = null, bool optionsFirst = false, bool exit = false)
+            object version = null, bool optionsFirst = false, bool exit = false) =>
+            throw new NotImplementedException();
+
+        T Apply<T>(string doc, IBuilder<T> builder)
+        {
+            return Apply(doc, new Tokens(Enumerable.Empty<string>(), typeof (DocoptInputErrorException)), builder);
+        }
+
+        T Apply<T>(string doc, ICollection<string> argv,
+                                IBuilder<T> builder,
+                                bool help = true, object version = null,
+                                bool optionsFirst = false, bool exit = false)
+        {
+            return Apply(doc, new Tokens(argv, typeof (DocoptInputErrorException)), builder, help, version, optionsFirst, exit);
+        }
+
+        T Apply<T>(string doc, Tokens tokens,
+                                IBuilder<T> builder,
+                                bool help = true, object version = null,
+                                bool optionsFirst = false, bool exit = false)
         {
             try
             {
@@ -56,9 +116,42 @@ namespace DocoptNet
 
                 if (pattern.Fix().Match(arguments) is (true, { Count: 0 }, var collected))
                 {
-                    var dict = new Dictionary<string, object>();
+                    var dict = builder.New();
                     foreach (var p in pattern.Flat().OfType<LeafPattern>().Concat(collected))
-                        dict[p.Name] = p.Value;
+                    {
+                        switch (p)
+                        {
+                            case Command { Value: bool value } command:
+                                dict = builder.Command(dict, command.Name, value);
+                                break;
+                            case Command { Value: int value } command:
+                                dict = builder.Command(dict, command.Name, value);
+                                break;
+                            case Argument { Value: null } argument:
+                                dict = builder.Argument(dict, argument.Name);
+                                break;
+                            case Argument { Value: string value } argument:
+                                dict = builder.Argument(dict, argument.Name, value);
+                                break;
+                            case Argument { Value: ArrayList value } argument:
+                                dict = builder.Argument(dict, argument.Name, value);
+                                break;
+                            case Option { Value: bool value } option:
+                                dict = builder.Option(dict, option.Name, value);
+                                break;
+                            case Option { Value: int value } option:
+                                dict = builder.Option(dict, option.Name, value);
+                                break;
+                            case Option { Value: string value } option:
+                                dict = builder.Option(dict, option.Name, value);
+                                break;
+                            case Option { Value: ArrayList value } option:
+                                dict = builder.Option(dict, option.Name, value);
+                                break;
+                            case var other:
+                                throw new NotSupportedException($"Unsupported pattern: {other}");
+                        }
+                    }
                     return dict;
                 }
                 throw new DocoptInputErrorException(exitUsage);
@@ -70,7 +163,7 @@ namespace DocoptNet
 
                 OnPrintExit(e.Message, e.ErrorCode);
 
-                return null;
+                return builder.Nil();
             }
         }
 
