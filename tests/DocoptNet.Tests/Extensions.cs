@@ -17,10 +17,30 @@ namespace DocoptNet.Tests
                                                         bool optionsFirst = false,
                                                         bool exit = false)
         {
+            return docopt.Apply(doc, Args.Parse(cmdLine), help, version, optionsFirst, exit);
+        }
+
+        public static IDictionary<string, object> Apply(this Docopt docopt,
+                                                        string doc, Args argv,
+                                                        bool help = true,
+                                                        object version = null,
+                                                        bool optionsFirst = false,
+                                                        bool exit = false)
+        {
+            return docopt.Apply(doc, argv.List, DictionaryBuilder.Instance, help, version, optionsFirst, exit);
+        }
+    }
+
+    sealed class Args
+    {
+        public static Args Argv(params string[] args) => new(args);
+
+        public static Args Parse(string cmdLine) =>
             // A very naive way to split a command line into individual
             // arguments but good enough for the test cases so far:
-            var argv = cmdLine.Split((char[])null, StringSplitOptions.RemoveEmptyEntries);
-            return docopt.Apply(doc, argv, help, version, optionsFirst, exit);
-        }
+            new(cmdLine.Split((char[])null, StringSplitOptions.RemoveEmptyEntries));
+
+        public Args(IList<string> list) => List = list;
+        public IList<string> List { get; }
     }
 }

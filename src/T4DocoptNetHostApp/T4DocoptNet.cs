@@ -17,25 +17,25 @@ Usage:
 Options:
  -o   A string with some double ""quotes"".
 ";
-	    private readonly IDictionary<string, object> _args;
+	    private readonly IDictionary<string, ValueObject> _args;
 		public AnotherArgs(ICollection<string> argv, bool help = true,
                                                       object version = null, bool optionsFirst = false, bool exit = false)
 		{
 			_args = new Docopt().Apply(USAGE, argv, help, version, optionsFirst, exit);
 		}
 
-        public IDictionary<string, object> Args
+        public IDictionary<string, ValueObject> Args
         {
             get { return _args; }
         }
 
-		public bool CmdCommand1 { get { return _args["command1"] as bool? == true; } }
+		public bool CmdCommand1 { get { return _args["command1"].IsTrue; } }
 		public string ArgArg { get { return null == _args["ARG"] ? null : _args["ARG"].ToString(); } }
-		public bool OptO { get { return _args["-o"] as bool? == true; } }
+		public bool OptO { get { return _args["-o"].IsTrue; } }
 		public string OptLong { get { return null == _args["--long"] ? null : _args["--long"].ToString(); } }
-		public bool OptSwitch { get { return _args["--switch"] as bool? == true; } }
-		public bool OptV { get { return _args["-v"] as bool? == true; } }
-		public bool CmdCommand2 { get { return _args["command2"] as bool? == true; } }
+		public bool OptSwitch { get { return _args["--switch"].IsTrue; } }
+		public bool OptV { get { return _args["-v"].IsTrue; } }
+		public bool CmdCommand2 { get { return _args["command2"].IsTrue; } }
 	}
 
     // Generated class for Main.usage.txt
@@ -56,28 +56,28 @@ Options:
 Explanation:
  This is a test usage file.
 ";
-	    private readonly IDictionary<string, object> _args;
+	    private readonly IDictionary<string, ValueObject> _args;
 		public MainArgs(ICollection<string> argv, bool help = true,
                                                       object version = null, bool optionsFirst = false, bool exit = false)
 		{
 			_args = new Docopt().Apply(USAGE, argv, help, version, optionsFirst, exit);
 		}
 
-        public IDictionary<string, object> Args
+        public IDictionary<string, ValueObject> Args
         {
             get { return _args; }
         }
 
-		public bool CmdCommand { get { return _args["command"] as bool? == true; } }
+		public bool CmdCommand { get { return _args["command"].IsTrue; } }
 		public string ArgArg { get { return null == _args["ARG"] ? null : _args["ARG"].ToString(); } }
 		public string ArgMyarg  { get { return null == _args["<myarg>"] ? null : _args["<myarg>"].ToString(); } }
 		public string ArgOptionalarg { get { return null == _args["OPTIONALARG"] ? null : _args["OPTIONALARG"].ToString(); } }
-		public bool OptO { get { return _args["-o"] as bool? == true; } }
+		public bool OptO { get { return _args["-o"].IsTrue; } }
 		public string OptS { get { return null == _args["-s"] ? null : _args["-s"].ToString(); } }
 		public string OptLong { get { return null == _args["--long"] ? null : _args["--long"].ToString(); } }
-		public bool OptSwitch { get { return _args["--switch"] as bool? == true; } }
-		public bool CmdFiles { get { return _args["files"] as bool? == true; } }
-		public ArrayList ArgFile { get { return (ArrayList)_args["FILE"]; } }
+		public bool OptSwitch { get { return _args["--switch"].IsTrue; } }
+		public bool CmdFiles { get { return _args["files"].IsTrue; } }
+		public ArrayList ArgFile { get { return _args["FILE"].AsList; } }
 	}
 
 }

@@ -17,6 +17,7 @@ namespace DocoptNet
         T Argument(T state, string name);
         T Argument(T state, string name, in Var<string> value);
         T Argument(T state, string name, in Var<ArrayList> value);
+        T Option(T state, string name);
         T Option(T state, string name, in Var<bool> value);
         T Option(T state, string name, in Var<string> value);
         T Option(T state, string name, in Var<int> value);
@@ -42,49 +43,78 @@ namespace DocoptNet
         public IDictionary<string, object> Argument(IDictionary<string, object> state, string name) => Adding(state, name, null);
         public IDictionary<string, object> Argument(IDictionary<string, object> state, string name, in Var<string> value) => Adding(state, name, value.Object);
         public IDictionary<string, object> Argument(IDictionary<string, object> state, string name, in Var<ArrayList> value) => Adding(state, name, value.Object);
+        public IDictionary<string, object> Option(IDictionary<string, object> state, string name) => Adding(state, name, null);
         public IDictionary<string, object> Option(IDictionary<string, object> state, string name, in Var<bool> value) => Adding(state, name, value.Object);
         public IDictionary<string, object> Option(IDictionary<string, object> state, string name, in Var<string> value) => Adding(state, name, value.Object);
         public IDictionary<string, object> Option(IDictionary<string, object> state, string name, in Var<int> value) => Adding(state, name, value.Object);
         public IDictionary<string, object> Option(IDictionary<string, object> state, string name, in Var<ArrayList> value) => Adding(state, name, value.Object);
     }
 
+    sealed class ValueObjectDictionaryBuilder : IBuilder<IDictionary<string, ValueObject>>
+    {
+        public static readonly ValueObjectDictionaryBuilder Instance = new();
+
+        public IDictionary<string, ValueObject> Nil() => null;
+
+        public IDictionary<string, ValueObject> New() => new Dictionary<string, ValueObject>();
+
+        static IDictionary<string, ValueObject> Adding(IDictionary<string, ValueObject> dict, string name, object value)
+        {
+            dict[name] = new ValueObject(value);
+            return dict;
+        }
+
+        public IDictionary<string, ValueObject> Command(IDictionary<string, ValueObject> state, string name, in Var<bool> value) => Adding(state, name, value.Object);
+        public IDictionary<string, ValueObject> Command(IDictionary<string, ValueObject> state, string name, in Var<int> value) => Adding(state, name, value.Object);
+        public IDictionary<string, ValueObject> Argument(IDictionary<string, ValueObject> state, string name) => Adding(state, name, null);
+        public IDictionary<string, ValueObject> Argument(IDictionary<string, ValueObject> state, string name, in Var<string> value) => Adding(state, name, value.Object);
+        public IDictionary<string, ValueObject> Argument(IDictionary<string, ValueObject> state, string name, in Var<ArrayList> value) => Adding(state, name, value.Object);
+        public IDictionary<string, ValueObject> Option(IDictionary<string, ValueObject> state, string name) => Adding(state, name, null);
+        public IDictionary<string, ValueObject> Option(IDictionary<string, ValueObject> state, string name, in Var<bool> value) => Adding(state, name, value.Object);
+        public IDictionary<string, ValueObject> Option(IDictionary<string, ValueObject> state, string name, in Var<string> value) => Adding(state, name, value.Object);
+        public IDictionary<string, ValueObject> Option(IDictionary<string, ValueObject> state, string name, in Var<int> value) => Adding(state, name, value.Object);
+        public IDictionary<string, ValueObject> Option(IDictionary<string, ValueObject> state, string name, in Var<ArrayList> value) => Adding(state, name, value.Object);
+    }
+
     partial class Docopt
     {
         public event EventHandler<PrintExitEventArgs> PrintExit;
 
-        public IDictionary<string, object> Apply(string doc)
+        public IDictionary<string, ValueObject> Apply(string doc)
         {
             return Apply(doc, new Tokens(Enumerable.Empty<string>(), typeof (DocoptInputErrorException)));
         }
 
-        public IDictionary<string, object> Apply(string doc, ICollection<string> argv, bool help = true,
+        public IDictionary<string, ValueObject> Apply(string doc, ICollection<string> argv, bool help = true,
             object version = null, bool optionsFirst = false, bool exit = false)
         {
             return Apply(doc, new Tokens(argv, typeof (DocoptInputErrorException)), help, version, optionsFirst, exit);
         }
 
-        protected IDictionary<string, object> Apply(string doc, Tokens tokens,
+        protected IDictionary<string, ValueObject> Apply(string doc, Tokens tokens,
             bool help = true,
-            object version = null, bool optionsFirst = false, bool exit = false) =>
-            throw new NotImplementedException();
+            object version = null, bool optionsFirst = false, bool exit = false)
+        {
+            return Apply(doc, tokens, ValueObjectDictionaryBuilder.Instance, help, version, optionsFirst, exit);
+        }
 
-        T Apply<T>(string doc, IBuilder<T> builder)
+        internal T Apply<T>(string doc, IBuilder<T> builder)
         {
             return Apply(doc, new Tokens(Enumerable.Empty<string>(), typeof (DocoptInputErrorException)), builder);
         }
 
-        T Apply<T>(string doc, ICollection<string> argv,
-                                IBuilder<T> builder,
-                                bool help = true, object version = null,
-                                bool optionsFirst = false, bool exit = false)
+        internal T Apply<T>(string doc, ICollection<string> argv,
+                            IBuilder<T> builder,
+                            bool help = true, object version = null,
+                            bool optionsFirst = false, bool exit = false)
         {
             return Apply(doc, new Tokens(argv, typeof (DocoptInputErrorException)), builder, help, version, optionsFirst, exit);
         }
 
-        T Apply<T>(string doc, Tokens tokens,
-                                IBuilder<T> builder,
-                                bool help = true, object version = null,
-                                bool optionsFirst = false, bool exit = false)
+        internal T Apply<T>(string doc, Tokens tokens,
+                            IBuilder<T> builder,
+                            bool help = true, object version = null,
+                            bool optionsFirst = false, bool exit = false)
         {
             try
             {
@@ -144,6 +174,9 @@ namespace DocoptNet
                                 break;
                             case Option { Value: string value } option:
                                 dict = builder.Option(dict, option.Name, Var.Specific(value));
+                                break;
+                            case Option { Value: null } option:
+                                dict = builder.Option(dict, option.Name);
                                 break;
                             case Option { Value: ArrayList value } option:
                                 dict = builder.Option(dict, option.Name, Var.Specific(value));

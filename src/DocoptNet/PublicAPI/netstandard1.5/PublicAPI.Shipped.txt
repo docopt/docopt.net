@@ -3,9 +3,9 @@ DocoptNet.ArgumentNode.ArgumentNode(string name, DocoptNet.ValueType valueType) 
 DocoptNet.CommandNode
 DocoptNet.CommandNode.CommandNode(string name) -> void
 DocoptNet.Docopt
-DocoptNet.Docopt.Apply(string doc) -> System.Collections.Generic.IDictionary<string, object>
-DocoptNet.Docopt.Apply(string doc, DocoptNet.Tokens tokens, bool help = true, object version = null, bool optionsFirst = false, bool exit = false) -> System.Collections.Generic.IDictionary<string, object>
-DocoptNet.Docopt.Apply(string doc, System.Collections.Generic.ICollection<string> argv, bool help = true, object version = null, bool optionsFirst = false, bool exit = false) -> System.Collections.Generic.IDictionary<string, object>
+DocoptNet.Docopt.Apply(string doc) -> System.Collections.Generic.IDictionary<string, DocoptNet.ValueObject>
+DocoptNet.Docopt.Apply(string doc, DocoptNet.Tokens tokens, bool help = true, object version = null, bool optionsFirst = false, bool exit = false) -> System.Collections.Generic.IDictionary<string, DocoptNet.ValueObject>
+DocoptNet.Docopt.Apply(string doc, System.Collections.Generic.ICollection<string> argv, bool help = true, object version = null, bool optionsFirst = false, bool exit = false) -> System.Collections.Generic.IDictionary<string, DocoptNet.ValueObject>
 DocoptNet.Docopt.Docopt() -> void
 DocoptNet.Docopt.GenerateCode(string doc) -> string
 DocoptNet.Docopt.GetNodes(string doc) -> System.Collections.Generic.IEnumerable<DocoptNet.Node>
@@ -49,6 +49,16 @@ DocoptNet.Tokens.GetEnumerator() -> System.Collections.Generic.IEnumerator<strin
 DocoptNet.Tokens.Move() -> string
 DocoptNet.Tokens.ThrowsInputError.get -> bool
 DocoptNet.Tokens.Tokens(System.Collections.Generic.IEnumerable<string> source, System.Type errorType) -> void
+DocoptNet.ValueObject
+DocoptNet.ValueObject.AsInt.get -> int
+DocoptNet.ValueObject.AsList.get -> System.Collections.ArrayList
+DocoptNet.ValueObject.IsFalse.get -> bool
+DocoptNet.ValueObject.IsInt.get -> bool
+DocoptNet.ValueObject.IsList.get -> bool
+DocoptNet.ValueObject.IsNullOrEmpty.get -> bool
+DocoptNet.ValueObject.IsString.get -> bool
+DocoptNet.ValueObject.IsTrue.get -> bool
+DocoptNet.ValueObject.Value.get -> object
 DocoptNet.ValueType
 DocoptNet.ValueType.Bool = 0 -> DocoptNet.ValueType
 DocoptNet.ValueType.List = 1 -> DocoptNet.ValueType
@@ -57,4 +67,7 @@ override DocoptNet.Node.Equals(object obj) -> bool
 override DocoptNet.Node.GetHashCode() -> int
 override DocoptNet.Node.ToString() -> string
 override DocoptNet.Tokens.ToString() -> string
+override DocoptNet.ValueObject.Equals(object obj) -> bool
+override DocoptNet.ValueObject.GetHashCode() -> int
+override DocoptNet.ValueObject.ToString() -> string
 static DocoptNet.Tokens.FromPattern(string pattern) -> DocoptNet.Tokens

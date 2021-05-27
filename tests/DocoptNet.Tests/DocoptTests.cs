@@ -191,7 +191,7 @@ namespace DocoptNet.Tests
                 {
                     {"-l", ""}
                 };
-            var actual = new Docopt().Apply("usage: prog -l <a>\noptions: -l <a>", new[] {"-l", ""});
+            var actual = new Docopt().Apply("usage: prog -l <a>\noptions: -l <a>", Args.Argv("-l", ""));
             Assert.AreEqual(expected, actual);
         }
 
