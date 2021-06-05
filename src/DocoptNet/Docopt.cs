@@ -8,7 +8,7 @@ namespace DocoptNet
     using System.Text;
     using System.Text.RegularExpressions;
 
-    interface IParseResultAccumulator<T>
+    interface IApplicationResultAccumulator<T>
     {
         T New();
         T Command(T state, string name, in Box<bool> value);
@@ -24,12 +24,12 @@ namespace DocoptNet
         T Error(DocoptBaseException exception);
     }
 
-    static class StockParseResultAccumulator
+    static class StockApplicationResultAccumulators
     {
-        public static readonly IParseResultAccumulator<IDictionary<string, object>> ObjectDictionary = new DictionaryAccumulator();
-        public static readonly IParseResultAccumulator<IDictionary<string, ValueObject>> ValueObjectDictionary = new ValueObjectDictionaryAccumulator();
+        public static readonly IApplicationResultAccumulator<IDictionary<string, object>> ObjectDictionary = new DictionaryAccumulator();
+        public static readonly IApplicationResultAccumulator<IDictionary<string, ValueObject>> ValueObjectDictionary = new ValueObjectDictionaryAccumulator();
 
-        sealed class DictionaryAccumulator : IParseResultAccumulator<IDictionary<string, object>>
+        sealed class DictionaryAccumulator : IApplicationResultAccumulator<IDictionary<string, object>>
         {
             public IDictionary<string, object> New() => new Dictionary<string, object>();
             public IDictionary<string, object> Command(IDictionary<string, object> state, string name, in Box<bool> value) => Adding(state, name, value.Object);
@@ -51,7 +51,7 @@ namespace DocoptNet
             }
         }
 
-        sealed class ValueObjectDictionaryAccumulator : IParseResultAccumulator<IDictionary<string, ValueObject>>
+        sealed class ValueObjectDictionaryAccumulator : IApplicationResultAccumulator<IDictionary<string, ValueObject>>
         {
             public IDictionary<string, ValueObject> New() => new Dictionary<string, ValueObject>();
             public IDictionary<string, ValueObject> Command(IDictionary<string, ValueObject> state, string name, in Box<bool> value) => Adding(state, name, value.Object);
@@ -93,16 +93,16 @@ namespace DocoptNet
             bool help = true,
             object version = null, bool optionsFirst = false, bool exit = false)
         {
-            return Apply(doc, tokens, StockParseResultAccumulator.ValueObjectDictionary, help, version, optionsFirst, exit);
+            return Apply(doc, tokens, StockApplicationResultAccumulators.ValueObjectDictionary, help, version, optionsFirst, exit);
         }
 
-        internal T Apply<T>(string doc, IParseResultAccumulator<T> accumulator)
+        internal T Apply<T>(string doc, IApplicationResultAccumulator<T> accumulator)
         {
             return Apply(doc, new Tokens(Enumerable.Empty<string>(), typeof (DocoptInputErrorException)), accumulator);
         }
 
         internal T Apply<T>(string doc, ICollection<string> argv,
-                            IParseResultAccumulator<T> accumulator,
+                            IApplicationResultAccumulator<T> accumulator,
                             bool help = true, object version = null,
                             bool optionsFirst = false, bool exit = false)
         {
@@ -110,7 +110,7 @@ namespace DocoptNet
         }
 
         internal T Apply<T>(string doc, Tokens tokens,
-                            IParseResultAccumulator<T> accumulator,
+                            IApplicationResultAccumulator<T> accumulator,
                             bool help = true, object version = null,
                             bool optionsFirst = false, bool exit = false)
         {
