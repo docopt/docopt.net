@@ -24,48 +24,38 @@ namespace DocoptNet
         public static readonly IApplicationResultAccumulator<IDictionary<string, object>> ObjectDictionary = new DictionaryAccumulator();
         public static readonly IApplicationResultAccumulator<IDictionary<string, ValueObject>> ValueObjectDictionary = new ValueObjectDictionaryAccumulator();
 
-        sealed class DictionaryAccumulator : IApplicationResultAccumulator<IDictionary<string, object>>
+        abstract class DictionaryAccumulator<T> : IApplicationResultAccumulator<IDictionary<string, T>>
         {
-            public IDictionary<string, object> New() => new Dictionary<string, object>();
-            public IDictionary<string, object> Command(IDictionary<string, object> state, string name, in Box<bool> value) => Adding(state, name, value.Object);
-            public IDictionary<string, object> Command(IDictionary<string, object> state, string name, in Box<int> value) => Adding(state, name, value.Object);
-            public IDictionary<string, object> Argument(IDictionary<string, object> state, string name) => Adding(state, name, null);
-            public IDictionary<string, object> Argument(IDictionary<string, object> state, string name, in Box<string> value) => Adding(state, name, value.Object);
-            public IDictionary<string, object> Argument(IDictionary<string, object> state, string name, in Box<ArrayList> value) => Adding(state, name, value.Object);
-            public IDictionary<string, object> Option(IDictionary<string, object> state, string name) => Adding(state, name, null);
-            public IDictionary<string, object> Option(IDictionary<string, object> state, string name, in Box<bool> value) => Adding(state, name, value.Object);
-            public IDictionary<string, object> Option(IDictionary<string, object> state, string name, in Box<string> value) => Adding(state, name, value.Object);
-            public IDictionary<string, object> Option(IDictionary<string, object> state, string name, in Box<int> value) => Adding(state, name, value.Object);
-            public IDictionary<string, object> Option(IDictionary<string, object> state, string name, in Box<ArrayList> value) => Adding(state, name, value.Object);
-            public IDictionary<string, object> Error(DocoptBaseException exception) => null;
+            public IDictionary<string, T> New() => new Dictionary<string, T>();
+            public IDictionary<string, T> Command(IDictionary<string, T> state, string name, in Box<bool> value) => Adding(state, name, value.Object);
+            public IDictionary<string, T> Command(IDictionary<string, T> state, string name, in Box<int> value) => Adding(state, name, value.Object);
+            public IDictionary<string, T> Argument(IDictionary<string, T> state, string name) => Adding(state, name, null);
+            public IDictionary<string, T> Argument(IDictionary<string, T> state, string name, in Box<string> value) => Adding(state, name, value.Object);
+            public IDictionary<string, T> Argument(IDictionary<string, T> state, string name, in Box<ArrayList> value) => Adding(state, name, value.Object);
+            public IDictionary<string, T> Option(IDictionary<string, T> state, string name) => Adding(state, name, null);
+            public IDictionary<string, T> Option(IDictionary<string, T> state, string name, in Box<bool> value) => Adding(state, name, value.Object);
+            public IDictionary<string, T> Option(IDictionary<string, T> state, string name, in Box<string> value) => Adding(state, name, value.Object);
+            public IDictionary<string, T> Option(IDictionary<string, T> state, string name, in Box<int> value) => Adding(state, name, value.Object);
+            public IDictionary<string, T> Option(IDictionary<string, T> state, string name, in Box<ArrayList> value) => Adding(state, name, value.Object);
+            public IDictionary<string, T> Error(DocoptBaseException exception) => null;
 
-            static IDictionary<string, object> Adding(IDictionary<string, object> dict, string name, object value)
+            IDictionary<string, T> Adding(IDictionary<string, T> dict, string name, object value)
             {
-                dict[name] = value;
+                dict[name] = Convert(value);
                 return dict;
             }
+
+            protected abstract T Convert(object value);
         }
 
-        sealed class ValueObjectDictionaryAccumulator : IApplicationResultAccumulator<IDictionary<string, ValueObject>>
+        sealed class ValueObjectDictionaryAccumulator : DictionaryAccumulator<ValueObject>
         {
-            public IDictionary<string, ValueObject> New() => new Dictionary<string, ValueObject>();
-            public IDictionary<string, ValueObject> Command(IDictionary<string, ValueObject> state, string name, in Box<bool> value) => Adding(state, name, value.Object);
-            public IDictionary<string, ValueObject> Command(IDictionary<string, ValueObject> state, string name, in Box<int> value) => Adding(state, name, value.Object);
-            public IDictionary<string, ValueObject> Argument(IDictionary<string, ValueObject> state, string name) => Adding(state, name, null);
-            public IDictionary<string, ValueObject> Argument(IDictionary<string, ValueObject> state, string name, in Box<string> value) => Adding(state, name, value.Object);
-            public IDictionary<string, ValueObject> Argument(IDictionary<string, ValueObject> state, string name, in Box<ArrayList> value) => Adding(state, name, value.Object);
-            public IDictionary<string, ValueObject> Option(IDictionary<string, ValueObject> state, string name) => Adding(state, name, null);
-            public IDictionary<string, ValueObject> Option(IDictionary<string, ValueObject> state, string name, in Box<bool> value) => Adding(state, name, value.Object);
-            public IDictionary<string, ValueObject> Option(IDictionary<string, ValueObject> state, string name, in Box<string> value) => Adding(state, name, value.Object);
-            public IDictionary<string, ValueObject> Option(IDictionary<string, ValueObject> state, string name, in Box<int> value) => Adding(state, name, value.Object);
-            public IDictionary<string, ValueObject> Option(IDictionary<string, ValueObject> state, string name, in Box<ArrayList> value) => Adding(state, name, value.Object);
-            public IDictionary<string, ValueObject> Error(DocoptBaseException exception) => null;
+            protected override ValueObject Convert(object value) => new(value);
+        }
 
-            static IDictionary<string, ValueObject> Adding(IDictionary<string, ValueObject> dict, string name, object value)
-            {
-                dict[name] = new ValueObject(value);
-                return dict;
-            }
+        sealed class DictionaryAccumulator : DictionaryAccumulator<object>
+        {
+            protected override object Convert(object value) => value;
         }
     }
 }
