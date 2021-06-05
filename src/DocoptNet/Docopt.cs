@@ -8,7 +8,7 @@ namespace DocoptNet
     using System.Text;
     using System.Text.RegularExpressions;
 
-    interface IBuilder<T>
+    interface IParseResultAccumulator<T>
     {
         T Nil();
         T New();
@@ -24,56 +24,116 @@ namespace DocoptNet
         T Option(T state, string name, in Box<ArrayList> value);
     }
 
-    sealed class DictionaryBuilder : IBuilder<IDictionary<string, object>>
+    interface IParseResultAccumulator
     {
-        public static readonly DictionaryBuilder Instance = new();
-
-        public IDictionary<string, object> Nil() => null;
-
-        public IDictionary<string, object> New() => new Dictionary<string, object>();
-
-        static IDictionary<string, object> Adding(IDictionary<string, object> dict, string name, object value)
-        {
-            dict[name] = value;
-            return dict;
-        }
-
-        public IDictionary<string, object> Command(IDictionary<string, object> state, string name, in Box<bool> value) => Adding(state, name, value.Object);
-        public IDictionary<string, object> Command(IDictionary<string, object> state, string name, in Box<int> value) => Adding(state, name, value.Object);
-        public IDictionary<string, object> Argument(IDictionary<string, object> state, string name) => Adding(state, name, null);
-        public IDictionary<string, object> Argument(IDictionary<string, object> state, string name, in Box<string> value) => Adding(state, name, value.Object);
-        public IDictionary<string, object> Argument(IDictionary<string, object> state, string name, in Box<ArrayList> value) => Adding(state, name, value.Object);
-        public IDictionary<string, object> Option(IDictionary<string, object> state, string name) => Adding(state, name, null);
-        public IDictionary<string, object> Option(IDictionary<string, object> state, string name, in Box<bool> value) => Adding(state, name, value.Object);
-        public IDictionary<string, object> Option(IDictionary<string, object> state, string name, in Box<string> value) => Adding(state, name, value.Object);
-        public IDictionary<string, object> Option(IDictionary<string, object> state, string name, in Box<int> value) => Adding(state, name, value.Object);
-        public IDictionary<string, object> Option(IDictionary<string, object> state, string name, in Box<ArrayList> value) => Adding(state, name, value.Object);
+        void Nil();
+        void Command(string name, in Box<bool> value);
+        void Command(string name, in Box<int> value);
+        void Argument(string name);
+        void Argument(string name, in Box<string> value);
+        void Argument(string name, in Box<ArrayList> value);
+        void Option(string name);
+        void Option(string name, in Box<bool> value);
+        void Option(string name, in Box<string> value);
+        void Option(string name, in Box<int> value);
+        void Option(string name, in Box<ArrayList> value);
     }
 
-    sealed class ValueObjectDictionaryBuilder : IBuilder<IDictionary<string, ValueObject>>
+    struct Unit {}
+
+    sealed class PushParseResultAccumulator : IParseResultAccumulator<Unit>
     {
-        public static readonly ValueObjectDictionaryBuilder Instance = new();
+        readonly IParseResultAccumulator _accumulator;
 
-        public IDictionary<string, ValueObject> Nil() => null;
+        public PushParseResultAccumulator(IParseResultAccumulator accumulator) =>
+            _accumulator = accumulator;
 
-        public IDictionary<string, ValueObject> New() => new Dictionary<string, ValueObject>();
+        public Unit Nil()                                                       { _accumulator.Nil();                 return default; }
+        public Unit New() => default;
+        public Unit Command(Unit state, string name, in Box<bool> value)        { _accumulator.Command(name, value);  return default; }
+        public Unit Command(Unit state, string name, in Box<int> value)         { _accumulator.Command(name, value);  return default; }
+        public Unit Argument(Unit state, string name)                           { _accumulator.Argument(name);        return default; }
+        public Unit Argument(Unit state, string name, in Box<string> value)     { _accumulator.Argument(name, value); return default; }
+        public Unit Argument(Unit state, string name, in Box<ArrayList> value)  { _accumulator.Argument(name, value); return default; }
+        public Unit Option(Unit state, string name)                             { _accumulator.Option(name);          return default; }
+        public Unit Option(Unit state, string name, in Box<bool> value)         { _accumulator.Option(name, value);   return default; }
+        public Unit Option(Unit state, string name, in Box<string> value)       { _accumulator.Option(name, value);   return default; }
+        public Unit Option(Unit state, string name, in Box<int> value)          { _accumulator.Option(name, value);   return default; }
+        public Unit Option(Unit state, string name, in Box<ArrayList> value)    { _accumulator.Option(name, value);   return default; }
+    }
 
-        static IDictionary<string, ValueObject> Adding(IDictionary<string, ValueObject> dict, string name, object value)
+    sealed class ParseResultAccumulator<T> : IParseResultAccumulator
+    {
+        T _state;
+        readonly IParseResultAccumulator<T> _accumulator;
+
+        public ParseResultAccumulator(IParseResultAccumulator<T> accumulator)
         {
-            dict[name] = new ValueObject(value);
-            return dict;
+            _state = _accumulator.New();
+            _accumulator = accumulator;
         }
 
-        public IDictionary<string, ValueObject> Command(IDictionary<string, ValueObject> state, string name, in Box<bool> value) => Adding(state, name, value.Object);
-        public IDictionary<string, ValueObject> Command(IDictionary<string, ValueObject> state, string name, in Box<int> value) => Adding(state, name, value.Object);
-        public IDictionary<string, ValueObject> Argument(IDictionary<string, ValueObject> state, string name) => Adding(state, name, null);
-        public IDictionary<string, ValueObject> Argument(IDictionary<string, ValueObject> state, string name, in Box<string> value) => Adding(state, name, value.Object);
-        public IDictionary<string, ValueObject> Argument(IDictionary<string, ValueObject> state, string name, in Box<ArrayList> value) => Adding(state, name, value.Object);
-        public IDictionary<string, ValueObject> Option(IDictionary<string, ValueObject> state, string name) => Adding(state, name, null);
-        public IDictionary<string, ValueObject> Option(IDictionary<string, ValueObject> state, string name, in Box<bool> value) => Adding(state, name, value.Object);
-        public IDictionary<string, ValueObject> Option(IDictionary<string, ValueObject> state, string name, in Box<string> value) => Adding(state, name, value.Object);
-        public IDictionary<string, ValueObject> Option(IDictionary<string, ValueObject> state, string name, in Box<int> value) => Adding(state, name, value.Object);
-        public IDictionary<string, ValueObject> Option(IDictionary<string, ValueObject> state, string name, in Box<ArrayList> value) => Adding(state, name, value.Object);
+        public void Nil()                                          => _state = _accumulator.Nil();
+        public void Command(string name, in Box<bool> value)       => _state = _accumulator.Command(_state, name, value);
+        public void Command(string name, in Box<int> value)        => _state = _accumulator.Command(_state, name, value);
+        public void Argument(string name)                          => _state = _accumulator.Argument(_state, name);
+        public void Argument(string name, in Box<string> value)    => _state = _accumulator.Argument(_state, name, value);
+        public void Argument(string name, in Box<ArrayList> value) => _state = _accumulator.Argument(_state, name, value);
+        public void Option(string name)                            => _state = _accumulator.Option(_state, name);
+        public void Option(string name, in Box<bool> value)        => _state = _accumulator.Option(_state, name, value);
+        public void Option(string name, in Box<string> value)      => _state = _accumulator.Option(_state, name, value);
+        public void Option(string name, in Box<int> value)         => _state = _accumulator.Option(_state, name, value);
+        public void Option(string name, in Box<ArrayList> value)   => _state = _accumulator.Option(_state, name, value);
+    }
+
+    static class StockParseResultAccumulator
+    {
+        public static readonly IParseResultAccumulator<IDictionary<string, object>> ObjectDictionary = new DictionaryAccumulator();
+        public static readonly IParseResultAccumulator<IDictionary<string, ValueObject>> ValueObjectDictionary = new ValueObjectDictionaryAccumulator();
+
+        sealed class DictionaryAccumulator : IParseResultAccumulator<IDictionary<string, object>>
+        {
+            public IDictionary<string, object> Nil() => null;
+            public IDictionary<string, object> New() => new Dictionary<string, object>();
+            public IDictionary<string, object> Command(IDictionary<string, object> state, string name, in Box<bool> value) => Adding(state, name, value.Object);
+            public IDictionary<string, object> Command(IDictionary<string, object> state, string name, in Box<int> value) => Adding(state, name, value.Object);
+            public IDictionary<string, object> Argument(IDictionary<string, object> state, string name) => Adding(state, name, null);
+            public IDictionary<string, object> Argument(IDictionary<string, object> state, string name, in Box<string> value) => Adding(state, name, value.Object);
+            public IDictionary<string, object> Argument(IDictionary<string, object> state, string name, in Box<ArrayList> value) => Adding(state, name, value.Object);
+            public IDictionary<string, object> Option(IDictionary<string, object> state, string name) => Adding(state, name, null);
+            public IDictionary<string, object> Option(IDictionary<string, object> state, string name, in Box<bool> value) => Adding(state, name, value.Object);
+            public IDictionary<string, object> Option(IDictionary<string, object> state, string name, in Box<string> value) => Adding(state, name, value.Object);
+            public IDictionary<string, object> Option(IDictionary<string, object> state, string name, in Box<int> value) => Adding(state, name, value.Object);
+            public IDictionary<string, object> Option(IDictionary<string, object> state, string name, in Box<ArrayList> value) => Adding(state, name, value.Object);
+
+            static IDictionary<string, object> Adding(IDictionary<string, object> dict, string name, object value)
+            {
+                dict[name] = value;
+                return dict;
+            }
+        }
+
+        sealed class ValueObjectDictionaryAccumulator : IParseResultAccumulator<IDictionary<string, ValueObject>>
+        {
+            public IDictionary<string, ValueObject> Nil() => null;
+            public IDictionary<string, ValueObject> New() => new Dictionary<string, ValueObject>();
+            public IDictionary<string, ValueObject> Command(IDictionary<string, ValueObject> state, string name, in Box<bool> value) => Adding(state, name, value.Object);
+            public IDictionary<string, ValueObject> Command(IDictionary<string, ValueObject> state, string name, in Box<int> value) => Adding(state, name, value.Object);
+            public IDictionary<string, ValueObject> Argument(IDictionary<string, ValueObject> state, string name) => Adding(state, name, null);
+            public IDictionary<string, ValueObject> Argument(IDictionary<string, ValueObject> state, string name, in Box<string> value) => Adding(state, name, value.Object);
+            public IDictionary<string, ValueObject> Argument(IDictionary<string, ValueObject> state, string name, in Box<ArrayList> value) => Adding(state, name, value.Object);
+            public IDictionary<string, ValueObject> Option(IDictionary<string, ValueObject> state, string name) => Adding(state, name, null);
+            public IDictionary<string, ValueObject> Option(IDictionary<string, ValueObject> state, string name, in Box<bool> value) => Adding(state, name, value.Object);
+            public IDictionary<string, ValueObject> Option(IDictionary<string, ValueObject> state, string name, in Box<string> value) => Adding(state, name, value.Object);
+            public IDictionary<string, ValueObject> Option(IDictionary<string, ValueObject> state, string name, in Box<int> value) => Adding(state, name, value.Object);
+            public IDictionary<string, ValueObject> Option(IDictionary<string, ValueObject> state, string name, in Box<ArrayList> value) => Adding(state, name, value.Object);
+
+            static IDictionary<string, ValueObject> Adding(IDictionary<string, ValueObject> dict, string name, object value)
+            {
+                dict[name] = new ValueObject(value);
+                return dict;
+            }
+        }
     }
 
     partial class Docopt
@@ -95,24 +155,24 @@ namespace DocoptNet
             bool help = true,
             object version = null, bool optionsFirst = false, bool exit = false)
         {
-            return Apply(doc, tokens, ValueObjectDictionaryBuilder.Instance, help, version, optionsFirst, exit);
+            return Apply(doc, tokens, StockParseResultAccumulator.ValueObjectDictionary, help, version, optionsFirst, exit);
         }
 
-        internal T Apply<T>(string doc, IBuilder<T> builder)
+        internal T Apply<T>(string doc, IParseResultAccumulator<T> accumulator)
         {
-            return Apply(doc, new Tokens(Enumerable.Empty<string>(), typeof (DocoptInputErrorException)), builder);
+            return Apply(doc, new Tokens(Enumerable.Empty<string>(), typeof (DocoptInputErrorException)), accumulator);
         }
 
         internal T Apply<T>(string doc, ICollection<string> argv,
-                            IBuilder<T> builder,
+                            IParseResultAccumulator<T> accumulator,
                             bool help = true, object version = null,
                             bool optionsFirst = false, bool exit = false)
         {
-            return Apply(doc, new Tokens(argv, typeof (DocoptInputErrorException)), builder, help, version, optionsFirst, exit);
+            return Apply(doc, new Tokens(argv, typeof (DocoptInputErrorException)), accumulator, help, version, optionsFirst, exit);
         }
 
         internal T Apply<T>(string doc, Tokens tokens,
-                            IBuilder<T> builder,
+                            IParseResultAccumulator<T> accumulator,
                             bool help = true, object version = null,
                             bool optionsFirst = false, bool exit = false)
         {
@@ -146,40 +206,40 @@ namespace DocoptNet
 
                 if (pattern.Fix().Match(arguments) is (true, { Count: 0 }, var collected))
                 {
-                    var dict = builder.New();
+                    var dict = accumulator.New();
                     foreach (var p in pattern.Flat().OfType<LeafPattern>().Concat(collected))
                     {
                         switch (p)
                         {
                             case Command { Value: bool } command:
-                                dict = builder.Command(dict, command.Name, Box<bool>.General(command.Value));
+                                dict = accumulator.Command(dict, command.Name, Box<bool>.General(command.Value));
                                 break;
                             case Command { Value: int } command:
-                                dict = builder.Command(dict, command.Name, Box<int>.General(command.Value));
+                                dict = accumulator.Command(dict, command.Name, Box<int>.General(command.Value));
                                 break;
                             case Argument { Value: null } argument:
-                                dict = builder.Argument(dict, argument.Name);
+                                dict = accumulator.Argument(dict, argument.Name);
                                 break;
                             case Argument { Value: string value } argument:
-                                dict = builder.Argument(dict, argument.Name, Box.Specific(value));
+                                dict = accumulator.Argument(dict, argument.Name, Box.Specific(value));
                                 break;
                             case Argument { Value: ArrayList value } argument:
-                                dict = builder.Argument(dict, argument.Name, Box.Specific(value));
+                                dict = accumulator.Argument(dict, argument.Name, Box.Specific(value));
                                 break;
                             case Option { Value: bool } option:
-                                dict = builder.Option(dict, option.Name, Box<bool>.General(option.Value));
+                                dict = accumulator.Option(dict, option.Name, Box<bool>.General(option.Value));
                                 break;
                             case Option { Value: int } option:
-                                dict = builder.Option(dict, option.Name, Box<int>.General(option.Value));
+                                dict = accumulator.Option(dict, option.Name, Box<int>.General(option.Value));
                                 break;
                             case Option { Value: string value } option:
-                                dict = builder.Option(dict, option.Name, Box.Specific(value));
+                                dict = accumulator.Option(dict, option.Name, Box.Specific(value));
                                 break;
                             case Option { Value: null } option:
-                                dict = builder.Option(dict, option.Name);
+                                dict = accumulator.Option(dict, option.Name);
                                 break;
                             case Option { Value: ArrayList value } option:
-                                dict = builder.Option(dict, option.Name, Box.Specific(value));
+                                dict = accumulator.Option(dict, option.Name, Box.Specific(value));
                                 break;
                             case var other:
                                 throw new NotSupportedException($"Unsupported pattern: {other}");
@@ -196,7 +256,7 @@ namespace DocoptNet
 
                 OnPrintExit(e.Message, e.ErrorCode);
 
-                return builder.Nil();
+                return accumulator.Nil();
             }
         }
 
