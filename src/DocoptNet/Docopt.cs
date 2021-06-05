@@ -144,46 +144,23 @@ namespace DocoptNet
 
                 if (pattern.Fix().Match(arguments) is (true, { Count: 0 }, var collected))
                 {
-                    var dict = accumulator.New();
-                    foreach (var p in pattern.Flat().OfType<LeafPattern>().Concat(collected))
-                    {
-                        switch (p)
-                        {
-                            case Command { Value: bool } command:
-                                dict = accumulator.Command(dict, command.Name, Box<bool>.General(command.Value));
-                                break;
-                            case Command { Value: int } command:
-                                dict = accumulator.Command(dict, command.Name, Box<int>.General(command.Value));
-                                break;
-                            case Argument { Value: null } argument:
-                                dict = accumulator.Argument(dict, argument.Name);
-                                break;
-                            case Argument { Value: string value } argument:
-                                dict = accumulator.Argument(dict, argument.Name, Box.Specific(value));
-                                break;
-                            case Argument { Value: ArrayList value } argument:
-                                dict = accumulator.Argument(dict, argument.Name, Box.Specific(value));
-                                break;
-                            case Option { Value: bool } option:
-                                dict = accumulator.Option(dict, option.Name, Box<bool>.General(option.Value));
-                                break;
-                            case Option { Value: int } option:
-                                dict = accumulator.Option(dict, option.Name, Box<int>.General(option.Value));
-                                break;
-                            case Option { Value: string value } option:
-                                dict = accumulator.Option(dict, option.Name, Box.Specific(value));
-                                break;
-                            case Option { Value: null } option:
-                                dict = accumulator.Option(dict, option.Name);
-                                break;
-                            case Option { Value: ArrayList value } option:
-                                dict = accumulator.Option(dict, option.Name, Box.Specific(value));
-                                break;
-                            case var other:
-                                throw new NotSupportedException($"Unsupported pattern: {other}");
-                        }
-                    }
-                    return dict;
+                    return pattern.Flat()
+                                  .OfType<LeafPattern>()
+                                  .Concat(collected)
+                                  .Aggregate(accumulator.New(), (state, p) => p switch
+                                   {
+                                       Command  { Value: bool        } command  => accumulator.Command(state, command.Name, Box<bool>.General(command.Value)),
+                                       Command  { Value: int         } command  => accumulator.Command(state, command.Name, Box<int>.General(command.Value)),
+                                       Argument { Value: null        } argument => accumulator.Argument(state, argument.Name),
+                                       Argument { Value: string v    } argument => accumulator.Argument(state, argument.Name, Box.Specific(v)),
+                                       Argument { Value: ArrayList v } argument => accumulator.Argument(state, argument.Name, Box.Specific(v)),
+                                       Option   { Value: bool        } option   => accumulator.Option(state, option.Name, Box<bool>.General(option.Value)),
+                                       Option   { Value: int         } option   => accumulator.Option(state, option.Name, Box<int>.General(option.Value)),
+                                       Option   { Value: string v    } option   => accumulator.Option(state, option.Name, Box.Specific(v)),
+                                       Option   { Value: null        } option   => accumulator.Option(state, option.Name),
+                                       Option   { Value: ArrayList v } option   => accumulator.Option(state, option.Name, Box.Specific(v)),
+                                       var other => throw new NotSupportedException($"Unsupported pattern: {other}"),
+                                   });
                 }
                 throw new DocoptInputErrorException(exitUsage);
             }
