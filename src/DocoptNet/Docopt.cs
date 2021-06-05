@@ -24,68 +24,6 @@ namespace DocoptNet
         T Option(T state, string name, in Box<ArrayList> value);
     }
 
-    interface IParseResultAccumulator
-    {
-        void Nil();
-        void Command(string name, in Box<bool> value);
-        void Command(string name, in Box<int> value);
-        void Argument(string name);
-        void Argument(string name, in Box<string> value);
-        void Argument(string name, in Box<ArrayList> value);
-        void Option(string name);
-        void Option(string name, in Box<bool> value);
-        void Option(string name, in Box<string> value);
-        void Option(string name, in Box<int> value);
-        void Option(string name, in Box<ArrayList> value);
-    }
-
-    struct Unit {}
-
-    sealed class PushParseResultAccumulator : IParseResultAccumulator<Unit>
-    {
-        readonly IParseResultAccumulator _accumulator;
-
-        public PushParseResultAccumulator(IParseResultAccumulator accumulator) =>
-            _accumulator = accumulator;
-
-        public Unit Nil()                                                       { _accumulator.Nil();                 return default; }
-        public Unit New() => default;
-        public Unit Command(Unit state, string name, in Box<bool> value)        { _accumulator.Command(name, value);  return default; }
-        public Unit Command(Unit state, string name, in Box<int> value)         { _accumulator.Command(name, value);  return default; }
-        public Unit Argument(Unit state, string name)                           { _accumulator.Argument(name);        return default; }
-        public Unit Argument(Unit state, string name, in Box<string> value)     { _accumulator.Argument(name, value); return default; }
-        public Unit Argument(Unit state, string name, in Box<ArrayList> value)  { _accumulator.Argument(name, value); return default; }
-        public Unit Option(Unit state, string name)                             { _accumulator.Option(name);          return default; }
-        public Unit Option(Unit state, string name, in Box<bool> value)         { _accumulator.Option(name, value);   return default; }
-        public Unit Option(Unit state, string name, in Box<string> value)       { _accumulator.Option(name, value);   return default; }
-        public Unit Option(Unit state, string name, in Box<int> value)          { _accumulator.Option(name, value);   return default; }
-        public Unit Option(Unit state, string name, in Box<ArrayList> value)    { _accumulator.Option(name, value);   return default; }
-    }
-
-    sealed class ParseResultAccumulator<T> : IParseResultAccumulator
-    {
-        T _state;
-        readonly IParseResultAccumulator<T> _accumulator;
-
-        public ParseResultAccumulator(IParseResultAccumulator<T> accumulator)
-        {
-            _state = _accumulator.New();
-            _accumulator = accumulator;
-        }
-
-        public void Nil()                                          => _state = _accumulator.Nil();
-        public void Command(string name, in Box<bool> value)       => _state = _accumulator.Command(_state, name, value);
-        public void Command(string name, in Box<int> value)        => _state = _accumulator.Command(_state, name, value);
-        public void Argument(string name)                          => _state = _accumulator.Argument(_state, name);
-        public void Argument(string name, in Box<string> value)    => _state = _accumulator.Argument(_state, name, value);
-        public void Argument(string name, in Box<ArrayList> value) => _state = _accumulator.Argument(_state, name, value);
-        public void Option(string name)                            => _state = _accumulator.Option(_state, name);
-        public void Option(string name, in Box<bool> value)        => _state = _accumulator.Option(_state, name, value);
-        public void Option(string name, in Box<string> value)      => _state = _accumulator.Option(_state, name, value);
-        public void Option(string name, in Box<int> value)         => _state = _accumulator.Option(_state, name, value);
-        public void Option(string name, in Box<ArrayList> value)   => _state = _accumulator.Option(_state, name, value);
-    }
-
     static class StockParseResultAccumulator
     {
         public static readonly IParseResultAccumulator<IDictionary<string, object>> ObjectDictionary = new DictionaryAccumulator();
