@@ -10,7 +10,6 @@ namespace DocoptNet
 
     interface IParseResultAccumulator<T>
     {
-        T Nil();
         T New();
         T Command(T state, string name, in Box<bool> value);
         T Command(T state, string name, in Box<int> value);
@@ -22,6 +21,7 @@ namespace DocoptNet
         T Option(T state, string name, in Box<string> value);
         T Option(T state, string name, in Box<int> value);
         T Option(T state, string name, in Box<ArrayList> value);
+        T Error(DocoptBaseException exception);
     }
 
     static class StockParseResultAccumulator
@@ -31,7 +31,6 @@ namespace DocoptNet
 
         sealed class DictionaryAccumulator : IParseResultAccumulator<IDictionary<string, object>>
         {
-            public IDictionary<string, object> Nil() => null;
             public IDictionary<string, object> New() => new Dictionary<string, object>();
             public IDictionary<string, object> Command(IDictionary<string, object> state, string name, in Box<bool> value) => Adding(state, name, value.Object);
             public IDictionary<string, object> Command(IDictionary<string, object> state, string name, in Box<int> value) => Adding(state, name, value.Object);
@@ -43,6 +42,7 @@ namespace DocoptNet
             public IDictionary<string, object> Option(IDictionary<string, object> state, string name, in Box<string> value) => Adding(state, name, value.Object);
             public IDictionary<string, object> Option(IDictionary<string, object> state, string name, in Box<int> value) => Adding(state, name, value.Object);
             public IDictionary<string, object> Option(IDictionary<string, object> state, string name, in Box<ArrayList> value) => Adding(state, name, value.Object);
+            public IDictionary<string, object> Error(DocoptBaseException exception) => null;
 
             static IDictionary<string, object> Adding(IDictionary<string, object> dict, string name, object value)
             {
@@ -53,7 +53,6 @@ namespace DocoptNet
 
         sealed class ValueObjectDictionaryAccumulator : IParseResultAccumulator<IDictionary<string, ValueObject>>
         {
-            public IDictionary<string, ValueObject> Nil() => null;
             public IDictionary<string, ValueObject> New() => new Dictionary<string, ValueObject>();
             public IDictionary<string, ValueObject> Command(IDictionary<string, ValueObject> state, string name, in Box<bool> value) => Adding(state, name, value.Object);
             public IDictionary<string, ValueObject> Command(IDictionary<string, ValueObject> state, string name, in Box<int> value) => Adding(state, name, value.Object);
@@ -65,6 +64,7 @@ namespace DocoptNet
             public IDictionary<string, ValueObject> Option(IDictionary<string, ValueObject> state, string name, in Box<string> value) => Adding(state, name, value.Object);
             public IDictionary<string, ValueObject> Option(IDictionary<string, ValueObject> state, string name, in Box<int> value) => Adding(state, name, value.Object);
             public IDictionary<string, ValueObject> Option(IDictionary<string, ValueObject> state, string name, in Box<ArrayList> value) => Adding(state, name, value.Object);
+            public IDictionary<string, ValueObject> Error(DocoptBaseException exception) => null;
 
             static IDictionary<string, ValueObject> Adding(IDictionary<string, ValueObject> dict, string name, object value)
             {
@@ -194,7 +194,7 @@ namespace DocoptNet
 
                 OnPrintExit(e.Message, e.ErrorCode);
 
-                return accumulator.Nil();
+                return accumulator.Error(e);
             }
         }
 
