@@ -2,6 +2,7 @@
 
   <PropertyGroup>
     <TargetFramework>net5.0</TargetFramework>
+    <Nullable>disable</Nullable>
   </PropertyGroup>
 
   <ItemGroup>
@@ -10,8 +11,14 @@
     <PackageReference Include="System.Net.Http.Json" Version="5.0.0" />
   </ItemGroup>
 
+  <!--
   <ItemGroup>
     <ProjectReference Include="..\DocoptNet\DocoptNet.csproj" />
+  </ItemGroup>
+  -->
+
+  <ItemGroup>
+    <Compile Include="..\DocoptNet\*.cs" Link="DocoptNet\%(Filename)" />
   </ItemGroup>
 
 </Project>

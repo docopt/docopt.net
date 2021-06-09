@@ -1,7 +1,11 @@
 @import url('open-iconic/font/css/open-iconic-bootstrap.min.css');
 
 html, body {
-    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;    
+}
+
+body {
+    overflow: hidden;
 }
 
 a, .btn-link {
@@ -42,9 +46,97 @@ a, .btn-link {
     z-index: 1000;
 }
 
-    #blazor-error-ui .dismiss {
-        cursor: pointer;
-        position: absolute;
-        right: 0.75rem;
-        top: 0.5rem;
-    }
+#blazor-error-ui .dismiss {
+    cursor: pointer;
+    position: absolute;
+    right: 0.75rem;
+    top: 0.5rem;
+}
+
+html, body {
+    background-color: #21222c;
+    height: 100%;
+    margin: 0;
+    padding: 0;
+}
+
+#app {
+    display: grid;
+    grid-template-rows: 2em 5em auto;
+    height: 100%;
+}
+
+#stats {
+    background-color: bisque;
+    padding: 0.2em;
+}
+
+#argv-pane {
+    display: flex;
+}
+
+tt, code {
+    font-family: 'Lucida Console', Monaco, 'Courier New', Courier, monospace;
+    font-size: 1em;
+}
+
+#argv, #doc, #etc {
+    font-family: 'Lucida Console', Monaco, 'Courier New', Courier, monospace;
+    padding: 0.5em;
+    background-color: #282a36;
+    color: #f8f8f2;
+}
+
+#argv {
+    flex: 1;
+    margin: 10px;
+    border: 1px solid #44475a;
+}
+
+#args {
+    color: #bd93f9;
+}
+
+#args code {
+    white-space: nowrap;
+    color: #8be9fd;
+}
+
+#args th {
+    color: #8be9fd;
+}
+
+#args th {
+    color: #ffb86c;
+}
+
+#result-pane {
+    display: grid;
+    grid-template-columns: 1.5fr 1fr 1fr;
+    color: #f8f8f2;
+}
+
+#result-pane > * {
+    margin: 0 10px 0 0;
+}
+
+#result-pane > :not(#doc) {
+    background-color: #282a36;
+}
+
+#result-pane textarea {
+    border: none;
+}
+
+#result-pane > :last-child {
+    margin-right: 0;
+}
+
+#result-pane
+{
+    overflow-y: scroll;
+}
+
+#etc.syntax-error {
+    color: #ff5555;
+}
