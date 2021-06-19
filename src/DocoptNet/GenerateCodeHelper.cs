@@ -9,14 +9,36 @@ namespace DocoptNet
             var result = "";
             for (var i = 0; i < s.Length; i++)
             {
-                if(s[i] is '-' or ' ')
+                var replacement = s[i] switch
                 {
+                    '-' or ' ' when i > 0 => string.Empty,
+                    '-' when i == 0 && s.Length == 1 => "Minus",
+                    '!' => "Exclamation",
+                    '#' => "Hash",
+                    '$' => "Dollar",
+                    '%' => "Percent",
+                    '&' => "Ampersand",
+                    '*' => "Star",
+                    '+' => "Plus",
+                    ',' => "Comma",
+                    '.' => "Dot",
+                    '/' => "Slash",
+                    ':' => "Colon",
+                    ';' => "SemiColon",
+                    '=' => "Equal",
+                    '?' => "Question",
+                    _ => null,
+                };
+                if (replacement is {} r)
+                {
+                    result += r;
                     makeUpperCase = true;
-                    continue;
                 }
-
-                result += makeUpperCase ? char.ToUpperInvariant(s[i]) : s[i];
-                makeUpperCase = false;
+                else if (s[i] is >= 'A' and <= 'Z' or >= 'a' and <= 'z' or >= '0' and <= '9')
+                {
+                    result += makeUpperCase && char.IsLower(s, i) ? char.ToUpperInvariant(s[i]) : s[i];
+                    makeUpperCase = false;
+                }
             }
 
             return result;

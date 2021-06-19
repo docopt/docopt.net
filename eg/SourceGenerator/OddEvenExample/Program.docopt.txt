@@ -1,0 +1,7 @@
+Usage: OddEvenExample [-h | --help] (ODD EVEN)...
+
+Example, try:
+  OddEvenExample 1 2 3 4
+
+Options:
+  -h, --help

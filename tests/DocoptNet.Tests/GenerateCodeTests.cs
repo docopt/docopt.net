@@ -29,17 +29,17 @@ Explanation:
  This is a test usage file.
 ";
             const string expected = @"
-public bool CmdCommand { get { return _args[""command""].IsTrue; } }
+public bool CmdCommand { get { ValueObject v = _args[""command""]; return v.IsTrue || v.IsOfTypeInt && v.AsInt > 0; } }
 public string ArgArg { get { return null == _args[""ARG""] ? null : _args[""ARG""].ToString(); } }
 public string ArgMyarg { get { return null == _args[""<myarg>""] ? null : _args[""<myarg>""].ToString(); } }
 public string ArgOptionalarg { get { return null == _args[""OPTIONALARG""] ? null : _args[""OPTIONALARG""].ToString(); } }
-public bool OptO { get { return _args[""-o""].IsTrue; } }
+public bool OptO { get { ValueObject v = _args[""-o""]; return v.IsTrue || v.IsOfTypeInt && v.AsInt > 0; } }
 public string OptS { get { return null == _args[""-s""] ? ""128"" : _args[""-s""].ToString(); } }
 public string OptLong { get { return null == _args[""--long""] ? null : _args[""--long""].ToString(); } }
-public bool OptSwitchDash { get { return _args[""--switch-dash""].IsTrue; } }
-public bool CmdCommand2 { get { return _args[""command2""].IsTrue; } }
+public bool OptSwitchDash { get { ValueObject v = _args[""--switch-dash""]; return v.IsTrue || v.IsOfTypeInt && v.AsInt > 0; } }
+public bool CmdCommand2 { get { ValueObject v = _args[""command2""]; return v.IsTrue || v.IsOfTypeInt && v.AsInt > 0; } }
 public string ArgInputFile { get { return null == _args[""<input file>""] ? null : _args[""<input file>""].ToString(); } }
-public bool CmdFiles { get { return _args[""files""].IsTrue; } }
+public bool CmdFiles { get { ValueObject v = _args[""files""]; return v.IsTrue || v.IsOfTypeInt && v.AsInt > 0; } }
 public ArrayList ArgFile { get { return _args[""FILE""].AsList; } }
 ";
             var s = new Docopt().GenerateCode(USAGE);
