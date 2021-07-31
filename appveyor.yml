@@ -1,10 +1,12 @@
 version: 1.1.{build}
 image: Visual Studio 2019
 configuration: Release
+before_build:
+- dotnet --info
 build_script:
-- cmd: dotnet build --configuration Release
+- cmd: dotnet build --configuration %CONFIGURATION%
 - cmd: IF NOT EXIST dist MKDIR dist
-- cmd: dotnet pack --configuration Release
+- cmd: dotnet pack --configuration %CONFIGURATION%
 test_script:
 - cmd: dotnet test
 artifacts:
