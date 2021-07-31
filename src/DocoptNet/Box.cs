@@ -12,7 +12,7 @@ namespace DocoptNet
         readonly object _boxed;
 
         public static Box<T> Specific(T value) => new(true, value, null);
-        public static Box<T> General(object value) => new(false, default, value);
+        public static Box<T> General(object value) => new(false, default, (T)value);
 
         Box(bool isSpecific, T value, object boxed)
         {
