@@ -2,6 +2,7 @@ namespace DocoptNet
 {
     using System;
     using System.Collections;
+    using System.Collections.Generic;
     using System.Linq;
 
     partial class ValueObject // TODO : IEquatable<ValueObject>
@@ -41,8 +42,14 @@ namespace DocoptNet
 
         public override string ToString()
         {
-            return IsList ? $"[{string.Join(", ", AsList.Cast<object>())}]"
-                 : (Value ?? string.Empty).ToString();
+            return Format(this, v => v.IsList ? v.AsList.Cast<object>() : null);
+        }
+
+        internal static string Format<T, TItem>(T value, Func<T, IEnumerable<TItem>> asList)
+        {
+            return value is null ? string.Empty
+                 : asList(value) is { } items ? $"[{string.Join(", ", items)}]"
+                 : value.ToString();
         }
     }
 }
