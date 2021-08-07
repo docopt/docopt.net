@@ -27,7 +27,7 @@ namespace DocoptNet
             get { return _name; }
         }
 
-        public object Value { get;  set; }
+        public object Value { get; set; }
 
         internal void Add(object increment)
         {
