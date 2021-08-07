@@ -24,6 +24,8 @@ namespace DocoptNet
         public T Value => _isSpecific ? _value : (T)_boxed;
         public object Object => _isSpecific ? _value : _boxed;
 
+        public Box<T> Generalize() => _isSpecific ? General(Object) : this;
+
         public override string ToString() =>
             (_isSpecific ? Value?.ToString() : Object?.ToString()) ?? string.Empty;
     }
