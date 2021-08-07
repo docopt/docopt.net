@@ -35,7 +35,7 @@ namespace DocoptNet
 
             if (Value is ICollection)
             {
-                return $"public ArrayList {s} {{ get {{ return (ArrayList)_args[\"{Name}\"]; }} }}";
+                return $"public ArrayList {s} {{ get {{ return _args[\"{Name}\"].AsList; }} }}";
             }
             return string.Format("public string {0} {{ get {{ return null == _args[\"{1}\"] ? null : _args[\"{1}\"].ToString(); }} }}", s, Name);
         }

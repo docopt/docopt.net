@@ -41,7 +41,7 @@ namespace DocoptNet
 
             if (ArgCount == 0)
             {
-                return $"public bool {s} {{ get {{ return _args[\"{Name}\"] as bool? == true; }} }}";
+                return $"public bool {s} {{ get {{ return _args[\"{Name}\"].IsTrue; }} }}";
             }
             var defaultValue = Value == null ? "null" : $"\"{Value}\"";
             return string.Format("public string {0} {{ get {{ return null == _args[\"{1}\"] ? {2} : _args[\"{1}\"].ToString(); }} }}", s, Name, defaultValue);

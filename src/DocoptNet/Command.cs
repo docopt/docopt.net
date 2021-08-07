@@ -12,7 +12,7 @@ namespace DocoptNet
         {
             var s = Name.ToLowerInvariant();
             s = "Cmd" + GenerateCodeHelper.ConvertToPascalCase(s);
-            return $"public bool {s} {{ get {{ return _args[\"{Name}\"] as bool? == true; }} }}";
+            return $"public bool {s} {{ get {{ return _args[\"{Name}\"].IsTrue; }} }}";
         }
 
     }

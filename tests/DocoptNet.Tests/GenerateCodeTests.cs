@@ -29,18 +29,18 @@ Explanation:
  This is a test usage file.
 ";
             const string expected = @"
-public bool CmdCommand { get { return _args[""command""] as bool? == true; } }
+public bool CmdCommand { get { return _args[""command""].IsTrue; } }
 public string ArgArg { get { return null == _args[""ARG""] ? null : _args[""ARG""].ToString(); } }
 public string ArgMyarg { get { return null == _args[""<myarg>""] ? null : _args[""<myarg>""].ToString(); } }
 public string ArgOptionalarg { get { return null == _args[""OPTIONALARG""] ? null : _args[""OPTIONALARG""].ToString(); } }
-public bool OptO { get { return _args[""-o""] as bool? == true; } }
+public bool OptO { get { return _args[""-o""].IsTrue; } }
 public string OptS { get { return null == _args[""-s""] ? ""128"" : _args[""-s""].ToString(); } }
 public string OptLong { get { return null == _args[""--long""] ? null : _args[""--long""].ToString(); } }
-public bool OptSwitchDash { get { return _args[""--switch-dash""] as bool? == true; } }
-public bool CmdCommand2 { get { return _args[""command2""] as bool? == true; } }
+public bool OptSwitchDash { get { return _args[""--switch-dash""].IsTrue; } }
+public bool CmdCommand2 { get { return _args[""command2""].IsTrue; } }
 public string ArgInputFile { get { return null == _args[""<input file>""] ? null : _args[""<input file>""].ToString(); } }
-public bool CmdFiles { get { return _args[""files""] as bool? == true; } }
-public ArrayList ArgFile { get { return (ArrayList)_args[""FILE""]; } }
+public bool CmdFiles { get { return _args[""files""].IsTrue; } }
+public ArrayList ArgFile { get { return _args[""FILE""].AsList; } }
 ";
             var s = new Docopt().GenerateCode(USAGE);
             Assert.AreEqual(NormalizeNewLines(expected), NormalizeNewLines(s));
