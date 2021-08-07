@@ -13,7 +13,7 @@ namespace DocoptNet.Tests
             var expected = new Dictionary<string, object>
                 {
                     {"--opt", true},
-                    {"<args>", new ArrayList {"this", "that"}}
+                    {"<args>", new[] {"this", "that"}}
                 };
             var actual = new Docopt().Apply("usage: prog [--opt] [<args>...]", "--opt this that");
             Assert.AreEqual(expected, actual);
@@ -25,7 +25,7 @@ namespace DocoptNet.Tests
             var expected = new Dictionary<string, object>
                 {
                     {"--opt", true},
-                    {"<args>", new ArrayList {"this", "that"}}
+                    {"<args>", new[] {"this", "that"}}
                 };
             var actual = new Docopt().Apply("usage: prog [--opt] [<args>...]", "this that --opt");
             Assert.AreEqual(expected, actual);
@@ -37,7 +37,7 @@ namespace DocoptNet.Tests
             var expected = new Dictionary<string, object>
                 {
                     {"--opt", false},
-                    {"<args>", new ArrayList {"this", "that", "--opt"}}
+                    {"<args>", new[] {"this", "that", "--opt"}}
                 };
             var actual = new Docopt().Apply("usage: prog [--opt] [<args>...]", "this that --opt", optionsFirst: true);
             Assert.AreEqual(expected, actual);

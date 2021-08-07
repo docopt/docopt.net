@@ -12,7 +12,7 @@ namespace DocoptNet.Tests
         {
             var expected = new Dictionary<string, object>
                 {
-                    {"--data", new ArrayList {"x"}}
+                    {"--data", new[] {"x"}}
                 };
             var actual = new Docopt().Apply("Usage: prog [--data=<data>...]\n\nOptions:\n\t-d --data=<arg>    Input data [default: x]", "");
             Assert.AreEqual(expected, actual);
@@ -23,7 +23,7 @@ namespace DocoptNet.Tests
         {
             var expected = new Dictionary<string, object>
                 {
-                    {"--data", new ArrayList {"x", "y"}}
+                    {"--data", new[] {"x", "y"}}
                 };
             var actual = new Docopt().Apply("Usage: prog [--data=<data>...]\n\n         Options:\n\t-d --data=<arg>    Input data [default: x y]", "");
             Assert.AreEqual(expected, actual);
@@ -34,7 +34,7 @@ namespace DocoptNet.Tests
         {
             var expected = new Dictionary<string, object>
                 {
-                    {"--data", new ArrayList {"this"}}
+                    {"--data", new[] {"this"}}
                 };
             var actual = new Docopt().Apply("Usage: prog [--data=<data>...]\n\n         Options:\n\t-d --data=<arg>    Input data [default: x y]", "--data=this");
             Assert.AreEqual(expected, actual);
