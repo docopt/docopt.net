@@ -19,7 +19,7 @@ namespace DocoptNet
         T Error(DocoptBaseException exception);
     }
 
-    static class StockApplicationResultAccumulators
+    static class ApplicationResultAccumulators
     {
         public static readonly IApplicationResultAccumulator<IDictionary<string, object>> ObjectDictionary = new DictionaryAccumulator();
         public static readonly IApplicationResultAccumulator<IDictionary<string, ValueObject>> ValueObjectDictionary = new ValueObjectDictionaryAccumulator();

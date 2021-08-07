@@ -27,7 +27,7 @@ namespace DocoptNet
             bool help = true,
             object version = null, bool optionsFirst = false, bool exit = false)
         {
-            return Apply(doc, tokens, StockApplicationResultAccumulators.ValueObjectDictionary, help, version, optionsFirst, exit);
+            return Apply(doc, tokens, ApplicationResultAccumulators.ValueObjectDictionary, help, version, optionsFirst, exit);
         }
 
         internal T Apply<T>(string doc, IApplicationResultAccumulator<T> accumulator)

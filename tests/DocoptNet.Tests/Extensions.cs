@@ -27,7 +27,7 @@ namespace DocoptNet.Tests
                                                         bool optionsFirst = false,
                                                         bool exit = false)
         {
-            return docopt.Apply(doc, argv.List, StockApplicationResultAccumulators.ObjectDictionary, help, version, optionsFirst, exit);
+            return docopt.Apply(doc, argv.List, ApplicationResultAccumulators.ObjectDictionary, help, version, optionsFirst, exit);
         }
     }
 
