@@ -68,7 +68,7 @@ namespace DocoptNet
 
         public override string ToString()
         {
-            return $"{GetType().Name}({Name}, {ValueObject.Format(Value, Value, v => v is ICollection collection ? collection.Cast<object>() : null)})";
+            return $"{GetType().Name}({Name}, {ValueObject.Format(Value)})";
         }
     }
 }
