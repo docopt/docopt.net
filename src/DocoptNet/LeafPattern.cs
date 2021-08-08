@@ -44,12 +44,12 @@ namespace DocoptNet
             else
             {
                 var newList = new ArrayList();
-                if (Value is ICollection collection)
-                    newList.AddRange(collection);
+                if (Value is ICollection values)
+                    newList.AddRange(values);
                 else
                     newList.Add(Value);
-                if (increment is ArrayList list)
-                    newList.AddRange(list);
+                if (increment is ICollection increments)
+                    newList.AddRange(increments);
                 else
                     newList.Add(increment);
                 Value = newList;

@@ -27,9 +27,9 @@ namespace DocoptNet.Tests
                 {
                     if (argument.Value == null)
                         dict[argument.Key] = null;
-                    else if (argument.Value is ArrayList list)
+                    else if (argument.Value is ICollection collection)
                     {
-                        dict[argument.Key] = new ArrayList(list);
+                        dict[argument.Key] = new ArrayList(collection);
                     }
                     else
                         dict[argument.Key] = argument.Value;
