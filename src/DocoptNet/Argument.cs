@@ -1,31 +1,35 @@
 namespace DocoptNet
 {
-    using System.Collections;
+    using System.Collections.Generic;
 
     class Argument: LeafPattern
     {
-        public Argument(string name, object value = null) : base(name, value)
+        public Argument(string name) : this(name, Value.Null)
         {
         }
 
         public Argument(string name, string value)
-            : base(name, value)
+            : this(name, Value.Init(value))
         {
         }
 
-        public Argument(string name, ICollection coll)
-            : base(name, coll)
+        public Argument(string name, List<string> values)
+            : this(name, Value.Init(values))
         {
         }
 
         public Argument(string name, int value)
-            : base(name, value)
+            : this(name, Value.Init(value))
+        {
+        }
+
+        public Argument(string name, Value value) : base(name, value)
         {
         }
 
         public override Node ToNode()
         {
-            return new ArgumentNode(this.Name, this.Value is ICollection ? ValueType.List : ValueType.String);
+            return new ArgumentNode(this.Name, Value.IsStringList ? ValueType.List : ValueType.String);
         }
 
         public override string GenerateCode()
@@ -33,7 +37,7 @@ namespace DocoptNet
             var s = Name.Replace("<", "").Replace(">", "").ToLowerInvariant();
             s = "Arg" + GenerateCodeHelper.ConvertToPascalCase(s);
 
-            if (Value is ICollection)
+            if (Value.IsStringList)
             {
                 return $"public ArrayList {s} {{ get {{ return _args[\"{Name}\"].AsList; }} }}";
             }

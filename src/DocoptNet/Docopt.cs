@@ -1,7 +1,6 @@
 namespace DocoptNet
 {
     using System;
-    using System.Collections;
     using System.Collections.Generic;
     using System.Diagnostics;
     using System.Linq;
@@ -81,18 +80,18 @@ namespace DocoptNet
                     return pattern.Flat()
                                   .OfType<LeafPattern>()
                                   .Concat(collected)
-                                  .Aggregate(accumulator.New(), (state, p) => p switch
+                                  .Aggregate(accumulator.New(), (state, p) => (p, p.Value.Box()) switch
                                    {
-                                       Command  { Value: bool        } command  => accumulator.Command(state, command.Name, Box<bool>.General(command.Value)),
-                                       Command  { Value: int         } command  => accumulator.Command(state, command.Name, Box<int>.General(command.Value)),
-                                       Argument { Value: null        } argument => accumulator.Argument(state, argument.Name),
-                                       Argument { Value: string v    } argument => accumulator.Argument(state, argument.Name, Box.Specific(v)),
-                                       Argument { Value: ArrayList v } argument => accumulator.Argument(state, argument.Name, Box.Specific(v)),
-                                       Option   { Value: bool        } option   => accumulator.Option(state, option.Name, Box<bool>.General(option.Value)),
-                                       Option   { Value: int         } option   => accumulator.Option(state, option.Name, Box<int>.General(option.Value)),
-                                       Option   { Value: string v    } option   => accumulator.Option(state, option.Name, Box.Specific(v)),
-                                       Option   { Value: null        } option   => accumulator.Option(state, option.Name),
-                                       Option   { Value: ArrayList v } option   => accumulator.Option(state, option.Name, Box.Specific(v)),
+                                       (Command , bool v        ) => accumulator.Command(state, p.Name, Value.Init(v)),
+                                       (Command , int v         ) => accumulator.Command(state, p.Name, Value.Init(v)),
+                                       (Argument, null          ) => accumulator.Argument(state, p.Name, Value.Null),
+                                       (Argument, string v      ) => accumulator.Argument(state, p.Name, Value.Init(v)),
+                                       (Argument, List<string> v) => accumulator.Argument(state, p.Name, Value.Init(v)),
+                                       (Option  , bool v        ) => accumulator.Option(state, p.Name, Value.Init(v)),
+                                       (Option  , int v         ) => accumulator.Option(state, p.Name, Value.Init(v)),
+                                       (Option  , string v      ) => accumulator.Option(state, p.Name, Value.Init(v)),
+                                       (Option  , null          ) => accumulator.Option(state, p.Name, Value.Null),
+                                       (Option  , List<string> v) => accumulator.Option(state, p.Name, Value.Init(v)),
                                        var other => throw new NotSupportedException($"Unsupported pattern: {other}"),
                                    });
                 }
@@ -371,14 +370,14 @@ namespace DocoptNet
                     options.Add(option);
                     if (tokens.ThrowsInputError)
                     {
-                        option = new Option(shortName, null, 0, Boxed.True);
+                        option = new Option(shortName, null, 0, Value.True);
                     }
                 }
                 else
                 {
                     // why is copying necessary here?
                     option = new Option(shortName, similar[0].LongName, similar[0].ArgCount, similar[0].Value);
-                    object value = null;
+                    Value? value = null;
                     if (option.ArgCount != 0)
                     {
                         if (left == "")
@@ -387,16 +386,16 @@ namespace DocoptNet
                             {
                                 throw tokens.CreateException(shortName + " requires argument");
                             }
-                            value = tokens.Move();
+                            value = Value.Init(tokens.Move());
                         }
                         else
                         {
-                            value = left;
+                            value = Value.Init(left);
                             left = "";
                         }
                     }
                     if (tokens.ThrowsInputError)
-                        option.Value = value ?? Boxed.True;
+                        option.Value = value ?? Value.True;
                 }
                 parsed.Add(option);
             }
@@ -431,7 +430,7 @@ namespace DocoptNet
                 option = new Option(null, longName, argCount);
                 options.Add(option);
                 if (tokens.ThrowsInputError)
-                    option = new Option(null, longName, argCount, argCount != 0 ? value : Boxed.True);
+                    option = new Option(null, longName, argCount, value is { } v ? Value.Init(v) : Value.True);
             }
             else
             {
@@ -451,7 +450,7 @@ namespace DocoptNet
                     }
                 }
                 if (tokens.ThrowsInputError)
-                    option.Value = value ?? Boxed.True;
+                    option.Value = value is { } v ? Value.Init(v) : Value.True;
             }
             return new[] {option};
         }

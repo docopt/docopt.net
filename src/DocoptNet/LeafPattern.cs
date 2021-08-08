@@ -12,7 +12,7 @@ namespace DocoptNet
     {
         private readonly string _name;
 
-        protected LeafPattern(string name, object value = null)
+        protected LeafPattern(string name, Value value = default)
         {
             _name = name;
             Value = value;
@@ -27,7 +27,7 @@ namespace DocoptNet
             get { return _name; }
         }
 
-        public object Value { get; set; }
+        public Value Value { get; set; }
 
         public override ICollection<Pattern> Flat(params Type[] types)
         {

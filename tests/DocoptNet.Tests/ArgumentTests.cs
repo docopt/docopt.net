@@ -1,6 +1,7 @@
 namespace DocoptNet.Tests
 {
     using System.Collections;
+    using System.Collections.Generic;
     using NUnit.Framework;
 
     [TestFixture]
@@ -23,7 +24,7 @@ namespace DocoptNet.Tests
         [Test]
         public void ToString_array_value_returns_string_in_expected_format()
         {
-            var argument = new Argument("arg", new ArrayList { "foo", "bar", "baz" });
+            var argument = new Argument("arg", new List<string> { "foo", "bar", "baz" });
             Assert.AreEqual("Argument(arg, [foo, bar, baz])", argument.ToString());
         }
     }

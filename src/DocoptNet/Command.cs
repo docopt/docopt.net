@@ -2,7 +2,7 @@ namespace DocoptNet
 {
     class Command : Argument
     {
-        public Command(string name, object value = null) : base(name, value ?? Boxed.False)
+        public Command(string name, bool value = false) : base(name, value ? Value.True : Value.False)
         {
         }
 

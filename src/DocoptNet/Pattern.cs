@@ -92,18 +92,18 @@ namespace DocoptNet
                 {
                     if (e is Argument || e is Option { ArgCount: > 0 })
                     {
-                        if (e.Value == null)
+                        if (e.Value.IsNull)
                         {
-                            e.Value = new ArrayList();
+                            e.Value = Value.Init(new List<string>(0));
                         }
-                        else if (e.Value is not ICollection)
+                        else if (!e.Value.IsStringList)
                         {
-                            e.Value = new ArrayList(e.Value.ToString().Split(new char[0], StringSplitOptions.RemoveEmptyEntries));
+                            e.Value = Value.Init(new List<string>(e.Value.ToString().Split(new char[0], StringSplitOptions.RemoveEmptyEntries)));
                         }
                     }
                     if (e is Command || e is Option { ArgCount: 0 })
                     {
-                        e.Value = Boxed.Zero;
+                        e.Value = Value.Init(0);
                     }
                 }
             }

@@ -4,6 +4,7 @@ namespace DocoptNet
 {
     using System;
     using System.Collections;
+    using System.Collections.Generic;
     using System.Diagnostics;
     using System.Globalization;
     using System.Linq;
@@ -85,7 +86,7 @@ namespace DocoptNet
                         if (left[i] is Argument { Value: { } value })
                         {
                             if (value.ToString() == command.Name)
-                                return MatchLeaf(command, i, new Command(command.Name, Boxed.True));
+                                return MatchLeaf(command, i, new Command(command.Name, true));
                             break;
                         }
                     }
@@ -116,22 +117,22 @@ namespace DocoptNet
             MatchResult MatchLeaf(LeafPattern leaf, int index, LeafPattern match)
             {
                 var left_ = left.RemoveAt(index);
-                if (leaf is { Value: ICollection } or { Value: int })
+                if (leaf is { Value: { IsStringList: true } } or { Value: { IsInteger: true } })
                 {
                     var sameNames = collected.Where(a => a.Name == leaf.Name).ToList();
                     if (sameNames.Count == 0)
                     {
-                        match.Value = leaf.Value is int ? Boxed.One
-                                    : match.Value is string ? new ArrayList { match.Value }
+                        match.Value = leaf.Value.IsInteger ? Value.Init(1)
+                                    : match.Value.IsString ? Value.Init(new List<string> { (string)match.Value })
                                     : match.Value;
                     }
                     else
                     {
                         var sameName = sameNames[0];
-                        if (leaf.Value is int)
-                            sameName.Value = (int)sameName.Value + 1;
+                        if (leaf.Value.IsInteger)
+                            sameName.Value = Value.Init((int)sameName.Value + 1);
                         else
-                            ((IList)sameName.Value).Add(match.Value);
+                            ((List<string>)sameName.Value).Add((string)match.Value);
 
                         return new MatchResult(true, left_, collected);
                     }
