@@ -7,12 +7,10 @@ namespace DocoptNet
 
     partial class ValueObject // TODO : IEquatable<ValueObject>
     {
-        public object Value { get; private set; }
+        public object Value { get; }
 
         internal ValueObject(object obj) =>
             Value = obj is ICollection collection ? new ArrayList(collection) : obj;
-
-        internal ValueObject() => Value = null;
 
         public bool IsNullOrEmpty => Value == null || Value.ToString().Length == 0;
         public bool IsFalse => Value as bool? == false;
