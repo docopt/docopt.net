@@ -290,5 +290,27 @@ namespace DocoptNet.Tests
             var systemUnderTest = new ValueObject(expected);
             CollectionAssert.AreEqual(new [] { expected }, systemUnderTest.AsList, "AsList should evalute to a collection containing only the wrapped object.");
         }
+
+        [Test]
+        public void ToString_string_returns_string()
+        {
+            const string expected = "foobar";
+            var systemUnderTest = new ValueObject(expected);
+            Assert.AreEqual(expected, systemUnderTest.ToString());
+        }
+
+        [Test]
+        public void ToString_null_returns_empty()
+        {
+            var systemUnderTest = new ValueObject(null);
+            Assert.AreEqual(string.Empty, systemUnderTest.ToString());
+        }
+
+        [Test]
+        public void ToString_array_returns_bracketed_csv()
+        {
+            var systemUnderTest = new ValueObject(new ArrayList { "foo", "bar", "baz" });
+            Assert.AreEqual("[foo, bar, baz]", systemUnderTest.ToString());
+        }
     }
 }
