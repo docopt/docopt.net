@@ -115,7 +115,7 @@ namespace DocoptNet
             MatchResult MatchLeaf(LeafPattern leaf, int index, LeafPattern match)
             {
                 var left_ = left.RemoveAt(index);
-                var sameName = collected.Where(a => a.Name == leaf.Name).ToList();
+                var sameNames = collected.Where(a => a.Name == leaf.Name).ToList();
                 if (leaf is { Value: ICollection } or { Value: int })
                 {
                     var increment = Boxed.One;
@@ -123,12 +123,35 @@ namespace DocoptNet
                     {
                         increment = match.Value is string ? new ArrayList { match.Value } : match.Value;
                     }
-                    if (sameName.Count == 0)
+                    if (sameNames.Count == 0)
                     {
                         match.Value = increment;
                         return new MatchResult(true, left_, collected.Append(match));
                     }
-                    sameName[0].Add(increment);
+
+                    var sameName = sameNames[0];
+
+                    if (increment is int n)
+                    {
+                        if (sameName.Value is IList list)
+                            list.Add(n);
+                        else
+                            sameName.Value = n + (sameName.Value is ICollection ? 0 : Convert.ToInt32(sameName.Value));
+                    }
+                    else
+                    {
+                        var newList = new ArrayList();
+                        if (sameName.Value is ICollection values)
+                            newList.AddRange(values);
+                        else
+                            newList.Add(sameName.Value);
+                        if (increment is ICollection increments)
+                            newList.AddRange(increments);
+                        else
+                            newList.Add(increment);
+                        sameName.Value = newList;
+                    }
+
                     return new MatchResult(true, left_, collected);
                 }
                 return new MatchResult(true, left_, collected.Append(match));

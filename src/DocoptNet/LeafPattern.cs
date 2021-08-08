@@ -1,7 +1,6 @@
 namespace DocoptNet
 {
     using System;
-    using System.Collections;
     using System.Collections.Generic;
     using System.Linq;
 
@@ -28,33 +27,6 @@ namespace DocoptNet
         }
 
         public object Value { get; set; }
-
-        internal void Add(object increment)
-        {
-            if (increment == null) throw new ArgumentNullException(nameof(increment));
-            if (Value == null) throw new InvalidOperationException();
-
-            if (increment is int n)
-            {
-                if (Value is IList list)
-                    list.Add(n);
-                else
-                    Value = n + (Value is ICollection ? 0 : Convert.ToInt32(Value));
-            }
-            else
-            {
-                var newList = new ArrayList();
-                if (Value is ICollection values)
-                    newList.AddRange(values);
-                else
-                    newList.Add(Value);
-                if (increment is ICollection increments)
-                    newList.AddRange(increments);
-                else
-                    newList.Add(increment);
-                Value = newList;
-            }
-        }
 
         public override ICollection<Pattern> Flat(params Type[] types)
         {
