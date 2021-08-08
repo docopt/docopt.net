@@ -42,13 +42,14 @@ namespace DocoptNet
 
         public override string ToString()
         {
-            return Format(this, v => v.IsList ? v.AsList.Cast<object>() : null);
+            return Format(this, Value, c => c.IsList ? c.AsList.Cast<object>() : null);
         }
 
-        internal static string Format<T, TItem>(T value, Func<T, IEnumerable<TItem>> asList)
+        internal static string Format<TContainer, TValue, TItem>(TContainer container, TValue value,
+                                                                 Func<TContainer, IEnumerable<TItem>> asList)
         {
             return value is null ? string.Empty
-                 : asList(value) is { } items ? $"[{string.Join(", ", items)}]"
+                 : asList(container) is { } items ? $"[{string.Join(", ", items)}]"
                  : value.ToString();
         }
     }
