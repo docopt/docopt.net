@@ -1,6 +1,5 @@
 namespace DocoptNet.Tests
 {
-    using System.Collections;
     using System.Collections.Generic;
     using NUnit.Framework;
     using static DocoptNet.Tests.PatternFactory;
