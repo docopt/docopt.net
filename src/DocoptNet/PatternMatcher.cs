@@ -5,6 +5,7 @@ namespace DocoptNet
     using System;
     using System.Collections;
     using System.Diagnostics;
+    using System.Globalization;
     using System.Linq;
 
     static class PatternMatcher
@@ -115,44 +116,25 @@ namespace DocoptNet
             MatchResult MatchLeaf(LeafPattern leaf, int index, LeafPattern match)
             {
                 var left_ = left.RemoveAt(index);
-                var sameNames = collected.Where(a => a.Name == leaf.Name).ToList();
                 if (leaf is { Value: ICollection } or { Value: int })
                 {
-                    var increment = Boxed.One;
-                    if (leaf.Value is not int)
-                    {
-                        increment = match.Value is string ? new ArrayList { match.Value } : match.Value;
-                    }
+                    var sameNames = collected.Where(a => a.Name == leaf.Name).ToList();
                     if (sameNames.Count == 0)
                     {
-                        match.Value = increment;
-                        return new MatchResult(true, left_, collected.Append(match));
-                    }
-
-                    var sameName = sameNames[0];
-
-                    if (increment is int n)
-                    {
-                        if (sameName.Value is IList list)
-                            list.Add(n);
-                        else
-                            sameName.Value = n + (sameName.Value is ICollection ? 0 : Convert.ToInt32(sameName.Value));
+                        match.Value = leaf.Value is int ? Boxed.One
+                                    : match.Value is string ? new ArrayList { match.Value }
+                                    : match.Value;
                     }
                     else
                     {
-                        var newList = new ArrayList();
-                        if (sameName.Value is ICollection values)
-                            newList.AddRange(values);
+                        var sameName = sameNames[0];
+                        if (leaf.Value is int)
+                            sameName.Value = (int)sameName.Value + 1;
                         else
-                            newList.Add(sameName.Value);
-                        if (increment is ICollection increments)
-                            newList.AddRange(increments);
-                        else
-                            newList.Add(increment);
-                        sameName.Value = newList;
-                    }
+                            ((IList)sameName.Value).Add(match.Value);
 
-                    return new MatchResult(true, left_, collected);
+                        return new MatchResult(true, left_, collected);
+                    }
                 }
                 return new MatchResult(true, left_, collected.Append(match));
             }
