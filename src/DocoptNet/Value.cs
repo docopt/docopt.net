@@ -3,10 +3,12 @@
 namespace DocoptNet
 {
     using System;
+    using System.Diagnostics;
     using System.Diagnostics.CodeAnalysis;
 
     enum ValueKind { Null, Boolean, Integer, String, StringList }
 
+    [DebuggerDisplay("{" + nameof(DebugDisplay) + "(),nq}")]
     readonly struct Value
     {
         readonly int _int;    // stores: bool, int
@@ -40,6 +42,8 @@ namespace DocoptNet
                 ValueKind.StringList => (Stack<string>)this,
                 _                    => throw new InvalidOperationException()
             };
+
+        string DebugDisplay() => $"{Kind}: {this}";
 
         public override string ToString() => ValueObject.Format((TryAsStringList(out var stack) ? stack.Reverse() : this).Box());
 
