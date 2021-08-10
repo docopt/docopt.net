@@ -3,7 +3,6 @@
 namespace DocoptNet
 {
     using System;
-    using System.Collections.Generic;
     using System.Diagnostics;
     using System.Linq;
 
@@ -121,7 +120,7 @@ namespace DocoptNet
                     if (sameNames.Count == 0)
                     {
                         match.Value = leaf.Value.IsInteger ? Value.Init(1)
-                                    : match.Value.IsString ? Value.Init(new List<string> { (string)match.Value })
+                                    : match.Value.IsString ? Value.Init(Stack<string>.Empty.Push((string)match.Value))
                                     : match.Value;
                     }
                     else
@@ -130,7 +129,7 @@ namespace DocoptNet
                         if (leaf.Value.IsInteger)
                             sameName.Value = Value.Init((int)sameName.Value + 1);
                         else
-                            ((List<string>)sameName.Value).Add((string)match.Value);
+                            sameName.Value = Value.Init(((Stack<string>)sameName.Value).Push((string)match.Value));
 
                         return new MatchResult(true, left_, collected);
                     }

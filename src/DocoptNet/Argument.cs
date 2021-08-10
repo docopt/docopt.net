@@ -1,7 +1,5 @@
 namespace DocoptNet
 {
-    using System.Collections.Generic;
-
     class Argument: LeafPattern
     {
         public Argument(string name) : this(name, Value.Null)
@@ -13,8 +11,8 @@ namespace DocoptNet
         {
         }
 
-        public Argument(string name, List<string> values)
-            : this(name, Value.Init(values))
+        public Argument(string name, string[] values)
+            : this(name, Value.Init(Stack.BottomTop(values)))
         {
         }
 

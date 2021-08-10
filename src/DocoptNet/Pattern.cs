@@ -93,11 +93,11 @@ namespace DocoptNet
                     {
                         if (e.Value.IsNull)
                         {
-                            e.Value = Value.Init(new List<string>(0));
+                            e.Value = Value.Init(Stack<string>.Empty);
                         }
                         else if (!e.Value.IsStringList)
                         {
-                            e.Value = Value.Init(new List<string>(e.Value.ToString().Split(new char[0], StringSplitOptions.RemoveEmptyEntries)));
+                            e.Value = Value.Init(Stack.BottomTop(e.Value.ToString().Split(new char[0], StringSplitOptions.RemoveEmptyEntries)));
                         }
                     }
                     if (e is Command || e is Option { ArgCount: 0 })
