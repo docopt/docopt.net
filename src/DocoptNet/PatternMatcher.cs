@@ -94,7 +94,7 @@ namespace DocoptNet
                     for (var i = 0; i < left.Count; i++)
                     {
                         if (left[i] is Argument { Value: var value })
-                            return MatchLeaf(argument, i, new Argument(argument.Name, value));
+                            return MatchLeaf(argument, i, new Argument(argument.Name) { Value = value });
                     }
                     return new MatchResult(false, left, collected);
                 }

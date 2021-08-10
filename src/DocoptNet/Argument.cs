@@ -1,27 +1,30 @@
 namespace DocoptNet
 {
+    using System.Globalization;
+
     class Argument: LeafPattern
     {
-        public Argument(string name) : this(name, Value.Null)
+        public Argument(string name) : base(name, Value.Null)
         {
         }
 
         public Argument(string name, string value)
-            : this(name, (Value)value)
+            : base(name, value)
         {
         }
 
         public Argument(string name, string[] values)
-            : this(name, Stack.BottomTop(values))
+            : base(name, Stack.BottomTop(values))
         {
         }
+
+        /// <remarks>
+        /// This is only used by tests as a convenience. The instantiated
+        /// <see cref="Value"/> is a string representation of the integer.
+        /// </remarks>
 
         public Argument(string name, int value)
-            : this(name, (Value)value)
-        {
-        }
-
-        public Argument(string name, Value value) : base(name, value)
+            : this(name, value.ToString(CultureInfo.InvariantCulture))
         {
         }
 
