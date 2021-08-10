@@ -14,7 +14,7 @@ namespace DocoptNet
         }
 
         public Argument(string name, string[] values)
-            : base(name, Stack.BottomTop(values))
+            : base(name, StringList.BottomTop(values))
         {
         }
 

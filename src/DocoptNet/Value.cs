@@ -11,8 +11,8 @@ namespace DocoptNet
     [DebuggerDisplay("{" + nameof(DebugDisplay) + "(),nq}")]
     readonly struct Value
     {
-        readonly int _int;    // stores: bool, int
-        readonly object? _ref; // stores: null, string, Stack<string>
+        readonly int _int;     // stores: bool, int
+        readonly object? _ref; // stores: null, string, StringList
 
         public static readonly Value Null  = new(ValueKind.Null, null);
         public static readonly Value True  = new(ValueKind.Boolean, 1);
@@ -39,28 +39,28 @@ namespace DocoptNet
                 ValueKind.Boolean    => (bool)this ? Boxed.True : Boxed.False,
                 ValueKind.Integer    => Boxed.Integer((int)this),
                 ValueKind.String     => (string)this,
-                ValueKind.StringList => (Stack<string>)this,
+                ValueKind.StringList => (StringList)this,
                 _                    => throw new InvalidOperationException()
             };
 
         string DebugDisplay() => $"{Kind}: {this}";
 
-        public override string ToString() => ValueObject.Format((TryAsStringList(out var stack) ? stack.Reverse() : this).Box());
+        public override string ToString() => ValueObject.Format((TryAsStringList(out var list) ? list.Reverse() : this).Box());
 
         public static implicit operator Value(bool value) => value ? True : False;
         public static implicit operator Value(int value) => new(ValueKind.Integer, value);
         public static implicit operator Value(string value) => new(ValueKind.String, value);
-        public static implicit operator Value(Stack<string> value) => new(ValueKind.StringList, value);
+        public static implicit operator Value(StringList value) => new(ValueKind.StringList, value);
 
         public bool TryAsBoolean(out bool value) { value = IsBoolean && _int != 0; return IsBoolean; }
         public bool TryAsInteger(out int value) { value = IsInteger ? _int : default; return IsInteger; }
         public bool TryAsString([NotNullWhen(true)]out string? value) { value = _ref is string s ? s : default; return IsString; }
-        public bool TryAsStringList([NotNullWhen(true)]out Stack<string>? value) { value = _ref is Stack<string> stack ? stack : default; return IsStringList; }
+        public bool TryAsStringList([NotNullWhen(true)]out StringList? value) { value = _ref is StringList list ? list : default; return IsStringList; }
 
         public static explicit operator bool(Value value) => value.TryAsBoolean(out var f) ? f : throw new InvalidCastException();
         public static explicit operator int(Value value) => value.TryAsInteger(out var n) ? n : throw new InvalidCastException();
         public static explicit operator string(Value value) => value.TryAsString(out var s) ? s : throw new InvalidCastException();
-        public static explicit operator Stack<string>(Value value) => value.TryAsStringList(out var stack) ? stack : throw new InvalidCastException();
+        public static explicit operator StringList(Value value) => value.TryAsStringList(out var list) ? list : throw new InvalidCastException();
 
         static class Boxed
         {

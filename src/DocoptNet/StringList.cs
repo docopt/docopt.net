@@ -8,26 +8,27 @@ namespace DocoptNet
     using System.Diagnostics;
     using System.Linq;
 
-    static class Stack
-    {
-        public static Stack<T> BottomTop<T>(params T[] items) =>
-            items.Aggregate(Stack<T>.Empty, (stack, item) => stack.Push(item));
-
-        public static Stack<T> TopBottom<T>(params T[] items) =>
-            items.Reverse().Aggregate(Stack<T>.Empty, (stack, item) => stack.Push(item));
-    }
+    /// <summary>
+    /// A list of strings modeled after "cons" lists.
+    /// </summary>
 
     [DebuggerDisplay("{" + nameof(DebugDisplay) + "(),nq}")]
-    sealed class Stack<T> : IEnumerable<T>, ICollection
+    sealed class StringList : IEnumerable<string>, ICollection
     {
-        public static readonly Stack<T> Empty = new(default!, null, 0);
+        public static readonly StringList Empty = new(default!, null, 0);
 
-        readonly T _top;
-        readonly Stack<T>? _next;
+        readonly string _top;
+        readonly StringList? _next;
 
-        Stack(T value, Stack<T> next) : this(value, next, next.Count + 1) { }
+        public static StringList BottomTop(params string[] items) =>
+            items.Aggregate(Empty, (stack, item) => stack.Push(item));
 
-        Stack(T value, Stack<T>? next, int count) =>
+        public static StringList TopBottom(params string[] items) =>
+            items.Reverse().Aggregate(Empty, (stack, item) => stack.Push(item));
+
+        StringList(string value, StringList next) : this(value, next, next.Count + 1) { }
+
+        StringList(string value, StringList? next, int count) =>
             (_top, _next, Count) = (value, next, count);
 
         public bool IsEmpty => Count == 0;
@@ -36,28 +37,28 @@ namespace DocoptNet
 
         string DebugDisplay() => Count > 1 ? $"Count = {Count}, Top = {Peek()}" : "(empty)";
 
-        public T Peek() => !IsEmpty ? _top : throw new InvalidOperationException();
-        public Stack<T> Pop() => _next ?? Empty;
-        public Stack<T> Push(T value) => new(value, this);
-        public Stack<T> Reverse() => this.Aggregate(Empty, (stack, item) => stack.Push(item));
+        public string Peek() => !IsEmpty ? _top : throw new InvalidOperationException();
+        public StringList Pop() => _next ?? Empty;
+        public StringList Push(string value) => new(value, this);
+        public StringList Reverse() => this.Aggregate(Empty, (stack, item) => stack.Push(item));
 
-        public List<T> ToList()
+        public List<string> ToList()
         {
-            var list = new List<T>(Count);
+            var list = new List<string>(Count);
             list.AddRange(this);
             return list;
         }
 
-        public T[] ToArray()
+        public string[] ToArray()
         {
-            var array = new T[Count];
+            var array = new string[Count];
             var i = 0;
             foreach (var item in this)
                 array[i++] = item;
             return array;
         }
 
-        public IEnumerator<T> GetEnumerator()
+        public IEnumerator<string> GetEnumerator()
         {
             for (var s = this; !s.IsEmpty; s = s.Pop())
                 yield return s._top;

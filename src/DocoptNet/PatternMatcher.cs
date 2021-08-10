@@ -120,7 +120,7 @@ namespace DocoptNet
                     if (sameNames.Count == 0)
                     {
                         match.Value = leaf.Value.IsInteger ? 1
-                                    : match.Value.TryAsString(out var s) ? Stack<string>.Empty.Push(s)
+                                    : match.Value.TryAsString(out var s) ? StringList.Empty.Push(s)
                                     : match.Value;
                     }
                     else
@@ -128,7 +128,7 @@ namespace DocoptNet
                         var sameName = sameNames[0];
                         sameName.Value = sameName.Value.TryAsInteger(out var n)
                                        ? n + 1
-                                       : ((Stack<string>)sameName.Value).Push((string)match.Value);
+                                       : ((StringList)sameName.Value).Push((string)match.Value);
 
                         return new MatchResult(true, left_, collected);
                     }
