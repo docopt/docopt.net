@@ -82,16 +82,16 @@ namespace DocoptNet
                                   .Concat(collected)
                                   .Aggregate(accumulator.New(), (state, p) => (p, p.Value.Box()) switch
                                    {
-                                       (Command , bool v         ) => accumulator.Command(state, p.Name, Value.Init(v)),
-                                       (Command , int v          ) => accumulator.Command(state, p.Name, Value.Init(v)),
+                                       (Command , bool v         ) => accumulator.Command(state, p.Name, v),
+                                       (Command , int v          ) => accumulator.Command(state, p.Name, v),
                                        (Argument, null           ) => accumulator.Argument(state, p.Name, Value.Null),
-                                       (Argument, string v       ) => accumulator.Argument(state, p.Name, Value.Init(v)),
-                                       (Argument, Stack<string> v) => accumulator.Argument(state, p.Name, Value.Init(v.Reverse())),
-                                       (Option  , bool v         ) => accumulator.Option(state, p.Name, Value.Init(v)),
-                                       (Option  , int v          ) => accumulator.Option(state, p.Name, Value.Init(v)),
-                                       (Option  , string v       ) => accumulator.Option(state, p.Name, Value.Init(v)),
+                                       (Argument, string v       ) => accumulator.Argument(state, p.Name, v),
+                                       (Argument, Stack<string> v) => accumulator.Argument(state, p.Name, v.Reverse()),
+                                       (Option  , bool v         ) => accumulator.Option(state, p.Name, v),
+                                       (Option  , int v          ) => accumulator.Option(state, p.Name, v),
+                                       (Option  , string v       ) => accumulator.Option(state, p.Name, v),
                                        (Option  , null           ) => accumulator.Option(state, p.Name, Value.Null),
-                                       (Option  , Stack<string> v) => accumulator.Option(state, p.Name, Value.Init(v.Reverse())),
+                                       (Option  , Stack<string> v) => accumulator.Option(state, p.Name, v.Reverse()),
                                        var other => throw new NotSupportedException($"Unsupported pattern: {other}"),
                                    });
                 }
@@ -386,11 +386,11 @@ namespace DocoptNet
                             {
                                 throw tokens.CreateException(shortName + " requires argument");
                             }
-                            value = Value.Init(tokens.Move());
+                            value = tokens.Move();
                         }
                         else
                         {
-                            value = Value.Init(left);
+                            value = left;
                             left = "";
                         }
                     }
@@ -430,7 +430,7 @@ namespace DocoptNet
                 option = new Option(null, longName, argCount);
                 options.Add(option);
                 if (tokens.ThrowsInputError)
-                    option = new Option(null, longName, argCount, value is { } v ? Value.Init(v) : Value.True);
+                    option = new Option(null, longName, argCount, value is { } v ? v : Value.True);
             }
             else
             {
@@ -450,7 +450,7 @@ namespace DocoptNet
                     }
                 }
                 if (tokens.ThrowsInputError)
-                    option.Value = value is { } v ? Value.Init(v) : Value.True;
+                    option.Value = value is { } v ? v : Value.True;
             }
             return new[] {option};
         }

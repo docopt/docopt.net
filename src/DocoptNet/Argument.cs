@@ -7,17 +7,17 @@ namespace DocoptNet
         }
 
         public Argument(string name, string value)
-            : this(name, Value.Init(value))
+            : this(name, (Value)value)
         {
         }
 
         public Argument(string name, string[] values)
-            : this(name, Value.Init(Stack.BottomTop(values)))
+            : this(name, Stack.BottomTop(values))
         {
         }
 
         public Argument(string name, int value)
-            : this(name, Value.Init(value))
+            : this(name, (Value)value)
         {
         }
 

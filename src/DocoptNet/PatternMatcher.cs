@@ -119,17 +119,16 @@ namespace DocoptNet
                     var sameNames = collected.Where(a => a.Name == leaf.Name).ToList();
                     if (sameNames.Count == 0)
                     {
-                        match.Value = leaf.Value.IsInteger ? Value.Init(1)
-                                    : match.Value.IsString ? Value.Init(Stack<string>.Empty.Push((string)match.Value))
+                        match.Value = leaf.Value.IsInteger ? 1
+                                    : match.Value.TryAsString(out var s) ? Stack<string>.Empty.Push(s)
                                     : match.Value;
                     }
                     else
                     {
                         var sameName = sameNames[0];
-                        if (leaf.Value.IsInteger)
-                            sameName.Value = Value.Init((int)sameName.Value + 1);
-                        else
-                            sameName.Value = Value.Init(((Stack<string>)sameName.Value).Push((string)match.Value));
+                        sameName.Value = sameName.Value.TryAsInteger(out var n)
+                                       ? n + 1
+                                       : ((Stack<string>)sameName.Value).Push((string)match.Value);
 
                         return new MatchResult(true, left_, collected);
                     }

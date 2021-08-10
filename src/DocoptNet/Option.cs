@@ -20,7 +20,7 @@ namespace DocoptNet
         }
 
         public Option(string shortName, string longName, int argCount, string value)
-            : this(shortName, longName, argCount, Value.Init(value))
+            : this(shortName, longName, argCount, (Value)value)
         {
         }
 
@@ -80,7 +80,7 @@ namespace DocoptNet
             {
                 var r = new Regex(@"\[default: (.*)\]", RegexOptions.IgnoreCase);
                 var m = r.Match(description);
-                value = m.Success ? Value.Init(m.Groups[1].Value) : Value.Null;
+                value = m.Success ? m.Groups[1].Value : Value.Null;
             }
             return new Option(shortName, longName, argCount, value);
         }
