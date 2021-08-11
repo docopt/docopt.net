@@ -19,9 +19,9 @@ namespace DocoptNet
         abstract class DictionaryAccumulator<T> : IApplicationResultAccumulator<IDictionary<string, T>>
         {
             public IDictionary<string, T> New() => new Dictionary<string, T>();
-            public IDictionary<string, T> Command(IDictionary<string, T> state, string name, in Value value) => Adding(state, name, value.Box());
-            public IDictionary<string, T> Argument(IDictionary<string, T> state, string name, in Value value) => Adding(state, name, value.Box());
-            public IDictionary<string, T> Option(IDictionary<string, T> state, string name, in Value value) => Adding(state, name, value.Box());
+            public IDictionary<string, T> Command(IDictionary<string, T> state, string name, in Value value) => Adding(state, name, value.Box);
+            public IDictionary<string, T> Argument(IDictionary<string, T> state, string name, in Value value) => Adding(state, name, value.Box);
+            public IDictionary<string, T> Option(IDictionary<string, T> state, string name, in Value value) => Adding(state, name, value.Box);
             public IDictionary<string, T> Error(DocoptBaseException exception) => null;
 
             IDictionary<string, T> Adding(IDictionary<string, T> dict, string name, object value)
