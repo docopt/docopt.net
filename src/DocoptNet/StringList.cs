@@ -42,22 +42,6 @@ namespace DocoptNet
         public StringList Push(string value) => new(value, this);
         public StringList Reverse() => this.Aggregate(Empty, (stack, item) => stack.Push(item));
 
-        public List<string> ToList()
-        {
-            var list = new List<string>(Count);
-            list.AddRange(this);
-            return list;
-        }
-
-        public string[] ToArray()
-        {
-            var array = new string[Count];
-            var i = 0;
-            foreach (var item in this)
-                array[i++] = item;
-            return array;
-        }
-
         public IEnumerator<string> GetEnumerator()
         {
             for (var s = this; !s.IsEmpty; s = s.Pop())
