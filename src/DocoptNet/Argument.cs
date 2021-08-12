@@ -4,7 +4,7 @@ namespace DocoptNet
 
     class Argument: LeafPattern
     {
-        public Argument(string name) : base(name, Value.Null)
+        public Argument(string name) : base(name, Value.None)
         {
         }
 

@@ -6,15 +6,15 @@ namespace DocoptNet
     using System.Diagnostics;
     using System.Diagnostics.CodeAnalysis;
 
-    enum ValueKind { Null, Boolean, Integer, String, StringList }
+    enum ValueKind { None, Boolean, Integer, String, StringList }
 
     [DebuggerDisplay("{" + nameof(DebugDisplay) + "(),nq}")]
     readonly struct Value
     {
         readonly int _int;     // stores: bool, int
-        readonly object? _ref; // stores: null, string, StringList
+        readonly object? _ref; // stores: string, StringList
 
-        public static readonly Value Null  = new(ValueKind.Null, null);
+        public static readonly Value None  = new(ValueKind.None, null);
         public static readonly Value True  = new(ValueKind.Boolean, 1);
         public static readonly Value False = new(ValueKind.Boolean, 0);
 
@@ -23,7 +23,7 @@ namespace DocoptNet
 
         public ValueKind Kind { get; }
 
-        public bool IsNull       => Kind == ValueKind.Null;
+        public bool IsNone       => Kind == ValueKind.None;
         public bool IsBoolean    => Kind == ValueKind.Boolean;
         public bool IsInteger    => Kind == ValueKind.Integer;
         public bool IsString     => Kind == ValueKind.String;
@@ -35,7 +35,7 @@ namespace DocoptNet
         public object? Box =>
             Kind switch
             {
-                ValueKind.Null       => null,
+                ValueKind.None       => null,
                 ValueKind.Boolean    => (bool)this ? Boxed.True : Boxed.False,
                 ValueKind.Integer    => Boxed.Integer((int)this),
                 ValueKind.String     => (string)this,

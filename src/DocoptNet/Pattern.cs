@@ -91,7 +91,7 @@ namespace DocoptNet
                 {
                     if (e is Argument || e is Option { ArgCount: > 0 })
                     {
-                        if (e.Value.IsNull)
+                        if (e.Value.IsNone)
                         {
                             e.Value = StringList.Empty;
                         }

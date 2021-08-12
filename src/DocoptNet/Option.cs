@@ -16,7 +16,7 @@ namespace DocoptNet
             LongName = longName;
             ArgCount = argCount;
             var v = value ?? Value.False;
-            Value = v.IsFalse && argCount > 0 ? Value.Null : v;
+            Value = v.IsFalse && argCount > 0 ? Value.None : v;
         }
 
         public Option(string shortName, string longName, int argCount, string value)
@@ -43,7 +43,7 @@ namespace DocoptNet
             {
                 return $"public bool {s} {{ get {{ return _args[\"{Name}\"].IsTrue; }} }}";
             }
-            var defaultValue = Value.IsNull ? "null" : $"\"{Value}\"";
+            var defaultValue = Value.IsNone ? "null" : $"\"{Value}\"";
             return string.Format("public string {0} {{ get {{ return null == _args[\"{1}\"] ? {2} : _args[\"{1}\"].ToString(); }} }}", s, Name, defaultValue);
         }
 
@@ -80,7 +80,7 @@ namespace DocoptNet
             {
                 var r = new Regex(@"\[default: (.*)\]", RegexOptions.IgnoreCase);
                 var m = r.Match(description);
-                value = m.Success ? m.Groups[1].Value : Value.Null;
+                value = m.Success ? m.Groups[1].Value : Value.None;
             }
             return new Option(shortName, longName, argCount, value);
         }
