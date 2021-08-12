@@ -114,7 +114,7 @@ namespace DocoptNet
             MatchResult MatchLeaf(LeafPattern leaf, int index, LeafPattern match)
             {
                 var left_ = left.RemoveAt(index);
-                if (leaf is { Value: { IsStringList: true } } or { Value: { IsInteger: true } })
+                if (leaf is { Value: { Kind: ValueKind.StringList or ValueKind.Integer } })
                 {
                     var sameNames = collected.Where(a => a.Name == leaf.Name).ToList();
                     if (sameNames.Count == 0)
