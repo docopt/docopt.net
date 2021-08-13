@@ -19,28 +19,28 @@ namespace DocoptNet
         abstract class DictionaryAccumulator<T> : IApplicationResultAccumulator<IDictionary<string, T>>
         {
             public IDictionary<string, T> New() => new Dictionary<string, T>();
-            public IDictionary<string, T> Command(IDictionary<string, T> state, string name, in Value value) => Adding(state, name, value.Box);
-            public IDictionary<string, T> Argument(IDictionary<string, T> state, string name, in Value value) => Adding(state, name, value.Box);
-            public IDictionary<string, T> Option(IDictionary<string, T> state, string name, in Value value) => Adding(state, name, value.Box);
+            public IDictionary<string, T> Command(IDictionary<string, T> state, string name, in Value value) => Adding(state, name, value);
+            public IDictionary<string, T> Argument(IDictionary<string, T> state, string name, in Value value) => Adding(state, name, value);
+            public IDictionary<string, T> Option(IDictionary<string, T> state, string name, in Value value) => Adding(state, name, value);
             public IDictionary<string, T> Error(DocoptBaseException exception) => null;
 
-            IDictionary<string, T> Adding(IDictionary<string, T> dict, string name, object value)
+            IDictionary<string, T> Adding(IDictionary<string, T> dict, string name, in Value value)
             {
                 dict[name] = Convert(value);
                 return dict;
             }
 
-            protected abstract T Convert(object value);
+            protected abstract T Convert(in Value value);
         }
 
         sealed class ValueObjectDictionaryAccumulator : DictionaryAccumulator<ValueObject>
         {
-            protected override ValueObject Convert(object value) => new(value);
+            protected override ValueObject Convert(in Value value) => new(value.Box);
         }
 
         sealed class DictionaryAccumulator : DictionaryAccumulator<object>
         {
-            protected override object Convert(object value) => value;
+            protected override object Convert(in Value value) => value.Box;
         }
     }
 }
