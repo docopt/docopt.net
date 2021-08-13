@@ -54,7 +54,7 @@ namespace DocoptNet
         {
             if (array is null) throw new ArgumentNullException(nameof(array));
             if (array.Rank != 1) throw new ArgumentException(null, nameof(array));
-            if (index + Count > array.Length) throw new ArgumentOutOfRangeException(nameof(index), index, null);
+            if (index < 0 || index + Count > array.Length) throw new ArgumentOutOfRangeException(nameof(index), index, null);
 
             foreach (var item in this)
                 array.SetValue(item, index++);
