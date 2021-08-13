@@ -45,7 +45,7 @@ namespace DocoptNet
 
         string DebugDisplay() => $"{Kind}: {this}";
 
-        public override string ToString() => ValueObject.Format((TryAsStringList(out var list) ? list.Reverse() : this).Box);
+        public override string ToString() => ValueObject.Format(Box);
 
         public static implicit operator Value(bool value) => value ? True : False;
         public static implicit operator Value(int value) => new(ValueKind.Integer, value);

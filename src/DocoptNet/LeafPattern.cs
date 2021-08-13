@@ -40,7 +40,8 @@ namespace DocoptNet
 
         public override string ToString()
         {
-            return $"{GetType().Name}({Name}, {ValueObject.Format(Value)})";
+            var value = Value.TryAsStringList(out var list) ? list.Reverse() : Value;
+            return $"{GetType().Name}({Name}, {ValueObject.Format(value)})";
         }
     }
 }
