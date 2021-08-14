@@ -57,9 +57,9 @@ namespace DocoptNet.Tests
         }
 
         [TestFixture]
-        public class ObjectDictionary
+        public class ValueDictionary
         {
-            static readonly IApplicationResultAccumulator<IDictionary<string, object>> Accumulator = ApplicationResultAccumulators.ObjectDictionary;
+            static readonly IApplicationResultAccumulator<IDictionary<string, Value>> Accumulator = ApplicationResultAccumulators.ValueDictionary;
 
             [Test]
             public void New_returns_empty_dictionary()
@@ -69,33 +69,33 @@ namespace DocoptNet.Tests
             }
 
             [Test]
-            public void Command_adds_entry_with_value_converted_to_object()
+            public void Command_adds_entry_with_value()
             {
                 var dict = Accumulator.New();
                 dict = Accumulator.Command(dict, "command", true);
                 var value = dict["command"];
-                Assert.That(value, Is.InstanceOf<bool>());
-                Assert.That(value, Is.EqualTo(true));
+                Assert.That(value, Is.InstanceOf<Value>());
+                Assert.That((bool)value, Is.EqualTo(true));
             }
 
             [Test]
-            public void Argument_adds_entry_with_value_converted_to_object()
+            public void Argument_adds_entry_with_value()
             {
                 var dict = Accumulator.New();
                 dict = Accumulator.Argument(dict, "<argument>", "value");
                 var value = dict["<argument>"];
-                Assert.That(value, Is.InstanceOf<string>());
-                Assert.That(value, Is.EqualTo("value"));
+                Assert.That(value, Is.InstanceOf<Value>());
+                Assert.That((string)value, Is.EqualTo("value"));
             }
 
             [Test]
-            public void Option_adds_entry_with_value_converted_to_object()
+            public void Option_adds_entry_with_value()
             {
                 var dict = Accumulator.New();
                 dict = Accumulator.Argument(dict, "--option", "value");
                 var value = dict["--option"];
-                Assert.That(value, Is.InstanceOf<string>());
-                Assert.That(value, Is.EqualTo("value"));
+                Assert.That(value, Is.InstanceOf<Value>());
+                Assert.That((string)value, Is.EqualTo("value"));
             }
 
             [Test]

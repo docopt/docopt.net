@@ -4,6 +4,7 @@ namespace DocoptNet.Tests
 {
     using System;
     using System.Collections;
+    using System.Linq;
     using NUnit.Framework;
 
     [TestFixture]
@@ -127,6 +128,34 @@ namespace DocoptNet.Tests
             var array = new string[length];
             var e = Assert.Throws<ArgumentOutOfRangeException>(() => list.CopyTo(array, index));
             Assert.That(e.ParamName, Is.EqualTo("index"));
+        }
+
+        [Test]
+        public void Equality_when_items_compare_equal()
+        {
+            var items = new[] { "foo", "bar", "baz" };
+            var list1 = StringList.TopBottom(items);
+            var list2 = StringList.TopBottom(items.Select(s => new string(s.ToCharArray())).ToArray());
+            Assert.That(list1 == list2, Is.True);
+            Assert.That(list1 != list2, Is.False);
+        }
+
+        [Test]
+        public void Equality_when_lengths_are_different()
+        {
+            var list1 = StringList.TopBottom("bar", "baz");
+            var list2 = list1.Push("foo");
+            Assert.That(list1 == list2, Is.False);
+            Assert.That(list1 != list2, Is.True);
+        }
+
+        [Test]
+        public void Equality_when_items_dont_compare_equal()
+        {
+            var list1 = StringList.TopBottom("foo", "bar", "baz");
+            var list2 = StringList.TopBottom("foo", "BAR", "baz");
+            Assert.That(list1 == list2, Is.False);
+            Assert.That(list1 != list2, Is.True);
         }
     }
 }

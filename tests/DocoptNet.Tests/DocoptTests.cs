@@ -47,7 +47,7 @@ namespace DocoptNet.Tests
         [Test]
         public void Test_issue_40_same_prefix()
         {
-            var expected = new Dictionary<string, object>
+            var expected = new Dictionary<string, Value>
                 {
                     {"--aabb", false},
                     {"--aa", true}
@@ -59,7 +59,7 @@ namespace DocoptNet.Tests
         [Test]
         public void Match_arg_only()
         {
-            var expected = new Dictionary<string, object>
+            var expected = new Dictionary<string, Value>
                 {
                     {"-v", false},
                     {"A", "arg"}
@@ -73,7 +73,7 @@ namespace DocoptNet.Tests
         [Test]
         public void Match_opt_and_arg()
         {
-            var expected = new Dictionary<string, object>
+            var expected = new Dictionary<string, Value>
                 {
                     {"-v", true},
                     {"A", "arg"}
@@ -98,15 +98,15 @@ namespace DocoptNet.Tests
         [Test]
         public void Match_one_opt_with_arg()
         {
-            var expected = new Dictionary<string, object>
+            var expected = new Dictionary<string, Value>
                 {
                     {"-v", true},
                     {"-q", false},
                     {"-r", false},
                     {"--help", false},
                     {"FILE", "file.py"},
-                    {"INPUT", null},
-                    {"OUTPUT", null}
+                    {"INPUT", default},
+                    {"OUTPUT", default}
                 };
             var actual = new Docopt().Apply(DOC, "-v file.py");
             Assert.AreEqual(expected, actual);
@@ -115,15 +115,15 @@ namespace DocoptNet.Tests
         [Test]
         public void Match_one_opt_only()
         {
-            var expected = new Dictionary<string, object>
+            var expected = new Dictionary<string, Value>
                 {
                     {"-v", true},
                     {"-q", false},
                     {"-r", false},
                     {"--help", false},
-                    {"FILE", null},
-                    {"INPUT", null},
-                    {"OUTPUT", null}
+                    {"FILE", default},
+                    {"INPUT", default},
+                    {"OUTPUT", default}
                 };
             var actual = new Docopt().Apply(DOC, "-v");
             Assert.AreEqual(expected, actual);
@@ -176,7 +176,7 @@ namespace DocoptNet.Tests
         [Test]
         public void Test_issue_59_assign_empty_string_to_long()
         {
-            var expected = new Dictionary<string, object>
+            var expected = new Dictionary<string, Value>
                 {
                     {"--long", ""}
                 };
@@ -187,7 +187,7 @@ namespace DocoptNet.Tests
         [Test]
         public void Test_issue_59_assign_empty_string_to_short()
         {
-            var expected = new Dictionary<string, object>
+            var expected = new Dictionary<string, Value>
                 {
                     {"-l", ""}
                 };
@@ -199,10 +199,10 @@ namespace DocoptNet.Tests
         public void Test_issue_68_options_shortcut_does_not_include_options_in_usage_pattern()
         {
             var args = new Docopt().Apply("usage: prog [-ab] [options]\noptions: -x\n -y", "-ax");
-            Assert.True(args["-a"] is true);
-            Assert.True(args["-b"] is false);
-            Assert.True(args["-x"] is true);
-            Assert.True(args["-y"] is false);
+            Assert.True(args["-a"].IsTrue);
+            Assert.True(args["-b"].IsFalse);
+            Assert.True(args["-x"].IsTrue);
+            Assert.True(args["-y"].IsFalse);
         }
     }
 }

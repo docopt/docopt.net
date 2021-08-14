@@ -84,13 +84,13 @@ namespace DocoptNet
                                    {
                                        (Command , bool v       ) => accumulator.Command(state, p.Name, v),
                                        (Command , int v        ) => accumulator.Command(state, p.Name, v),
-                                       (Argument, null         ) => accumulator.Argument(state, p.Name, Value.None),
+                                       (Argument, null         ) => accumulator.Argument(state, p.Name),
                                        (Argument, string v     ) => accumulator.Argument(state, p.Name, v),
                                        (Argument, StringList v ) => accumulator.Argument(state, p.Name, v.Reverse()),
                                        (Option  , bool v       ) => accumulator.Option(state, p.Name, v),
                                        (Option  , int v        ) => accumulator.Option(state, p.Name, v),
                                        (Option  , string v     ) => accumulator.Option(state, p.Name, v),
-                                       (Option  , null         ) => accumulator.Option(state, p.Name, Value.None),
+                                       (Option  , null         ) => accumulator.Option(state, p.Name),
                                        (Option  , StringList v ) => accumulator.Option(state, p.Name, v.Reverse()),
                                        var other => throw new NotSupportedException($"Unsupported pattern: {other}"),
                                    });

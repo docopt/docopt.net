@@ -9,7 +9,7 @@ namespace DocoptNet.Tests
         [Test]
         public void Simple_flag()
         {
-            var expected = new Dictionary<string, object>
+            var expected = new Dictionary<string, Value>
                 {
                     {"-v", true}
                 };
@@ -20,7 +20,7 @@ namespace DocoptNet.Tests
         [Test]
         public void Flag_0()
         {
-            var expected = new Dictionary<string, object>
+            var expected = new Dictionary<string, Value>
                 {
                     {"-v", 0}
                 };
@@ -31,7 +31,7 @@ namespace DocoptNet.Tests
         [Test]
         public void Flag_1()
         {
-            var expected = new Dictionary<string, object>
+            var expected = new Dictionary<string, Value>
                 {
                     {"-v", 1}
                 };
@@ -42,7 +42,7 @@ namespace DocoptNet.Tests
         [Test]
         public void Flag_2()
         {
-            var expected = new Dictionary<string, object>
+            var expected = new Dictionary<string, Value>
                 {
                     {"-v", 2}
                 };
@@ -59,7 +59,7 @@ namespace DocoptNet.Tests
         [Test]
         public void Flag_3()
         {
-            var expected = new Dictionary<string, object>
+            var expected = new Dictionary<string, Value>
                 {
                     {"-v", 3}
                 };
@@ -70,7 +70,7 @@ namespace DocoptNet.Tests
         [Test]
         public void Flag_one_or_more()
         {
-            var expected = new Dictionary<string, object>
+            var expected = new Dictionary<string, Value>
                 {
                     {"-v", 6}
                 };
@@ -81,7 +81,7 @@ namespace DocoptNet.Tests
         [Test]
         public void Flag_long_2()
         {
-            var expected = new Dictionary<string, object>
+            var expected = new Dictionary<string, Value>
                 {
                     {"--ver", 2}
                 };

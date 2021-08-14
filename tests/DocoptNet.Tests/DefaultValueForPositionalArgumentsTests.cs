@@ -9,9 +9,9 @@ namespace DocoptNet.Tests
         [Test]
         public void Expect_default_value()
         {
-            var expected = new Dictionary<string, object>
+            var expected = new Dictionary<string, Value>
                 {
-                    {"--data", new[] {"x"}}
+                    {"--data", StringList.TopBottom("x")}
                 };
             var actual = new Docopt().Apply("Usage: prog [--data=<data>...]\n\nOptions:\n\t-d --data=<arg>    Input data [default: x]", "");
             Assert.AreEqual(expected, actual);
@@ -20,9 +20,9 @@ namespace DocoptNet.Tests
         [Test]
         public void Expect_default_collection()
         {
-            var expected = new Dictionary<string, object>
+            var expected = new Dictionary<string, Value>
                 {
-                    {"--data", new[] {"x", "y"}}
+                    {"--data", StringList.TopBottom("x", "y")}
                 };
             var actual = new Docopt().Apply("Usage: prog [--data=<data>...]\n\n         Options:\n\t-d --data=<arg>    Input data [default: x y]", "");
             Assert.AreEqual(expected, actual);
@@ -31,9 +31,9 @@ namespace DocoptNet.Tests
         [Test]
         public void Expect_one_arg()
         {
-            var expected = new Dictionary<string, object>
+            var expected = new Dictionary<string, Value>
                 {
-                    {"--data", new[] {"this"}}
+                    {"--data", StringList.TopBottom("this")}
                 };
             var actual = new Docopt().Apply("Usage: prog [--data=<data>...]\n\n         Options:\n\t-d --data=<arg>    Input data [default: x y]", "--data=this");
             Assert.AreEqual(expected, actual);

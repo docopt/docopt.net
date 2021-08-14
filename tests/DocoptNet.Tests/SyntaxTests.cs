@@ -25,7 +25,7 @@ namespace DocoptNet.Tests
         [Test]
         public void Detect_double_dash()
         {
-            var expected = new Dictionary<string, object>
+            var expected = new Dictionary<string, Value>
                 {
                     {"-o", false},
                     {"<arg>", "-o"},
@@ -38,7 +38,7 @@ namespace DocoptNet.Tests
         [Test]
         public void No_double_dash()
         {
-            var expected = new Dictionary<string, object>
+            var expected = new Dictionary<string, Value>
                 {
                     {"-o", true},
                     {"<arg>", "1"},

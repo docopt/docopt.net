@@ -24,16 +24,7 @@ namespace DocoptNet.Tests
                 var arguments = new Docopt().Apply(doc, cmdLine);
                 var dict = new Dictionary<string, object>();
                 foreach (var argument in arguments)
-                {
-                    if (argument.Value == null)
-                        dict[argument.Key] = null;
-                    else if (argument.Value is ICollection collection)
-                    {
-                        dict[argument.Key] = new ArrayList(collection);
-                    }
-                    else
-                        dict[argument.Key] = argument.Value;
-                }
+                    dict[argument.Key] = argument.Value.Box;
                 actual = JsonConvert.SerializeObject(dict);
             }
             catch (Exception)

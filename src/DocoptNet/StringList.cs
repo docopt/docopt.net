@@ -9,11 +9,12 @@ namespace DocoptNet
     using System.Linq;
 
     /// <summary>
-    /// A list of strings modeled after "cons" lists.
+    /// A list of strings modeled after "cons" lists and that supports value equality
+    /// based on equality of items when compared to another list.
     /// </summary>
 
     [DebuggerDisplay("{" + nameof(DebugDisplay) + "(),nq}")]
-    sealed class StringList : IEnumerable<string>, ICollection
+    sealed class StringList : IEnumerable<string>, ICollection, IEquatable<StringList>
     {
         public static readonly StringList Empty = new(default!, null, 0);
 
@@ -41,6 +42,43 @@ namespace DocoptNet
         public StringList Pop() => _next ?? Empty;
         public StringList Push(string value) => new(value, this);
         public StringList Reverse() => this.Aggregate(Empty, (stack, item) => stack.Push(item));
+
+        public override bool Equals(object obj) =>
+            Equals(obj as StringList);
+
+        public bool Equals(StringList? other)
+        {
+            if (ReferenceEquals(null, other))
+                return false;
+
+            if (ReferenceEquals(this, other))
+                return true;
+
+            if (Count != other.Count)
+                return false;
+
+            for (StringList a = this, b = other; !a.IsEmpty; a = a.Pop(), b = b.Pop())
+            {
+                if (a.Peek() != b.Peek())
+                    return false;
+            }
+
+            return true;
+        }
+
+        public override int GetHashCode()
+        {
+            unchecked
+            {
+                var hashCode = 0;
+                for (var current = this; !current.IsEmpty; current = current.Pop())
+                    hashCode = (hashCode * 397) ^ current.Peek().GetHashCode();
+                return hashCode;
+            }
+        }
+
+        public static bool operator ==(StringList? left, StringList? right) => Equals(left, right);
+        public static bool operator !=(StringList? left, StringList? right) => !Equals(left, right);
 
         public IEnumerator<string> GetEnumerator()
         {
