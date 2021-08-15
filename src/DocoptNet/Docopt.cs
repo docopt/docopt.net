@@ -72,6 +72,28 @@ namespace DocoptNet
             }
         }
 
+        // TODO consider consolidating duplication with portions of Apply above
+        internal static (Pattern Pattern, ICollection<Option> Options, string ExitUsage)
+            ParsePattern(string doc)
+        {
+            var usageSections = ParseSection("usage:", doc);
+            if (usageSections.Length == 0)
+                throw new DocoptLanguageErrorException("\"usage:\" (case-insensitive) not found.");
+            if (usageSections.Length > 1)
+                throw new DocoptLanguageErrorException("More that one \"usage:\" (case-insensitive).");
+            var exitUsage = usageSections[0];
+            var options = ParseDefaults(doc);
+            var pattern = ParsePattern(FormalUsage(exitUsage), options);
+            var patternOptions = pattern.Flat<Option>().Distinct().ToList();
+            // [default] syntax for argument is disabled
+            foreach (OptionsShortcut optionsShortcut in pattern.Flat(typeof (OptionsShortcut)))
+            {
+                var docOptions = ParseDefaults(doc);
+                optionsShortcut.Children = docOptions.Distinct().Except(patternOptions).ToList();
+            }
+            return (pattern.Fix(), options, exitUsage);
+        }
+
         private void SetDefaultPrintExitHandlerIfNecessary(bool exit)
         {
             if (exit && PrintExit == null)
@@ -98,12 +120,30 @@ namespace DocoptNet
             return sb.ToString();
         }
 
-        public IEnumerable<Node> GetNodes(string doc)
+        public IEnumerable<Node> GetNodes(string doc) =>
+            GetNodes(doc, name => (Node)new CommandNode(name),
+                          (name, value) => new ArgumentNode(name, value is { IsList: true } ? ValueType.List : ValueType.String),
+                          (longName, shortName, argCount, _) => new OptionNode((longName ?? shortName).TrimStart('-'), argCount == 0 ? ValueType.Bool : ValueType.String));
+
+        internal IEnumerable<T> GetNodes<T>(string doc,
+                                            Func<string, T> commandSelector,
+                                            Func<string, ValueObject, T> argumentSelector,
+                                            Func<string, string, int, ValueObject, T> optionSelector)
         {
-            return GetFlatPatterns(doc)
-                .Select(p => p.ToNode())
-                .Where(p => p != null)
-                .ToArray();
+            var nodes =
+                from p in GetFlatPatterns(doc)
+                select p switch
+                {
+                    Command command   => (true, Value: commandSelector(command.Name)),
+                    Argument argument => (true, Value: argumentSelector(argument.Name, argument.Value)),
+                    Option option     => (true, Value: optionSelector(option.LongName, option.ShortName, option.ArgCount, option.Value)),
+                    _ => default,
+                }
+                into p
+                where p is (true, _)
+                select p.Value;
+
+            return nodes.ToArray();
         }
 
         static IEnumerable<Pattern> GetFlatPatterns(string doc)
