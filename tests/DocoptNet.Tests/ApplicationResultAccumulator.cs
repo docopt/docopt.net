@@ -43,7 +43,7 @@ namespace DocoptNet.Tests
             public void Option_adds_entry_with_value_converted_to_object()
             {
                 var dict = Accumulator.New();
-                dict = Accumulator.Argument(dict, "--option", "value");
+                dict = Accumulator.Option(dict, "--option", "value");
                 var value = dict["--option"];
                 Assert.That(value, Is.InstanceOf<ValueObject>());
                 Assert.That(value.Value, Is.EqualTo("value"));
@@ -92,7 +92,7 @@ namespace DocoptNet.Tests
             public void Option_adds_entry_with_value()
             {
                 var dict = Accumulator.New();
-                dict = Accumulator.Argument(dict, "--option", "value");
+                dict = Accumulator.Option(dict, "--option", "value");
                 var value = dict["--option"];
                 Assert.That(value, Is.InstanceOf<Value>());
                 Assert.That((string)value, Is.EqualTo("value"));
