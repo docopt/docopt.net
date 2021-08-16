@@ -171,8 +171,8 @@ namespace DocoptNet
                 select p switch
                 {
                     Command command   => (true, Value: commandSelector(command.Name)),
-                    Argument argument => (true, Value: argumentSelector(argument.Name, argument.Value)),
-                    Option option     => (true, Value: optionSelector(option.LongName, option.ShortName, option.ArgCount, option.Value)),
+                    Argument argument => (true, Value: argumentSelector(argument.Name, new ValueObject(argument.Value.Box))),
+                    Option option     => (true, Value: optionSelector(option.LongName, option.ShortName, option.ArgCount, new ValueObject(option.Value.Box))),
                     _ => default,
                 }
                 into p

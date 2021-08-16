@@ -43,7 +43,7 @@ namespace DocoptNet
         public StringList Push(string value) => new(value, this);
         public StringList Reverse() => this.Aggregate(Empty, (stack, item) => stack.Push(item));
 
-        public override bool Equals(object obj) =>
+        public override bool Equals(object? obj) =>
             Equals(obj as StringList);
 
         public bool Equals(StringList? other)
