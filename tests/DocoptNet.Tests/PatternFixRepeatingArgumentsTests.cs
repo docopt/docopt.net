@@ -1,6 +1,6 @@
 namespace DocoptNet.Tests
 {
-    using System.Collections;
+    using System;
     using NUnit.Framework;
 
     [TestFixture]
@@ -28,7 +28,7 @@ namespace DocoptNet.Tests
         public void Should_fix_required_args()
         {
             Assert.AreEqual(
-                new Required(new Argument("N", new ArrayList()), new Argument("N", new ArrayList())),
+                new Required(new Argument("N", Array.Empty<string>()), new Argument("N", Array.Empty<string>())),
                 new Required(new Argument("N"), new Argument("N")).FixRepeatingArguments()
                 );
         }
@@ -37,8 +37,8 @@ namespace DocoptNet.Tests
         public void Should_fix_either_args()
         {
             Assert.AreEqual(
-                new Either(new Argument("N", new ArrayList()),
-                           new OneOrMore(new Argument("N", new ArrayList()))),
+                new Either(new Argument("N", Array.Empty<string>()),
+                           new OneOrMore(new Argument("N", Array.Empty<string>()))),
                 new Either(new Argument("N"), new OneOrMore(new Argument("N"))).Fix()
                 );
         }

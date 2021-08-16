@@ -83,7 +83,7 @@ namespace DocoptNet
                         if (left[i] is Argument { Value: { } value })
                         {
                             if (value.ToString() == command.Name)
-                                return MatchLeaf(command, i, new Command(command.Name, new ValueObject(true)));
+                                return MatchLeaf(command, i, new Command(command.Name, true));
                             break;
                         }
                     }
@@ -94,7 +94,7 @@ namespace DocoptNet
                     for (var i = 0; i < left.Count; i++)
                     {
                         if (left[i] is Argument { Value: var value })
-                            return MatchLeaf(argument, i, new Argument(argument.Name, value));
+                            return MatchLeaf(argument, i, new Argument(argument.Name) { Value = value });
                     }
                     return new MatchResult(false, left, collected);
                 }
@@ -114,21 +114,24 @@ namespace DocoptNet
             MatchResult MatchLeaf(LeafPattern leaf, int index, LeafPattern match)
             {
                 var left_ = left.RemoveAt(index);
-                var sameName = collected.Where(a => a.Name == leaf.Name).ToList();
-                if (leaf.Value is { IsList: true } or { IsOfTypeInt: true })
+                if (leaf is { Value: { Kind: ValueKind.StringList or ValueKind.Integer } })
                 {
-                    var increment = new ValueObject(1);
-                    if (!leaf.Value.IsOfTypeInt)
+                    var sameNames = collected.Where(a => a.Name == leaf.Name).ToList();
+                    if (sameNames.Count == 0)
                     {
-                        increment = match.Value.IsString ? new ValueObject(new [] { match.Value }) : match.Value;
+                        match.Value = leaf.Value.IsInteger ? 1
+                                    : match.Value.TryAsString(out var s) ? StringList.Empty.Push(s)
+                                    : match.Value;
                     }
-                    if (sameName.Count == 0)
+                    else
                     {
-                        match.Value = increment;
-                        return new MatchResult(true, left_, collected.Append(match));
+                        var sameName = sameNames[0];
+                        sameName.Value = sameName.Value.TryAsInteger(out var n)
+                                       ? n + 1
+                                       : ((StringList)sameName.Value).Push((string)match.Value);
+
+                        return new MatchResult(true, left_, collected);
                     }
-                    sameName[0].Value.Add(increment);
-                    return new MatchResult(true, left_, collected);
                 }
                 return new MatchResult(true, left_, collected.Append(match));
             }

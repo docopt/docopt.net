@@ -1,7 +1,6 @@
 namespace DocoptNet
 {
     using System;
-    using System.Collections;
     using System.Collections.Generic;
     using System.Diagnostics;
     using System.Linq;
@@ -92,20 +91,18 @@ namespace DocoptNet
                 {
                     if (e is Argument || e is Option { ArgCount: > 0 })
                     {
-                        if (e.Value == null)
+                        if (e.Value.IsNone)
                         {
-                            e.Value = new ValueObject(new ArrayList());
+                            e.Value = StringList.Empty;
                         }
-                        else if (!e.Value.IsList)
+                        else if (!e.Value.IsStringList)
                         {
-                            e.Value =
-                                new ValueObject(e.Value.ToString()
-                                                 .Split(new char[0], StringSplitOptions.RemoveEmptyEntries));
+                            e.Value = StringList.BottomTop(e.Value.ToString().Split(new char[0], StringSplitOptions.RemoveEmptyEntries));
                         }
                     }
                     if (e is Command || e is Option { ArgCount: 0 })
                     {
-                        e.Value = new ValueObject(0);
+                        e.Value = 0;
                     }
                 }
             }

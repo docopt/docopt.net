@@ -1,0 +1,77 @@
+DocoptNet.ArgumentNode
+DocoptNet.ArgumentNode.ArgumentNode(string name, DocoptNet.ValueType valueType) -> void
+DocoptNet.CommandNode
+DocoptNet.CommandNode.CommandNode(string name) -> void
+DocoptNet.Docopt
+DocoptNet.Docopt.Apply(string doc) -> System.Collections.Generic.IDictionary<string, DocoptNet.ValueObject>
+DocoptNet.Docopt.Apply(string doc, DocoptNet.Tokens tokens, bool help = true, object version = null, bool optionsFirst = false, bool exit = false) -> System.Collections.Generic.IDictionary<string, DocoptNet.ValueObject>
+DocoptNet.Docopt.Apply(string doc, System.Collections.Generic.ICollection<string> argv, bool help = true, object version = null, bool optionsFirst = false, bool exit = false) -> System.Collections.Generic.IDictionary<string, DocoptNet.ValueObject>
+DocoptNet.Docopt.Docopt() -> void
+DocoptNet.Docopt.GenerateCode(string doc) -> string
+DocoptNet.Docopt.GetNodes(string doc) -> System.Collections.Generic.IEnumerable<DocoptNet.Node>
+DocoptNet.Docopt.OnPrintExit(string doc, int errorCode = 0) -> void
+DocoptNet.Docopt.PrintExit -> System.EventHandler<DocoptNet.PrintExitEventArgs>
+DocoptNet.DocoptBaseException
+DocoptNet.DocoptBaseException.DocoptBaseException() -> void
+DocoptNet.DocoptBaseException.DocoptBaseException(string message) -> void
+DocoptNet.DocoptBaseException.DocoptBaseException(string message, System.Exception inner) -> void
+DocoptNet.DocoptBaseException.DocoptBaseException(System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context) -> void
+DocoptNet.DocoptBaseException.ErrorCode.get -> int
+DocoptNet.DocoptExitException
+DocoptNet.DocoptExitException.DocoptExitException() -> void
+DocoptNet.DocoptExitException.DocoptExitException(string message) -> void
+DocoptNet.DocoptExitException.DocoptExitException(string message, System.Exception inner) -> void
+DocoptNet.DocoptExitException.DocoptExitException(System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context) -> void
+DocoptNet.DocoptInputErrorException
+DocoptNet.DocoptInputErrorException.DocoptInputErrorException() -> void
+DocoptNet.DocoptInputErrorException.DocoptInputErrorException(string message) -> void
+DocoptNet.DocoptInputErrorException.DocoptInputErrorException(string message, System.Exception inner) -> void
+DocoptNet.DocoptInputErrorException.DocoptInputErrorException(System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context) -> void
+DocoptNet.DocoptLanguageErrorException
+DocoptNet.DocoptLanguageErrorException.DocoptLanguageErrorException() -> void
+DocoptNet.DocoptLanguageErrorException.DocoptLanguageErrorException(string message) -> void
+DocoptNet.DocoptLanguageErrorException.DocoptLanguageErrorException(string message, System.Exception inner) -> void
+DocoptNet.DocoptLanguageErrorException.DocoptLanguageErrorException(System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context) -> void
+DocoptNet.Node
+DocoptNet.Node.Equals(DocoptNet.Node other) -> bool
+DocoptNet.Node.Name.get -> string
+DocoptNet.Node.Node(string name, DocoptNet.ValueType valueType) -> void
+DocoptNet.Node.ValueType.get -> DocoptNet.ValueType
+DocoptNet.OptionNode
+DocoptNet.OptionNode.OptionNode(string name, DocoptNet.ValueType valueType) -> void
+DocoptNet.PrintExitEventArgs
+DocoptNet.PrintExitEventArgs.ErrorCode.get -> int
+DocoptNet.PrintExitEventArgs.ErrorCode.set -> void
+DocoptNet.PrintExitEventArgs.Message.get -> string
+DocoptNet.PrintExitEventArgs.Message.set -> void
+DocoptNet.PrintExitEventArgs.PrintExitEventArgs(string msg, int errorCode) -> void
+DocoptNet.Tokens
+DocoptNet.Tokens.CreateException(string message) -> System.Exception
+DocoptNet.Tokens.Current() -> string
+DocoptNet.Tokens.ErrorType.get -> System.Type
+DocoptNet.Tokens.GetEnumerator() -> System.Collections.Generic.IEnumerator<string>
+DocoptNet.Tokens.Move() -> string
+DocoptNet.Tokens.ThrowsInputError.get -> bool
+DocoptNet.Tokens.Tokens(System.Collections.Generic.IEnumerable<string> source, System.Type errorType) -> void
+DocoptNet.ValueObject
+DocoptNet.ValueObject.AsInt.get -> int
+DocoptNet.ValueObject.AsList.get -> System.Collections.ArrayList
+DocoptNet.ValueObject.IsFalse.get -> bool
+DocoptNet.ValueObject.IsInt.get -> bool
+DocoptNet.ValueObject.IsList.get -> bool
+DocoptNet.ValueObject.IsNullOrEmpty.get -> bool
+DocoptNet.ValueObject.IsString.get -> bool
+DocoptNet.ValueObject.IsTrue.get -> bool
+DocoptNet.ValueObject.Value.get -> object
+DocoptNet.ValueType
+DocoptNet.ValueType.Bool = 0 -> DocoptNet.ValueType
+DocoptNet.ValueType.List = 1 -> DocoptNet.ValueType
+DocoptNet.ValueType.String = 2 -> DocoptNet.ValueType
+override DocoptNet.Node.Equals(object obj) -> bool
+override DocoptNet.Node.GetHashCode() -> int
+override DocoptNet.Node.ToString() -> string
+override DocoptNet.Tokens.ToString() -> string
+override DocoptNet.ValueObject.Equals(object obj) -> bool
+override DocoptNet.ValueObject.GetHashCode() -> int
+override DocoptNet.ValueObject.ToString() -> string
+static DocoptNet.Tokens.FromPattern(string pattern) -> DocoptNet.Tokens
