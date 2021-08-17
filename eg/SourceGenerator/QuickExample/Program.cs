@@ -9,6 +9,11 @@ try
 {
     program = new Program(args, version: "0.1.1rc", exit: true);
 }
+catch (DocoptExitException e)
+{
+    Console.WriteLine(e.Message);
+    return e.ErrorCode;
+}
 catch (DocoptInputErrorException e)
 {
     Console.Error.WriteLine(e);
