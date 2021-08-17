@@ -234,7 +234,7 @@ namespace DocoptNet
                     };
 
                     return matcher.Match(left, collected,
-                                         leaf.Name, leaf.Value.Box,
+                                         leaf.Name, leaf.Value.Object,
                                          leaf.Value.IsStringList,
                                          leaf.Value.IsInteger);
                 }

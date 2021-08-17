@@ -293,10 +293,10 @@ namespace DocoptNet.CodeGeneration
                 .DeclareAssigned("tokens", "new Tokens(args, typeof(DocoptInputErrorException))")
                 ["var options = Options.Select(e => new Option(e.ShortName, e.LongName, e.ArgCount, e.Value)).ToList()"].EndStatement
                 .DeclareAssigned("arguments", "Docopt.ParseArgv(tokens, options, optionsFirst).AsReadOnly()")
-                .If(@"help && arguments.Any(o => o is { Name: ""-h"" or ""--help"", Value: { Box: null or string { Length: 0 } } })")
+                .If(@"help && arguments.Any(o => o is { Name: ""-h"" or ""--help"", Value: { Object: null or string { Length: 0 } } })")
                 .Block
                 .Throw("new DocoptExitException(Usage)").BlockEnd
-                .If(@"version is not null && arguments.Any(o => o is { Name: ""--version"", Value: { Box: null or string { Length: 0 } } })")
+                .If(@"version is not null && arguments.Any(o => o is { Name: ""--version"", Value: { Object: null or string { Length: 0 } } })")
                 .Block
                 .Throw("new DocoptExitException(version.ToString())").BlockEnd
                 .DeclareAssigned("left", "arguments")
@@ -318,7 +318,7 @@ namespace DocoptNet.CodeGeneration
             {
                 _ = code['['].Literal(leaf.Name)["] = "]
                         ["new ValueObject("]
-                            [(leaf.Value.Box is StringList list ? list.Reverse() : leaf.Value).ToValueObject()]["),"].NewLine;
+                            [(leaf.Value.Object is StringList list ? list.Reverse() : leaf.Value).ToValueObject()]["),"].NewLine;
             }
 
             _ = code.SkipNextNewLine.BlockEnd.EndStatement;
@@ -326,7 +326,7 @@ namespace DocoptNet.CodeGeneration
             _ = code.NewLine
                     .Assign("collected", "a.Collected")
                     .ForEach("p", "collected").Block
-                    .Assign("dict[p.Name]", "(p.Value.Box is StringList list ? list.Reverse() : p.Value).ToValueObject()").BlockEnd
+                    .Assign("dict[p.Name]", "(p.Value.Object is StringList list ? list.Reverse() : p.Value).ToValueObject()").BlockEnd
                     .NewLine
                     .Return("dict").BlockEnd;
 

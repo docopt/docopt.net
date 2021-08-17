@@ -221,7 +221,7 @@ namespace DocoptNet.CodeGeneration
                 }
                 else
                 {
-                    _ = this[value.Box switch
+                    _ = this[value.Object switch
                     {
                         null => "null",
                         int n => SyntaxFactory.Literal(n),
