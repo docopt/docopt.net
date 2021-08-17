@@ -67,12 +67,10 @@ namespace DocoptNet
                     optionsShortcut.Children = docOptions.Distinct().Except(patternOptions).ToList();
                 }
 
-                static bool IsNullOrEmptyString(object obj) => obj is null or string { Length: 0 };
-
-                if (help && arguments.Any(o => o is { Name: "-h" or "--help" } && !IsNullOrEmptyString(o.Value)))
+                if (help && arguments.Any(o => o is { Name: "-h" or "--help", Value: { IsTrue: true } }))
                     OnPrintExit(doc);
 
-                if (version is not null && arguments.Any(o => o is { Name: "--version" } && !IsNullOrEmptyString(o.Value)))
+                if (version is not null && arguments.Any(o => o is { Name: "--version", Value: { IsTrue: true } }))
                     OnPrintExit(version.ToString());
 
                 if (pattern.Fix().Match(arguments) is (true, { Count: 0 }, var collected))
