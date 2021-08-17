@@ -165,7 +165,7 @@ namespace DocoptNet.CodeGeneration
         public CSharpSourceBuilder ForEach(string var, string expression) =>
             this["foreach (var "][var][" in "][expression][')'].NewLine;
 
-        public CSharpSourceBuilder this[ValueObject value]
+        public CSharpSourceBuilder this[ValueObject? value]
         {
             get
             {
@@ -195,6 +195,40 @@ namespace DocoptNet.CodeGeneration
                         { IsTrue: true } => "true",
                         { IsFalse: true } => "false",
                         { IsList: true, Value: ArrayList { Count: 0 } } => "new ArrayList()",
+                        _ => throw new NotSupportedException(), // todo emit diagnostic
+                    }];
+                }
+
+                return this;
+            }
+        }
+
+        public CSharpSourceBuilder this[Value value]
+        {
+            get
+            {
+                if (value.TryAsStringList(out var items) && items.Count is var count and > 0)
+                {
+                    _ = this["StringList.BottomTop("];
+                    var i = 0;
+                    foreach (var item in items)
+                    {
+                        _ = Literal(item);
+                        if (++i < count)
+                            _ = this[", "];
+                    }
+                    _ = this[")"];
+                }
+                else
+                {
+                    _ = this[value.Box switch
+                    {
+                        null => "null",
+                        int n => SyntaxFactory.Literal(n),
+                        string s => SyntaxFactory.Literal(s),
+                        true => "true",
+                        false => "false",
+                        StringList { IsEmpty: true } => "StringList.Empty",
                         _ => throw new NotSupportedException(), // todo emit diagnostic
                     }];
                 }

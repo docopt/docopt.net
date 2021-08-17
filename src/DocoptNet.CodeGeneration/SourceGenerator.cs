@@ -155,7 +155,7 @@ namespace DocoptNet.CodeGeneration
             }
 
             _ = code.NewLine;
-            var (pattern, options, exitUsage) = new Docopt().ParsePattern(usage);
+            var (pattern, options, exitUsage) = Docopt.ParsePattern(usage);
             AppendTree(pattern);
 
             void AppendTreeCode(Pattern pattern)
@@ -182,14 +182,14 @@ namespace DocoptNet.CodeGeneration
                         _ = code["new Command("][Literal(command.Name)][')'];
                         break;
                     case Argument { Name: var name }:
-                        _ = code["new Argument("][Literal(name)][", (ValueObject)null)"];
+                        _ = code["new Argument("][Literal(name)][")"];
                         break;
                     case Option option:
                         _ = code["new Option("]
                                     [option.ShortName is {} sn ? Literal(sn) : "null"][", "]
                                     [option.LongName is {} ln ? Literal(ln) : "null"][", "]
                                     [option.ArgCount][", "]
-                                    ["new ValueObject("][option.Value][')']
+                                    [option.Value]
                                 [')'];
                         break;
                     default:
@@ -261,7 +261,7 @@ namespace DocoptNet.CodeGeneration
                                 [".Match("]
                                     ["PatternMatcher."][lfn][", "]
                                     [Literal(name)][", "]
-                                    ["value: "][leaf.Value switch
+                                    ["value: "][leaf.Value.ToValueObject() switch
                                     {
                                         null => "null",
                                         { Value: null     } => "null",
@@ -270,10 +270,10 @@ namespace DocoptNet.CodeGeneration
                                         { Value: string v } => Literal(v).ToString(),
                                         { IsTrue: true    } => "true",
                                         { IsFalse: true   } => "false",
-                                        _ => throw new NotSupportedException(leaf.Value?.ToString() ?? "(null)"), // todo emit diagnostic
+                                        _ => throw new NotSupportedException(leaf.Value.ToString()), // todo emit diagnostic
                                     }][", "]
-                                    ["isList: "][leaf.Value is { IsList: true } ? "true" : "false"][", "]
-                                    ["isInt: "][leaf.Value is { IsOfTypeInt: true } ? "true" : "false"][')'].EndStatement;
+                                    ["isList: "][leaf.Value.IsStringList ? "true" : "false"][", "]
+                                    ["isInt: "][leaf.Value.IsInteger ? "true" : "false"][')'].EndStatement;
                         break;
                     }
                 }
@@ -293,10 +293,10 @@ namespace DocoptNet.CodeGeneration
                 .DeclareAssigned("tokens", "new Tokens(args, typeof(DocoptInputErrorException))")
                 ["var options = Options.Select(e => new Option(e.ShortName, e.LongName, e.ArgCount, e.Value)).ToList()"].EndStatement
                 .DeclareAssigned("arguments", "Docopt.ParseArgv(tokens, options, optionsFirst).AsReadOnly()")
-                .If(@"help && arguments.Any(o => o is { Name: ""-h"" or ""--help"", Value: { IsNullOrEmpty: false } })")
+                .If(@"help && arguments.Any(o => o is { Name: ""-h"" or ""--help"", Value: { Box: null or string { Length: 0 } } })")
                 .Block
                 .Throw("new DocoptExitException(Usage)").BlockEnd
-                .If(@"version is not null && arguments.Any(o => o is { Name: ""--version"", Value: { IsNullOrEmpty: false } })")
+                .If(@"version is not null && arguments.Any(o => o is { Name: ""--version"", Value: { Box: null or string { Length: 0 } } })")
                 .Block
                 .Throw("new DocoptExitException(version.ToString())").BlockEnd
                 .DeclareAssigned("left", "arguments")
@@ -318,7 +318,7 @@ namespace DocoptNet.CodeGeneration
             {
                 _ = code['['].Literal(leaf.Name)["] = "]
                         ["new ValueObject("]
-                            [leaf.Value]["),"].NewLine;
+                            [(leaf.Value.Box is StringList list ? list.Reverse() : leaf.Value).ToValueObject()]["),"].NewLine;
             }
 
             _ = code.SkipNextNewLine.BlockEnd.EndStatement;
@@ -326,7 +326,7 @@ namespace DocoptNet.CodeGeneration
             _ = code.NewLine
                     .Assign("collected", "a.Collected")
                     .ForEach("p", "collected").Block
-                    .Assign("dict[p.Name]", "p.Value").BlockEnd
+                    .Assign("dict[p.Name]", "(p.Value.Box is StringList list ? list.Reverse() : p.Value).ToValueObject()").BlockEnd
                     .NewLine
                     .Return("dict").BlockEnd;
 

@@ -85,8 +85,8 @@ namespace DocoptNet.Tests.CodeGeneration
             var name = args.ArgName!;
             Assert.That(name, Is.Not.Null);
             Assert.That(name.Count, Is.EqualTo(2));
-            Assert.That((string)((dynamic)name)[0].Value, Is.EqualTo("foo"));
-            Assert.That((string)((dynamic)name)[1].Value, Is.EqualTo("bar"));
+            Assert.That((string)((dynamic)name)[0], Is.EqualTo("foo"));
+            Assert.That((string)((dynamic)name)[1], Is.EqualTo("bar"));
 
             Assert.That(args.CmdMove, Is.False);
             Assert.That(args.ArgX, Is.Null);

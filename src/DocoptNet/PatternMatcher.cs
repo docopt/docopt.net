@@ -234,9 +234,9 @@ namespace DocoptNet
                     };
 
                     return matcher.Match(left, collected,
-                                         leaf.Name, leaf.Value,
-                                         leaf.Value?.IsList ?? false,
-                                         leaf.Value?.IsOfTypeInt ?? false);
+                                         leaf.Name, leaf.Value.Box,
+                                         leaf.Value.IsStringList,
+                                         leaf.Value.IsInteger);
                 }
                 default:
                     throw new ArgumentException(nameof(pattern));
@@ -263,20 +263,25 @@ namespace DocoptNet
                 return new MatchResult(false, left, collected);
             }
             var left_ = left.RemoveAt(index);
-            var sameName = collected.Where(a => a.Name == name).ToList();
             if (value != null && (isList || isInt))
             {
-                var increment = new ValueObject(1);
-                if (!isInt)
-                    increment = match.Value.IsString ? new ValueObject(new [] {match.Value})  : match.Value;
-                if (sameName.Count == 0)
+                var sameNames = collected.Where(a => a.Name == name).ToList();
+                if (sameNames.Count == 0)
                 {
-                    match.Value = increment;
+                    match.Value = isInt ? 1
+                                : match.Value.TryAsString(out var s) ? StringList.Empty.Push(s)
+                                : match.Value;
                     return new MatchResult(true, left_, collected.Append(match));
                 }
+                else
+                {
+                    var sameName = sameNames[0];
+                    sameName.Value = sameName.Value.TryAsInteger(out var n)
+                                   ? n + 1
+                                   : ((StringList)sameName.Value).Push((string)match.Value);
 
-                sameName[0].Value.Add(increment);
-                return new MatchResult(true, left_, collected);
+                    return new MatchResult(true, left_, collected);
+                }
             }
             return new MatchResult(true, left_, collected.Append(match));
         }
@@ -292,7 +297,7 @@ namespace DocoptNet
                 if (left[i] is Argument { Value: { } value })
                 {
                     if (value.ToString() == command)
-                        return (i, new Command(command, new ValueObject(true)));
+                        return (i, new Command(command, true));
                     break;
                 }
             }
@@ -304,7 +309,7 @@ namespace DocoptNet
             for (var i = 0; i < left.Count; i++)
             {
                 if (left[i] is Argument { Value: var value })
-                    return (i, new Argument(name, value));
+                    return (i, new Argument(name) { Value = value });
             }
             return default;
         }

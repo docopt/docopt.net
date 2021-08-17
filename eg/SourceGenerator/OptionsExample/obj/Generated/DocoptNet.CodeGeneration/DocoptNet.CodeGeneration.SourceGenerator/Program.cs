@@ -83,42 +83,42 @@ Options:
                     {
                         new Optional(new Pattern[]
                         {
-                            new Option("-h", "--help", 0, new ValueObject(false)),
-                            new Option("-v", "--verbose", 0, new ValueObject(false)),
-                            new Option("-q", "--quiet", 0, new ValueObject(false)),
-                            new Option("-r", "--repeat", 0, new ValueObject(false)),
-                            new Option("-f", "--file", 1, new ValueObject("*.py"))
+                            new Option("-h", "--help", 0, false),
+                            new Option("-v", "--verbose", 0, false),
+                            new Option("-q", "--quiet", 0, false),
+                            new Option("-r", "--repeat", 0, false),
+                            new Option("-f", "--file", 1, "*.py")
                         }),
                         new Optional(new Pattern[]
                         {
-                            new Option(null, "--exclude", 1, new ValueObject(".svn,CVS,.bzr,.hg,.git"))
+                            new Option(null, "--exclude", 1, ".svn,CVS,.bzr,.hg,.git")
                         }),
                         new Optional(new Pattern[]
                         {
                             new Either(new Pattern[]
                             {
-                                new Option(null, "--select", 1, new ValueObject(null)),
-                                new Option(null, "--ignore", 1, new ValueObject(null))
+                                new Option(null, "--select", 1, null),
+                                new Option(null, "--ignore", 1, null)
                             })
                         }),
                         new Optional(new Pattern[]
                         {
-                            new Option(null, "--show-source", 0, new ValueObject(false))
+                            new Option(null, "--show-source", 0, false)
                         }),
                         new Optional(new Pattern[]
                         {
-                            new Option(null, "--statistics", 0, new ValueObject(false))
+                            new Option(null, "--statistics", 0, false)
                         }),
                         new Optional(new Pattern[]
                         {
-                            new Option(null, "--count", 0, new ValueObject(false))
+                            new Option(null, "--count", 0, false)
                         }),
                         new Optional(new Pattern[]
                         {
-                            new Option(null, "--benchmark", 0, new ValueObject(false))
+                            new Option(null, "--benchmark", 0, false)
                         }),
                         new OneOrMore(
-                        new Argument("PATH", (ValueObject)null))
+                        new Argument("PATH"))
                     }),
                     new Required(new Pattern[]
                     {
@@ -126,35 +126,35 @@ Options:
                         {
                             new Either(new Pattern[]
                             {
-                                new Option(null, "--doctest", 0, new ValueObject(false)),
-                                new Option(null, "--testsuite", 1, new ValueObject(null))
+                                new Option(null, "--doctest", 0, false),
+                                new Option(null, "--testsuite", 1, null)
                             })
                         })
                     }),
                     new Required(new Pattern[]
                     {
-                        new Option(null, "--version", 0, new ValueObject(false))
+                        new Option(null, "--version", 0, false)
                     })
                 })
             });
 
         static readonly ICollection<Option> Options = new Option[]
         {
-            new Option("-h", "--help", 0, new ValueObject(false)),
-            new Option(null, "--version", 0, new ValueObject(false)),
-            new Option("-v", "--verbose", 0, new ValueObject(false)),
-            new Option("-q", "--quiet", 0, new ValueObject(false)),
-            new Option("-r", "--repeat", 0, new ValueObject(false)),
-            new Option(null, "--exclude", 1, new ValueObject(".svn,CVS,.bzr,.hg,.git")),
-            new Option("-f", "--file", 1, new ValueObject("*.py")),
-            new Option(null, "--select", 1, new ValueObject(null)),
-            new Option(null, "--ignore", 1, new ValueObject(null)),
-            new Option(null, "--show-source", 0, new ValueObject(false)),
-            new Option(null, "--statistics", 0, new ValueObject(false)),
-            new Option(null, "--count", 0, new ValueObject(false)),
-            new Option(null, "--benchmark", 0, new ValueObject(false)),
-            new Option(null, "--testsuite", 1, new ValueObject(null)),
-            new Option(null, "--doctest", 0, new ValueObject(false)),
+            new Option("-h", "--help", 0, false),
+            new Option(null, "--version", 0, false),
+            new Option("-v", "--verbose", 0, false),
+            new Option("-q", "--quiet", 0, false),
+            new Option("-r", "--repeat", 0, false),
+            new Option(null, "--exclude", 1, ".svn,CVS,.bzr,.hg,.git"),
+            new Option("-f", "--file", 1, "*.py"),
+            new Option(null, "--select", 1, null),
+            new Option(null, "--ignore", 1, null),
+            new Option(null, "--show-source", 0, false),
+            new Option(null, "--statistics", 0, false),
+            new Option(null, "--count", 0, false),
+            new Option(null, "--benchmark", 0, false),
+            new Option(null, "--testsuite", 1, null),
+            new Option(null, "--doctest", 0, false),
         };
 
         static Dictionary<string, ValueObject> Apply(IEnumerable<string> args, bool help = true, object version = null, bool optionsFirst = false, bool exit = false)
@@ -162,11 +162,11 @@ Options:
             var tokens = new Tokens(args, typeof(DocoptInputErrorException));
             var options = Options.Select(e => new Option(e.ShortName, e.LongName, e.ArgCount, e.Value)).ToList();
             var arguments = Docopt.ParseArgv(tokens, options, optionsFirst).AsReadOnly();
-            if (help && arguments.Any(o => o is { Name: "-h" or "--help", Value: { IsNullOrEmpty: false } }))
+            if (help && arguments.Any(o => o is { Name: "-h" or "--help", Value: { Box: null or string { Length: 0 } } }))
             {
                 throw new DocoptExitException(Usage);
             }
-            if (version is not null && arguments.Any(o => o is { Name: "--version", Value: { IsNullOrEmpty: false } }))
+            if (version is not null && arguments.Any(o => o is { Name: "--version", Value: { Box: null or string { Length: 0 } } }))
             {
                 throw new DocoptExitException(version.ToString());
             }
@@ -467,7 +467,7 @@ Options:
             collected = a.Collected;
             foreach (var p in collected)
             {
-                dict[p.Name] = p.Value;
+                dict[p.Name] = (p.Value.Box is StringList list ? list.Reverse() : p.Value).ToValueObject();
             }
 
             return dict;

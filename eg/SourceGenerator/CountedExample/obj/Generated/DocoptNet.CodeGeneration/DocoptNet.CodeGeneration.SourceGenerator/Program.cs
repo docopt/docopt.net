@@ -46,12 +46,12 @@ Try: CountedExample -vvvvvvvvvv
                 {
                     new Required(new Pattern[]
                     {
-                        new Option(null, "--help", 0, new ValueObject(false))
+                        new Option(null, "--help", 0, false)
                     }),
                     new Required(new Pattern[]
                     {
                         new OneOrMore(
-                        new Option("-v", null, 0, new ValueObject(0)))
+                        new Option("-v", null, 0, 0))
                     }),
                     new Required(new Pattern[]
                     {
@@ -66,22 +66,22 @@ Try: CountedExample -vvvvvvvvvv
                         new OneOrMore(
                         new Required(new Pattern[]
                         {
-                            new Option(null, "--path", 1, new ValueObject(new ArrayList()))
+                            new Option(null, "--path", 1, StringList.Empty)
                         }))
                     }),
                     new Required(new Pattern[]
                     {
-                        new Argument("<file>", (ValueObject)null),
-                        new Argument("<file>", (ValueObject)null)
+                        new Argument("<file>"),
+                        new Argument("<file>")
                     })
                 })
             });
 
         static readonly ICollection<Option> Options = new Option[]
         {
-            new Option(null, "--help", 0, new ValueObject(false)),
-            new Option("-v", null, 0, new ValueObject(0)),
-            new Option(null, "--path", 1, new ValueObject(new ArrayList())),
+            new Option(null, "--help", 0, false),
+            new Option("-v", null, 0, 0),
+            new Option(null, "--path", 1, StringList.Empty),
         };
 
         static Dictionary<string, ValueObject> Apply(IEnumerable<string> args, bool help = true, object version = null, bool optionsFirst = false, bool exit = false)
@@ -89,11 +89,11 @@ Try: CountedExample -vvvvvvvvvv
             var tokens = new Tokens(args, typeof(DocoptInputErrorException));
             var options = Options.Select(e => new Option(e.ShortName, e.LongName, e.ArgCount, e.Value)).ToList();
             var arguments = Docopt.ParseArgv(tokens, options, optionsFirst).AsReadOnly();
-            if (help && arguments.Any(o => o is { Name: "-h" or "--help", Value: { IsNullOrEmpty: false } }))
+            if (help && arguments.Any(o => o is { Name: "-h" or "--help", Value: { Box: null or string { Length: 0 } } }))
             {
                 throw new DocoptExitException(Usage);
             }
-            if (version is not null && arguments.Any(o => o is { Name: "--version", Value: { IsNullOrEmpty: false } }))
+            if (version is not null && arguments.Any(o => o is { Name: "--version", Value: { Box: null or string { Length: 0 } } }))
             {
                 throw new DocoptExitException(version.ToString());
             }
@@ -276,7 +276,7 @@ Try: CountedExample -vvvvvvvvvv
             collected = a.Collected;
             foreach (var p in collected)
             {
-                dict[p.Name] = p.Value;
+                dict[p.Name] = (p.Value.Box is StringList list ? list.Reverse() : p.Value).ToValueObject();
             }
 
             return dict;

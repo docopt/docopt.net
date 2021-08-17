@@ -9,18 +9,18 @@ namespace DocoptNet
         public string LongName { get; private set; }
         public int ArgCount { get; private set; }
 
-        public Option(string shortName = null, string longName = null, int argCount = 0, ValueObject value = null)
+        public Option(string shortName = null, string longName = null, int argCount = 0, Value? value = null)
             : base()
         {
             ShortName = shortName;
             LongName = longName;
             ArgCount = argCount;
-            var v = value ?? new ValueObject(false);
-            Value = (v.IsFalse && argCount > 0) ? null : v;
+            var v = value ?? Value.False;
+            Value = v.IsFalse && argCount > 0 ? Value.None : v;
         }
 
         public Option(string shortName, string longName, int argCount, string value)
-            : this(shortName, longName, argCount, new ValueObject(value))
+            : this(shortName, longName, argCount, (Value)value)
         {
         }
 
@@ -43,7 +43,7 @@ namespace DocoptNet
             {
                 return $"public bool {s} {{ get {{ ValueObject v = _args[\"{Name}\"]; return v.IsTrue || v.IsOfTypeInt && v.AsInt > 0; }} }}";
             }
-            var defaultValue = Value == null ? "null" : $"\"{Value}\"";
+            var defaultValue = Value.IsNone ? "null" : $"\"{Value}\"";
             return string.Format("public string {0} {{ get {{ return null == _args[\"{1}\"] ? {2} : _args[\"{1}\"].ToString(); }} }}", s, Name, defaultValue);
         }
 
@@ -61,7 +61,7 @@ namespace DocoptNet
             string shortName = null;
             string longName = null;
             var argCount = 0;
-            var value = new ValueObject(false);
+            var value = Value.False;
             var (options, _, description) = optionDescription.Trim().Partition(DESC_SEPARATOR);
             foreach (var s in options.Split(" \t,=".ToCharArray(), StringSplitOptions.RemoveEmptyEntries))
             {
@@ -80,7 +80,7 @@ namespace DocoptNet
             {
                 var r = new Regex(@"\[default: (.*)\]", RegexOptions.IgnoreCase);
                 var m = r.Match(description);
-                value = m.Success ? new ValueObject(m.Groups[1].Value) : null;
+                value = m.Success ? m.Groups[1].Value : Value.None;
             }
             return new Option(shortName, longName, argCount, value);
         }

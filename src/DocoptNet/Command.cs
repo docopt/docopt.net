@@ -1,8 +1,8 @@
 namespace DocoptNet
 {
-    class Command : Argument
+    class Command : LeafPattern
     {
-        public Command(string name, ValueObject value = null) : base(name, value ?? new ValueObject(false))
+        public Command(string name, bool value = false) : base(name, value ? Value.True : Value.False)
         {
         }
 

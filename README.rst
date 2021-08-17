@@ -71,14 +71,17 @@ Differences from reference python implementation
 Installation
 ======================================================================
 
+Use dotnet
+
+    dotnet add package Docopt.net
+    
 Use nuget
 
-    nuget install Docopt.net -Version 0.6.1.11
+    nuget install Docopt.net
 
-Alternatively, you can just drop ``DocoptNet.dll`` file into your
-project--it is self-contained.
-
-**docopt.net** is tested with Visual Studio 2012.
+Under Visual Studio
+    
+    Just drop ``DocoptNet.dll`` file into your project--it is self-contained.
 
 API
 ======================================================================

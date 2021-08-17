@@ -55,15 +55,15 @@ Options:
                     {
                         new Optional(new Pattern[]
                         {
-                            new Option("-v", null, 0, new ValueObject(false)),
-                            new Option("-q", null, 0, new ValueObject(false)),
-                            new Option("-r", null, 0, new ValueObject(false)),
-                            new Option("-h", "--help", 0, new ValueObject(false))
+                            new Option("-v", null, 0, false),
+                            new Option("-q", null, 0, false),
+                            new Option("-r", null, 0, false),
+                            new Option("-h", "--help", 0, false)
                         }),
                         new OneOrMore(
                         new Optional(new Pattern[]
                         {
-                            new Argument("FILE", (ValueObject)null)
+                            new Argument("FILE")
                         }))
                     }),
                     new Required(new Pattern[]
@@ -72,24 +72,24 @@ Options:
                         {
                             new Either(new Pattern[]
                             {
-                                new Option(null, "--left", 0, new ValueObject(false)),
-                                new Option(null, "--right", 0, new ValueObject(false))
+                                new Option(null, "--left", 0, false),
+                                new Option(null, "--right", 0, false)
                             })
                         }),
-                        new Argument("CORRECTION", (ValueObject)null),
-                        new Argument("FILE", (ValueObject)null)
+                        new Argument("CORRECTION"),
+                        new Argument("FILE")
                     })
                 })
             });
 
         static readonly ICollection<Option> Options = new Option[]
         {
-            new Option("-h", "--help", 0, new ValueObject(false)),
-            new Option("-v", null, 0, new ValueObject(false)),
-            new Option("-q", null, 0, new ValueObject(false)),
-            new Option("-r", null, 0, new ValueObject(false)),
-            new Option(null, "--left", 0, new ValueObject(false)),
-            new Option(null, "--right", 0, new ValueObject(false)),
+            new Option("-h", "--help", 0, false),
+            new Option("-v", null, 0, false),
+            new Option("-q", null, 0, false),
+            new Option("-r", null, 0, false),
+            new Option(null, "--left", 0, false),
+            new Option(null, "--right", 0, false),
         };
 
         static Dictionary<string, ValueObject> Apply(IEnumerable<string> args, bool help = true, object version = null, bool optionsFirst = false, bool exit = false)
@@ -97,11 +97,11 @@ Options:
             var tokens = new Tokens(args, typeof(DocoptInputErrorException));
             var options = Options.Select(e => new Option(e.ShortName, e.LongName, e.ArgCount, e.Value)).ToList();
             var arguments = Docopt.ParseArgv(tokens, options, optionsFirst).AsReadOnly();
-            if (help && arguments.Any(o => o is { Name: "-h" or "--help", Value: { IsNullOrEmpty: false } }))
+            if (help && arguments.Any(o => o is { Name: "-h" or "--help", Value: { Box: null or string { Length: 0 } } }))
             {
                 throw new DocoptExitException(Usage);
             }
-            if (version is not null && arguments.Any(o => o is { Name: "--version", Value: { IsNullOrEmpty: false } }))
+            if (version is not null && arguments.Any(o => o is { Name: "--version", Value: { Box: null or string { Length: 0 } } }))
             {
                 throw new DocoptExitException(version.ToString());
             }
@@ -293,7 +293,7 @@ Options:
             collected = a.Collected;
             foreach (var p in collected)
             {
-                dict[p.Name] = p.Value;
+                dict[p.Name] = (p.Value.Box is StringList list ? list.Reverse() : p.Value).ToValueObject();
             }
 
             return dict;

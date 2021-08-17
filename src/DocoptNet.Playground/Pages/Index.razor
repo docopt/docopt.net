@@ -1,0 +1,187 @@
+@page "/"
+@using System.Diagnostics
+@using System.Linq;
+@using System.Text;
+@using DocoptNet;
+@using ValueType = DocoptNet.ValueType;
+@inject IJSRuntime JSRuntime
+
+<div id="stats">
+    @if (_ms is { } ms)
+    {
+        <span title="Peformance">&#x231A; @ms.TotalSeconds.ToString("0.0000") secs</span>
+    }
+    else
+    {
+        <a class="@(_dirty ? "hidden" : null)"
+           target="about-csmin"
+           href="https://github.com/docopt/docopt.net">&#x1F6C8; What is this?</a>
+    }
+</div>
+
+<div id="argv-pane">
+    <textarea id="argv"
+              @bind=@_commandLine
+              @bind:event="oninput"
+              @onkeyup=@(_ => Docoptify())
+              autofocus
+		      placeholder="Enter command-line"></textarea>
+</div>
+
+<div id="result-pane">
+
+    <textarea id="doc"
+              @bind=@_input
+              @bind:event="oninput"
+              @onkeyup=@(_ => Docoptify())
+              @ref="_inputTextArea"
+              wrap="off"
+              placeholder="Enter docopt text"></textarea>
+
+    <div>
+        @if (_nodes is { } nodes)
+        {
+            <table id="args" class="table table-sm table-striped table-borderless">
+                <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Node Type</th>
+                    <th>Count</th>
+                    <th>Value Type</th>
+                    <th>Value</th>
+                </tr>
+                </thead>
+                <tbody>
+                @foreach (var node in nodes)
+                {
+                    <tr>
+                        <td><code>@node.Name</code></td>
+                        <td>@node.ValueType</td>
+                        <td>@node.Count</td>
+                        <td>@node.Value?.Value?.GetType().Name</td>
+                        <td>@(node.Value?.ToString() ?? "(null)")</td>
+                    </tr>
+                }
+                </tbody>
+            </table>
+        }
+    </div>
+
+    @if (_output is { Length: > 0 })
+    {
+        <textarea id="etc" readonly
+            class="@(_error ? "syntax-error" : null)"
+            @bind=@_output></textarea>
+    }
+
+</div>
+
+@functions
+{
+	bool _dirty;
+	string _commandLine;
+	string _lastCommandLine;
+    string _input;
+    string _lastInput;
+    string _output;
+	IDictionary<string, ValueObject> _args;
+	List<Node> _nodes;
+    bool _error;
+    TimeSpan? _ms;
+    ElementReference _inputTextArea;
+
+    record Node(string Name, ValueType ValueType, int Count, ValueObject Value);
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        await base.OnAfterRenderAsync(firstRender);
+        if (firstRender)
+        {
+			_output = string.Empty;
+			_commandLine = "ship Guardian move 10 50 --speed=20";
+			_input = @"Naval Fate.
+
+Usage:
+  naval_fate ship new <name>...
+  naval_fate ship <name> move <x> <y> [--speed=<kn>]
+  naval_fate ship shoot <x> <y>
+  naval_fate mine (set|remove) <x> <y> [--moored|--drifting]
+  naval_fate -h | --help
+  naval_fate --version
+
+Options:
+  -h --help     Show this screen.
+  --version     Show version.
+  --speed=<kn>  Speed in knots [default: 10].
+  --moored      Moored (anchored) mine.
+  --drifting    Drifting mine.
+ ";
+			Docoptify();
+            StateHasChanged();
+		}
+    }
+
+    void Docoptify()
+    {
+		if (_lastInput == _input && _lastCommandLine == _commandLine) {
+            return;
+        }
+
+        _lastInput = _input;
+		_lastCommandLine = _commandLine;
+        _error = false;
+        _ms = null;
+
+        if (_input.Length == 0) {
+            _output = string.Empty;
+            return;
+        }
+
+        _dirty = true;
+
+        var sw = Stopwatch.StartNew();
+
+        void AppendTree(StringBuilder output, Pattern pattern, int level = 0)
+        {
+            output.Append(' ', level * 2);
+            switch (pattern)
+            {
+                case BranchPattern branch:
+                    output.Append(branch.GetType().Name).Append(':').AppendLine();
+                    foreach (var child in branch.Children)
+                        AppendTree(output, child, level + 1);
+                    break;
+                case LeafPattern leaf:
+                    output.Append(leaf).AppendLine();
+                    break;
+            }
+        }
+
+        try
+        {
+            var sb = new StringBuilder();
+            var (pattern, _, _) = Docopt.ParsePattern(_input);
+            AppendTree(sb, pattern);
+
+			var docopt = new Docopt();
+            var argv = _commandLine.Split((char[])null, StringSplitOptions.RemoveEmptyEntries);
+			_nodes = docopt.GetNodes(_input,
+                                     name => new Node(name, ValueType.Bool, 0, null),
+                                     (name, value) => new Node(name, value is { IsList: true } ? ValueType.List : ValueType.String, 0, null),
+                                     (longName, shortName, argCount, _) => new Node((longName ?? shortName), argCount == 0 ? ValueType.Bool : ValueType.String, 0, null))
+                           .GroupBy(e => e.Name, e => e, (_, g) => new Node(g.First().Name, g.First().ValueType, g.Count(), null))
+                           .ToList();
+            _args = docopt.Apply(_input, argv, help: false, version: null, optionsFirst: false, exit: false);
+            _nodes = _nodes.Select(n => new Node(n.Name, n.ValueType, n.Count, _args.TryGetValue(n.Name, out var v) ? v : null)).ToList();
+			_output = string.Empty;
+            _output = sb.ToString();
+            _ms = sw.Elapsed;
+        }
+        catch (DocoptBaseException e)
+        {
+			_args = null;
+            _output = e.Message;
+            _error = true;
+        }
+    }
+}

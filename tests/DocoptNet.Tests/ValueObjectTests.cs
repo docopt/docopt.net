@@ -233,42 +233,42 @@ namespace DocoptNet.Tests
         }
 
         [Test]
-        public void IsString_empty_string_evalutes_true()
+        public void IsString_empty_string_evaluates_true()
         {
             var systemUnderTest = new ValueObject(string.Empty);
             Assert.IsTrue(systemUnderTest.IsString, "IsString should evaluate to true when ValueObject wraps an empty string.");
         }
 
         [Test]
-        public void IsString_nonempty_string_evalutes_true()
+        public void IsString_nonempty_string_evaluates_true()
         {
             var systemUnderTest = new ValueObject("b");
             Assert.IsTrue(systemUnderTest.IsString, "IsString should evaluate to true when ValueObject wraps a non-empty string.");
         }
 
         [Test]
-        public void IsString_integer_string_evalutes_true()
+        public void IsString_integer_string_evaluates_true()
         {
             var systemUnderTest = new ValueObject("5");
             Assert.IsTrue(systemUnderTest.IsString, "IsString should evaluate to true when ValueObject wraps a string that can be converted to an integer.");
         }
 
         [Test]
-        public void IsString_list_evalutes_false()
+        public void IsString_list_evaluates_false()
         {
             var systemUnderTest = new ValueObject(new ArrayList());
             Assert.IsFalse(systemUnderTest.IsString, "IsString should evaluate to false when ValueObject wraps a list.");
         }
 
         [Test]
-        public void IsString_null_evalutes_false()
+        public void IsString_null_evaluates_false()
         {
             var systemUnderTest = new ValueObject(null);
             Assert.IsFalse(systemUnderTest.IsString, "IsString should evaluate to false when ValueObject wraps null.");
         }
 
         [Test]
-        public void AsList_list_evalutes_to_expected_collection()
+        public void AsList_list_evaluates_to_expected_collection()
         {
             var expected = new ArrayList() { 1, "xyz", null };
             var systemUnderTest = new ValueObject(expected);
@@ -276,7 +276,7 @@ namespace DocoptNet.Tests
         }
 
         [Test]
-        public void AsList_array_evalutes_to_expected_collection()
+        public void AsList_array_evaluates_to_expected_collection()
         {
             var expected = new int[] { 1, 1, 2, 3, 5, 8 };
             var systemUnderTest = new ValueObject(expected);
@@ -284,11 +284,33 @@ namespace DocoptNet.Tests
         }
 
         [Test]
-        public void AsList_string_evalutes_to_single_element_collection()
+        public void AsList_string_evaluates_to_single_element_collection()
         {
             const string expected = "c";
             var systemUnderTest = new ValueObject(expected);
             CollectionAssert.AreEqual(new [] { expected }, systemUnderTest.AsList, "AsList should evalute to a collection containing only the wrapped object.");
+        }
+
+        [Test]
+        public void ToString_string_returns_string()
+        {
+            const string expected = "foobar";
+            var systemUnderTest = new ValueObject(expected);
+            Assert.AreEqual(expected, systemUnderTest.ToString());
+        }
+
+        [Test]
+        public void ToString_null_returns_empty()
+        {
+            var systemUnderTest = new ValueObject(null);
+            Assert.AreEqual(string.Empty, systemUnderTest.ToString());
+        }
+
+        [Test]
+        public void ToString_array_returns_bracketed_csv()
+        {
+            var systemUnderTest = new ValueObject(new ArrayList { "foo", "bar", "baz" });
+            Assert.AreEqual("[foo, bar, baz]", systemUnderTest.ToString());
         }
     }
 }

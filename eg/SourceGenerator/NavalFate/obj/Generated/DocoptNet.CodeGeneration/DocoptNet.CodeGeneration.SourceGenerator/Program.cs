@@ -74,26 +74,26 @@ namespace NavalFate
                         new Command("ship"),
                         new Command("new"),
                         new OneOrMore(
-                        new Argument("<name>", (ValueObject)null))
+                        new Argument("<name>"))
                     }),
                     new Required(new Pattern[]
                     {
                         new Command("ship"),
-                        new Argument("<name>", (ValueObject)null),
+                        new Argument("<name>"),
                         new Command("move"),
-                        new Argument("<x>", (ValueObject)null),
-                        new Argument("<y>", (ValueObject)null),
+                        new Argument("<x>"),
+                        new Argument("<y>"),
                         new Optional(new Pattern[]
                         {
-                            new Option(null, "--speed", 1, new ValueObject(10))
+                            new Option(null, "--speed", 1, "10")
                         })
                     }),
                     new Required(new Pattern[]
                     {
                         new Command("ship"),
                         new Command("shoot"),
-                        new Argument("<x>", (ValueObject)null),
-                        new Argument("<y>", (ValueObject)null)
+                        new Argument("<x>"),
+                        new Argument("<y>")
                     }),
                     new Required(new Pattern[]
                     {
@@ -106,14 +106,14 @@ namespace NavalFate
                                 new Command("remove")
                             })
                         }),
-                        new Argument("<x>", (ValueObject)null),
-                        new Argument("<y>", (ValueObject)null),
+                        new Argument("<x>"),
+                        new Argument("<y>"),
                         new Optional(new Pattern[]
                         {
                             new Either(new Pattern[]
                             {
-                                new Option(null, "--moored", 0, new ValueObject(false)),
-                                new Option(null, "--drifting", 0, new ValueObject(false))
+                                new Option(null, "--moored", 0, false),
+                                new Option(null, "--drifting", 0, false)
                             })
                         })
                     }),
@@ -121,23 +121,23 @@ namespace NavalFate
                     {
                         new Required(new Pattern[]
                         {
-                            new Option("-h", "--help", 0, new ValueObject(false))
+                            new Option("-h", "--help", 0, false)
                         })
                     }),
                     new Required(new Pattern[]
                     {
-                        new Option(null, "--version", 0, new ValueObject(false))
+                        new Option(null, "--version", 0, false)
                     })
                 })
             });
 
         static readonly ICollection<Option> Options = new Option[]
         {
-            new Option("-h", "--help", 0, new ValueObject(false)),
-            new Option(null, "--version", 0, new ValueObject(false)),
-            new Option(null, "--speed", 1, new ValueObject(10)),
-            new Option(null, "--moored", 0, new ValueObject(false)),
-            new Option(null, "--drifting", 0, new ValueObject(false)),
+            new Option("-h", "--help", 0, false),
+            new Option(null, "--version", 0, false),
+            new Option(null, "--speed", 1, "10"),
+            new Option(null, "--moored", 0, false),
+            new Option(null, "--drifting", 0, false),
         };
 
         static Dictionary<string, ValueObject> Apply(IEnumerable<string> args, bool help = true, object version = null, bool optionsFirst = false, bool exit = false)
@@ -145,11 +145,11 @@ namespace NavalFate
             var tokens = new Tokens(args, typeof(DocoptInputErrorException));
             var options = Options.Select(e => new Option(e.ShortName, e.LongName, e.ArgCount, e.Value)).ToList();
             var arguments = Docopt.ParseArgv(tokens, options, optionsFirst).AsReadOnly();
-            if (help && arguments.Any(o => o is { Name: "-h" or "--help", Value: { IsNullOrEmpty: false } }))
+            if (help && arguments.Any(o => o is { Name: "-h" or "--help", Value: { Box: null or string { Length: 0 } } }))
             {
                 throw new DocoptExitException(Usage);
             }
-            if (version is not null && arguments.Any(o => o is { Name: "--version", Value: { IsNullOrEmpty: false } }))
+            if (version is not null && arguments.Any(o => o is { Name: "--version", Value: { Box: null or string { Length: 0 } } }))
             {
                 throw new DocoptExitException(version.ToString());
             }
@@ -499,7 +499,7 @@ namespace NavalFate
             collected = a.Collected;
             foreach (var p in collected)
             {
-                dict[p.Name] = p.Value;
+                dict[p.Name] = (p.Value.Box is StringList list ? list.Reverse() : p.Value).ToValueObject();
             }
 
             return dict;

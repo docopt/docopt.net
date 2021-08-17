@@ -11,7 +11,7 @@ namespace DocoptNet
     {
         private readonly string _name;
 
-        protected LeafPattern(string name, ValueObject value=null)
+        protected LeafPattern(string name, Value value = default)
         {
             _name = name;
             Value = value;
@@ -26,7 +26,7 @@ namespace DocoptNet
             get { return _name; }
         }
 
-        public ValueObject Value { get; set; }
+        public Value Value { get; set; }
 
         public override ICollection<Pattern> Flat(params Type[] types)
         {
@@ -40,7 +40,8 @@ namespace DocoptNet
 
         public override string ToString()
         {
-            return $"{GetType().Name}({Name}, {Value})";
+            var value = Value.TryAsStringList(out var list) ? list.Reverse() : Value;
+            return $"{GetType().Name}({Name}, {ValueObject.Format(value)})";
         }
     }
 }

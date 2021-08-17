@@ -9,9 +9,9 @@ namespace DocoptNet.Tests
         [Test]
         public void Required()
         {
-            var expected = new Dictionary<string, ValueObject>
+            var expected = new Dictionary<string, Value>
                 {
-                    {"add", new ValueObject(true)}
+                    {"add", true}
                 };
             var actual = new Docopt().Apply("Usage: prog add", "add");
             Assert.AreEqual(expected, actual);
@@ -20,9 +20,9 @@ namespace DocoptNet.Tests
         [Test]
         public void Optional_no_args()
         {
-            var expected = new Dictionary<string, ValueObject>
+            var expected = new Dictionary<string, Value>
                 {
-                    {"add", new ValueObject(false)}
+                    {"add", false}
                 };
             var actual = new Docopt().Apply("Usage: prog [add]", "");
             Assert.AreEqual(expected, actual);
@@ -31,9 +31,9 @@ namespace DocoptNet.Tests
         [Test]
         public void Optional_one_arg()
         {
-            var expected = new Dictionary<string, ValueObject>
+            var expected = new Dictionary<string, Value>
                 {
-                    {"add", new ValueObject(true)}
+                    {"add", true}
                 };
             var actual = new Docopt().Apply("Usage: prog [add]", "add");
             Assert.AreEqual(expected, actual);
@@ -42,10 +42,10 @@ namespace DocoptNet.Tests
         [Test]
         public void Optional_either_first_specified()
         {
-            var expected = new Dictionary<string, ValueObject>
+            var expected = new Dictionary<string, Value>
                 {
-                    {"add", new ValueObject(true)},
-                    {"rm", new ValueObject(false)}
+                    {"add", true},
+                    {"rm", false}
                 };
             var actual = new Docopt().Apply("Usage: prog (add|rm)", "add");
             Assert.AreEqual(expected, actual);
@@ -54,10 +54,10 @@ namespace DocoptNet.Tests
         [Test]
         public void Optional_either_second_specified()
         {
-            var expected = new Dictionary<string, ValueObject>
+            var expected = new Dictionary<string, Value>
                 {
-                    {"add", new ValueObject(false)},
-                    {"rm", new ValueObject(true)}
+                    {"add", false},
+                    {"rm", true}
                 };
             var actual = new Docopt().Apply("Usage: prog (add|rm)", "rm");
             Assert.AreEqual(expected, actual);
@@ -66,10 +66,10 @@ namespace DocoptNet.Tests
         [Test]
         public void Required_both_specified()
         {
-            var expected = new Dictionary<string, ValueObject>
+            var expected = new Dictionary<string, Value>
                 {
-                    {"a", new ValueObject(true)},
-                    {"b", new ValueObject(true)}
+                    {"a", true},
+                    {"b", true}
                 };
             var actual = new Docopt().Apply("Usage: prog a b", "a b");
             Assert.AreEqual(expected, actual);

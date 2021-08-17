@@ -9,8 +9,8 @@ namespace DocoptNet.Tests
         [Test]
         public void Test_option_match_opt_matched()
         {
-            var expected = new MatchResult(true, Leaves(), Leaves(new Option("-a", value: new ValueObject(true))));
-            var actual = new Option("-a").Match(new Option("-a", value: new ValueObject(true)));
+            var expected = new MatchResult(true, Leaves(), Leaves(new Option("-a", value: Value.True)));
+            var actual = new Option("-a").Match(new Option("-a", value: Value.True));
             Assert.AreEqual(expected, actual);
         }
 
@@ -46,10 +46,10 @@ namespace DocoptNet.Tests
         {
             var expected = new MatchResult(true,
                                            Leaves(new Option("-a")),
-                                           Leaves(new Option("-a", value: new ValueObject(true)))
+                                           Leaves(new Option("-a", value: Value.True))
                 );
             var actual =
-                new Option("-a").Match(new Option("-a", value: new ValueObject(true)), new Option("-a"));
+                new Option("-a").Match(new Option("-a", value: Value.True), new Option("-a"));
             Assert.AreEqual(expected, actual);
         }
     }

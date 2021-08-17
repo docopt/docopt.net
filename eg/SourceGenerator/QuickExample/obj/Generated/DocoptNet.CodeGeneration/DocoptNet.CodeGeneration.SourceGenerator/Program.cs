@@ -43,33 +43,33 @@ namespace QuickExample
                     new Required(new Pattern[]
                     {
                         new Command("tcp"),
-                        new Argument("<host>", (ValueObject)null),
-                        new Argument("<port>", (ValueObject)null),
+                        new Argument("<host>"),
+                        new Argument("<port>"),
                         new Optional(new Pattern[]
                         {
-                            new Option(null, "--timeout", 1, new ValueObject(null))
+                            new Option(null, "--timeout", 1, null)
                         })
                     }),
                     new Required(new Pattern[]
                     {
                         new Command("serial"),
-                        new Argument("<port>", (ValueObject)null),
+                        new Argument("<port>"),
                         new Optional(new Pattern[]
                         {
-                            new Option(null, "--baud", 1, new ValueObject(null))
+                            new Option(null, "--baud", 1, null)
                         }),
                         new Optional(new Pattern[]
                         {
-                            new Option(null, "--timeout", 1, new ValueObject(null))
+                            new Option(null, "--timeout", 1, null)
                         })
                     }),
                     new Required(new Pattern[]
                     {
                         new Either(new Pattern[]
                         {
-                            new Option("-h", null, 0, new ValueObject(false)),
-                            new Option(null, "--help", 0, new ValueObject(false)),
-                            new Option(null, "--version", 0, new ValueObject(false))
+                            new Option("-h", null, 0, false),
+                            new Option(null, "--help", 0, false),
+                            new Option(null, "--version", 0, false)
                         })
                     })
                 })
@@ -77,11 +77,11 @@ namespace QuickExample
 
         static readonly ICollection<Option> Options = new Option[]
         {
-            new Option(null, "--timeout", 1, new ValueObject(null)),
-            new Option(null, "--baud", 1, new ValueObject(null)),
-            new Option("-h", null, 0, new ValueObject(false)),
-            new Option(null, "--help", 0, new ValueObject(false)),
-            new Option(null, "--version", 0, new ValueObject(false)),
+            new Option(null, "--timeout", 1, null),
+            new Option(null, "--baud", 1, null),
+            new Option("-h", null, 0, false),
+            new Option(null, "--help", 0, false),
+            new Option(null, "--version", 0, false),
         };
 
         static Dictionary<string, ValueObject> Apply(IEnumerable<string> args, bool help = true, object version = null, bool optionsFirst = false, bool exit = false)
@@ -89,11 +89,11 @@ namespace QuickExample
             var tokens = new Tokens(args, typeof(DocoptInputErrorException));
             var options = Options.Select(e => new Option(e.ShortName, e.LongName, e.ArgCount, e.Value)).ToList();
             var arguments = Docopt.ParseArgv(tokens, options, optionsFirst).AsReadOnly();
-            if (help && arguments.Any(o => o is { Name: "-h" or "--help", Value: { IsNullOrEmpty: false } }))
+            if (help && arguments.Any(o => o is { Name: "-h" or "--help", Value: { Box: null or string { Length: 0 } } }))
             {
                 throw new DocoptExitException(Usage);
             }
-            if (version is not null && arguments.Any(o => o is { Name: "--version", Value: { IsNullOrEmpty: false } }))
+            if (version is not null && arguments.Any(o => o is { Name: "--version", Value: { Box: null or string { Length: 0 } } }))
             {
                 throw new DocoptExitException(version.ToString());
             }
@@ -294,7 +294,7 @@ namespace QuickExample
             collected = a.Collected;
             foreach (var p in collected)
             {
-                dict[p.Name] = p.Value;
+                dict[p.Name] = (p.Value.Box is StringList list ? list.Reverse() : p.Value).ToValueObject();
             }
 
             return dict;
