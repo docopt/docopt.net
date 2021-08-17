@@ -76,9 +76,9 @@ namespace DocoptNet.Tests
             }
 
             [Test]
-            public void Box_returns_null()
+            public void Object_returns_null()
             {
-                Assert.That(Value.Box, Is.Null);
+                Assert.That(Value.Object, Is.Null);
             }
 
             [Test]
@@ -190,9 +190,9 @@ namespace DocoptNet.Tests
             }
 
             [Test]
-            public void Box_returns_true()
+            public void Object_returns_true()
             {
-                Assert.That(Value.Box, Is.True);
+                Assert.That(Value.Object, Is.True);
             }
 
             [Test]
@@ -306,9 +306,9 @@ namespace DocoptNet.Tests
             }
 
             [Test]
-            public void Box_returns_false()
+            public void Object_returns_false()
             {
-                Assert.That(Value.Box, Is.False);
+                Assert.That(Value.Object, Is.False);
             }
 
             [Test]
@@ -423,9 +423,9 @@ namespace DocoptNet.Tests
             }
 
             [Test]
-            public void Box_returns_underlying_value()
+            public void Object_returns_underlying_value()
             {
-                Assert.That(Value.Box, Is.EqualTo(UnderlyingValue));
+                Assert.That(Value.Object, Is.EqualTo(UnderlyingValue));
             }
 
             [Test]
@@ -540,9 +540,9 @@ namespace DocoptNet.Tests
             }
 
             [Test]
-            public void Box_returns_underlying_value()
+            public void Object_returns_underlying_value()
             {
-                Assert.That(Value.Box, Is.EqualTo(UnderlyingValue));
+                Assert.That(Value.Object, Is.EqualTo(UnderlyingValue));
             }
 
             [Test]
@@ -657,9 +657,9 @@ namespace DocoptNet.Tests
             }
 
             [Test]
-            public void Box_returns_underlying_value()
+            public void Object_returns_underlying_value()
             {
-                Assert.That(Value.Box, Is.EqualTo(UnderlyingValue));
+                Assert.That(Value.Object, Is.EqualTo(UnderlyingValue));
             }
 
             [Test]

@@ -24,7 +24,7 @@ namespace DocoptNet.Tests
                 var arguments = new Docopt().Apply(doc, cmdLine);
                 var dict = new Dictionary<string, object>();
                 foreach (var argument in arguments)
-                    dict[argument.Key] = argument.Value.Box;
+                    dict[argument.Key] = argument.Value.Object;
                 actual = JsonConvert.SerializeObject(dict);
             }
             catch (Exception)

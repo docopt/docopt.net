@@ -32,7 +32,7 @@ namespace DocoptNet
         public bool IsTrue  => IsBoolean && !IsFalse;
         public bool IsFalse => IsBoolean && _int == 0;
 
-        public object? Box =>
+        public object? Object =>
             Kind switch
             {
                 ValueKind.None       => null,
@@ -45,7 +45,7 @@ namespace DocoptNet
 
         string DebugDisplay() => $"{Kind}: {this}";
 
-        public override string ToString() => ValueObject.Format(Box);
+        public override string ToString() => ValueObject.Format(Object);
 
         public static implicit operator Value(bool value) => value ? True : False;
         public static implicit operator Value(int value) => new(ValueKind.Integer, value);

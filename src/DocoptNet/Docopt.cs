@@ -80,7 +80,7 @@ namespace DocoptNet
                     return pattern.Flat()
                                   .OfType<LeafPattern>()
                                   .Concat(collected)
-                                  .Aggregate(accumulator.New(), (state, p) => (p, p.Value.Box) switch
+                                  .Aggregate(accumulator.New(), (state, p) => (p, p.Value.Object) switch
                                    {
                                        (Command , bool v       ) => accumulator.Command(state, p.Name, v),
                                        (Command , int v        ) => accumulator.Command(state, p.Name, v),
@@ -171,8 +171,8 @@ namespace DocoptNet
                 select p switch
                 {
                     Command command   => (true, Value: commandSelector(command.Name)),
-                    Argument argument => (true, Value: argumentSelector(argument.Name, new ValueObject(argument.Value.Box))),
-                    Option option     => (true, Value: optionSelector(option.LongName, option.ShortName, option.ArgCount, new ValueObject(option.Value.Box))),
+                    Argument argument => (true, Value: argumentSelector(argument.Name, new ValueObject(argument.Value.Object))),
+                    Option option     => (true, Value: optionSelector(option.LongName, option.ShortName, option.ArgCount, new ValueObject(option.Value.Object))),
                     _ => default,
                 }
                 into p
