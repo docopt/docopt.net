@@ -162,11 +162,11 @@ Options:
             var tokens = new Tokens(args, typeof(DocoptInputErrorException));
             var options = Options.Select(e => new Option(e.ShortName, e.LongName, e.ArgCount, e.Value)).ToList();
             var arguments = Docopt.ParseArgv(tokens, options, optionsFirst).AsReadOnly();
-            if (help && arguments.Any(o => o is { Name: "-h" or "--help", Value: { Object: null or string { Length: 0 } } }))
+            if (help && arguments.Any(o => o is { Name: "-h" or "--help", Value: { IsTrue: true } }))
             {
                 throw new DocoptExitException(Usage);
             }
-            if (version is not null && arguments.Any(o => o is { Name: "--version", Value: { Object: null or string { Length: 0 } } }))
+            if (version is not null && arguments.Any(o => o is { Name: "--version", Value: { IsTrue: true } }))
             {
                 throw new DocoptExitException(version.ToString());
             }

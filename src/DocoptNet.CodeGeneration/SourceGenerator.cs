@@ -293,10 +293,10 @@ namespace DocoptNet.CodeGeneration
                 .DeclareAssigned("tokens", "new Tokens(args, typeof(DocoptInputErrorException))")
                 ["var options = Options.Select(e => new Option(e.ShortName, e.LongName, e.ArgCount, e.Value)).ToList()"].EndStatement
                 .DeclareAssigned("arguments", "Docopt.ParseArgv(tokens, options, optionsFirst).AsReadOnly()")
-                .If(@"help && arguments.Any(o => o is { Name: ""-h"" or ""--help"", Value: { Object: null or string { Length: 0 } } })")
+                .If(@"help && arguments.Any(o => o is { Name: ""-h"" or ""--help"", Value: { IsTrue: true } })")
                 .Block
                 .Throw("new DocoptExitException(Usage)").BlockEnd
-                .If(@"version is not null && arguments.Any(o => o is { Name: ""--version"", Value: { Object: null or string { Length: 0 } } })")
+                .If(@"version is not null && arguments.Any(o => o is { Name: ""--version"", Value: { IsTrue: true } })")
                 .Block
                 .Throw("new DocoptExitException(version.ToString())").BlockEnd
                 .DeclareAssigned("left", "arguments")
