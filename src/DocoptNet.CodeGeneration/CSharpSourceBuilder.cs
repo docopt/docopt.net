@@ -203,13 +203,13 @@ namespace DocoptNet.CodeGeneration
             }
         }
 
-        public CSharpSourceBuilder this[Value value]
+        public CSharpSourceBuilder this[Value value, string none = "null"]
         {
             get
             {
                 if (value.TryAsStringList(out var items) && items.Count is var count and > 0)
                 {
-                    _ = this["StringList.BottomTop("];
+                    _ = this["StringList.TopBottom("];
                     var i = 0;
                     foreach (var item in items)
                     {
@@ -223,7 +223,7 @@ namespace DocoptNet.CodeGeneration
                 {
                     _ = this[value.Object switch
                     {
-                        null => "null",
+                        null => none,
                         int n => SyntaxFactory.Literal(n),
                         string s => SyntaxFactory.Literal(s),
                         true => "true",

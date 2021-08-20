@@ -65,7 +65,7 @@ Options:
             new Option("-q", null, 0, false),
         };
 
-        static Dictionary<string, ValueObject> Apply(IEnumerable<string> args, bool help = true, object version = null, bool optionsFirst = false, bool exit = false)
+        static Dictionary<string, Value> Apply(IEnumerable<string> args, bool help = true, object version = null, bool optionsFirst = false, bool exit = false)
         {
             var tokens = new Tokens(args, typeof(DocoptInputErrorException));
             var options = Options.Select(e => new Option(e.ShortName, e.LongName, e.ArgCount, e.Value)).ToList();
@@ -177,32 +177,32 @@ Options:
                 throw new DocoptInputErrorException(exitUsage);
             }
 
-            var dict = new Dictionary<string, ValueObject>
+            var dict = new Dictionary<string, Value>
             {
-                [@"--help"] = new ValueObject(false),
-                [@"--version"] = new ValueObject(false),
-                [@"--number"] = new ValueObject(null),
-                [@"--timeout"] = new ValueObject(null),
-                [@"--apply"] = new ValueObject(false),
-                [@"-q"] = new ValueObject(false),
-                [@"<port>"] = new ValueObject(null),
+                [@"--help"] = false,
+                [@"--version"] = false,
+                [@"--number"] = Value.None,
+                [@"--timeout"] = Value.None,
+                [@"--apply"] = false,
+                [@"-q"] = false,
+                [@"<port>"] = Value.None,
             };
 
             collected = a.Collected;
             foreach (var p in collected)
             {
-                dict[p.Name] = (p.Value.Object is StringList list ? list.Reverse() : p.Value).ToValueObject();
+                dict[p.Name] = p.Value is { IsStringList: true } ? ((StringList)p.Value).Reverse() : p.Value;
             }
 
             return dict;
         }
 
-        public bool OptHelp { get { ValueObject v = _args["--help"]; return v.IsTrue || v.IsOfTypeInt && v.AsInt > 0; } }
-        public bool OptVersion { get { ValueObject v = _args["--version"]; return v.IsTrue || v.IsOfTypeInt && v.AsInt > 0; } }
-        public string OptNumber { get { return null == _args["--number"] ? null : _args["--number"].ToString(); } }
-        public string OptTimeout { get { return null == _args["--timeout"] ? null : _args["--timeout"].ToString(); } }
-        public bool OptApply { get { ValueObject v = _args["--apply"]; return v.IsTrue || v.IsOfTypeInt && v.AsInt > 0; } }
-        public bool OptQ { get { ValueObject v = _args["-q"]; return v.IsTrue || v.IsOfTypeInt && v.AsInt > 0; } }
-        public string ArgPort { get { return null == _args["<port>"] ? null : _args["<port>"].ToString(); } }
+        public bool OptHelp => _args["--help"].Object is true or (int and > 0);
+        public bool OptVersion => _args["--version"].Object is true or (int and > 0);
+        public string OptNumber => (string)_args["--number"].Object;
+        public string OptTimeout => (string)_args["--timeout"].Object;
+        public bool OptApply => _args["--apply"].Object is true or (int and > 0);
+        public bool OptQ => _args["-q"].Object is true or (int and > 0);
+        public string ArgPort => _args["<port>"].Object as string;
     }
 }

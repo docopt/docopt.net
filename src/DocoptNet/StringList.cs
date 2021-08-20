@@ -14,7 +14,7 @@ namespace DocoptNet
     /// </summary>
 
     [DebuggerDisplay("{" + nameof(DebugDisplay) + "(),nq}")]
-    sealed class StringList : IEnumerable<string>, ICollection, IEquatable<StringList>
+    sealed partial class StringList : IEnumerable<string>, ICollection, IEquatable<StringList>
     {
         public static readonly StringList Empty = new(default!, null, 0);
 

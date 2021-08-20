@@ -140,7 +140,7 @@ namespace NavalFate
             new Option(null, "--drifting", 0, false),
         };
 
-        static Dictionary<string, ValueObject> Apply(IEnumerable<string> args, bool help = true, object version = null, bool optionsFirst = false, bool exit = false)
+        static Dictionary<string, Value> Apply(IEnumerable<string> args, bool help = true, object version = null, bool optionsFirst = false, bool exit = false)
         {
             var tokens = new Tokens(args, typeof(DocoptInputErrorException));
             var options = Options.Select(e => new Option(e.ShortName, e.LongName, e.ArgCount, e.Value)).ToList();
@@ -470,55 +470,55 @@ namespace NavalFate
                 throw new DocoptInputErrorException(exitUsage);
             }
 
-            var dict = new Dictionary<string, ValueObject>
+            var dict = new Dictionary<string, Value>
             {
-                [@"ship"] = new ValueObject(false),
-                [@"new"] = new ValueObject(false),
-                [@"<name>"] = new ValueObject(new ArrayList()),
-                [@"ship"] = new ValueObject(false),
-                [@"<name>"] = new ValueObject(new ArrayList()),
-                [@"move"] = new ValueObject(false),
-                [@"<x>"] = new ValueObject(null),
-                [@"<y>"] = new ValueObject(null),
-                [@"--speed"] = new ValueObject(10),
-                [@"ship"] = new ValueObject(false),
-                [@"shoot"] = new ValueObject(false),
-                [@"<x>"] = new ValueObject(null),
-                [@"<y>"] = new ValueObject(null),
-                [@"mine"] = new ValueObject(false),
-                [@"set"] = new ValueObject(false),
-                [@"remove"] = new ValueObject(false),
-                [@"<x>"] = new ValueObject(null),
-                [@"<y>"] = new ValueObject(null),
-                [@"--moored"] = new ValueObject(false),
-                [@"--drifting"] = new ValueObject(false),
-                [@"--help"] = new ValueObject(false),
-                [@"--version"] = new ValueObject(false),
+                [@"ship"] = false,
+                [@"new"] = false,
+                [@"<name>"] = StringList.Empty,
+                [@"ship"] = false,
+                [@"<name>"] = StringList.Empty,
+                [@"move"] = false,
+                [@"<x>"] = Value.None,
+                [@"<y>"] = Value.None,
+                [@"--speed"] = "10",
+                [@"ship"] = false,
+                [@"shoot"] = false,
+                [@"<x>"] = Value.None,
+                [@"<y>"] = Value.None,
+                [@"mine"] = false,
+                [@"set"] = false,
+                [@"remove"] = false,
+                [@"<x>"] = Value.None,
+                [@"<y>"] = Value.None,
+                [@"--moored"] = false,
+                [@"--drifting"] = false,
+                [@"--help"] = false,
+                [@"--version"] = false,
             };
 
             collected = a.Collected;
             foreach (var p in collected)
             {
-                dict[p.Name] = (p.Value.Object is StringList list ? list.Reverse() : p.Value).ToValueObject();
+                dict[p.Name] = p.Value is { IsStringList: true } ? ((StringList)p.Value).Reverse() : p.Value;
             }
 
             return dict;
         }
 
-        public bool CmdShip { get { ValueObject v = _args["ship"]; return v.IsTrue || v.IsOfTypeInt && v.AsInt > 0; } }
-        public bool CmdNew { get { ValueObject v = _args["new"]; return v.IsTrue || v.IsOfTypeInt && v.AsInt > 0; } }
-        public ArrayList ArgName { get { return _args["<name>"].AsList; } }
-        public bool CmdMove { get { ValueObject v = _args["move"]; return v.IsTrue || v.IsOfTypeInt && v.AsInt > 0; } }
-        public string ArgX { get { return null == _args["<x>"] ? null : _args["<x>"].ToString(); } }
-        public string ArgY { get { return null == _args["<y>"] ? null : _args["<y>"].ToString(); } }
-        public string OptSpeed { get { return null == _args["--speed"] ? "10" : _args["--speed"].ToString(); } }
-        public bool CmdShoot { get { ValueObject v = _args["shoot"]; return v.IsTrue || v.IsOfTypeInt && v.AsInt > 0; } }
-        public bool CmdMine { get { ValueObject v = _args["mine"]; return v.IsTrue || v.IsOfTypeInt && v.AsInt > 0; } }
-        public bool CmdSet { get { ValueObject v = _args["set"]; return v.IsTrue || v.IsOfTypeInt && v.AsInt > 0; } }
-        public bool CmdRemove { get { ValueObject v = _args["remove"]; return v.IsTrue || v.IsOfTypeInt && v.AsInt > 0; } }
-        public bool OptMoored { get { ValueObject v = _args["--moored"]; return v.IsTrue || v.IsOfTypeInt && v.AsInt > 0; } }
-        public bool OptDrifting { get { ValueObject v = _args["--drifting"]; return v.IsTrue || v.IsOfTypeInt && v.AsInt > 0; } }
-        public bool OptHelp { get { ValueObject v = _args["--help"]; return v.IsTrue || v.IsOfTypeInt && v.AsInt > 0; } }
-        public bool OptVersion { get { ValueObject v = _args["--version"]; return v.IsTrue || v.IsOfTypeInt && v.AsInt > 0; } }
+        public bool CmdShip => _args["ship"].Object is true or (int and > 0);
+        public bool CmdNew => _args["new"].Object is true or (int and > 0);
+        public StringList ArgName => (StringList)_args["<name>"];
+        public bool CmdMove => _args["move"].Object is true or (int and > 0);
+        public string ArgX => _args["<x>"].Object as string;
+        public string ArgY => _args["<y>"].Object as string;
+        public string OptSpeed => (string)_args["--speed"].Object ?? "10";
+        public bool CmdShoot => _args["shoot"].Object is true or (int and > 0);
+        public bool CmdMine => _args["mine"].Object is true or (int and > 0);
+        public bool CmdSet => _args["set"].Object is true or (int and > 0);
+        public bool CmdRemove => _args["remove"].Object is true or (int and > 0);
+        public bool OptMoored => _args["--moored"].Object is true or (int and > 0);
+        public bool OptDrifting => _args["--drifting"].Object is true or (int and > 0);
+        public bool OptHelp => _args["--help"].Object is true or (int and > 0);
+        public bool OptVersion => _args["--version"].Object is true or (int and > 0);
     }
 }

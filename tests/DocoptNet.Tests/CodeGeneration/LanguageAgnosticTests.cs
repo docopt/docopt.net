@@ -31,7 +31,7 @@ using Newtonsoft.Json;
 
 public partial class Program
 {
-    readonly IDictionary<string, ValueObject> _args;
+    readonly IDictionary<string, Value> _args;
 
     public Program(IList<string> argv)
     {
@@ -39,17 +39,17 @@ public partial class Program
         var dict = new Dictionary<string, object>();
         foreach (var (name, value) in arguments)
         {
-            if (value == null)
+            if (value.IsNone)
                 dict[name] = null;
-            else if (value.IsList)
+            else if (value.TryAsStringList(out var items))
             {
                 var l = new ArrayList();
-                foreach (var item in value.AsList)
-                    l.Add(item is ValueObject { Value: var v } ? v : item);
+                foreach (var item in items)
+                    l.Add(item);
                 dict[name] = l;
             }
             else
-                dict[name] = value.Value;
+                dict[name] = value.Object;
         }
         Json = JsonConvert.SerializeObject(dict);
     }
@@ -59,7 +59,8 @@ public partial class Program
 
 namespace DocoptNet.Generated
 {
-    public partial class ValueObject {}
+    public partial struct Value {}
+    public partial class StringList {}
 }
 ";
             Assembly assembly;

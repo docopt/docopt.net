@@ -92,7 +92,7 @@ Options:
             new Option(null, "--right", 0, false),
         };
 
-        static Dictionary<string, ValueObject> Apply(IEnumerable<string> args, bool help = true, object version = null, bool optionsFirst = false, bool exit = false)
+        static Dictionary<string, Value> Apply(IEnumerable<string> args, bool help = true, object version = null, bool optionsFirst = false, bool exit = false)
         {
             var tokens = new Tokens(args, typeof(DocoptInputErrorException));
             var options = Options.Select(e => new Option(e.ShortName, e.LongName, e.ArgCount, e.Value)).ToList();
@@ -277,35 +277,35 @@ Options:
                 throw new DocoptInputErrorException(exitUsage);
             }
 
-            var dict = new Dictionary<string, ValueObject>
+            var dict = new Dictionary<string, Value>
             {
-                [@"-v"] = new ValueObject(false),
-                [@"-q"] = new ValueObject(false),
-                [@"-r"] = new ValueObject(false),
-                [@"--help"] = new ValueObject(false),
-                [@"FILE"] = new ValueObject(new ArrayList()),
-                [@"--left"] = new ValueObject(false),
-                [@"--right"] = new ValueObject(false),
-                [@"CORRECTION"] = new ValueObject(null),
-                [@"FILE"] = new ValueObject(new ArrayList()),
+                [@"-v"] = false,
+                [@"-q"] = false,
+                [@"-r"] = false,
+                [@"--help"] = false,
+                [@"FILE"] = StringList.Empty,
+                [@"--left"] = false,
+                [@"--right"] = false,
+                [@"CORRECTION"] = Value.None,
+                [@"FILE"] = StringList.Empty,
             };
 
             collected = a.Collected;
             foreach (var p in collected)
             {
-                dict[p.Name] = (p.Value.Object is StringList list ? list.Reverse() : p.Value).ToValueObject();
+                dict[p.Name] = p.Value is { IsStringList: true } ? ((StringList)p.Value).Reverse() : p.Value;
             }
 
             return dict;
         }
 
-        public bool OptV { get { ValueObject v = _args["-v"]; return v.IsTrue || v.IsOfTypeInt && v.AsInt > 0; } }
-        public bool OptQ { get { ValueObject v = _args["-q"]; return v.IsTrue || v.IsOfTypeInt && v.AsInt > 0; } }
-        public bool OptR { get { ValueObject v = _args["-r"]; return v.IsTrue || v.IsOfTypeInt && v.AsInt > 0; } }
-        public bool OptHelp { get { ValueObject v = _args["--help"]; return v.IsTrue || v.IsOfTypeInt && v.AsInt > 0; } }
-        public ArrayList ArgFile { get { return _args["FILE"].AsList; } }
-        public bool OptLeft { get { ValueObject v = _args["--left"]; return v.IsTrue || v.IsOfTypeInt && v.AsInt > 0; } }
-        public bool OptRight { get { ValueObject v = _args["--right"]; return v.IsTrue || v.IsOfTypeInt && v.AsInt > 0; } }
-        public string ArgCorrection { get { return null == _args["CORRECTION"] ? null : _args["CORRECTION"].ToString(); } }
+        public bool OptV => _args["-v"].Object is true or (int and > 0);
+        public bool OptQ => _args["-q"].Object is true or (int and > 0);
+        public bool OptR => _args["-r"].Object is true or (int and > 0);
+        public bool OptHelp => _args["--help"].Object is true or (int and > 0);
+        public StringList ArgFile => (StringList)_args["FILE"];
+        public bool OptLeft => _args["--left"].Object is true or (int and > 0);
+        public bool OptRight => _args["--right"].Object is true or (int and > 0);
+        public string ArgCorrection => _args["CORRECTION"].Object as string;
     }
 }

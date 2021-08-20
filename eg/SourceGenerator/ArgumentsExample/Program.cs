@@ -41,7 +41,7 @@ namespace ArgumentsExample
 {
     partial class Program
     {
-        readonly IDictionary<string, ValueObject> _args;
+        readonly IDictionary<string, Value> _args;
 
         public Program(ICollection<string> argv, bool help = true,
                        object version = null, bool optionsFirst = false, bool exit = false)
@@ -49,6 +49,6 @@ namespace ArgumentsExample
             _args = Apply(argv, help, version, optionsFirst, exit);
         }
 
-        public IDictionary<string, ValueObject> Args => _args;
+        public IDictionary<string, Value> Args => _args;
     }
 }

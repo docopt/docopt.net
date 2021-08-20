@@ -49,7 +49,7 @@ Options:
             new Option("-h", "--help", 0, false),
         };
 
-        static Dictionary<string, ValueObject> Apply(IEnumerable<string> args, bool help = true, object version = null, bool optionsFirst = false, bool exit = false)
+        static Dictionary<string, Value> Apply(IEnumerable<string> args, bool help = true, object version = null, bool optionsFirst = false, bool exit = false)
         {
             var tokens = new Tokens(args, typeof(DocoptInputErrorException));
             var options = Options.Select(e => new Option(e.ShortName, e.LongName, e.ArgCount, e.Value)).ToList();
@@ -144,24 +144,24 @@ Options:
                 throw new DocoptInputErrorException(exitUsage);
             }
 
-            var dict = new Dictionary<string, ValueObject>
+            var dict = new Dictionary<string, Value>
             {
-                [@"--help"] = new ValueObject(false),
-                [@"ODD"] = new ValueObject(new ArrayList()),
-                [@"EVEN"] = new ValueObject(new ArrayList()),
+                [@"--help"] = false,
+                [@"ODD"] = StringList.Empty,
+                [@"EVEN"] = StringList.Empty,
             };
 
             collected = a.Collected;
             foreach (var p in collected)
             {
-                dict[p.Name] = (p.Value.Object is StringList list ? list.Reverse() : p.Value).ToValueObject();
+                dict[p.Name] = p.Value is { IsStringList: true } ? ((StringList)p.Value).Reverse() : p.Value;
             }
 
             return dict;
         }
 
-        public bool OptHelp { get { ValueObject v = _args["--help"]; return v.IsTrue || v.IsOfTypeInt && v.AsInt > 0; } }
-        public ArrayList ArgOdd { get { return _args["ODD"].AsList; } }
-        public ArrayList ArgEven { get { return _args["EVEN"].AsList; } }
+        public bool OptHelp => _args["--help"].Object is true or (int and > 0);
+        public StringList ArgOdd => (StringList)_args["ODD"];
+        public StringList ArgEven => (StringList)_args["EVEN"];
     }
 }

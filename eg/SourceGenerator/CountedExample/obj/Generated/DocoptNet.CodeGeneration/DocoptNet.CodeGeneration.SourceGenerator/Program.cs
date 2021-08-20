@@ -84,7 +84,7 @@ Try: CountedExample -vvvvvvvvvv
             new Option(null, "--path", 1, StringList.Empty),
         };
 
-        static Dictionary<string, ValueObject> Apply(IEnumerable<string> args, bool help = true, object version = null, bool optionsFirst = false, bool exit = false)
+        static Dictionary<string, Value> Apply(IEnumerable<string> args, bool help = true, object version = null, bool optionsFirst = false, bool exit = false)
         {
             var tokens = new Tokens(args, typeof(DocoptInputErrorException));
             var options = Options.Select(e => new Option(e.ShortName, e.LongName, e.ArgCount, e.Value)).ToList();
@@ -262,30 +262,30 @@ Try: CountedExample -vvvvvvvvvv
                 throw new DocoptInputErrorException(exitUsage);
             }
 
-            var dict = new Dictionary<string, ValueObject>
+            var dict = new Dictionary<string, Value>
             {
-                [@"--help"] = new ValueObject(false),
-                [@"-v"] = new ValueObject(0),
-                [@"go"] = new ValueObject(0),
-                [@"go"] = new ValueObject(0),
-                [@"--path"] = new ValueObject(new ArrayList()),
-                [@"<file>"] = new ValueObject(new ArrayList()),
-                [@"<file>"] = new ValueObject(new ArrayList()),
+                [@"--help"] = false,
+                [@"-v"] = 0,
+                [@"go"] = 0,
+                [@"go"] = 0,
+                [@"--path"] = StringList.Empty,
+                [@"<file>"] = StringList.Empty,
+                [@"<file>"] = StringList.Empty,
             };
 
             collected = a.Collected;
             foreach (var p in collected)
             {
-                dict[p.Name] = (p.Value.Object is StringList list ? list.Reverse() : p.Value).ToValueObject();
+                dict[p.Name] = p.Value is { IsStringList: true } ? ((StringList)p.Value).Reverse() : p.Value;
             }
 
             return dict;
         }
 
-        public bool OptHelp { get { ValueObject v = _args["--help"]; return v.IsTrue || v.IsOfTypeInt && v.AsInt > 0; } }
-        public bool OptV { get { ValueObject v = _args["-v"]; return v.IsTrue || v.IsOfTypeInt && v.AsInt > 0; } }
-        public bool CmdGo { get { ValueObject v = _args["go"]; return v.IsTrue || v.IsOfTypeInt && v.AsInt > 0; } }
-        public string OptPath { get { return null == _args["--path"] ? "[]" : _args["--path"].ToString(); } }
-        public ArrayList ArgFile { get { return _args["<file>"].AsList; } }
+        public bool OptHelp => _args["--help"].Object is true or (int and > 0);
+        public bool OptV => _args["-v"].Object is true or (int and > 0);
+        public bool CmdGo => _args["go"].Object is true or (int and > 0);
+        public string OptPath => (string)_args["--path"].Object;
+        public StringList ArgFile => (StringList)_args["<file>"];
     }
 }

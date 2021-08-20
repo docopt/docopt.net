@@ -102,7 +102,7 @@ Options:
             new Option("-h", "--help", 0, false),
         };
 
-        static Dictionary<string, ValueObject> Apply(IEnumerable<string> args, bool help = true, object version = null, bool optionsFirst = false, bool exit = false)
+        static Dictionary<string, Value> Apply(IEnumerable<string> args, bool help = true, object version = null, bool optionsFirst = false, bool exit = false)
         {
             var tokens = new Tokens(args, typeof(DocoptInputErrorException));
             var options = Options.Select(e => new Option(e.ShortName, e.LongName, e.ArgCount, e.Value)).ToList();
@@ -340,37 +340,37 @@ Options:
                 throw new DocoptInputErrorException(exitUsage);
             }
 
-            var dict = new Dictionary<string, ValueObject>
+            var dict = new Dictionary<string, Value>
             {
-                [@"<value>"] = new ValueObject(new ArrayList()),
-                [@"+"] = new ValueObject(0),
-                [@"-"] = new ValueObject(0),
-                [@"*"] = new ValueObject(0),
-                [@"/"] = new ValueObject(0),
-                [@"<value>"] = new ValueObject(new ArrayList()),
-                [@"<function>"] = new ValueObject(null),
-                [@"<value>"] = new ValueObject(new ArrayList()),
-                [@","] = new ValueObject(0),
-                [@"<value>"] = new ValueObject(new ArrayList()),
-                [@"--help"] = new ValueObject(false),
+                [@"<value>"] = StringList.Empty,
+                [@"+"] = 0,
+                [@"-"] = 0,
+                [@"*"] = 0,
+                [@"/"] = 0,
+                [@"<value>"] = StringList.Empty,
+                [@"<function>"] = Value.None,
+                [@"<value>"] = StringList.Empty,
+                [@","] = 0,
+                [@"<value>"] = StringList.Empty,
+                [@"--help"] = false,
             };
 
             collected = a.Collected;
             foreach (var p in collected)
             {
-                dict[p.Name] = (p.Value.Object is StringList list ? list.Reverse() : p.Value).ToValueObject();
+                dict[p.Name] = p.Value is { IsStringList: true } ? ((StringList)p.Value).Reverse() : p.Value;
             }
 
             return dict;
         }
 
-        public ArrayList ArgValue { get { return _args["<value>"].AsList; } }
-        public bool CmdPlus { get { ValueObject v = _args["+"]; return v.IsTrue || v.IsOfTypeInt && v.AsInt > 0; } }
-        public bool CmdMinus { get { ValueObject v = _args["-"]; return v.IsTrue || v.IsOfTypeInt && v.AsInt > 0; } }
-        public bool CmdStar { get { ValueObject v = _args["*"]; return v.IsTrue || v.IsOfTypeInt && v.AsInt > 0; } }
-        public bool CmdSlash { get { ValueObject v = _args["/"]; return v.IsTrue || v.IsOfTypeInt && v.AsInt > 0; } }
-        public string ArgFunction { get { return null == _args["<function>"] ? null : _args["<function>"].ToString(); } }
-        public bool CmdComma { get { ValueObject v = _args[","]; return v.IsTrue || v.IsOfTypeInt && v.AsInt > 0; } }
-        public bool OptHelp { get { ValueObject v = _args["--help"]; return v.IsTrue || v.IsOfTypeInt && v.AsInt > 0; } }
+        public StringList ArgValue => (StringList)_args["<value>"];
+        public bool CmdPlus => _args["+"].Object is true or (int and > 0);
+        public bool CmdMinus => _args["-"].Object is true or (int and > 0);
+        public bool CmdStar => _args["*"].Object is true or (int and > 0);
+        public bool CmdSlash => _args["/"].Object is true or (int and > 0);
+        public string ArgFunction => _args["<function>"].Object as string;
+        public bool CmdComma => _args[","].Object is true or (int and > 0);
+        public bool OptHelp => _args["--help"].Object is true or (int and > 0);
     }
 }

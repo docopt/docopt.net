@@ -157,7 +157,7 @@ Options:
             new Option(null, "--doctest", 0, false),
         };
 
-        static Dictionary<string, ValueObject> Apply(IEnumerable<string> args, bool help = true, object version = null, bool optionsFirst = false, bool exit = false)
+        static Dictionary<string, Value> Apply(IEnumerable<string> args, bool help = true, object version = null, bool optionsFirst = false, bool exit = false)
         {
             var tokens = new Tokens(args, typeof(DocoptInputErrorException));
             var options = Options.Select(e => new Option(e.ShortName, e.LongName, e.ArgCount, e.Value)).ToList();
@@ -444,50 +444,50 @@ Options:
                 throw new DocoptInputErrorException(exitUsage);
             }
 
-            var dict = new Dictionary<string, ValueObject>
+            var dict = new Dictionary<string, Value>
             {
-                [@"--help"] = new ValueObject(false),
-                [@"--verbose"] = new ValueObject(false),
-                [@"--quiet"] = new ValueObject(false),
-                [@"--repeat"] = new ValueObject(false),
-                [@"--file"] = new ValueObject("*.py"),
-                [@"--exclude"] = new ValueObject(".svn,CVS,.bzr,.hg,.git"),
-                [@"--select"] = new ValueObject(null),
-                [@"--ignore"] = new ValueObject(null),
-                [@"--show-source"] = new ValueObject(false),
-                [@"--statistics"] = new ValueObject(false),
-                [@"--count"] = new ValueObject(false),
-                [@"--benchmark"] = new ValueObject(false),
-                [@"PATH"] = new ValueObject(new ArrayList()),
-                [@"--doctest"] = new ValueObject(false),
-                [@"--testsuite"] = new ValueObject(null),
-                [@"--version"] = new ValueObject(false),
+                [@"--help"] = false,
+                [@"--verbose"] = false,
+                [@"--quiet"] = false,
+                [@"--repeat"] = false,
+                [@"--file"] = "*.py",
+                [@"--exclude"] = ".svn,CVS,.bzr,.hg,.git",
+                [@"--select"] = Value.None,
+                [@"--ignore"] = Value.None,
+                [@"--show-source"] = false,
+                [@"--statistics"] = false,
+                [@"--count"] = false,
+                [@"--benchmark"] = false,
+                [@"PATH"] = StringList.Empty,
+                [@"--doctest"] = false,
+                [@"--testsuite"] = Value.None,
+                [@"--version"] = false,
             };
 
             collected = a.Collected;
             foreach (var p in collected)
             {
-                dict[p.Name] = (p.Value.Object is StringList list ? list.Reverse() : p.Value).ToValueObject();
+                dict[p.Name] = p.Value is { IsStringList: true } ? ((StringList)p.Value).Reverse() : p.Value;
             }
 
             return dict;
         }
 
-        public bool OptHelp { get { ValueObject v = _args["--help"]; return v.IsTrue || v.IsOfTypeInt && v.AsInt > 0; } }
-        public bool OptVerbose { get { ValueObject v = _args["--verbose"]; return v.IsTrue || v.IsOfTypeInt && v.AsInt > 0; } }
-        public bool OptQuiet { get { ValueObject v = _args["--quiet"]; return v.IsTrue || v.IsOfTypeInt && v.AsInt > 0; } }
-        public bool OptRepeat { get { ValueObject v = _args["--repeat"]; return v.IsTrue || v.IsOfTypeInt && v.AsInt > 0; } }
-        public string OptFile { get { return null == _args["--file"] ? "*.py" : _args["--file"].ToString(); } }
-        public string OptExclude { get { return null == _args["--exclude"] ? ".svn,CVS,.bzr,.hg,.git" : _args["--exclude"].ToString(); } }
-        public string OptSelect { get { return null == _args["--select"] ? null : _args["--select"].ToString(); } }
-        public string OptIgnore { get { return null == _args["--ignore"] ? null : _args["--ignore"].ToString(); } }
-        public bool OptShowSource { get { ValueObject v = _args["--show-source"]; return v.IsTrue || v.IsOfTypeInt && v.AsInt > 0; } }
-        public bool OptStatistics { get { ValueObject v = _args["--statistics"]; return v.IsTrue || v.IsOfTypeInt && v.AsInt > 0; } }
-        public bool OptCount { get { ValueObject v = _args["--count"]; return v.IsTrue || v.IsOfTypeInt && v.AsInt > 0; } }
-        public bool OptBenchmark { get { ValueObject v = _args["--benchmark"]; return v.IsTrue || v.IsOfTypeInt && v.AsInt > 0; } }
-        public ArrayList ArgPath { get { return _args["PATH"].AsList; } }
-        public bool OptDoctest { get { ValueObject v = _args["--doctest"]; return v.IsTrue || v.IsOfTypeInt && v.AsInt > 0; } }
-        public string OptTestsuite { get { return null == _args["--testsuite"] ? null : _args["--testsuite"].ToString(); } }
-        public bool OptVersion { get { ValueObject v = _args["--version"]; return v.IsTrue || v.IsOfTypeInt && v.AsInt > 0; } }
+        public bool OptHelp => _args["--help"].Object is true or (int and > 0);
+        public bool OptVerbose => _args["--verbose"].Object is true or (int and > 0);
+        public bool OptQuiet => _args["--quiet"].Object is true or (int and > 0);
+        public bool OptRepeat => _args["--repeat"].Object is true or (int and > 0);
+        public string OptFile => (string)_args["--file"].Object ?? "*.py";
+        public string OptExclude => (string)_args["--exclude"].Object ?? ".svn,CVS,.bzr,.hg,.git";
+        public string OptSelect => (string)_args["--select"].Object;
+        public string OptIgnore => (string)_args["--ignore"].Object;
+        public bool OptShowSource => _args["--show-source"].Object is true or (int and > 0);
+        public bool OptStatistics => _args["--statistics"].Object is true or (int and > 0);
+        public bool OptCount => _args["--count"].Object is true or (int and > 0);
+        public bool OptBenchmark => _args["--benchmark"].Object is true or (int and > 0);
+        public StringList ArgPath => (StringList)_args["PATH"];
+        public bool OptDoctest => _args["--doctest"].Object is true or (int and > 0);
+        public string OptTestsuite => (string)_args["--testsuite"].Object;
+        public bool OptVersion => _args["--version"].Object is true or (int and > 0);
     }
 }

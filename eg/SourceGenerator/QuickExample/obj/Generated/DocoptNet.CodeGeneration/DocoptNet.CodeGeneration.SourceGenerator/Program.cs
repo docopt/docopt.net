@@ -84,7 +84,7 @@ namespace QuickExample
             new Option(null, "--version", 0, false),
         };
 
-        static Dictionary<string, ValueObject> Apply(IEnumerable<string> args, bool help = true, object version = null, bool optionsFirst = false, bool exit = false)
+        static Dictionary<string, Value> Apply(IEnumerable<string> args, bool help = true, object version = null, bool optionsFirst = false, bool exit = false)
         {
             var tokens = new Tokens(args, typeof(DocoptInputErrorException));
             var options = Options.Select(e => new Option(e.ShortName, e.LongName, e.ArgCount, e.Value)).ToList();
@@ -276,38 +276,38 @@ namespace QuickExample
                 throw new DocoptInputErrorException(exitUsage);
             }
 
-            var dict = new Dictionary<string, ValueObject>
+            var dict = new Dictionary<string, Value>
             {
-                [@"tcp"] = new ValueObject(false),
-                [@"<host>"] = new ValueObject(null),
-                [@"<port>"] = new ValueObject(null),
-                [@"--timeout"] = new ValueObject(null),
-                [@"serial"] = new ValueObject(false),
-                [@"<port>"] = new ValueObject(null),
-                [@"--baud"] = new ValueObject(null),
-                [@"--timeout"] = new ValueObject(null),
-                [@"-h"] = new ValueObject(false),
-                [@"--help"] = new ValueObject(false),
-                [@"--version"] = new ValueObject(false),
+                [@"tcp"] = false,
+                [@"<host>"] = Value.None,
+                [@"<port>"] = Value.None,
+                [@"--timeout"] = Value.None,
+                [@"serial"] = false,
+                [@"<port>"] = Value.None,
+                [@"--baud"] = Value.None,
+                [@"--timeout"] = Value.None,
+                [@"-h"] = false,
+                [@"--help"] = false,
+                [@"--version"] = false,
             };
 
             collected = a.Collected;
             foreach (var p in collected)
             {
-                dict[p.Name] = (p.Value.Object is StringList list ? list.Reverse() : p.Value).ToValueObject();
+                dict[p.Name] = p.Value is { IsStringList: true } ? ((StringList)p.Value).Reverse() : p.Value;
             }
 
             return dict;
         }
 
-        public bool CmdTcp { get { ValueObject v = _args["tcp"]; return v.IsTrue || v.IsOfTypeInt && v.AsInt > 0; } }
-        public string ArgHost { get { return null == _args["<host>"] ? null : _args["<host>"].ToString(); } }
-        public string ArgPort { get { return null == _args["<port>"] ? null : _args["<port>"].ToString(); } }
-        public string OptTimeout { get { return null == _args["--timeout"] ? null : _args["--timeout"].ToString(); } }
-        public bool CmdSerial { get { ValueObject v = _args["serial"]; return v.IsTrue || v.IsOfTypeInt && v.AsInt > 0; } }
-        public string OptBaud { get { return null == _args["--baud"] ? null : _args["--baud"].ToString(); } }
-        public bool OptH { get { ValueObject v = _args["-h"]; return v.IsTrue || v.IsOfTypeInt && v.AsInt > 0; } }
-        public bool OptHelp { get { ValueObject v = _args["--help"]; return v.IsTrue || v.IsOfTypeInt && v.AsInt > 0; } }
-        public bool OptVersion { get { ValueObject v = _args["--version"]; return v.IsTrue || v.IsOfTypeInt && v.AsInt > 0; } }
+        public bool CmdTcp => _args["tcp"].Object is true or (int and > 0);
+        public string ArgHost => _args["<host>"].Object as string;
+        public string ArgPort => _args["<port>"].Object as string;
+        public string OptTimeout => (string)_args["--timeout"].Object;
+        public bool CmdSerial => _args["serial"].Object is true or (int and > 0);
+        public string OptBaud => (string)_args["--baud"].Object;
+        public bool OptH => _args["-h"].Object is true or (int and > 0);
+        public bool OptHelp => _args["--help"].Object is true or (int and > 0);
+        public bool OptVersion => _args["--version"].Object is true or (int and > 0);
     }
 }

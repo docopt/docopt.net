@@ -82,16 +82,16 @@ namespace DocoptNet.Tests.CodeGeneration
             Assert.That(args.CmdShip, Is.True);
             Assert.That(args.CmdNew, Is.True);
 
-            var name = args.ArgName!;
+            var name = args.ArgName!.Cast<string>().ToList();
             Assert.That(name, Is.Not.Null);
             Assert.That(name.Count, Is.EqualTo(2));
-            Assert.That((string)((dynamic)name)[0], Is.EqualTo("foo"));
-            Assert.That((string)((dynamic)name)[1], Is.EqualTo("bar"));
+            Assert.That(name[0], Is.EqualTo("foo"));
+            Assert.That(name[1], Is.EqualTo("bar"));
 
             Assert.That(args.CmdMove, Is.False);
             Assert.That(args.ArgX, Is.Null);
             Assert.That(args.ArgY, Is.Null);
-            Assert.That(args.OptSpeed, Is.EqualTo(10));
+            Assert.That(args.OptSpeed, Is.EqualTo("10"));
             Assert.That(args.CmdShoot, Is.False);
             Assert.That(args.CmdMine, Is.False);
             Assert.That(args.CmdSet, Is.False);
@@ -124,7 +124,7 @@ namespace DocoptNet.Tests.CodeGeneration
                 ? _args[key] switch
                   {
                       null => throw new NullReferenceException(),
-                      {} v => selector((object?)((dynamic)v).Value),
+                      {} v => selector((object?)((dynamic)v).Object),
                   }
                 : throw new KeyNotFoundException("Key was not present in the dictionary: " + key);
         }
@@ -133,21 +133,21 @@ namespace DocoptNet.Tests.CodeGeneration
         {
             public NavalFateArgs(IDictionary args) : base(args) {}
 
-            public bool? CmdShip       => Get("ship", v => (bool?)v);
-            public bool? CmdNew        => Get("new", v => (bool?)v);
-            public ArrayList? ArgName  => Get("<name>", v => (ArrayList?)v);
-            public bool? CmdMove       => Get("move", v => (bool?)v);
-            public int?  ArgX          => Get("<x>", v => (int?)v);
-            public int?  ArgY          => Get("<y>", v => (int?)v);
-            public int?  OptSpeed      => Get("--speed", v => (int?)v);
-            public bool? CmdShoot      => Get("shoot", v => (bool?)v);
-            public bool? CmdMine       => Get("mine", v => (bool?)v);
-            public bool? CmdSet        => Get("set", v => (bool?)v);
-            public bool? CmdRemove     => Get("remove", v => (bool?)v);
-            public bool? OptMoored     => Get("--moored", v => (bool?)v);
-            public bool? OptDrifting   => Get("--drifting", v => (bool?)v);
-            public bool? OptHelp       => Get("--help", v => (bool?)v);
-            public bool? OptVersion    => Get("--version", v => (bool?)v);
+            public bool?        CmdShip        => Get("ship", v => (bool?)v);
+            public bool?        CmdNew         => Get("new", v => (bool?)v);
+            public IEnumerable? ArgName        => Get("<name>", v => (IEnumerable?)v);
+            public bool?        CmdMove        => Get("move", v => (bool?)v);
+            public int?         ArgX           => Get("<x>", v => (int?)v);
+            public int?         ArgY           => Get("<y>", v => (int?)v);
+            public string?      OptSpeed       => Get("--speed", v => (string?)v);
+            public bool?        CmdShoot       => Get("shoot", v => (bool?)v);
+            public bool?        CmdMine        => Get("mine", v => (bool?)v);
+            public bool?        CmdSet         => Get("set", v => (bool?)v);
+            public bool?        CmdRemove      => Get("remove", v => (bool?)v);
+            public bool?        OptMoored      => Get("--moored", v => (bool?)v);
+            public bool?        OptDrifting    => Get("--drifting", v => (bool?)v);
+            public bool?        OptHelp        => Get("--help", v => (bool?)v);
+            public bool?        OptVersion     => Get("--version", v => (bool?)v);
         }
 
         sealed class Program
@@ -183,7 +183,7 @@ using DocoptNet.Generated;
 
 public partial class " + nameof(Program) + @"
 {
-    readonly IDictionary<string, ValueObject> _args;
+    readonly IDictionary<string, Value> _args;
 
     public " + nameof(Program) + @"(
         IList<string> argv, bool help = true,
@@ -192,12 +192,13 @@ public partial class " + nameof(Program) + @"
         _args = Apply(argv, help, version, optionsFirst);
     }
 
-    public IDictionary<string, ValueObject> Args => _args;
+    public IDictionary<string, Value> Args => _args;
 }
 
 namespace DocoptNet.Generated
 {
-    public partial class ValueObject {}
+    public partial struct Value {}
+    public partial class StringList {}
 }
 ";
 

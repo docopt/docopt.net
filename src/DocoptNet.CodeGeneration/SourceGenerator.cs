@@ -24,6 +24,7 @@ namespace DocoptNet.CodeGeneration
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.Text;
     using static Microsoft.CodeAnalysis.CSharp.SyntaxFactory;
+    using Argument = DocoptNet.Argument;
 
     [Generator]
     public sealed class SourceGenerator : ISourceGenerator
@@ -289,7 +290,7 @@ namespace DocoptNet.CodeGeneration
             _ = code.SkipNextNewLine.BlockEnd.EndStatement;
 
             _ = code.NewLine;
-            _ = code["static Dictionary<string, ValueObject> Apply(IEnumerable<string> args, bool help = true, object version = null, bool optionsFirst = false, bool exit = false)"].NewLine.Block
+            _ = code["static Dictionary<string, Value> Apply(IEnumerable<string> args, bool help = true, object version = null, bool optionsFirst = false, bool exit = false)"].NewLine.Block
                 .DeclareAssigned("tokens", "new Tokens(args, typeof(DocoptInputErrorException))")
                 ["var options = Options.Select(e => new Option(e.ShortName, e.LongName, e.ArgCount, e.Value)).ToList()"].EndStatement
                 .DeclareAssigned("arguments", "Docopt.ParseArgv(tokens, options, optionsFirst).AsReadOnly()")
@@ -312,13 +313,11 @@ namespace DocoptNet.CodeGeneration
                     .Throw("new DocoptInputErrorException(exitUsage)").BlockEnd
                     .NewLine;
 
-            _ = code.SkipStatementEnd.DeclareAssigned("dict", "new Dictionary<string, ValueObject>").NewLine.Block;
+            _ = code.SkipStatementEnd.DeclareAssigned("dict", "new Dictionary<string, Value>").NewLine.Block;
 
             foreach (var leaf in pattern.Flat().OfType<LeafPattern>())
             {
-                _ = code['['].Literal(leaf.Name)["] = "]
-                        ["new ValueObject("]
-                            [(leaf.Value.Object is StringList list ? list.Reverse() : leaf.Value).ToValueObject()]["),"].NewLine;
+                _ = code['['].Literal(leaf.Name)["] = "][leaf.Value is { IsStringList: true } ? ((StringList)leaf.Value).Reverse() : leaf.Value, "Value.None"][','].NewLine;
             }
 
             _ = code.SkipNextNewLine.BlockEnd.EndStatement;
@@ -326,15 +325,27 @@ namespace DocoptNet.CodeGeneration
             _ = code.NewLine
                     .Assign("collected", "a.Collected")
                     .ForEach("p", "collected").Block
-                    .Assign("dict[p.Name]", "(p.Value.Object is StringList list ? list.Reverse() : p.Value).ToValueObject()").BlockEnd
+                    .Assign("dict[p.Name]", "p.Value is { IsStringList: true } ? ((StringList)p.Value).Reverse() : p.Value").BlockEnd
                     .NewLine
                     .Return("dict").BlockEnd;
 
             _ = code.NewLine;
-            using (var reader = new StringReader(new Docopt().GenerateCode(usage)))
+
+            foreach (var line in
+                from p in Docopt.GetFlatPatterns(usage)
+                group p by p.Name into g
+                select g.First() switch
+                {
+                    Command { Name: var name } => $"public bool Cmd{GenerateCodeHelper.ConvertToPascalCase(name.ToLowerInvariant())} => _args[\"{name}\"].Object is true or (int and > 0);",
+                    Argument { Name: var name, Value: { IsStringList: true } } => $"public StringList Arg{GenerateCodeHelper.ConvertToPascalCase(name.Replace("<", "").Replace(">", "").ToLowerInvariant())} => (StringList)_args[\"{name}\"];",
+                    Argument { Name: var name } => $"public string Arg{GenerateCodeHelper.ConvertToPascalCase(name.Replace("<", "").Replace(">", "").ToLowerInvariant())} => _args[\"{name}\"].Object as string;",
+                    Option { Name: var name, ArgCount: 0 } => $"public bool Opt{GenerateCodeHelper.ConvertToPascalCase(name.ToLowerInvariant())} => _args[\"{name}\"].Object is true or (int and > 0);",
+                    Option { Name: var name, Value: { Object: string @default } } => $"public string Opt{GenerateCodeHelper.ConvertToPascalCase(name.ToLowerInvariant())} => (string)_args[\"{name}\"].Object ?? {Literal(@default)};",
+                    Option { Name: var name } => $"public string Opt{GenerateCodeHelper.ConvertToPascalCase(name.ToLowerInvariant())} => (string)_args[\"{name}\"].Object;",
+                    var p => throw new NotSupportedException($"Unsupported pattern: {p}")
+                })
             {
-                while (reader.ReadLine() is { } line)
-                    _ = code[line].NewLine;
+                _ = code[line].NewLine;
             }
 
             _ = code.BlockEnd;

@@ -9,7 +9,7 @@ namespace DocoptNet
     enum ValueKind { None, Boolean, Integer, String, StringList }
 
     [DebuggerDisplay("{" + nameof(DebugDisplay) + "(),nq}")]
-    readonly struct Value
+    readonly partial struct Value
     {
         readonly int _int;     // stores: bool, int
         readonly object? _ref; // stores: string, StringList
@@ -21,7 +21,7 @@ namespace DocoptNet
         Value(ValueKind kind, object? value) : this(kind, 0, value) { }
         Value(ValueKind kind, int @int, object? @ref = null) => (Kind, _int, _ref) = (kind, @int, @ref);
 
-        public ValueKind Kind { get; }
+        internal ValueKind Kind { get; }
 
         public bool IsNone       => Kind == ValueKind.None;
         public bool IsBoolean    => Kind == ValueKind.Boolean;
