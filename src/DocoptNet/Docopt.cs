@@ -22,7 +22,7 @@ namespace DocoptNet
             return Apply(doc, new Tokens(argv, typeof (DocoptInputErrorException)), help, version, optionsFirst, exit);
         }
 
-        protected IDictionary<string, ValueObject> Apply(string doc, Tokens tokens,
+        IDictionary<string, ValueObject> Apply(string doc, Tokens tokens,
             bool help = true,
             object version = null, bool optionsFirst = false, bool exit = false)
         {
