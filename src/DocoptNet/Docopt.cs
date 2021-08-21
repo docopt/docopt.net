@@ -157,12 +157,12 @@ namespace DocoptNet
         public IEnumerable<Node> GetNodes(string doc) =>
             GetNodes(doc, (name, _) => (Node)new CommandNode(name),
                           (name, value) => new ArgumentNode(name, value is { IsStringList: true } ? ValueType.List : ValueType.String),
-                          (longName, shortName, argCount, _) => new OptionNode((longName ?? shortName).TrimStart('-'), argCount == 0 ? ValueType.Bool : ValueType.String));
+                          (name, _, _, argCount, _) => new OptionNode(name.TrimStart('-'), argCount == 0 ? ValueType.Bool : ValueType.String));
 
         internal IEnumerable<T> GetNodes<T>(string doc,
                                             Func<string, Value, T> commandSelector,
                                             Func<string, Value, T> argumentSelector,
-                                            Func<string, string, int, Value, T> optionSelector)
+                                            Func<string, string, string, int, Value, T> optionSelector)
         {
             var nodes =
                 from p in GetFlatPatterns(doc)
@@ -170,7 +170,7 @@ namespace DocoptNet
                 {
                     Command command   => (true, Value: commandSelector(command.Name, command.Value)),
                     Argument argument => (true, Value: argumentSelector(argument.Name, argument.Value)),
-                    Option option     => (true, Value: optionSelector(option.LongName, option.ShortName, option.ArgCount, option.Value)),
+                    Option option     => (true, Value: optionSelector(option.Name, option.LongName, option.ShortName, option.ArgCount, option.Value)),
                     _ => default,
                 }
                 into p

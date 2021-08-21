@@ -165,7 +165,7 @@ Options:
 			_nodes = docopt.GetNodes(_input,
                                      (name, value) => new Node(name, value.Kind, 0, Value.None),
                                      (name, value) => new Node(name, value.IsStringList ? ValueKind.StringList : ValueKind.String, 0, Value.None),
-                                     (longName, shortName, _, value) => new Node(longName ?? shortName, value.Kind, 0, Value.None))
+                                     (name, _, _, _, value) => new Node(name, value.Kind, 0, Value.None))
                            .GroupBy(e => e.Name, e => e, (_, g) => new Node(g.First().Name, g.First().ValueKind, g.Count(), Value.None))
                            .ToList();
             _args = docopt.Apply(_input, argv, help: false, version: null, optionsFirst: false, exit: false, accumulator: ApplicationResultAccumulators.ValueDictionary);
