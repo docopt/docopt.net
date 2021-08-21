@@ -12,7 +12,6 @@ namespace DocoptNet
     public partial class OptionNode { }
     public partial class CommandNode { }
     public partial class Node { }
-    public partial class Tokens { }
     public partial class ValueObject { }
 }
 

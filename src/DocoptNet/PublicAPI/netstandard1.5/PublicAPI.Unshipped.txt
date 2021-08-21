@@ -1,0 +1,11 @@
+*REMOVED*DocoptNet.Docopt.Apply(string doc, DocoptNet.Tokens tokens, bool help = true, object version = null, bool optionsFirst = false, bool exit = false) -> System.Collections.Generic.IDictionary<string, DocoptNet.ValueObject>
+*REMOVED*DocoptNet.Tokens
+*REMOVED*DocoptNet.Tokens.CreateException(string message) -> System.Exception
+*REMOVED*DocoptNet.Tokens.Current() -> string
+*REMOVED*DocoptNet.Tokens.ErrorType.get -> System.Type
+*REMOVED*DocoptNet.Tokens.GetEnumerator() -> System.Collections.Generic.IEnumerator<string>
+*REMOVED*DocoptNet.Tokens.Move() -> string
+*REMOVED*DocoptNet.Tokens.ThrowsInputError.get -> bool
+*REMOVED*DocoptNet.Tokens.Tokens(System.Collections.Generic.IEnumerable<string> source, System.Type errorType) -> void
+*REMOVED*override DocoptNet.Tokens.ToString() -> string
+*REMOVED*static DocoptNet.Tokens.FromPattern(string pattern) -> DocoptNet.Tokens
