@@ -155,22 +155,22 @@ namespace DocoptNet
         }
 
         public IEnumerable<Node> GetNodes(string doc) =>
-            GetNodes(doc, name => (Node)new CommandNode(name),
-                          (name, value) => new ArgumentNode(name, value is { IsList: true } ? ValueType.List : ValueType.String),
+            GetNodes(doc, (name, _) => (Node)new CommandNode(name),
+                          (name, value) => new ArgumentNode(name, value is { IsStringList: true } ? ValueType.List : ValueType.String),
                           (longName, shortName, argCount, _) => new OptionNode((longName ?? shortName).TrimStart('-'), argCount == 0 ? ValueType.Bool : ValueType.String));
 
         internal IEnumerable<T> GetNodes<T>(string doc,
-                                            Func<string, T> commandSelector,
-                                            Func<string, ValueObject, T> argumentSelector,
-                                            Func<string, string, int, ValueObject, T> optionSelector)
+                                            Func<string, Value, T> commandSelector,
+                                            Func<string, Value, T> argumentSelector,
+                                            Func<string, string, int, Value, T> optionSelector)
         {
             var nodes =
                 from p in GetFlatPatterns(doc)
                 select p switch
                 {
-                    Command command   => (true, Value: commandSelector(command.Name)),
-                    Argument argument => (true, Value: argumentSelector(argument.Name, new ValueObject(argument.Value.Object))),
-                    Option option     => (true, Value: optionSelector(option.LongName, option.ShortName, option.ArgCount, new ValueObject(option.Value.Object))),
+                    Command command   => (true, Value: commandSelector(command.Name, command.Value)),
+                    Argument argument => (true, Value: argumentSelector(argument.Name, argument.Value)),
+                    Option option     => (true, Value: optionSelector(option.LongName, option.ShortName, option.ArgCount, option.Value)),
                     _ => default,
                 }
                 into p
