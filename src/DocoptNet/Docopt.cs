@@ -22,54 +22,26 @@ namespace DocoptNet
             return Apply(doc, argv.AsEnumerable(), help, version, optionsFirst, exit)?.ToValueObjectDictionary();
         }
 
-        internal TResult Apply<TState, TResult>(string doc, ICollection<string> argv,
-                                                TState initialState,
-                                                IApplicationResultAccumulator<TState, TResult> accumulator,
-                                                bool help = true, object version = null,
-                                                bool optionsFirst = false, bool exit = false)
-            where TResult : class
-        {
-            return Apply(doc, argv.AsEnumerable(), help, version, optionsFirst, exit)?.Accumulate(initialState, accumulator);
-        }
-
         internal ApplicationResult Apply(string doc, IEnumerable<string> argv,
                                          bool help = true, object version = null,
                                          bool optionsFirst = false, bool exit = false) =>
             Apply(doc, new Tokens(argv, typeof (DocoptInputErrorException)), help, version, optionsFirst, exit);
 
         ApplicationResult Apply(string doc, Tokens tokens,
-                                bool help = true, object version = null,
-                                bool optionsFirst = false, bool exit = false)
+                                bool help, object version, bool optionsFirst, bool exit)
         {
             try
             {
                 SetDefaultPrintExitHandlerIfNecessary(exit);
-                var usageSections = ParseSection("usage:", doc);
-                if (usageSections.Length == 0)
-                    throw new DocoptLanguageErrorException("\"usage:\" (case-insensitive) not found.");
-                if (usageSections.Length > 1)
-                    throw new DocoptLanguageErrorException("More that one \"usage:\" (case-insensitive).");
-                var exitUsage = usageSections[0];
-                var options = ParseDefaults(doc);
-                var pattern = ParsePattern(FormalUsage(exitUsage), options);
-                var arguments = ParseArgv(tokens, options, optionsFirst).AsReadOnly();
-                var patternOptions = pattern.Flat<Option>().Distinct().ToList();
-                // [default] syntax for argument is disabled
-                foreach (OptionsShortcut optionsShortcut in pattern.Flat(typeof (OptionsShortcut)))
-                {
-                    var docOptions = ParseDefaults(doc);
-                    optionsShortcut.Children = docOptions.Distinct().Except(patternOptions).ToList();
-                }
 
-                if (help && arguments.Any(o => o is { Name: "-h" or "--help", Value: { IsTrue: true } }))
-                    OnPrintExit(doc);
+                var result = Apply(doc, tokens,
+                                   help, doc => OnPrintExit(doc),
+                                   version, version => OnPrintExit(version),
+                                   optionsFirst);
 
-                if (version is not null && arguments.Any(o => o is { Name: "--version", Value: { IsTrue: true } }))
-                    OnPrintExit(version.ToString());
-
-                return pattern.Fix().Match(arguments) is (true, { Count: 0 }, var collected)
-                     ? new ApplicationResult(pattern.Flat().OfType<LeafPattern>().Concat(collected).ToReadOnlyList())
-                     : throw new DocoptInputErrorException(exitUsage);
+                return result is ApplicationResult.ErrorResult { Usage: var exitUsage }
+                     ? throw new DocoptInputErrorException(exitUsage)
+                     : result;
             }
             catch (DocoptBaseException e)
             {
@@ -80,6 +52,39 @@ namespace DocoptNet
 
                 return null;
             }
+        }
+
+        static ApplicationResult Apply(string doc, Tokens tokens,
+                                       bool help, Action<string> helpAction,
+                                       object version, Action<string> versionAction,
+                                       bool optionsFirst)
+        {
+            var usageSections = ParseSection("usage:", doc);
+            if (usageSections.Length == 0)
+                throw new DocoptLanguageErrorException("\"usage:\" (case-insensitive) not found.");
+            if (usageSections.Length > 1)
+                throw new DocoptLanguageErrorException("More that one \"usage:\" (case-insensitive).");
+            var exitUsage = usageSections[0];
+            var options = ParseDefaults(doc);
+            var pattern = ParsePattern(FormalUsage(exitUsage), options);
+            var arguments = ParseArgv(tokens, options, optionsFirst).AsReadOnly();
+            var patternOptions = pattern.Flat<Option>().Distinct().ToList();
+            // [default] syntax for argument is disabled
+            foreach (OptionsShortcut optionsShortcut in pattern.Flat(typeof (OptionsShortcut)))
+            {
+                var docOptions = ParseDefaults(doc);
+                optionsShortcut.Children = docOptions.Distinct().Except(patternOptions).ToList();
+            }
+
+            if (help && arguments.Any(o => o is { Name: "-h" or "--help", Value: { IsTrue: true } }))
+                helpAction(doc);
+
+            if (version is not null && arguments.Any(o => o is { Name: "--version", Value: { IsTrue: true } }))
+                versionAction(doc);
+
+            return pattern.Fix().Match(arguments) is (true, { Count: 0 }, var collected)
+                 ? new ApplicationResult.SuccessResult(pattern.Flat().OfType<LeafPattern>().Concat(collected).ToReadOnlyList())
+                 : new ApplicationResult.ErrorResult(exitUsage);
         }
 
         // TODO consider consolidating duplication with portions of Apply above
