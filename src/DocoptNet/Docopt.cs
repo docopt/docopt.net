@@ -34,15 +34,15 @@ namespace DocoptNet
             {
                 SetDefaultPrintExitHandlerIfNecessary(exit);
 
-                var partialResult = Parse(doc, tokens, optionsFirst);
+                var parsedResult = Parse(doc, tokens, optionsFirst);
 
-                if (help && partialResult.IsHelpOptionSpecified)
+                if (help && parsedResult.IsHelpOptionSpecified)
                     OnPrintExit(doc);
 
-                if (version is not null && partialResult.IsVersionOptionSpecified)
+                if (version is not null && parsedResult.IsVersionOptionSpecified)
                     OnPrintExit(version.ToString());
 
-                return partialResult.Apply();
+                return parsedResult.Apply();
             }
             catch (DocoptBaseException e)
             {
