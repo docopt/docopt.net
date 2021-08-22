@@ -34,10 +34,15 @@ namespace DocoptNet
             {
                 SetDefaultPrintExitHandlerIfNecessary(exit);
 
-                var result = Apply(doc, tokens,
-                                   help, doc => OnPrintExit(doc),
-                                   version, version => OnPrintExit(version),
-                                   optionsFirst);
+                var partialResult = Parse(doc, tokens, optionsFirst);
+
+                if (help && partialResult.IsHelpOptionSpecified)
+                    OnPrintExit(doc);
+
+                if (version is not null && partialResult.IsVersionOptionSpecified)
+                    OnPrintExit(version.ToString());
+
+                var result = partialResult.Apply();
 
                 return result is ApplicationResult.ErrorResult { Usage: var exitUsage }
                      ? throw new DocoptInputErrorException(exitUsage)
@@ -54,10 +59,7 @@ namespace DocoptNet
             }
         }
 
-        static ApplicationResult Apply(string doc, Tokens tokens,
-                                       bool help, Action<string> helpAction,
-                                       object version, Action<string> versionAction,
-                                       bool optionsFirst)
+        static ParsedResult Parse(string doc, Tokens tokens, bool optionsFirst)
         {
             var usageSections = ParseSection("usage:", doc);
             if (usageSections.Length == 0)
@@ -76,15 +78,32 @@ namespace DocoptNet
                 optionsShortcut.Children = docOptions.Distinct().Except(patternOptions).ToList();
             }
 
-            if (help && arguments.Any(o => o is { Name: "-h" or "--help", Value: { IsTrue: true } }))
-                helpAction(doc);
+            return new ParsedResult(pattern, arguments, exitUsage);
+        }
 
-            if (version is not null && arguments.Any(o => o is { Name: "--version", Value: { IsTrue: true } }))
-                versionAction(doc);
+        sealed class ParsedResult
+        {
+            readonly Required _pattern;
+            readonly ReadOnlyList<LeafPattern> _arguments;
+            readonly string _exitUsage;
 
-            return pattern.Fix().Match(arguments) is (true, { Count: 0 }, var collected)
-                 ? new ApplicationResult.SuccessResult(pattern.Flat().OfType<LeafPattern>().Concat(collected).ToReadOnlyList())
-                 : new ApplicationResult.ErrorResult(exitUsage);
+            public ParsedResult(Required pattern, ReadOnlyList<LeafPattern> arguments, string exitUsage)
+            {
+                _pattern = pattern;
+                _arguments = arguments;
+                _exitUsage = exitUsage;
+            }
+
+            public bool IsHelpOptionSpecified =>
+                _arguments.Any(o => o is { Name: "-h" or "--help", Value: { IsTrue: true } });
+
+            public bool IsVersionOptionSpecified =>
+                _arguments.Any(o => o is { Name: "--version", Value: { IsTrue: true } });
+
+            public ApplicationResult Apply() =>
+                _pattern.Fix().Match(_arguments) is (true, { Count: 0 }, var collected)
+                    ? new ApplicationResult.SuccessResult(_pattern.Flat().OfType<LeafPattern>().Concat(collected).ToReadOnlyList())
+                    : new ApplicationResult.ErrorResult(_exitUsage);
         }
 
         // TODO consider consolidating duplication with portions of Apply above
