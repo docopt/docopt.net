@@ -2,6 +2,7 @@ namespace DocoptNet.Tests
 {
     using System;
     using System.Collections.Generic;
+    using System.Linq;
 
     static class Extensions
     {
@@ -27,7 +28,8 @@ namespace DocoptNet.Tests
                                                        bool optionsFirst = false,
                                                        bool exit = false)
         {
-            return docopt.Apply(doc, argv.List, ApplicationResultAccumulators.ValueDictionary, help, version, optionsFirst, exit);
+            return docopt.Apply(doc, argv.List.AsEnumerable(), help, version, optionsFirst, exit)
+                        ?.ToValueDictionary();
         }
     }
 

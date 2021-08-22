@@ -4,9 +4,11 @@ namespace DocoptNet
 {
     using System.Collections;
     using System.Collections.Generic;
+    using System.Linq;
 
     static class ReadOnlyList
     {
+        public static ReadOnlyList<T> ToReadOnlyList<T>(this IEnumerable<T> sequence) => AsReadOnly(sequence.ToList());
         public static ReadOnlyList<T> AsReadOnly<T>(this IList<T> list) => new(list);
     }
 

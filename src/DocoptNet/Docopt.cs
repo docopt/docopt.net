@@ -13,39 +13,33 @@ namespace DocoptNet
 
         public IDictionary<string, ValueObject> Apply(string doc)
         {
-            return Apply(doc, new Tokens(Enumerable.Empty<string>(), typeof (DocoptInputErrorException)));
+            return Apply(doc, Array.Empty<string>());
         }
 
         public IDictionary<string, ValueObject> Apply(string doc, ICollection<string> argv, bool help = true,
             object version = null, bool optionsFirst = false, bool exit = false)
         {
-            return Apply(doc, new Tokens(argv, typeof (DocoptInputErrorException)), help, version, optionsFirst, exit);
+            return Apply(doc, argv.AsEnumerable(), help, version, optionsFirst, exit)?.ToValueObjectDictionary();
         }
 
-        IDictionary<string, ValueObject> Apply(string doc, Tokens tokens,
-            bool help = true,
-            object version = null, bool optionsFirst = false, bool exit = false)
+        internal TResult Apply<TState, TResult>(string doc, ICollection<string> argv,
+                                                TState initialState,
+                                                IApplicationResultAccumulator<TState, TResult> accumulator,
+                                                bool help = true, object version = null,
+                                                bool optionsFirst = false, bool exit = false)
+            where TResult : class
         {
-            return Apply(doc, tokens, ApplicationResultAccumulators.ValueObjectDictionary, help, version, optionsFirst, exit);
+            return Apply(doc, argv.AsEnumerable(), help, version, optionsFirst, exit)?.Accumulate(initialState, accumulator);
         }
 
-        internal T Apply<T>(string doc, IApplicationResultAccumulator<T> accumulator)
-        {
-            return Apply(doc, new Tokens(Enumerable.Empty<string>(), typeof (DocoptInputErrorException)), accumulator);
-        }
+        internal ApplicationResult Apply(string doc, IEnumerable<string> argv,
+                                         bool help = true, object version = null,
+                                         bool optionsFirst = false, bool exit = false) =>
+            Apply(doc, new Tokens(argv, typeof (DocoptInputErrorException)), help, version, optionsFirst, exit);
 
-        internal T Apply<T>(string doc, ICollection<string> argv,
-                            IApplicationResultAccumulator<T> accumulator,
-                            bool help = true, object version = null,
-                            bool optionsFirst = false, bool exit = false)
-        {
-            return Apply(doc, new Tokens(argv, typeof (DocoptInputErrorException)), accumulator, help, version, optionsFirst, exit);
-        }
-
-        internal T Apply<T>(string doc, Tokens tokens,
-                            IApplicationResultAccumulator<T> accumulator,
-                            bool help = true, object version = null,
-                            bool optionsFirst = false, bool exit = false)
+        ApplicationResult Apply(string doc, Tokens tokens,
+                                bool help = true, object version = null,
+                                bool optionsFirst = false, bool exit = false)
         {
             try
             {
@@ -73,27 +67,9 @@ namespace DocoptNet
                 if (version is not null && arguments.Any(o => o is { Name: "--version", Value: { IsTrue: true } }))
                     OnPrintExit(version.ToString());
 
-                if (pattern.Fix().Match(arguments) is (true, { Count: 0 }, var collected))
-                {
-                    return pattern.Flat()
-                                  .OfType<LeafPattern>()
-                                  .Concat(collected)
-                                  .Aggregate(accumulator.New(), (state, p) => (p, p.Value.Object) switch
-                                   {
-                                       (Command , bool v       ) => accumulator.Command(state, p.Name, v),
-                                       (Command , int v        ) => accumulator.Command(state, p.Name, v),
-                                       (Argument, null         ) => accumulator.Argument(state, p.Name),
-                                       (Argument, string v     ) => accumulator.Argument(state, p.Name, v),
-                                       (Argument, StringList v ) => accumulator.Argument(state, p.Name, v.Reverse()),
-                                       (Option  , bool v       ) => accumulator.Option(state, p.Name, v),
-                                       (Option  , int v        ) => accumulator.Option(state, p.Name, v),
-                                       (Option  , string v     ) => accumulator.Option(state, p.Name, v),
-                                       (Option  , null         ) => accumulator.Option(state, p.Name),
-                                       (Option  , StringList v ) => accumulator.Option(state, p.Name, v.Reverse()),
-                                       var other => throw new NotSupportedException($"Unsupported pattern: {other}"),
-                                   });
-                }
-                throw new DocoptInputErrorException(exitUsage);
+                return pattern.Fix().Match(arguments) is (true, { Count: 0 }, var collected)
+                     ? new ApplicationResult(pattern.Flat().OfType<LeafPattern>().Concat(collected).ToReadOnlyList())
+                     : throw new DocoptInputErrorException(exitUsage);
             }
             catch (DocoptBaseException e)
             {
@@ -102,7 +78,7 @@ namespace DocoptNet
 
                 OnPrintExit(e.Message, e.ErrorCode);
 
-                return accumulator.Error(e);
+                return null;
             }
         }
 

@@ -168,7 +168,7 @@ Options:
                                      (name, _, _, _, value) => new Node(name, value.Kind, 0, Value.None))
                            .GroupBy(e => e.Name, e => e, (_, g) => new Node(g.First().Name, g.First().ValueKind, g.Count(), Value.None))
                            .ToList();
-            _args = docopt.Apply(_input, argv, help: false, version: null, optionsFirst: false, exit: false, accumulator: ApplicationResultAccumulators.ValueDictionary);
+            _args = docopt.Apply(_input, argv.AsEnumerable(), help: false, version: null, optionsFirst: false, exit: false).ToValueDictionary();
             _nodes = _nodes.Select(n => new Node(n.Name, n.ValueKind, n.Count, _args.TryGetValue(n.Name, out var v) ? v : Value.None)).ToList();
 			_output = string.Empty;
             _output = sb.ToString();
