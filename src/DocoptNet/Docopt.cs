@@ -42,11 +42,7 @@ namespace DocoptNet
                 if (version is not null && partialResult.IsVersionOptionSpecified)
                     OnPrintExit(version.ToString());
 
-                var result = partialResult.Apply();
-
-                return result is ApplicationResult.Error { Usage: var exitUsage }
-                     ? throw new DocoptInputErrorException(exitUsage)
-                     : result;
+                return partialResult.Apply();
             }
             catch (DocoptBaseException e)
             {
@@ -102,8 +98,8 @@ namespace DocoptNet
 
             public ApplicationResult Apply() =>
                 _pattern.Fix().Match(_arguments) is (true, { Count: 0 }, var collected)
-                    ? new ApplicationResult.Success(_pattern.Flat().OfType<LeafPattern>().Concat(collected).ToReadOnlyList())
-                    : new ApplicationResult.Error(_exitUsage);
+                    ? new ApplicationResult(_pattern.Flat().OfType<LeafPattern>().Concat(collected).ToReadOnlyList())
+                    : throw new DocoptInputErrorException(_exitUsage);
         }
 
         // TODO consider consolidating duplication with portions of Apply above

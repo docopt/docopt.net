@@ -6,75 +6,47 @@ namespace DocoptNet
     using System.Collections.Generic;
     using System.Linq;
 
-    abstract class ApplicationResult
+    sealed class ApplicationResult
     {
-        public abstract T Map<T>(Func<Success, T> successSelector,
-                                 Func<Error, T> errorSelector);
+        readonly ReadOnlyList<LeafPattern> _collected;
 
-        public sealed class Success : ApplicationResult
-        {
-            readonly ReadOnlyList<LeafPattern> _collected;
+        internal ApplicationResult(ReadOnlyList<LeafPattern> collected) => _collected = collected;
 
-            internal Success(ReadOnlyList<LeafPattern> collected) => _collected = collected;
-
-            public TResult Accumulate<TState, TResult>(TState initialState,
-                                                       IApplicationResultAccumulator<TState, TResult> accumulator) =>
-                _collected.Aggregate(initialState, (state, p) => (p, p.Value.Object) switch
-                                     {
-                                         (Command , bool v       ) => accumulator.Command(state, p.Name, v),
-                                         (Command , int v        ) => accumulator.Command(state, p.Name, v),
-                                         (Argument, null         ) => accumulator.Argument(state, p.Name),
-                                         (Argument, string v     ) => accumulator.Argument(state, p.Name, v),
-                                         (Argument, StringList v ) => accumulator.Argument(state, p.Name, v.Reverse()),
-                                         (Option  , bool v       ) => accumulator.Option(state, p.Name, v),
-                                         (Option  , int v        ) => accumulator.Option(state, p.Name, v),
-                                         (Option  , string v     ) => accumulator.Option(state, p.Name, v),
-                                         (Option  , null         ) => accumulator.Option(state, p.Name),
-                                         (Option  , StringList v ) => accumulator.Option(state, p.Name, v.Reverse()),
-                                         var other => throw new NotSupportedException($"Unsupported pattern: {other}"),
-                                     },
-                                     accumulator.GetResult);
-
-            public override T Map<T>(Func<Success, T> successSelector,
-                                     Func<Error, T> errorSelector) =>
-                successSelector(this);
-        }
-
-        public sealed class Error : ApplicationResult
-        {
-            internal Error(string usage) => Usage = usage;
-
-            public string Usage { get; }
-
-            public override T Map<T>(Func<Success, T> successSelector,
-                                     Func<Error, T> errorSelector) =>
-                errorSelector(this);
-        }
+        public TResult Accumulate<TState, TResult>(TState initialState,
+                                                   IApplicationResultAccumulator<TState, TResult> accumulator) =>
+            _collected.Aggregate(initialState, (state, p) => (p, p.Value.Object) switch
+                                 {
+                                     (Command , bool v       ) => accumulator.Command(state, p.Name, v),
+                                     (Command , int v        ) => accumulator.Command(state, p.Name, v),
+                                     (Argument, null         ) => accumulator.Argument(state, p.Name),
+                                     (Argument, string v     ) => accumulator.Argument(state, p.Name, v),
+                                     (Argument, StringList v ) => accumulator.Argument(state, p.Name, v.Reverse()),
+                                     (Option  , bool v       ) => accumulator.Option(state, p.Name, v),
+                                     (Option  , int v        ) => accumulator.Option(state, p.Name, v),
+                                     (Option  , string v     ) => accumulator.Option(state, p.Name, v),
+                                     (Option  , null         ) => accumulator.Option(state, p.Name),
+                                     (Option  , StringList v ) => accumulator.Option(state, p.Name, v.Reverse()),
+                                     var other => throw new NotSupportedException($"Unsupported pattern: {other}"),
+                                 },
+                                 accumulator.GetResult);
     }
 
     static class ApplicationResultExtensions
     {
-        internal static T Map<T>(this ApplicationResult result, Func<ApplicationResult.Success, T> selector)
-        {
-            if (result is null) throw new ArgumentNullException(nameof(result));
-
-            return result.Map(selector, r => throw new DocoptInputErrorException(r.Usage));
-        }
-
         internal static IDictionary<string, ValueObject> ToValueObjectDictionary(this ApplicationResult result)
         {
             if (result is null) throw new ArgumentNullException(nameof(result));
 
-            return result.Map(r => r.Accumulate(new Dictionary<string, ValueObject>(),
-                                                ApplicationResultAccumulators.ValueObjectDictionary));
+            return result.Accumulate(new Dictionary<string, ValueObject>(),
+                                     ApplicationResultAccumulators.ValueObjectDictionary);
         }
 
         internal static IDictionary<string, Value> ToValueDictionary(this ApplicationResult result)
         {
             if (result is null) throw new ArgumentNullException(nameof(result));
 
-            return result.Map(sr => sr.Accumulate(new Dictionary<string, Value>(),
-                                                  ApplicationResultAccumulators.ValueDictionary));
+            return result.Accumulate(new Dictionary<string, Value>(),
+                                     ApplicationResultAccumulators.ValueDictionary);
         }
     }
 }
