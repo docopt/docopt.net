@@ -8,14 +8,14 @@ namespace DocoptNet
 
     abstract class ApplicationResult
     {
-        public abstract T Map<T>(Func<SuccessResult, T> successSelector,
-                                 Func<ErrorResult, T> errorSelector);
+        public abstract T Map<T>(Func<Success, T> successSelector,
+                                 Func<Error, T> errorSelector);
 
-        public sealed class SuccessResult : ApplicationResult
+        public sealed class Success : ApplicationResult
         {
             readonly ReadOnlyList<LeafPattern> _collected;
 
-            internal SuccessResult(ReadOnlyList<LeafPattern> collected) => _collected = collected;
+            internal Success(ReadOnlyList<LeafPattern> collected) => _collected = collected;
 
             public TResult Accumulate<TState, TResult>(TState initialState,
                                                        IApplicationResultAccumulator<TState, TResult> accumulator) =>
@@ -35,26 +35,26 @@ namespace DocoptNet
                                      },
                                      accumulator.GetResult);
 
-            public override T Map<T>(Func<SuccessResult, T> successSelector,
-                                     Func<ErrorResult, T> errorSelector) =>
+            public override T Map<T>(Func<Success, T> successSelector,
+                                     Func<Error, T> errorSelector) =>
                 successSelector(this);
         }
 
-        public sealed class ErrorResult : ApplicationResult
+        public sealed class Error : ApplicationResult
         {
-            internal ErrorResult(string usage) => Usage = usage;
+            internal Error(string usage) => Usage = usage;
 
             public string Usage { get; }
 
-            public override T Map<T>(Func<SuccessResult, T> successSelector,
-                                     Func<ErrorResult, T> errorSelector) =>
+            public override T Map<T>(Func<Success, T> successSelector,
+                                     Func<Error, T> errorSelector) =>
                 errorSelector(this);
         }
     }
 
     static class ApplicationResultExtensions
     {
-        internal static T Map<T>(this ApplicationResult result, Func<ApplicationResult.SuccessResult, T> selector)
+        internal static T Map<T>(this ApplicationResult result, Func<ApplicationResult.Success, T> selector)
         {
             if (result is null) throw new ArgumentNullException(nameof(result));
 

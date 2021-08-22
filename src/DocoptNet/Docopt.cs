@@ -44,7 +44,7 @@ namespace DocoptNet
 
                 var result = partialResult.Apply();
 
-                return result is ApplicationResult.ErrorResult { Usage: var exitUsage }
+                return result is ApplicationResult.Error { Usage: var exitUsage }
                      ? throw new DocoptInputErrorException(exitUsage)
                      : result;
             }
@@ -102,8 +102,8 @@ namespace DocoptNet
 
             public ApplicationResult Apply() =>
                 _pattern.Fix().Match(_arguments) is (true, { Count: 0 }, var collected)
-                    ? new ApplicationResult.SuccessResult(_pattern.Flat().OfType<LeafPattern>().Concat(collected).ToReadOnlyList())
-                    : new ApplicationResult.ErrorResult(_exitUsage);
+                    ? new ApplicationResult.Success(_pattern.Flat().OfType<LeafPattern>().Concat(collected).ToReadOnlyList())
+                    : new ApplicationResult.Error(_exitUsage);
         }
 
         // TODO consider consolidating duplication with portions of Apply above
