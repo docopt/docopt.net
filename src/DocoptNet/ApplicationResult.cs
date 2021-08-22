@@ -8,7 +8,7 @@ namespace DocoptNet
 
     abstract class ApplicationResult
     {
-        public abstract T Map<T>(Func<SuccessResult, T> successResult,
+        public abstract T Map<T>(Func<SuccessResult, T> successSelector,
                                  Func<ErrorResult, T> errorSelector);
 
         public sealed class SuccessResult : ApplicationResult
@@ -35,9 +35,9 @@ namespace DocoptNet
                                      },
                                      accumulator.GetResult);
 
-            public override T Map<T>(Func<SuccessResult, T> successResult,
+            public override T Map<T>(Func<SuccessResult, T> successSelector,
                                      Func<ErrorResult, T> errorSelector) =>
-                successResult(this);
+                successSelector(this);
         }
 
         public sealed class ErrorResult : ApplicationResult
@@ -46,7 +46,7 @@ namespace DocoptNet
 
             public string Usage { get; }
 
-            public override T Map<T>(Func<SuccessResult, T> successResult,
+            public override T Map<T>(Func<SuccessResult, T> successSelector,
                                      Func<ErrorResult, T> errorSelector) =>
                 errorSelector(this);
         }
