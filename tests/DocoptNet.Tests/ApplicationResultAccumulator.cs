@@ -13,16 +13,9 @@ namespace DocoptNet.Tests
             static readonly IApplicationResultAccumulator<IDictionary<string, ValueObject>> Accumulator = ApplicationResultAccumulators.ValueObjectDictionary;
 
             [Test]
-            public void New_returns_empty_dictionary()
-            {
-                var dict = Accumulator.New();
-                Assert.That(dict, Is.Empty);
-            }
-
-            [Test]
             public void Command_adds_entry_with_value_converted_to_object()
             {
-                var dict = Accumulator.New();
+                IDictionary<string, ValueObject> dict = new Dictionary<string, ValueObject>();
                 dict = Accumulator.Command(dict, "command", true);
                 var value = dict["command"];
                 Assert.That(value, Is.InstanceOf<ValueObject>());
@@ -32,7 +25,7 @@ namespace DocoptNet.Tests
             [Test]
             public void Argument_adds_entry_with_value_converted_to_object()
             {
-                var dict = Accumulator.New();
+                IDictionary<string, ValueObject> dict = new Dictionary<string, ValueObject>();
                 dict = Accumulator.Argument(dict, "<argument>", "value");
                 var value = dict["<argument>"];
                 Assert.That(value, Is.InstanceOf<ValueObject>());
@@ -42,7 +35,7 @@ namespace DocoptNet.Tests
             [Test]
             public void Option_adds_entry_with_value_converted_to_object()
             {
-                var dict = Accumulator.New();
+                IDictionary<string, ValueObject> dict = new Dictionary<string, ValueObject>();
                 dict = Accumulator.Option(dict, "--option", "value");
                 var value = dict["--option"];
                 Assert.That(value, Is.InstanceOf<ValueObject>());
@@ -50,9 +43,10 @@ namespace DocoptNet.Tests
             }
 
             [Test]
-            public void Error_returns_null()
+            public void GetResult_returns_same()
             {
-                Assert.That(Accumulator.Error(new DocoptInputErrorException()), Is.Null);
+                IDictionary<string, ValueObject> dict = new Dictionary<string, ValueObject>();
+                Assert.That(Accumulator.GetResult(dict), Is.SameAs(dict));
             }
         }
 
@@ -62,16 +56,9 @@ namespace DocoptNet.Tests
             static readonly IApplicationResultAccumulator<IDictionary<string, Value>> Accumulator = ApplicationResultAccumulators.ValueDictionary;
 
             [Test]
-            public void New_returns_empty_dictionary()
-            {
-                var dict = Accumulator.New();
-                Assert.That(dict, Is.Empty);
-            }
-
-            [Test]
             public void Command_adds_entry_with_value()
             {
-                var dict = Accumulator.New();
+                IDictionary<string, Value> dict = new Dictionary<string, Value>();
                 dict = Accumulator.Command(dict, "command", true);
                 var value = dict["command"];
                 Assert.That(value, Is.InstanceOf<Value>());
@@ -81,7 +68,7 @@ namespace DocoptNet.Tests
             [Test]
             public void Argument_adds_entry_with_value()
             {
-                var dict = Accumulator.New();
+                IDictionary<string, Value> dict = new Dictionary<string, Value>();
                 dict = Accumulator.Argument(dict, "<argument>", "value");
                 var value = dict["<argument>"];
                 Assert.That(value, Is.InstanceOf<Value>());
@@ -91,7 +78,7 @@ namespace DocoptNet.Tests
             [Test]
             public void Option_adds_entry_with_value()
             {
-                var dict = Accumulator.New();
+                IDictionary<string, Value> dict = new Dictionary<string, Value>();
                 dict = Accumulator.Option(dict, "--option", "value");
                 var value = dict["--option"];
                 Assert.That(value, Is.InstanceOf<Value>());
@@ -99,9 +86,10 @@ namespace DocoptNet.Tests
             }
 
             [Test]
-            public void Error_returns_null()
+            public void GetResult_returns_same()
             {
-                Assert.That(Accumulator.Error(new DocoptInputErrorException()), Is.Null);
+                IDictionary<string, Value> dict = new Dictionary<string, Value>();
+                Assert.That(Accumulator.GetResult(dict), Is.SameAs(dict));
             }
         }
     }

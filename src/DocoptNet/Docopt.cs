@@ -13,87 +13,36 @@ namespace DocoptNet
 
         public IDictionary<string, ValueObject> Apply(string doc)
         {
-            return Apply(doc, new Tokens(Enumerable.Empty<string>(), typeof (DocoptInputErrorException)));
+            return Apply(doc, Array.Empty<string>());
         }
 
         public IDictionary<string, ValueObject> Apply(string doc, ICollection<string> argv, bool help = true,
             object version = null, bool optionsFirst = false, bool exit = false)
         {
-            return Apply(doc, new Tokens(argv, typeof (DocoptInputErrorException)), help, version, optionsFirst, exit);
+            return Apply(doc, argv.AsEnumerable(), help, version, optionsFirst, exit)?.ToValueObjectDictionary();
         }
 
-        protected IDictionary<string, ValueObject> Apply(string doc, Tokens tokens,
-            bool help = true,
-            object version = null, bool optionsFirst = false, bool exit = false)
-        {
-            return Apply(doc, tokens, ApplicationResultAccumulators.ValueObjectDictionary, help, version, optionsFirst, exit);
-        }
+        internal ApplicationResult Apply(string doc, IEnumerable<string> argv,
+                                         bool help = true, object version = null,
+                                         bool optionsFirst = false, bool exit = false) =>
+            Apply(doc, new Tokens(argv, typeof (DocoptInputErrorException)), help, version, optionsFirst, exit);
 
-        internal T Apply<T>(string doc, IApplicationResultAccumulator<T> accumulator)
-        {
-            return Apply(doc, new Tokens(Enumerable.Empty<string>(), typeof (DocoptInputErrorException)), accumulator);
-        }
-
-        internal T Apply<T>(string doc, ICollection<string> argv,
-                            IApplicationResultAccumulator<T> accumulator,
-                            bool help = true, object version = null,
-                            bool optionsFirst = false, bool exit = false)
-        {
-            return Apply(doc, new Tokens(argv, typeof (DocoptInputErrorException)), accumulator, help, version, optionsFirst, exit);
-        }
-
-        internal T Apply<T>(string doc, Tokens tokens,
-                            IApplicationResultAccumulator<T> accumulator,
-                            bool help = true, object version = null,
-                            bool optionsFirst = false, bool exit = false)
+        ApplicationResult Apply(string doc, Tokens tokens,
+                                bool help, object version, bool optionsFirst, bool exit)
         {
             try
             {
                 SetDefaultPrintExitHandlerIfNecessary(exit);
-                var usageSections = ParseSection("usage:", doc);
-                if (usageSections.Length == 0)
-                    throw new DocoptLanguageErrorException("\"usage:\" (case-insensitive) not found.");
-                if (usageSections.Length > 1)
-                    throw new DocoptLanguageErrorException("More that one \"usage:\" (case-insensitive).");
-                var exitUsage = usageSections[0];
-                var options = ParseDefaults(doc);
-                var pattern = ParsePattern(FormalUsage(exitUsage), options);
-                var arguments = ParseArgv(tokens, options, optionsFirst).AsReadOnly();
-                var patternOptions = pattern.Flat<Option>().Distinct().ToList();
-                // [default] syntax for argument is disabled
-                foreach (OptionsShortcut optionsShortcut in pattern.Flat(typeof (OptionsShortcut)))
-                {
-                    var docOptions = ParseDefaults(doc);
-                    optionsShortcut.Children = docOptions.Distinct().Except(patternOptions).ToList();
-                }
 
-                if (help && arguments.Any(o => o is { Name: "-h" or "--help", Value: { IsTrue: true } }))
+                var parsedResult = Parse(doc, tokens, optionsFirst);
+
+                if (help && parsedResult.IsHelpOptionSpecified)
                     OnPrintExit(doc);
 
-                if (version is not null && arguments.Any(o => o is { Name: "--version", Value: { IsTrue: true } }))
+                if (version is not null && parsedResult.IsVersionOptionSpecified)
                     OnPrintExit(version.ToString());
 
-                if (pattern.Fix().Match(arguments) is (true, { Count: 0 }, var collected))
-                {
-                    return pattern.Flat()
-                                  .OfType<LeafPattern>()
-                                  .Concat(collected)
-                                  .Aggregate(accumulator.New(), (state, p) => (p, p.Value.Object) switch
-                                   {
-                                       (Command , bool v       ) => accumulator.Command(state, p.Name, v),
-                                       (Command , int v        ) => accumulator.Command(state, p.Name, v),
-                                       (Argument, null         ) => accumulator.Argument(state, p.Name),
-                                       (Argument, string v     ) => accumulator.Argument(state, p.Name, v),
-                                       (Argument, StringList v ) => accumulator.Argument(state, p.Name, v.Reverse()),
-                                       (Option  , bool v       ) => accumulator.Option(state, p.Name, v),
-                                       (Option  , int v        ) => accumulator.Option(state, p.Name, v),
-                                       (Option  , string v     ) => accumulator.Option(state, p.Name, v),
-                                       (Option  , null         ) => accumulator.Option(state, p.Name),
-                                       (Option  , StringList v ) => accumulator.Option(state, p.Name, v.Reverse()),
-                                       var other => throw new NotSupportedException($"Unsupported pattern: {other}"),
-                                   });
-                }
-                throw new DocoptInputErrorException(exitUsage);
+                return parsedResult.Apply();
             }
             catch (DocoptBaseException e)
             {
@@ -102,8 +51,55 @@ namespace DocoptNet
 
                 OnPrintExit(e.Message, e.ErrorCode);
 
-                return accumulator.Error(e);
+                return null;
             }
+        }
+
+        static ParsedResult Parse(string doc, Tokens tokens, bool optionsFirst)
+        {
+            var usageSections = ParseSection("usage:", doc);
+            if (usageSections.Length == 0)
+                throw new DocoptLanguageErrorException("\"usage:\" (case-insensitive) not found.");
+            if (usageSections.Length > 1)
+                throw new DocoptLanguageErrorException("More that one \"usage:\" (case-insensitive).");
+            var exitUsage = usageSections[0];
+            var options = ParseDefaults(doc);
+            var pattern = ParsePattern(FormalUsage(exitUsage), options);
+            var arguments = ParseArgv(tokens, options, optionsFirst).AsReadOnly();
+            var patternOptions = pattern.Flat<Option>().Distinct().ToList();
+            // [default] syntax for argument is disabled
+            foreach (OptionsShortcut optionsShortcut in pattern.Flat(typeof (OptionsShortcut)))
+            {
+                var docOptions = ParseDefaults(doc);
+                optionsShortcut.Children = docOptions.Distinct().Except(patternOptions).ToList();
+            }
+
+            return new ParsedResult(pattern, arguments, exitUsage);
+        }
+
+        sealed class ParsedResult
+        {
+            readonly Required _pattern;
+            readonly ReadOnlyList<LeafPattern> _arguments;
+            readonly string _exitUsage;
+
+            public ParsedResult(Required pattern, ReadOnlyList<LeafPattern> arguments, string exitUsage)
+            {
+                _pattern = pattern;
+                _arguments = arguments;
+                _exitUsage = exitUsage;
+            }
+
+            public bool IsHelpOptionSpecified =>
+                _arguments.Any(o => o is { Name: "-h" or "--help", Value: { IsTrue: true } });
+
+            public bool IsVersionOptionSpecified =>
+                _arguments.Any(o => o is { Name: "--version", Value: { IsTrue: true } });
+
+            public ApplicationResult Apply() =>
+                _pattern.Fix().Match(_arguments) is (true, { Count: 0 }, var collected)
+                    ? new ApplicationResult(_pattern.Flat().OfType<LeafPattern>().Concat(collected).ToReadOnlyList())
+                    : throw new DocoptInputErrorException(_exitUsage);
         }
 
         // TODO consider consolidating duplication with portions of Apply above
@@ -155,22 +151,22 @@ namespace DocoptNet
         }
 
         public IEnumerable<Node> GetNodes(string doc) =>
-            GetNodes(doc, name => (Node)new CommandNode(name),
-                          (name, value) => new ArgumentNode(name, value is { IsList: true } ? ValueType.List : ValueType.String),
-                          (longName, shortName, argCount, _) => new OptionNode((longName ?? shortName).TrimStart('-'), argCount == 0 ? ValueType.Bool : ValueType.String));
+            GetNodes(doc, (name, _) => (Node)new CommandNode(name),
+                          (name, value) => new ArgumentNode(name, value is { IsStringList: true } ? ValueType.List : ValueType.String),
+                          (name, _, _, argCount, _) => new OptionNode(name.TrimStart('-'), argCount == 0 ? ValueType.Bool : ValueType.String));
 
         internal IEnumerable<T> GetNodes<T>(string doc,
-                                            Func<string, T> commandSelector,
-                                            Func<string, ValueObject, T> argumentSelector,
-                                            Func<string, string, int, ValueObject, T> optionSelector)
+                                            Func<string, Value, T> commandSelector,
+                                            Func<string, Value, T> argumentSelector,
+                                            Func<string, string, string, int, Value, T> optionSelector)
         {
             var nodes =
                 from p in GetFlatPatterns(doc)
                 select p switch
                 {
-                    Command command   => (true, Value: commandSelector(command.Name)),
-                    Argument argument => (true, Value: argumentSelector(argument.Name, new ValueObject(argument.Value.Object))),
-                    Option option     => (true, Value: optionSelector(option.LongName, option.ShortName, option.ArgCount, new ValueObject(option.Value.Object))),
+                    Command command   => (true, Value: commandSelector(command.Name, command.Value)),
+                    Argument argument => (true, Value: argumentSelector(argument.Name, argument.Value)),
+                    Option option     => (true, Value: optionSelector(option.Name, option.LongName, option.ShortName, option.ArgCount, option.Value)),
                     _ => default,
                 }
                 into p
