@@ -254,7 +254,7 @@ namespace DocoptNet.CodeGeneration
                         var lfn = leaf switch
                         {
                             Command => "MatchCommand",
-                            DocoptNet.Argument => "MatchArgument",
+                            Argument => "MatchArgument",
                             Option => "MatchOption",
                             _ => throw new NotImplementedException()
                         };
