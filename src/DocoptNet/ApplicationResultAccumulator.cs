@@ -4,9 +4,8 @@ namespace DocoptNet
 {
     using System.Collections.Generic;
 
-    interface IApplicationResultAccumulator<T>
+    interface IApplicationResultAccumulator<T, out TResult>
     {
-        T New();
         T Command(T state, string name, bool value);
         T Command(T state, string name, int value);
         T Argument(T state, string name);
@@ -17,8 +16,10 @@ namespace DocoptNet
         T Option(T state, string name, string value);
         T Option(T state, string name, int value);
         T Option(T state, string name, StringList value);
-        T Error(DocoptBaseException exception);
+        TResult GetResult(T state);
     }
+
+    interface IApplicationResultAccumulator<T> : IApplicationResultAccumulator<T, T> { }
 
     static class ApplicationResultAccumulators
     {
@@ -27,7 +28,6 @@ namespace DocoptNet
 
         sealed class ValueDictionaryAccumulator : IApplicationResultAccumulator<IDictionary<string, Value>>
         {
-            public IDictionary<string, Value> New() => new Dictionary<string, Value>();
             public IDictionary<string, Value> Command(IDictionary<string, Value> state, string name, bool value) => Adding(state, name, value);
             public IDictionary<string, Value> Command(IDictionary<string, Value> state, string name, int value) => Adding(state, name, value);
             public IDictionary<string, Value> Argument(IDictionary<string, Value> state, string name) => Adding(state, name, Value.None);
@@ -38,7 +38,8 @@ namespace DocoptNet
             public IDictionary<string, Value> Option(IDictionary<string, Value> state, string name, string value) => Adding(state, name, value);
             public IDictionary<string, Value> Option(IDictionary<string, Value> state, string name, int value) => Adding(state, name, value);
             public IDictionary<string, Value> Option(IDictionary<string, Value> state, string name, StringList value) => Adding(state, name, value);
-            public IDictionary<string, Value> Error(DocoptBaseException exception) => null!;
+
+            public IDictionary<string, Value> GetResult(IDictionary<string, Value> state) => state;
 
             static IDictionary<string, Value> Adding(IDictionary<string, Value> dict, string name, Value value)
             {
@@ -49,7 +50,6 @@ namespace DocoptNet
 
         sealed class ValueObjectDictionaryAccumulator : IApplicationResultAccumulator<IDictionary<string, ValueObject>>
         {
-            public IDictionary<string, ValueObject> New() => new Dictionary<string, ValueObject>();
             public IDictionary<string, ValueObject> Command(IDictionary<string, ValueObject> state, string name, bool value) => Adding(state, name, value);
             public IDictionary<string, ValueObject> Command(IDictionary<string, ValueObject> state, string name, int value) => Adding(state, name, value);
             public IDictionary<string, ValueObject> Argument(IDictionary<string, ValueObject> state, string name) => Adding(state, name, null);
@@ -60,7 +60,8 @@ namespace DocoptNet
             public IDictionary<string, ValueObject> Option(IDictionary<string, ValueObject> state, string name, string value) => Adding(state, name, value);
             public IDictionary<string, ValueObject> Option(IDictionary<string, ValueObject> state, string name, int value) => Adding(state, name, value);
             public IDictionary<string, ValueObject> Option(IDictionary<string, ValueObject> state, string name, StringList value) => Adding(state, name, value);
-            public IDictionary<string, ValueObject> Error(DocoptBaseException exception) => null!;
+
+            public IDictionary<string, ValueObject> GetResult(IDictionary<string, ValueObject> state) => state;
 
             static IDictionary<string, ValueObject> Adding(IDictionary<string, ValueObject> dict, string name, object? value)
             {
