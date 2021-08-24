@@ -317,9 +317,8 @@ namespace DocoptNet
                 var atom = ParseAtom(tokens, options);
                 if (tokens.Current() == "...")
                 {
-                    result.Add(new OneOrMore(atom.ToArray()));
+                    atom = new[] { new OneOrMore(atom.ToArray()) };
                     tokens.Move();
-                    return result;
                 }
                 result.AddRange(atom);
             }
