@@ -6,32 +6,37 @@ namespace DocoptNet
     using System.Linq;
     using System.Text.RegularExpressions;
 
-    partial class Tokens: IEnumerable<string>
+    partial class Tokens
     {
-        private readonly Type _errorType;
-        private readonly Queue<string> _tokens;
+        static Tokens New<TError>(IEnumerable<string> source, Func<string, TError> errorFactory)
+            where TError : DocoptBaseException =>
+            new ContextualTokens<TError>(source, errorFactory);
 
-        public Tokens(IEnumerable<string> source, Type errorType)
-        {
-            _errorType = errorType ?? typeof(DocoptInputErrorException);
-            _tokens = new Queue<string>(source);
-        }
-
-        public Type ErrorType
-        {
-            get { return _errorType; }
-        }
-
-        public bool ThrowsInputError
-        {
-            get { return ErrorType == typeof (DocoptInputErrorException); }
-        }
+        public static Tokens From(IEnumerable<string> source) =>
+            New(source, msg => new DocoptInputErrorException(msg));
 
         public static Tokens FromPattern(string pattern)
         {
             var spacedOut = Regex.Replace(pattern, @"([\[\]\(\)\|]|\.\.\.)", @" $1 ");
             var source = Regex.Split(spacedOut, @"\s+|(\S*<.*?>)").Where(x => !string.IsNullOrEmpty(x));
-            return new Tokens(source, typeof(DocoptLanguageErrorException));
+            return New(source, msg => new DocoptLanguageErrorException(msg));
+        }
+    }
+
+    abstract partial class Tokens : IEnumerable<string>
+    {
+        private readonly Queue<string> _tokens;
+
+        protected Tokens(IEnumerable<string> source)
+        {
+            _tokens = new Queue<string>(source);
+        }
+
+        public abstract Type ErrorType { get; }
+
+        public bool ThrowsInputError
+        {
+            get { return ErrorType == typeof (DocoptInputErrorException); }
         }
 
         public IEnumerator<string> GetEnumerator()
@@ -54,14 +59,32 @@ namespace DocoptNet
             return _tokens.Count > 0 ? _tokens.Peek() : null;
         }
 
-        public Exception CreateException(string message)
-        {
-            return Activator.CreateInstance(_errorType, new object[] {message}) as Exception;
-        }
+        public abstract Exception CreateException(string message);
 
         public override string ToString()
         {
             return $"current={Current()},count={_tokens.Count}";
+        }
+
+        partial class ContextualTokens<TError> : Tokens where TError : Exception
+        {
+            private readonly Func<string, TError> _errorFactory;
+
+            public ContextualTokens(IEnumerable<string> source, Func<string, TError> errorFactory) :
+                base(source)
+            {
+                _errorFactory = errorFactory;
+            }
+
+            public override Type ErrorType
+            {
+                get { return typeof(TError); }
+            }
+
+            public override Exception CreateException(string message)
+            {
+                return _errorFactory(message);
+            }
         }
     }
 }

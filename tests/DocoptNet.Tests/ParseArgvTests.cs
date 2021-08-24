@@ -11,7 +11,7 @@ namespace DocoptNet.Tests
 
         private Tokens TS(string s)
         {
-            return new Tokens(s.Split((char[])null, StringSplitOptions.RemoveEmptyEntries), typeof(DocoptInputErrorException));
+            return Tokens.From(s.Split((char[])null, StringSplitOptions.RemoveEmptyEntries));
         }
 
         [Test]
