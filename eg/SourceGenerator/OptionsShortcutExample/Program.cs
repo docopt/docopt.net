@@ -1,13 +1,12 @@
 using System;
-using System.Collections.Generic;
 using DocoptNet.Generated;
 using OptionsShortcutExample;
 
-Program program;
+Program.Arguments arguments;
 
 try
 {
-    program = new Program(args, version: "1.0.0rc2", exit: true);
+    arguments = Program.Arguments.Apply(args, version: "1.0.0rc2", exit: true);
 }
 catch (DocoptExitException e)
 {
@@ -20,33 +19,17 @@ catch (DocoptInputErrorException e)
     return 0xbd;
 }
 
-foreach (var (name, value) in program.Args)
-    Console.WriteLine("{0} = {1}", name, value);
+foreach (var (name, value) in arguments)
+    Console.WriteLine($"{name} = {value}");
 
 Console.WriteLine($@"{{
-    Help    = {program.OptHelp   },
-    Version = {program.OptVersion},
-    Number  = {program.OptNumber },
-    Timeout = {program.OptTimeout},
-    Apply   = {program.OptApply  },
-    Q       = {program.OptQ      },
-    Port    = {program.ArgPort   },
+    Help    = {arguments.OptHelp   },
+    Version = {arguments.OptVersion},
+    Number  = {arguments.OptNumber },
+    Timeout = {arguments.OptTimeout},
+    Apply   = {arguments.OptApply  },
+    Q       = {arguments.OptQ      },
+    Port    = {arguments.ArgPort   },
 }}");
 
 return 0;
-
-namespace OptionsShortcutExample
-{
-    partial class Program
-    {
-        readonly IDictionary<string, Value> _args;
-
-        public Program(ICollection<string> argv, bool help = true,
-                       object version = null, bool optionsFirst = false, bool exit = false)
-        {
-            _args = Apply(argv, help, version, optionsFirst, exit);
-        }
-
-        public IDictionary<string, Value> Args => _args;
-    }
-}

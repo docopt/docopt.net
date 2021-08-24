@@ -1,14 +1,12 @@
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using DocoptNet.Generated;
 using NavalFate;
 
-Program program;
+Program.Arguments arguments;
 
 try
 {
-    program = new Program(args, version: "Naval Fate 2.0", exit: true);
+    arguments = Program.Arguments.Apply(args, version: "Naval Fate 2.0", exit: true);
 }
 catch (DocoptExitException e)
 {
@@ -21,41 +19,25 @@ catch (DocoptInputErrorException e)
     return 0xbd;
 }
 
-foreach (var (name, value) in program.Args)
-    Console.WriteLine("{0} = {1}", name, value);
+foreach (var (name, value) in arguments)
+    Console.WriteLine($"{name} = {value}");
 
 Console.WriteLine($@"{{
-    Ship     = {program.CmdShip    },
-    New      = {program.CmdNew     },
-    Name     = [{string.Join(", ", from object name in program.ArgName select name)}],
-    Move     = {program.CmdMove    },
-    X        = {program.ArgX       },
-    Y        = {program.ArgY       },
-    Speed    = {program.OptSpeed   },
-    Shoot    = {program.CmdShoot   },
-    Mine     = {program.CmdMine    },
-    Set      = {program.CmdSet     },
-    Remove   = {program.CmdRemove  },
-    Moored   = {program.OptMoored  },
-    Drifting = {program.OptDrifting},
-    Help     = {program.OptHelp    },
-    Version  = {program.OptVersion },
+    Ship     = {arguments.CmdShip    },
+    New      = {arguments.CmdNew     },
+    Name     = [{string.Join(", ", arguments.ArgName)}],
+    Move     = {arguments.CmdMove    },
+    X        = {arguments.ArgX       },
+    Y        = {arguments.ArgY       },
+    Speed    = {arguments.OptSpeed   },
+    Shoot    = {arguments.CmdShoot   },
+    Mine     = {arguments.CmdMine    },
+    Set      = {arguments.CmdSet     },
+    Remove   = {arguments.CmdRemove  },
+    Moored   = {arguments.OptMoored  },
+    Drifting = {arguments.OptDrifting},
+    Help     = {arguments.OptHelp    },
+    Version  = {arguments.OptVersion },
 }}");
 
 return 0;
-
-namespace NavalFate
-{
-    partial class Program
-    {
-        readonly IDictionary<string, Value> _args;
-
-        public Program(ICollection<string> argv, bool help = true,
-                       object version = null, bool optionsFirst = false, bool exit = false)
-        {
-            _args = Apply(argv, help, version, optionsFirst, exit);
-        }
-
-        public IDictionary<string, Value> Args => _args;
-    }
-}

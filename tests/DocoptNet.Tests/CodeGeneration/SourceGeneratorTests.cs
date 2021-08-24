@@ -121,11 +121,7 @@ namespace DocoptNet.Tests.CodeGeneration
 
             public T Get<T>(string key, Func<object?, T> selector) =>
                 _args.Contains(key)
-                ? _args[key] switch
-                  {
-                      null => throw new NullReferenceException(),
-                      {} v => selector((object?)((dynamic)v).Object),
-                  }
+                ? selector(_args[key])
                 : throw new KeyNotFoundException("Key was not present in the dictionary: " + key);
         }
 
@@ -167,11 +163,19 @@ namespace DocoptNet.Tests.CodeGeneration
 
             public T Run<T>(DocoptOptions options, Func<IDictionary, T> selector, params string[] argv)
             {
-                dynamic program = Activator.CreateInstance(_type, argv,
-                                                           options.Help, options.Version,
-                                                           options.OptionsFirst, options.Exit)!;
-                Assert.That(program, Is.Not.Null);
-                return selector((IDictionary)program.Args);
+                const string applyMethodName = "Apply";
+                var method = _type.GetMethod(applyMethodName, BindingFlags.Public | BindingFlags.Static);
+                if (method == null)
+                    throw new MissingMethodException(_type.Name, applyMethodName);
+                var args = (IEnumerable<KeyValuePair<string, object?>>)
+                    method.Invoke(null, new[]
+                    {
+                        argv,
+                        options.Help, options.Version,
+                        options.OptionsFirst, options.Exit
+                    })!;
+                Assert.That(args, Is.Not.Null);
+                return selector(args.ToDictionary(e => e.Key, e => e.Value));
             }
         }
 
@@ -181,19 +185,7 @@ namespace DocoptNet.Tests.CodeGeneration
 using System.Collections.Generic;
 using DocoptNet.Generated;
 
-public partial class " + nameof(Program) + @"
-{
-    readonly IDictionary<string, Value> _args;
-
-    public " + nameof(Program) + @"(
-        IList<string> argv, bool help = true,
-        object version = null, bool optionsFirst = false, bool exit = false)
-    {
-        _args = Apply(argv, help, version, optionsFirst);
-    }
-
-    public IDictionary<string, Value> Args => _args;
-}
+public partial class " + nameof(Program) + @" { }
 
 namespace DocoptNet.Generated
 {
@@ -203,7 +195,7 @@ namespace DocoptNet.Generated
 ";
 
             var assembly = GenerateProgram(usage, main);
-            return new Program(assembly.GetType(nameof(Program))!);
+            return new Program(assembly.GetType(nameof(Program))?.GetNestedType("Arguments")!);
         }
 
         static int _assemblyUniqueCounter;

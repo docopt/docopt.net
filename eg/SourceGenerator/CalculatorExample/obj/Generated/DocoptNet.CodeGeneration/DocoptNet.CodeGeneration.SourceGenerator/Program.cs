@@ -1,3 +1,5 @@
+#nullable enable annotations
+
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -102,275 +104,291 @@ Options:
             new Option("-h", "--help", 0, false),
         };
 
-        static Dictionary<string, Value> Apply(IEnumerable<string> args, bool help = true, object version = null, bool optionsFirst = false, bool exit = false)
+        public partial class Arguments : IEnumerable<KeyValuePair<string, object?>>
         {
-            var tokens = new Tokens(args, typeof(DocoptInputErrorException));
-            var options = Options.Select(e => new Option(e.ShortName, e.LongName, e.ArgCount, e.Value)).ToList();
-            var arguments = Docopt.ParseArgv(tokens, options, optionsFirst).AsReadOnly();
-            if (help && arguments.Any(o => o is { Name: "-h" or "--help", Value: { IsTrue: true } }))
+            public static Arguments Apply(IEnumerable<string> args, bool help = true, object? version = null, bool optionsFirst = false, bool exit = false)
             {
-                throw new DocoptExitException(Usage);
-            }
-            if (version is not null && arguments.Any(o => o is { Name: "--version", Value: { IsTrue: true } }))
-            {
-                throw new DocoptExitException(version.ToString());
-            }
-            var left = arguments;
-            var collected = new Leaves();
-            var a = new RequiredMatcher(1, left, collected);
-            do
-            {
-                // Required(Either(Required(Argument(<value>, []), OneOrMore(Required(Required(Either(Command(+, 0), Command(-, 0), Command(*, 0), Command(/, 0))), Argument(<value>, [])))), Required(Argument(<function>, ), Argument(<value>, []), OneOrMore(Optional(Required(Command(,, 0), Argument(<value>, []))))), Required(Required(Option(-h,--help,0,False)))))
-                var b = new RequiredMatcher(1, a.Left, a.Collected);
-                while (b.Next())
+                var tokens = new Tokens(args, typeof(DocoptInputErrorException));
+                var options = Options.Select(e => new Option(e.ShortName, e.LongName, e.ArgCount, e.Value)).ToList();
+                var arguments = Docopt.ParseArgv(tokens, options, optionsFirst).AsReadOnly();
+                if (help && arguments.Any(o => o is { Name: "-h" or "--help", Value: { IsTrue: true } }))
                 {
-                    // Either(Required(Argument(<value>, []), OneOrMore(Required(Required(Either(Command(+, 0), Command(-, 0), Command(*, 0), Command(/, 0))), Argument(<value>, [])))), Required(Argument(<function>, ), Argument(<value>, []), OneOrMore(Optional(Required(Command(,, 0), Argument(<value>, []))))), Required(Required(Option(-h,--help,0,False))))
-                    var c = new EitherMatcher(3, b.Left, b.Collected);
-                    while (c.Next())
+                    throw new DocoptExitException(Usage);
+                }
+                if (version is not null && arguments.Any(o => o is { Name: "--version", Value: { IsTrue: true } }))
+                {
+                    throw new DocoptExitException(version.ToString());
+                }
+                var left = arguments;
+                var collected = new Leaves();
+                var a = new RequiredMatcher(1, left, collected);
+                do
+                {
+                    // Required(Either(Required(Argument(<value>, []), OneOrMore(Required(Required(Either(Command(+, 0), Command(-, 0), Command(*, 0), Command(/, 0))), Argument(<value>, [])))), Required(Argument(<function>, ), Argument(<value>, []), OneOrMore(Optional(Required(Command(,, 0), Argument(<value>, []))))), Required(Required(Option(-h,--help,0,False)))))
+                    var b = new RequiredMatcher(1, a.Left, a.Collected);
+                    while (b.Next())
                     {
-                        switch (c.Index)
+                        // Either(Required(Argument(<value>, []), OneOrMore(Required(Required(Either(Command(+, 0), Command(-, 0), Command(*, 0), Command(/, 0))), Argument(<value>, [])))), Required(Argument(<function>, ), Argument(<value>, []), OneOrMore(Optional(Required(Command(,, 0), Argument(<value>, []))))), Required(Required(Option(-h,--help,0,False))))
+                        var c = new EitherMatcher(3, b.Left, b.Collected);
+                        while (c.Next())
                         {
-                            case 0:
+                            switch (c.Index)
                             {
-                                // Required(Argument(<value>, []), OneOrMore(Required(Required(Either(Command(+, 0), Command(-, 0), Command(*, 0), Command(/, 0))), Argument(<value>, []))))
-                                var d = new RequiredMatcher(2, c.Left, c.Collected);
-                                while (d.Next())
+                                case 0:
                                 {
-                                    switch (d.Index)
+                                    // Required(Argument(<value>, []), OneOrMore(Required(Required(Either(Command(+, 0), Command(-, 0), Command(*, 0), Command(/, 0))), Argument(<value>, []))))
+                                    var d = new RequiredMatcher(2, c.Left, c.Collected);
+                                    while (d.Next())
                                     {
-                                        case 0:
+                                        switch (d.Index)
                                         {
-                                            // Argument(<value>, [])
-                                            d.Match(PatternMatcher.MatchArgument, "<value>", value: new ArrayList(), isList: true, isInt: false);
-                                            break;
-                                        }
-                                        case 1:
-                                        {
-                                            // OneOrMore(Required(Required(Either(Command(+, 0), Command(-, 0), Command(*, 0), Command(/, 0))), Argument(<value>, [])))
-                                            var e = new OneOrMoreMatcher(1, d.Left, d.Collected);
-                                            while (e.Next())
+                                            case 0:
                                             {
-                                                // Required(Required(Either(Command(+, 0), Command(-, 0), Command(*, 0), Command(/, 0))), Argument(<value>, []))
-                                                var f = new RequiredMatcher(2, e.Left, e.Collected);
-                                                while (f.Next())
-                                                {
-                                                    switch (f.Index)
-                                                    {
-                                                        case 0:
-                                                        {
-                                                            // Required(Either(Command(+, 0), Command(-, 0), Command(*, 0), Command(/, 0)))
-                                                            var g = new RequiredMatcher(1, f.Left, f.Collected);
-                                                            while (g.Next())
-                                                            {
-                                                                // Either(Command(+, 0), Command(-, 0), Command(*, 0), Command(/, 0))
-                                                                var h = new EitherMatcher(4, g.Left, g.Collected);
-                                                                while (h.Next())
-                                                                {
-                                                                    switch (h.Index)
-                                                                    {
-                                                                        case 0:
-                                                                        {
-                                                                            // Command(+, 0)
-                                                                            h.Match(PatternMatcher.MatchCommand, "+", value: 0, isList: false, isInt: true);
-                                                                            break;
-                                                                        }
-                                                                        case 1:
-                                                                        {
-                                                                            // Command(-, 0)
-                                                                            h.Match(PatternMatcher.MatchCommand, "-", value: 0, isList: false, isInt: true);
-                                                                            break;
-                                                                        }
-                                                                        case 2:
-                                                                        {
-                                                                            // Command(*, 0)
-                                                                            h.Match(PatternMatcher.MatchCommand, "*", value: 0, isList: false, isInt: true);
-                                                                            break;
-                                                                        }
-                                                                        case 3:
-                                                                        {
-                                                                            // Command(/, 0)
-                                                                            h.Match(PatternMatcher.MatchCommand, "/", value: 0, isList: false, isInt: true);
-                                                                            break;
-                                                                        }
-                                                                    }
-                                                                    if (!h.LastMatched)
-                                                                        break;
-                                                                }
-                                                                g.Fold(h.Result);
-                                                                if (!g.LastMatched)
-                                                                    break;
-                                                            }
-                                                            f.Fold(g.Result);
-                                                            break;
-                                                        }
-                                                        case 1:
-                                                        {
-                                                            // Argument(<value>, [])
-                                                            f.Match(PatternMatcher.MatchArgument, "<value>", value: new ArrayList(), isList: true, isInt: false);
-                                                            break;
-                                                        }
-                                                    }
-                                                    if (!f.LastMatched)
-                                                        break;
-                                                }
-                                                e.Fold(f.Result);
-                                                if (!e.LastMatched)
-                                                    break;
+                                                // Argument(<value>, [])
+                                                d.Match(PatternMatcher.MatchArgument, "<value>", value: new ArrayList(), isList: true, isInt: false);
+                                                break;
                                             }
-                                            d.Fold(e.Result);
-                                            break;
-                                        }
-                                    }
-                                    if (!d.LastMatched)
-                                        break;
-                                }
-                                c.Fold(d.Result);
-                                break;
-                            }
-                            case 1:
-                            {
-                                // Required(Argument(<function>, ), Argument(<value>, []), OneOrMore(Optional(Required(Command(,, 0), Argument(<value>, [])))))
-                                var d = new RequiredMatcher(3, c.Left, c.Collected);
-                                while (d.Next())
-                                {
-                                    switch (d.Index)
-                                    {
-                                        case 0:
-                                        {
-                                            // Argument(<function>, )
-                                            d.Match(PatternMatcher.MatchArgument, "<function>", value: null, isList: false, isInt: false);
-                                            break;
-                                        }
-                                        case 1:
-                                        {
-                                            // Argument(<value>, [])
-                                            d.Match(PatternMatcher.MatchArgument, "<value>", value: new ArrayList(), isList: true, isInt: false);
-                                            break;
-                                        }
-                                        case 2:
-                                        {
-                                            // OneOrMore(Optional(Required(Command(,, 0), Argument(<value>, []))))
-                                            var e = new OneOrMoreMatcher(1, d.Left, d.Collected);
-                                            while (e.Next())
+                                            case 1:
                                             {
-                                                // Optional(Required(Command(,, 0), Argument(<value>, [])))
-                                                var f = new OptionalMatcher(1, e.Left, e.Collected);
-                                                while (f.Next())
+                                                // OneOrMore(Required(Required(Either(Command(+, 0), Command(-, 0), Command(*, 0), Command(/, 0))), Argument(<value>, [])))
+                                                var e = new OneOrMoreMatcher(1, d.Left, d.Collected);
+                                                while (e.Next())
                                                 {
-                                                    // Required(Command(,, 0), Argument(<value>, []))
-                                                    var g = new RequiredMatcher(2, f.Left, f.Collected);
-                                                    while (g.Next())
+                                                    // Required(Required(Either(Command(+, 0), Command(-, 0), Command(*, 0), Command(/, 0))), Argument(<value>, []))
+                                                    var f = new RequiredMatcher(2, e.Left, e.Collected);
+                                                    while (f.Next())
                                                     {
-                                                        switch (g.Index)
+                                                        switch (f.Index)
                                                         {
                                                             case 0:
                                                             {
-                                                                // Command(,, 0)
-                                                                g.Match(PatternMatcher.MatchCommand, ",", value: 0, isList: false, isInt: true);
+                                                                // Required(Either(Command(+, 0), Command(-, 0), Command(*, 0), Command(/, 0)))
+                                                                var g = new RequiredMatcher(1, f.Left, f.Collected);
+                                                                while (g.Next())
+                                                                {
+                                                                    // Either(Command(+, 0), Command(-, 0), Command(*, 0), Command(/, 0))
+                                                                    var h = new EitherMatcher(4, g.Left, g.Collected);
+                                                                    while (h.Next())
+                                                                    {
+                                                                        switch (h.Index)
+                                                                        {
+                                                                            case 0:
+                                                                            {
+                                                                                // Command(+, 0)
+                                                                                h.Match(PatternMatcher.MatchCommand, "+", value: 0, isList: false, isInt: true);
+                                                                                break;
+                                                                            }
+                                                                            case 1:
+                                                                            {
+                                                                                // Command(-, 0)
+                                                                                h.Match(PatternMatcher.MatchCommand, "-", value: 0, isList: false, isInt: true);
+                                                                                break;
+                                                                            }
+                                                                            case 2:
+                                                                            {
+                                                                                // Command(*, 0)
+                                                                                h.Match(PatternMatcher.MatchCommand, "*", value: 0, isList: false, isInt: true);
+                                                                                break;
+                                                                            }
+                                                                            case 3:
+                                                                            {
+                                                                                // Command(/, 0)
+                                                                                h.Match(PatternMatcher.MatchCommand, "/", value: 0, isList: false, isInt: true);
+                                                                                break;
+                                                                            }
+                                                                        }
+                                                                        if (!h.LastMatched)
+                                                                            break;
+                                                                    }
+                                                                    g.Fold(h.Result);
+                                                                    if (!g.LastMatched)
+                                                                        break;
+                                                                }
+                                                                f.Fold(g.Result);
                                                                 break;
                                                             }
                                                             case 1:
                                                             {
                                                                 // Argument(<value>, [])
-                                                                g.Match(PatternMatcher.MatchArgument, "<value>", value: new ArrayList(), isList: true, isInt: false);
+                                                                f.Match(PatternMatcher.MatchArgument, "<value>", value: new ArrayList(), isList: true, isInt: false);
                                                                 break;
                                                             }
                                                         }
-                                                        if (!g.LastMatched)
+                                                        if (!f.LastMatched)
                                                             break;
                                                     }
-                                                    f.Fold(g.Result);
-                                                    if (!f.LastMatched)
+                                                    e.Fold(f.Result);
+                                                    if (!e.LastMatched)
                                                         break;
                                                 }
-                                                e.Fold(f.Result);
-                                                if (!e.LastMatched)
-                                                    break;
+                                                d.Fold(e.Result);
+                                                break;
                                             }
-                                            d.Fold(e.Result);
-                                            break;
                                         }
-                                    }
-                                    if (!d.LastMatched)
-                                        break;
-                                }
-                                c.Fold(d.Result);
-                                break;
-                            }
-                            case 2:
-                            {
-                                // Required(Required(Option(-h,--help,0,False)))
-                                var d = new RequiredMatcher(1, c.Left, c.Collected);
-                                while (d.Next())
-                                {
-                                    // Required(Option(-h,--help,0,False))
-                                    var e = new RequiredMatcher(1, d.Left, d.Collected);
-                                    while (e.Next())
-                                    {
-                                        // Option(-h,--help,0,False)
-                                        e.Match(PatternMatcher.MatchOption, "--help", value: false, isList: false, isInt: false);
-                                        if (!e.LastMatched)
+                                        if (!d.LastMatched)
                                             break;
                                     }
-                                    d.Fold(e.Result);
-                                    if (!d.LastMatched)
-                                        break;
+                                    c.Fold(d.Result);
+                                    break;
                                 }
-                                c.Fold(d.Result);
-                                break;
+                                case 1:
+                                {
+                                    // Required(Argument(<function>, ), Argument(<value>, []), OneOrMore(Optional(Required(Command(,, 0), Argument(<value>, [])))))
+                                    var d = new RequiredMatcher(3, c.Left, c.Collected);
+                                    while (d.Next())
+                                    {
+                                        switch (d.Index)
+                                        {
+                                            case 0:
+                                            {
+                                                // Argument(<function>, )
+                                                d.Match(PatternMatcher.MatchArgument, "<function>", value: null, isList: false, isInt: false);
+                                                break;
+                                            }
+                                            case 1:
+                                            {
+                                                // Argument(<value>, [])
+                                                d.Match(PatternMatcher.MatchArgument, "<value>", value: new ArrayList(), isList: true, isInt: false);
+                                                break;
+                                            }
+                                            case 2:
+                                            {
+                                                // OneOrMore(Optional(Required(Command(,, 0), Argument(<value>, []))))
+                                                var e = new OneOrMoreMatcher(1, d.Left, d.Collected);
+                                                while (e.Next())
+                                                {
+                                                    // Optional(Required(Command(,, 0), Argument(<value>, [])))
+                                                    var f = new OptionalMatcher(1, e.Left, e.Collected);
+                                                    while (f.Next())
+                                                    {
+                                                        // Required(Command(,, 0), Argument(<value>, []))
+                                                        var g = new RequiredMatcher(2, f.Left, f.Collected);
+                                                        while (g.Next())
+                                                        {
+                                                            switch (g.Index)
+                                                            {
+                                                                case 0:
+                                                                {
+                                                                    // Command(,, 0)
+                                                                    g.Match(PatternMatcher.MatchCommand, ",", value: 0, isList: false, isInt: true);
+                                                                    break;
+                                                                }
+                                                                case 1:
+                                                                {
+                                                                    // Argument(<value>, [])
+                                                                    g.Match(PatternMatcher.MatchArgument, "<value>", value: new ArrayList(), isList: true, isInt: false);
+                                                                    break;
+                                                                }
+                                                            }
+                                                            if (!g.LastMatched)
+                                                                break;
+                                                        }
+                                                        f.Fold(g.Result);
+                                                        if (!f.LastMatched)
+                                                            break;
+                                                    }
+                                                    e.Fold(f.Result);
+                                                    if (!e.LastMatched)
+                                                        break;
+                                                }
+                                                d.Fold(e.Result);
+                                                break;
+                                            }
+                                        }
+                                        if (!d.LastMatched)
+                                            break;
+                                    }
+                                    c.Fold(d.Result);
+                                    break;
+                                }
+                                case 2:
+                                {
+                                    // Required(Required(Option(-h,--help,0,False)))
+                                    var d = new RequiredMatcher(1, c.Left, c.Collected);
+                                    while (d.Next())
+                                    {
+                                        // Required(Option(-h,--help,0,False))
+                                        var e = new RequiredMatcher(1, d.Left, d.Collected);
+                                        while (e.Next())
+                                        {
+                                            // Option(-h,--help,0,False)
+                                            e.Match(PatternMatcher.MatchOption, "--help", value: false, isList: false, isInt: false);
+                                            if (!e.LastMatched)
+                                                break;
+                                        }
+                                        d.Fold(e.Result);
+                                        if (!d.LastMatched)
+                                            break;
+                                    }
+                                    c.Fold(d.Result);
+                                    break;
+                                }
                             }
+                            if (!c.LastMatched)
+                                break;
                         }
-                        if (!c.LastMatched)
+                        b.Fold(c.Result);
+                        if (!b.LastMatched)
                             break;
                     }
-                    b.Fold(c.Result);
-                    if (!b.LastMatched)
-                        break;
+                    a.Fold(b.Result);
                 }
-                a.Fold(b.Result);
-            }
-            while (false);
+                while (false);
 
-            if (!a.Result || a.Left.Count > 0)
-            {
-                const string exitUsage = @"Usage:
+                if (!a.Result || a.Left.Count > 0)
+                {
+                    const string exitUsage = @"Usage:
   calculator_example.py <value> ( ( + | - | * | / ) <value> )...
   calculator_example.py <function> <value> [( , <value> )]...
   calculator_example.py (-h | --help)";
-                throw new DocoptInputErrorException(exitUsage);
+                    throw new DocoptInputErrorException(exitUsage);
+                }
+
+                collected = a.Collected;
+                var result = new Arguments();
+
+                foreach (var p in collected)
+                {
+                    var value = p.Value is { IsStringList: true } ? ((StringList)p.Value).Reverse() : p.Value;
+                    switch (p.Name)
+                    {
+                        case @"<value>": result.ArgValue = (StringList)value; break;
+                        case @"+": result.CmdPlus = (int)value; break;
+                        case @"-": result.CmdMinus = (int)value; break;
+                        case @"*": result.CmdStar = (int)value; break;
+                        case @"/": result.CmdSlash = (int)value; break;
+                        case @"<function>": result.ArgFunction = (string?)value; break;
+                        case @",": result.CmdComma = (int)value; break;
+                        case @"--help": result.OptHelp = (bool)value; break;
+                    }
+                }
+
+                return result;
             }
 
-            var dict = new Dictionary<string, Value>
+            IEnumerator<KeyValuePair<string, object?>> GetEnumerator()
             {
-                [@"<value>"] = StringList.Empty,
-                [@"+"] = 0,
-                [@"-"] = 0,
-                [@"*"] = 0,
-                [@"/"] = 0,
-                [@"<value>"] = StringList.Empty,
-                [@"<function>"] = Value.None,
-                [@"<value>"] = StringList.Empty,
-                [@","] = 0,
-                [@"<value>"] = StringList.Empty,
-                [@"--help"] = false,
-            };
-
-            collected = a.Collected;
-            foreach (var p in collected)
-            {
-                dict[p.Name] = p.Value is { IsStringList: true } ? ((StringList)p.Value).Reverse() : p.Value;
+                yield return KeyValuePair.Create("<value>", (object?)ArgValue);
+                yield return KeyValuePair.Create("+", (object?)CmdPlus);
+                yield return KeyValuePair.Create("-", (object?)CmdMinus);
+                yield return KeyValuePair.Create("*", (object?)CmdStar);
+                yield return KeyValuePair.Create("/", (object?)CmdSlash);
+                yield return KeyValuePair.Create("<function>", (object?)ArgFunction);
+                yield return KeyValuePair.Create(",", (object?)CmdComma);
+                yield return KeyValuePair.Create("--help", (object?)OptHelp);
             }
 
-            return dict;
+            IEnumerator<KeyValuePair<string, object?>> IEnumerable<KeyValuePair<string, object?>>.GetEnumerator() => GetEnumerator();
+            IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
+
+            public StringList ArgValue { get; private set; } = StringList.Empty;
+            public int CmdPlus { get; private set; }
+            public int CmdMinus { get; private set; }
+            public int CmdStar { get; private set; }
+            public int CmdSlash { get; private set; }
+            public string? ArgFunction { get; private set; }
+            public int CmdComma { get; private set; }
+            public bool OptHelp { get; private set; }
         }
-
-        public StringList ArgValue => (StringList)_args["<value>"];
-        public bool CmdPlus => _args["+"].Object is true or (int and > 0);
-        public bool CmdMinus => _args["-"].Object is true or (int and > 0);
-        public bool CmdStar => _args["*"].Object is true or (int and > 0);
-        public bool CmdSlash => _args["/"].Object is true or (int and > 0);
-        public string ArgFunction => _args["<function>"].Object as string;
-        public bool CmdComma => _args[","].Object is true or (int and > 0);
-        public bool OptHelp => _args["--help"].Object is true or (int and > 0);
     }
 }

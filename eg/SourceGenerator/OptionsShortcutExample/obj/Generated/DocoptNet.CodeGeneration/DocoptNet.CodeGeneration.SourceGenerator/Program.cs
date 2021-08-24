@@ -1,3 +1,5 @@
+#nullable enable annotations
+
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -65,144 +67,162 @@ Options:
             new Option("-q", null, 0, false),
         };
 
-        static Dictionary<string, Value> Apply(IEnumerable<string> args, bool help = true, object version = null, bool optionsFirst = false, bool exit = false)
+        public partial class Arguments : IEnumerable<KeyValuePair<string, object?>>
         {
-            var tokens = new Tokens(args, typeof(DocoptInputErrorException));
-            var options = Options.Select(e => new Option(e.ShortName, e.LongName, e.ArgCount, e.Value)).ToList();
-            var arguments = Docopt.ParseArgv(tokens, options, optionsFirst).AsReadOnly();
-            if (help && arguments.Any(o => o is { Name: "-h" or "--help", Value: { IsTrue: true } }))
+            public static Arguments Apply(IEnumerable<string> args, bool help = true, object? version = null, bool optionsFirst = false, bool exit = false)
             {
-                throw new DocoptExitException(Usage);
-            }
-            if (version is not null && arguments.Any(o => o is { Name: "--version", Value: { IsTrue: true } }))
-            {
-                throw new DocoptExitException(version.ToString());
-            }
-            var left = arguments;
-            var collected = new Leaves();
-            var a = new RequiredMatcher(1, left, collected);
-            do
-            {
-                // Required(Required(Optional(OptionsShortcut(Option(-h,--help,0,False), Option(,--version,0,False), Option(-n,--number,1,), Option(-t,--timeout,1,), Option(,--apply,0,False), Option(-q,,0,False))), Argument(<port>, )))
-                var b = new RequiredMatcher(1, a.Left, a.Collected);
-                while (b.Next())
+                var tokens = new Tokens(args, typeof(DocoptInputErrorException));
+                var options = Options.Select(e => new Option(e.ShortName, e.LongName, e.ArgCount, e.Value)).ToList();
+                var arguments = Docopt.ParseArgv(tokens, options, optionsFirst).AsReadOnly();
+                if (help && arguments.Any(o => o is { Name: "-h" or "--help", Value: { IsTrue: true } }))
                 {
-                    // Required(Optional(OptionsShortcut(Option(-h,--help,0,False), Option(,--version,0,False), Option(-n,--number,1,), Option(-t,--timeout,1,), Option(,--apply,0,False), Option(-q,,0,False))), Argument(<port>, ))
-                    var c = new RequiredMatcher(2, b.Left, b.Collected);
-                    while (c.Next())
+                    throw new DocoptExitException(Usage);
+                }
+                if (version is not null && arguments.Any(o => o is { Name: "--version", Value: { IsTrue: true } }))
+                {
+                    throw new DocoptExitException(version.ToString());
+                }
+                var left = arguments;
+                var collected = new Leaves();
+                var a = new RequiredMatcher(1, left, collected);
+                do
+                {
+                    // Required(Required(Optional(OptionsShortcut(Option(-h,--help,0,False), Option(,--version,0,False), Option(-n,--number,1,), Option(-t,--timeout,1,), Option(,--apply,0,False), Option(-q,,0,False))), Argument(<port>, )))
+                    var b = new RequiredMatcher(1, a.Left, a.Collected);
+                    while (b.Next())
                     {
-                        switch (c.Index)
+                        // Required(Optional(OptionsShortcut(Option(-h,--help,0,False), Option(,--version,0,False), Option(-n,--number,1,), Option(-t,--timeout,1,), Option(,--apply,0,False), Option(-q,,0,False))), Argument(<port>, ))
+                        var c = new RequiredMatcher(2, b.Left, b.Collected);
+                        while (c.Next())
                         {
-                            case 0:
+                            switch (c.Index)
                             {
-                                // Optional(OptionsShortcut(Option(-h,--help,0,False), Option(,--version,0,False), Option(-n,--number,1,), Option(-t,--timeout,1,), Option(,--apply,0,False), Option(-q,,0,False)))
-                                var d = new OptionalMatcher(1, c.Left, c.Collected);
-                                while (d.Next())
+                                case 0:
                                 {
-                                    // OptionsShortcut(Option(-h,--help,0,False), Option(,--version,0,False), Option(-n,--number,1,), Option(-t,--timeout,1,), Option(,--apply,0,False), Option(-q,,0,False))
-                                    var e = new OptionalMatcher(6, d.Left, d.Collected);
-                                    while (e.Next())
+                                    // Optional(OptionsShortcut(Option(-h,--help,0,False), Option(,--version,0,False), Option(-n,--number,1,), Option(-t,--timeout,1,), Option(,--apply,0,False), Option(-q,,0,False)))
+                                    var d = new OptionalMatcher(1, c.Left, c.Collected);
+                                    while (d.Next())
                                     {
-                                        switch (e.Index)
+                                        // OptionsShortcut(Option(-h,--help,0,False), Option(,--version,0,False), Option(-n,--number,1,), Option(-t,--timeout,1,), Option(,--apply,0,False), Option(-q,,0,False))
+                                        var e = new OptionalMatcher(6, d.Left, d.Collected);
+                                        while (e.Next())
                                         {
-                                            case 0:
+                                            switch (e.Index)
                                             {
-                                                // Option(-h,--help,0,False)
-                                                e.Match(PatternMatcher.MatchOption, "--help", value: false, isList: false, isInt: false);
-                                                break;
+                                                case 0:
+                                                {
+                                                    // Option(-h,--help,0,False)
+                                                    e.Match(PatternMatcher.MatchOption, "--help", value: false, isList: false, isInt: false);
+                                                    break;
+                                                }
+                                                case 1:
+                                                {
+                                                    // Option(,--version,0,False)
+                                                    e.Match(PatternMatcher.MatchOption, "--version", value: false, isList: false, isInt: false);
+                                                    break;
+                                                }
+                                                case 2:
+                                                {
+                                                    // Option(-n,--number,1,)
+                                                    e.Match(PatternMatcher.MatchOption, "--number", value: null, isList: false, isInt: false);
+                                                    break;
+                                                }
+                                                case 3:
+                                                {
+                                                    // Option(-t,--timeout,1,)
+                                                    e.Match(PatternMatcher.MatchOption, "--timeout", value: null, isList: false, isInt: false);
+                                                    break;
+                                                }
+                                                case 4:
+                                                {
+                                                    // Option(,--apply,0,False)
+                                                    e.Match(PatternMatcher.MatchOption, "--apply", value: false, isList: false, isInt: false);
+                                                    break;
+                                                }
+                                                case 5:
+                                                {
+                                                    // Option(-q,,0,False)
+                                                    e.Match(PatternMatcher.MatchOption, "-q", value: false, isList: false, isInt: false);
+                                                    break;
+                                                }
                                             }
-                                            case 1:
-                                            {
-                                                // Option(,--version,0,False)
-                                                e.Match(PatternMatcher.MatchOption, "--version", value: false, isList: false, isInt: false);
+                                            if (!e.LastMatched)
                                                 break;
-                                            }
-                                            case 2:
-                                            {
-                                                // Option(-n,--number,1,)
-                                                e.Match(PatternMatcher.MatchOption, "--number", value: null, isList: false, isInt: false);
-                                                break;
-                                            }
-                                            case 3:
-                                            {
-                                                // Option(-t,--timeout,1,)
-                                                e.Match(PatternMatcher.MatchOption, "--timeout", value: null, isList: false, isInt: false);
-                                                break;
-                                            }
-                                            case 4:
-                                            {
-                                                // Option(,--apply,0,False)
-                                                e.Match(PatternMatcher.MatchOption, "--apply", value: false, isList: false, isInt: false);
-                                                break;
-                                            }
-                                            case 5:
-                                            {
-                                                // Option(-q,,0,False)
-                                                e.Match(PatternMatcher.MatchOption, "-q", value: false, isList: false, isInt: false);
-                                                break;
-                                            }
                                         }
-                                        if (!e.LastMatched)
+                                        d.Fold(e.Result);
+                                        if (!d.LastMatched)
                                             break;
                                     }
-                                    d.Fold(e.Result);
-                                    if (!d.LastMatched)
-                                        break;
+                                    c.Fold(d.Result);
+                                    break;
                                 }
-                                c.Fold(d.Result);
-                                break;
+                                case 1:
+                                {
+                                    // Argument(<port>, )
+                                    c.Match(PatternMatcher.MatchArgument, "<port>", value: null, isList: false, isInt: false);
+                                    break;
+                                }
                             }
-                            case 1:
-                            {
-                                // Argument(<port>, )
-                                c.Match(PatternMatcher.MatchArgument, "<port>", value: null, isList: false, isInt: false);
+                            if (!c.LastMatched)
                                 break;
-                            }
                         }
-                        if (!c.LastMatched)
+                        b.Fold(c.Result);
+                        if (!b.LastMatched)
                             break;
                     }
-                    b.Fold(c.Result);
-                    if (!b.LastMatched)
-                        break;
+                    a.Fold(b.Result);
                 }
-                a.Fold(b.Result);
-            }
-            while (false);
+                while (false);
 
-            if (!a.Result || a.Left.Count > 0)
-            {
-                const string exitUsage = @"Usage:
+                if (!a.Result || a.Left.Count > 0)
+                {
+                    const string exitUsage = @"Usage:
   OptionsShortcutExample [options] <port>";
-                throw new DocoptInputErrorException(exitUsage);
+                    throw new DocoptInputErrorException(exitUsage);
+                }
+
+                collected = a.Collected;
+                var result = new Arguments();
+
+                foreach (var p in collected)
+                {
+                    var value = p.Value is { IsStringList: true } ? ((StringList)p.Value).Reverse() : p.Value;
+                    switch (p.Name)
+                    {
+                        case @"--help": result.OptHelp = (bool)value; break;
+                        case @"--version": result.OptVersion = (bool)value; break;
+                        case @"--number": result.OptNumber = (string?)value; break;
+                        case @"--timeout": result.OptTimeout = (string?)value; break;
+                        case @"--apply": result.OptApply = (bool)value; break;
+                        case @"-q": result.OptQ = (bool)value; break;
+                        case @"<port>": result.ArgPort = (string?)value; break;
+                    }
+                }
+
+                return result;
             }
 
-            var dict = new Dictionary<string, Value>
+            IEnumerator<KeyValuePair<string, object?>> GetEnumerator()
             {
-                [@"--help"] = false,
-                [@"--version"] = false,
-                [@"--number"] = Value.None,
-                [@"--timeout"] = Value.None,
-                [@"--apply"] = false,
-                [@"-q"] = false,
-                [@"<port>"] = Value.None,
-            };
-
-            collected = a.Collected;
-            foreach (var p in collected)
-            {
-                dict[p.Name] = p.Value is { IsStringList: true } ? ((StringList)p.Value).Reverse() : p.Value;
+                yield return KeyValuePair.Create("--help", (object?)OptHelp);
+                yield return KeyValuePair.Create("--version", (object?)OptVersion);
+                yield return KeyValuePair.Create("--number", (object?)OptNumber);
+                yield return KeyValuePair.Create("--timeout", (object?)OptTimeout);
+                yield return KeyValuePair.Create("--apply", (object?)OptApply);
+                yield return KeyValuePair.Create("-q", (object?)OptQ);
+                yield return KeyValuePair.Create("<port>", (object?)ArgPort);
             }
 
-            return dict;
+            IEnumerator<KeyValuePair<string, object?>> IEnumerable<KeyValuePair<string, object?>>.GetEnumerator() => GetEnumerator();
+            IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
+
+            public bool OptHelp { get; private set; }
+            public bool OptVersion { get; private set; }
+            public string? OptNumber { get; private set; }
+            public string? OptTimeout { get; private set; }
+            public bool OptApply { get; private set; }
+            public bool OptQ { get; private set; }
+            public string? ArgPort { get; private set; }
         }
-
-        public bool OptHelp => _args["--help"].Object is true or (int and > 0);
-        public bool OptVersion => _args["--version"].Object is true or (int and > 0);
-        public string OptNumber => (string)_args["--number"].Object;
-        public string OptTimeout => (string)_args["--timeout"].Object;
-        public bool OptApply => _args["--apply"].Object is true or (int and > 0);
-        public bool OptQ => _args["-q"].Object is true or (int and > 0);
-        public string ArgPort => _args["<port>"].Object as string;
     }
 }

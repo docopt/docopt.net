@@ -1,14 +1,12 @@
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using DocoptNet.Generated;
 using OddEvenExample;
 
-Program program;
+Program.Arguments arguments;
 
 try
 {
-    program = new Program(args, exit: true);
+    arguments = Program.Arguments.Apply(args, exit: true);
 }
 catch (DocoptExitException e)
 {
@@ -21,29 +19,13 @@ catch (DocoptInputErrorException e)
     return 0xbd;
 }
 
-foreach (var (name, value) in program.Args)
-    Console.WriteLine("{0} = {1}", name, value);
+foreach (var (name, value) in arguments)
+    Console.WriteLine($"{name} = {value}");
 
 Console.WriteLine($@"{{
-    Help = {program.OptHelp},
-    Odd  = [{string.Join(", ", from object v in program.ArgOdd select v)}],
-    Even = [{string.Join(", ", from object v in program.ArgEven select v)}],
+    Help = {arguments.OptHelp},
+    Odd  = [{string.Join(", ", arguments.ArgOdd)}],
+    Even = [{string.Join(", ", arguments.ArgEven)}],
 }}");
 
 return 0;
-
-namespace OddEvenExample
-{
-    partial class Program
-    {
-        readonly IDictionary<string, Value> _args;
-
-        public Program(ICollection<string> argv, bool help = true,
-                       object version = null, bool optionsFirst = false, bool exit = false)
-        {
-            _args = Apply(argv, help, version, optionsFirst, exit);
-        }
-
-        public IDictionary<string, Value> Args => _args;
-    }
-}

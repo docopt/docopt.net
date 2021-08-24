@@ -124,7 +124,9 @@ namespace DocoptNet.CodeGeneration
             var usage = text.ToString();
             var code = new CSharpSourceBuilder();
 
-            _ = code.Using("System.Collections")
+            _ = code["#nullable enable annotations"].NewLine
+                    .NewLine
+                    .Using("System.Collections")
                     .Using("System.Collections.Generic")
                     .Using("System.Linq")
                     .Using("DocoptNet.Generated")
@@ -290,7 +292,9 @@ namespace DocoptNet.CodeGeneration
             _ = code.SkipNextNewLine.BlockEnd.EndStatement;
 
             _ = code.NewLine;
-            _ = code["static Dictionary<string, Value> Apply(IEnumerable<string> args, bool help = true, object version = null, bool optionsFirst = false, bool exit = false)"].NewLine.Block
+            _ = code["public partial class Arguments : IEnumerable<KeyValuePair<string, object?>>"].NewLine.Block;
+
+            _ = code["public static Arguments Apply(IEnumerable<string> args, bool help = true, object? version = null, bool optionsFirst = false, bool exit = false)"].NewLine.Block
                 .DeclareAssigned("tokens", "new Tokens(args, typeof(DocoptInputErrorException))")
                 ["var options = Options.Select(e => new Option(e.ShortName, e.LongName, e.ArgCount, e.Value)).ToList()"].EndStatement
                 .DeclareAssigned("arguments", "Docopt.ParseArgv(tokens, options, optionsFirst).AsReadOnly()")
@@ -313,47 +317,101 @@ namespace DocoptNet.CodeGeneration
                     .Throw("new DocoptInputErrorException(exitUsage)").BlockEnd
                     .NewLine;
 
-            _ = code.SkipStatementEnd.DeclareAssigned("dict", "new Dictionary<string, Value>").NewLine.Block;
+            _ = code.Assign("collected", "a.Collected")
+                    .DeclareAssigned("result", "new Arguments()");
 
-            foreach (var leaf in pattern.Flat().OfType<LeafPattern>())
+            var leaves = Docopt.GetFlatPatterns(usage)
+                               .GroupBy(p => p.Name)
+                               .Select(g => (LeafPattern)g.First())
+                               .ToList();
+
+            if (leaves.Any())
             {
-                _ = code['['].Literal(leaf.Name)["] = "][leaf.Value is { IsStringList: true } ? ((StringList)leaf.Value).Reverse() : leaf.Value, "Value.None"][','].NewLine;
+                _ = code.NewLine
+                        .ForEach("p", "collected").Block
+                        .DeclareAssigned("value", "p.Value is { IsStringList: true } ? ((StringList)p.Value).Reverse() : p.Value")
+                        ["switch (p.Name)"].NewLine
+                        .Block;
+
+                foreach (var p in leaves)
+                {
+                    _ = code.SkipNextNewLine.Case(p.Name)
+                            [" result."][InferPropertyName(p)][" = ("][p switch { Option   { Value: { IsString: true } } => "string",
+                                                                                  Argument { Value: { IsNone: true } } or Option { ArgCount: not 0, Value: { Kind: not ValueKind.StringList } } => "string?",
+                                                                                  { Value: { Kind: var kind } } => InferType(kind) }][")value"]
+                            .SkipNextNewLine.EndStatement[' ']
+                            .Break;
+                }
+
+                _ = code.BlockEnd   // switch
+                        .BlockEnd;  // foreach
+
             }
 
-            _ = code.SkipNextNewLine.BlockEnd.EndStatement;
-
             _ = code.NewLine
-                    .Assign("collected", "a.Collected")
-                    .ForEach("p", "collected").Block
-                    .Assign("dict[p.Name]", "p.Value is { IsStringList: true } ? ((StringList)p.Value).Reverse() : p.Value").BlockEnd
-                    .NewLine
-                    .Return("dict").BlockEnd;
+                    .Return("result")
+                    .BlockEnd;  // Apply
 
+            _ = code.NewLine;
+            _ = code["IEnumerator<KeyValuePair<string, object?>> GetEnumerator()"].NewLine.Block;
+            if (leaves.Any())
+            {
+                foreach (var line in from p in leaves
+                                     select $"yield return KeyValuePair.Create({Literal(p.Name)}, (object?){InferPropertyName(p)})")
+                {
+                    _ = code[line].EndStatement;
+                }
+            }
+            else
+            {
+                _ = code["yield break"].EndStatement;
+            }
+
+            _ = code.BlockEnd.NewLine;
+            _ = code["IEnumerator<KeyValuePair<string, object?>> IEnumerable<KeyValuePair<string, object?>>.GetEnumerator() => GetEnumerator()"].EndStatement;
+            _ = code["IEnumerator IEnumerable.GetEnumerator() => GetEnumerator()"].EndStatement;
             _ = code.NewLine;
 
             foreach (var line in
-                from p in Docopt.GetFlatPatterns(usage)
-                group p by p.Name into g
-                select g.First() switch
+                from p in leaves
+                select (Name: InferPropertyName(p), Pattern: p) into e
+                select (Func<CSharpSourceBuilder, CSharpSourceBuilder>)(e.Pattern switch
                 {
-                    Command { Name: var name } => $"public bool Cmd{GenerateCodeHelper.ConvertToPascalCase(name.ToLowerInvariant())} => _args[\"{name}\"].Object is true or (int and > 0);",
-                    Argument { Name: var name, Value: { IsStringList: true } } => $"public StringList Arg{GenerateCodeHelper.ConvertToPascalCase(name.Replace("<", "").Replace(">", "").ToLowerInvariant())} => (StringList)_args[\"{name}\"];",
-                    Argument { Name: var name } => $"public string Arg{GenerateCodeHelper.ConvertToPascalCase(name.Replace("<", "").Replace(">", "").ToLowerInvariant())} => _args[\"{name}\"].Object as string;",
-                    Option { Name: var name, ArgCount: 0 } => $"public bool Opt{GenerateCodeHelper.ConvertToPascalCase(name.ToLowerInvariant())} => _args[\"{name}\"].Object is true or (int and > 0);",
-                    Option { Name: var name, Value: { Object: string @default } } => $"public string Opt{GenerateCodeHelper.ConvertToPascalCase(name.ToLowerInvariant())} => (string)_args[\"{name}\"].Object ?? {Literal(@default)};",
-                    Option { Name: var name } => $"public string Opt{GenerateCodeHelper.ConvertToPascalCase(name.ToLowerInvariant())} => (string)_args[\"{name}\"].Object;",
-                    var p => throw new NotSupportedException($"Unsupported pattern: {p}")
-                })
+                    Option { Value: { IsString: true } str } => c => c["public string "][e.Name][" { get; private set; } = "][str].SkipNextNewLine.EndStatement,
+                    Argument { Value: { IsNone: true } } or Option { ArgCount: not 0, Value: { Kind: not ValueKind.StringList } } => c => c["public string? "][e.Name][" { get; private set; }"],
+                    { Value: { Object: StringList list } } => c => c["public StringList "][e.Name][" { get; private set; } = "][list.Reverse()].SkipNextNewLine.EndStatement,
+                    { Value: { Kind: var kind } } => c => c["public "][InferType(kind)][' '][e.Name][" { get; private set; }"],
+                }))
             {
-                _ = code[line].NewLine;
+                _ = line(code).NewLine;
             }
 
-            _ = code.BlockEnd;
+            _ = code.BlockEnd  // class Arguments
+                    .BlockEnd;
 
             if (isNamespaced)
                 _ = code.BlockEnd;
 
             return new StringBuilderSourceText(code.StringBuilder, outputEncoding ?? text.Encoding ?? Utf8BomlessEncoding);
+
+            static string InferPropertyName(LeafPattern leaf) =>
+                leaf switch
+                {
+                    Command  { Name: var name } => $"Cmd{GenerateCodeHelper.ConvertToPascalCase(name.ToLowerInvariant())}",
+                    Argument { Name: var name } => $"Arg{GenerateCodeHelper.ConvertToPascalCase(name.Replace("<", "").Replace(">", "").ToLowerInvariant())}",
+                    Option   { Name: var name } => $"Opt{GenerateCodeHelper.ConvertToPascalCase(name.ToLowerInvariant())}",
+                    var p => throw new NotSupportedException($"Unsupported pattern: {p}")
+                };
+
+            static string InferType(ValueKind kind) =>
+                kind switch
+                {
+                    ValueKind.Boolean    => "bool",
+                    ValueKind.Integer    => "int",
+                    ValueKind.String     => "string?",
+                    ValueKind.StringList => nameof(StringList),
+                    _ => throw new ArgumentOutOfRangeException(nameof(kind), kind, null)
+                };
         }
     }
 }

@@ -1,3 +1,5 @@
+#nullable enable annotations
+
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -157,337 +159,364 @@ Options:
             new Option(null, "--doctest", 0, false),
         };
 
-        static Dictionary<string, Value> Apply(IEnumerable<string> args, bool help = true, object version = null, bool optionsFirst = false, bool exit = false)
+        public partial class Arguments : IEnumerable<KeyValuePair<string, object?>>
         {
-            var tokens = new Tokens(args, typeof(DocoptInputErrorException));
-            var options = Options.Select(e => new Option(e.ShortName, e.LongName, e.ArgCount, e.Value)).ToList();
-            var arguments = Docopt.ParseArgv(tokens, options, optionsFirst).AsReadOnly();
-            if (help && arguments.Any(o => o is { Name: "-h" or "--help", Value: { IsTrue: true } }))
+            public static Arguments Apply(IEnumerable<string> args, bool help = true, object? version = null, bool optionsFirst = false, bool exit = false)
             {
-                throw new DocoptExitException(Usage);
-            }
-            if (version is not null && arguments.Any(o => o is { Name: "--version", Value: { IsTrue: true } }))
-            {
-                throw new DocoptExitException(version.ToString());
-            }
-            var left = arguments;
-            var collected = new Leaves();
-            var a = new RequiredMatcher(1, left, collected);
-            do
-            {
-                // Required(Either(Required(Optional(Option(-h,--help,0,False), Option(-v,--verbose,0,False), Option(-q,--quiet,0,False), Option(-r,--repeat,0,False), Option(-f,--file,1,*.py)), Optional(Option(,--exclude,1,.svn,CVS,.bzr,.hg,.git)), Optional(Either(Option(,--select,1,), Option(,--ignore,1,))), Optional(Option(,--show-source,0,False)), Optional(Option(,--statistics,0,False)), Optional(Option(,--count,0,False)), Optional(Option(,--benchmark,0,False)), OneOrMore(Argument(PATH, []))), Required(Required(Either(Option(,--doctest,0,False), Option(,--testsuite,1,)))), Required(Option(,--version,0,False))))
-                var b = new RequiredMatcher(1, a.Left, a.Collected);
-                while (b.Next())
+                var tokens = new Tokens(args, typeof(DocoptInputErrorException));
+                var options = Options.Select(e => new Option(e.ShortName, e.LongName, e.ArgCount, e.Value)).ToList();
+                var arguments = Docopt.ParseArgv(tokens, options, optionsFirst).AsReadOnly();
+                if (help && arguments.Any(o => o is { Name: "-h" or "--help", Value: { IsTrue: true } }))
                 {
-                    // Either(Required(Optional(Option(-h,--help,0,False), Option(-v,--verbose,0,False), Option(-q,--quiet,0,False), Option(-r,--repeat,0,False), Option(-f,--file,1,*.py)), Optional(Option(,--exclude,1,.svn,CVS,.bzr,.hg,.git)), Optional(Either(Option(,--select,1,), Option(,--ignore,1,))), Optional(Option(,--show-source,0,False)), Optional(Option(,--statistics,0,False)), Optional(Option(,--count,0,False)), Optional(Option(,--benchmark,0,False)), OneOrMore(Argument(PATH, []))), Required(Required(Either(Option(,--doctest,0,False), Option(,--testsuite,1,)))), Required(Option(,--version,0,False)))
-                    var c = new EitherMatcher(3, b.Left, b.Collected);
-                    while (c.Next())
+                    throw new DocoptExitException(Usage);
+                }
+                if (version is not null && arguments.Any(o => o is { Name: "--version", Value: { IsTrue: true } }))
+                {
+                    throw new DocoptExitException(version.ToString());
+                }
+                var left = arguments;
+                var collected = new Leaves();
+                var a = new RequiredMatcher(1, left, collected);
+                do
+                {
+                    // Required(Either(Required(Optional(Option(-h,--help,0,False), Option(-v,--verbose,0,False), Option(-q,--quiet,0,False), Option(-r,--repeat,0,False), Option(-f,--file,1,*.py)), Optional(Option(,--exclude,1,.svn,CVS,.bzr,.hg,.git)), Optional(Either(Option(,--select,1,), Option(,--ignore,1,))), Optional(Option(,--show-source,0,False)), Optional(Option(,--statistics,0,False)), Optional(Option(,--count,0,False)), Optional(Option(,--benchmark,0,False)), OneOrMore(Argument(PATH, []))), Required(Required(Either(Option(,--doctest,0,False), Option(,--testsuite,1,)))), Required(Option(,--version,0,False))))
+                    var b = new RequiredMatcher(1, a.Left, a.Collected);
+                    while (b.Next())
                     {
-                        switch (c.Index)
+                        // Either(Required(Optional(Option(-h,--help,0,False), Option(-v,--verbose,0,False), Option(-q,--quiet,0,False), Option(-r,--repeat,0,False), Option(-f,--file,1,*.py)), Optional(Option(,--exclude,1,.svn,CVS,.bzr,.hg,.git)), Optional(Either(Option(,--select,1,), Option(,--ignore,1,))), Optional(Option(,--show-source,0,False)), Optional(Option(,--statistics,0,False)), Optional(Option(,--count,0,False)), Optional(Option(,--benchmark,0,False)), OneOrMore(Argument(PATH, []))), Required(Required(Either(Option(,--doctest,0,False), Option(,--testsuite,1,)))), Required(Option(,--version,0,False)))
+                        var c = new EitherMatcher(3, b.Left, b.Collected);
+                        while (c.Next())
                         {
-                            case 0:
+                            switch (c.Index)
                             {
-                                // Required(Optional(Option(-h,--help,0,False), Option(-v,--verbose,0,False), Option(-q,--quiet,0,False), Option(-r,--repeat,0,False), Option(-f,--file,1,*.py)), Optional(Option(,--exclude,1,.svn,CVS,.bzr,.hg,.git)), Optional(Either(Option(,--select,1,), Option(,--ignore,1,))), Optional(Option(,--show-source,0,False)), Optional(Option(,--statistics,0,False)), Optional(Option(,--count,0,False)), Optional(Option(,--benchmark,0,False)), OneOrMore(Argument(PATH, [])))
-                                var d = new RequiredMatcher(8, c.Left, c.Collected);
-                                while (d.Next())
+                                case 0:
                                 {
-                                    switch (d.Index)
+                                    // Required(Optional(Option(-h,--help,0,False), Option(-v,--verbose,0,False), Option(-q,--quiet,0,False), Option(-r,--repeat,0,False), Option(-f,--file,1,*.py)), Optional(Option(,--exclude,1,.svn,CVS,.bzr,.hg,.git)), Optional(Either(Option(,--select,1,), Option(,--ignore,1,))), Optional(Option(,--show-source,0,False)), Optional(Option(,--statistics,0,False)), Optional(Option(,--count,0,False)), Optional(Option(,--benchmark,0,False)), OneOrMore(Argument(PATH, [])))
+                                    var d = new RequiredMatcher(8, c.Left, c.Collected);
+                                    while (d.Next())
                                     {
-                                        case 0:
+                                        switch (d.Index)
                                         {
-                                            // Optional(Option(-h,--help,0,False), Option(-v,--verbose,0,False), Option(-q,--quiet,0,False), Option(-r,--repeat,0,False), Option(-f,--file,1,*.py))
-                                            var e = new OptionalMatcher(5, d.Left, d.Collected);
-                                            while (e.Next())
+                                            case 0:
                                             {
-                                                switch (e.Index)
+                                                // Optional(Option(-h,--help,0,False), Option(-v,--verbose,0,False), Option(-q,--quiet,0,False), Option(-r,--repeat,0,False), Option(-f,--file,1,*.py))
+                                                var e = new OptionalMatcher(5, d.Left, d.Collected);
+                                                while (e.Next())
                                                 {
-                                                    case 0:
-                                                    {
-                                                        // Option(-h,--help,0,False)
-                                                        e.Match(PatternMatcher.MatchOption, "--help", value: false, isList: false, isInt: false);
-                                                        break;
-                                                    }
-                                                    case 1:
-                                                    {
-                                                        // Option(-v,--verbose,0,False)
-                                                        e.Match(PatternMatcher.MatchOption, "--verbose", value: false, isList: false, isInt: false);
-                                                        break;
-                                                    }
-                                                    case 2:
-                                                    {
-                                                        // Option(-q,--quiet,0,False)
-                                                        e.Match(PatternMatcher.MatchOption, "--quiet", value: false, isList: false, isInt: false);
-                                                        break;
-                                                    }
-                                                    case 3:
-                                                    {
-                                                        // Option(-r,--repeat,0,False)
-                                                        e.Match(PatternMatcher.MatchOption, "--repeat", value: false, isList: false, isInt: false);
-                                                        break;
-                                                    }
-                                                    case 4:
-                                                    {
-                                                        // Option(-f,--file,1,*.py)
-                                                        e.Match(PatternMatcher.MatchOption, "--file", value: "*.py", isList: false, isInt: false);
-                                                        break;
-                                                    }
-                                                }
-                                                if (!e.LastMatched)
-                                                    break;
-                                            }
-                                            d.Fold(e.Result);
-                                            break;
-                                        }
-                                        case 1:
-                                        {
-                                            // Optional(Option(,--exclude,1,.svn,CVS,.bzr,.hg,.git))
-                                            var e = new OptionalMatcher(1, d.Left, d.Collected);
-                                            while (e.Next())
-                                            {
-                                                // Option(,--exclude,1,.svn,CVS,.bzr,.hg,.git)
-                                                e.Match(PatternMatcher.MatchOption, "--exclude", value: ".svn,CVS,.bzr,.hg,.git", isList: false, isInt: false);
-                                                if (!e.LastMatched)
-                                                    break;
-                                            }
-                                            d.Fold(e.Result);
-                                            break;
-                                        }
-                                        case 2:
-                                        {
-                                            // Optional(Either(Option(,--select,1,), Option(,--ignore,1,)))
-                                            var e = new OptionalMatcher(1, d.Left, d.Collected);
-                                            while (e.Next())
-                                            {
-                                                // Either(Option(,--select,1,), Option(,--ignore,1,))
-                                                var f = new EitherMatcher(2, e.Left, e.Collected);
-                                                while (f.Next())
-                                                {
-                                                    switch (f.Index)
+                                                    switch (e.Index)
                                                     {
                                                         case 0:
                                                         {
-                                                            // Option(,--select,1,)
-                                                            f.Match(PatternMatcher.MatchOption, "--select", value: null, isList: false, isInt: false);
+                                                            // Option(-h,--help,0,False)
+                                                            e.Match(PatternMatcher.MatchOption, "--help", value: false, isList: false, isInt: false);
                                                             break;
                                                         }
                                                         case 1:
                                                         {
-                                                            // Option(,--ignore,1,)
-                                                            f.Match(PatternMatcher.MatchOption, "--ignore", value: null, isList: false, isInt: false);
+                                                            // Option(-v,--verbose,0,False)
+                                                            e.Match(PatternMatcher.MatchOption, "--verbose", value: false, isList: false, isInt: false);
+                                                            break;
+                                                        }
+                                                        case 2:
+                                                        {
+                                                            // Option(-q,--quiet,0,False)
+                                                            e.Match(PatternMatcher.MatchOption, "--quiet", value: false, isList: false, isInt: false);
+                                                            break;
+                                                        }
+                                                        case 3:
+                                                        {
+                                                            // Option(-r,--repeat,0,False)
+                                                            e.Match(PatternMatcher.MatchOption, "--repeat", value: false, isList: false, isInt: false);
+                                                            break;
+                                                        }
+                                                        case 4:
+                                                        {
+                                                            // Option(-f,--file,1,*.py)
+                                                            e.Match(PatternMatcher.MatchOption, "--file", value: "*.py", isList: false, isInt: false);
                                                             break;
                                                         }
                                                     }
-                                                    if (!f.LastMatched)
+                                                    if (!e.LastMatched)
                                                         break;
                                                 }
-                                                e.Fold(f.Result);
-                                                if (!e.LastMatched)
-                                                    break;
+                                                d.Fold(e.Result);
+                                                break;
                                             }
-                                            d.Fold(e.Result);
-                                            break;
-                                        }
-                                        case 3:
-                                        {
-                                            // Optional(Option(,--show-source,0,False))
-                                            var e = new OptionalMatcher(1, d.Left, d.Collected);
-                                            while (e.Next())
+                                            case 1:
                                             {
-                                                // Option(,--show-source,0,False)
-                                                e.Match(PatternMatcher.MatchOption, "--show-source", value: false, isList: false, isInt: false);
-                                                if (!e.LastMatched)
-                                                    break;
+                                                // Optional(Option(,--exclude,1,.svn,CVS,.bzr,.hg,.git))
+                                                var e = new OptionalMatcher(1, d.Left, d.Collected);
+                                                while (e.Next())
+                                                {
+                                                    // Option(,--exclude,1,.svn,CVS,.bzr,.hg,.git)
+                                                    e.Match(PatternMatcher.MatchOption, "--exclude", value: ".svn,CVS,.bzr,.hg,.git", isList: false, isInt: false);
+                                                    if (!e.LastMatched)
+                                                        break;
+                                                }
+                                                d.Fold(e.Result);
+                                                break;
                                             }
-                                            d.Fold(e.Result);
-                                            break;
-                                        }
-                                        case 4:
-                                        {
-                                            // Optional(Option(,--statistics,0,False))
-                                            var e = new OptionalMatcher(1, d.Left, d.Collected);
-                                            while (e.Next())
+                                            case 2:
                                             {
-                                                // Option(,--statistics,0,False)
-                                                e.Match(PatternMatcher.MatchOption, "--statistics", value: false, isList: false, isInt: false);
-                                                if (!e.LastMatched)
-                                                    break;
+                                                // Optional(Either(Option(,--select,1,), Option(,--ignore,1,)))
+                                                var e = new OptionalMatcher(1, d.Left, d.Collected);
+                                                while (e.Next())
+                                                {
+                                                    // Either(Option(,--select,1,), Option(,--ignore,1,))
+                                                    var f = new EitherMatcher(2, e.Left, e.Collected);
+                                                    while (f.Next())
+                                                    {
+                                                        switch (f.Index)
+                                                        {
+                                                            case 0:
+                                                            {
+                                                                // Option(,--select,1,)
+                                                                f.Match(PatternMatcher.MatchOption, "--select", value: null, isList: false, isInt: false);
+                                                                break;
+                                                            }
+                                                            case 1:
+                                                            {
+                                                                // Option(,--ignore,1,)
+                                                                f.Match(PatternMatcher.MatchOption, "--ignore", value: null, isList: false, isInt: false);
+                                                                break;
+                                                            }
+                                                        }
+                                                        if (!f.LastMatched)
+                                                            break;
+                                                    }
+                                                    e.Fold(f.Result);
+                                                    if (!e.LastMatched)
+                                                        break;
+                                                }
+                                                d.Fold(e.Result);
+                                                break;
                                             }
-                                            d.Fold(e.Result);
-                                            break;
-                                        }
-                                        case 5:
-                                        {
-                                            // Optional(Option(,--count,0,False))
-                                            var e = new OptionalMatcher(1, d.Left, d.Collected);
-                                            while (e.Next())
+                                            case 3:
                                             {
-                                                // Option(,--count,0,False)
-                                                e.Match(PatternMatcher.MatchOption, "--count", value: false, isList: false, isInt: false);
-                                                if (!e.LastMatched)
-                                                    break;
+                                                // Optional(Option(,--show-source,0,False))
+                                                var e = new OptionalMatcher(1, d.Left, d.Collected);
+                                                while (e.Next())
+                                                {
+                                                    // Option(,--show-source,0,False)
+                                                    e.Match(PatternMatcher.MatchOption, "--show-source", value: false, isList: false, isInt: false);
+                                                    if (!e.LastMatched)
+                                                        break;
+                                                }
+                                                d.Fold(e.Result);
+                                                break;
                                             }
-                                            d.Fold(e.Result);
-                                            break;
-                                        }
-                                        case 6:
-                                        {
-                                            // Optional(Option(,--benchmark,0,False))
-                                            var e = new OptionalMatcher(1, d.Left, d.Collected);
-                                            while (e.Next())
+                                            case 4:
                                             {
-                                                // Option(,--benchmark,0,False)
-                                                e.Match(PatternMatcher.MatchOption, "--benchmark", value: false, isList: false, isInt: false);
-                                                if (!e.LastMatched)
-                                                    break;
+                                                // Optional(Option(,--statistics,0,False))
+                                                var e = new OptionalMatcher(1, d.Left, d.Collected);
+                                                while (e.Next())
+                                                {
+                                                    // Option(,--statistics,0,False)
+                                                    e.Match(PatternMatcher.MatchOption, "--statistics", value: false, isList: false, isInt: false);
+                                                    if (!e.LastMatched)
+                                                        break;
+                                                }
+                                                d.Fold(e.Result);
+                                                break;
                                             }
-                                            d.Fold(e.Result);
-                                            break;
-                                        }
-                                        case 7:
-                                        {
-                                            // OneOrMore(Argument(PATH, []))
-                                            var e = new OneOrMoreMatcher(1, d.Left, d.Collected);
-                                            while (e.Next())
+                                            case 5:
                                             {
-                                                // Argument(PATH, [])
-                                                e.Match(PatternMatcher.MatchArgument, "PATH", value: new ArrayList(), isList: true, isInt: false);
-                                                if (!e.LastMatched)
-                                                    break;
+                                                // Optional(Option(,--count,0,False))
+                                                var e = new OptionalMatcher(1, d.Left, d.Collected);
+                                                while (e.Next())
+                                                {
+                                                    // Option(,--count,0,False)
+                                                    e.Match(PatternMatcher.MatchOption, "--count", value: false, isList: false, isInt: false);
+                                                    if (!e.LastMatched)
+                                                        break;
+                                                }
+                                                d.Fold(e.Result);
+                                                break;
                                             }
-                                            d.Fold(e.Result);
-                                            break;
+                                            case 6:
+                                            {
+                                                // Optional(Option(,--benchmark,0,False))
+                                                var e = new OptionalMatcher(1, d.Left, d.Collected);
+                                                while (e.Next())
+                                                {
+                                                    // Option(,--benchmark,0,False)
+                                                    e.Match(PatternMatcher.MatchOption, "--benchmark", value: false, isList: false, isInt: false);
+                                                    if (!e.LastMatched)
+                                                        break;
+                                                }
+                                                d.Fold(e.Result);
+                                                break;
+                                            }
+                                            case 7:
+                                            {
+                                                // OneOrMore(Argument(PATH, []))
+                                                var e = new OneOrMoreMatcher(1, d.Left, d.Collected);
+                                                while (e.Next())
+                                                {
+                                                    // Argument(PATH, [])
+                                                    e.Match(PatternMatcher.MatchArgument, "PATH", value: new ArrayList(), isList: true, isInt: false);
+                                                    if (!e.LastMatched)
+                                                        break;
+                                                }
+                                                d.Fold(e.Result);
+                                                break;
+                                            }
                                         }
+                                        if (!d.LastMatched)
+                                            break;
                                     }
-                                    if (!d.LastMatched)
-                                        break;
+                                    c.Fold(d.Result);
+                                    break;
                                 }
-                                c.Fold(d.Result);
-                                break;
-                            }
-                            case 1:
-                            {
-                                // Required(Required(Either(Option(,--doctest,0,False), Option(,--testsuite,1,))))
-                                var d = new RequiredMatcher(1, c.Left, c.Collected);
-                                while (d.Next())
+                                case 1:
                                 {
-                                    // Required(Either(Option(,--doctest,0,False), Option(,--testsuite,1,)))
-                                    var e = new RequiredMatcher(1, d.Left, d.Collected);
-                                    while (e.Next())
+                                    // Required(Required(Either(Option(,--doctest,0,False), Option(,--testsuite,1,))))
+                                    var d = new RequiredMatcher(1, c.Left, c.Collected);
+                                    while (d.Next())
                                     {
-                                        // Either(Option(,--doctest,0,False), Option(,--testsuite,1,))
-                                        var f = new EitherMatcher(2, e.Left, e.Collected);
-                                        while (f.Next())
+                                        // Required(Either(Option(,--doctest,0,False), Option(,--testsuite,1,)))
+                                        var e = new RequiredMatcher(1, d.Left, d.Collected);
+                                        while (e.Next())
                                         {
-                                            switch (f.Index)
+                                            // Either(Option(,--doctest,0,False), Option(,--testsuite,1,))
+                                            var f = new EitherMatcher(2, e.Left, e.Collected);
+                                            while (f.Next())
                                             {
-                                                case 0:
+                                                switch (f.Index)
                                                 {
-                                                    // Option(,--doctest,0,False)
-                                                    f.Match(PatternMatcher.MatchOption, "--doctest", value: false, isList: false, isInt: false);
-                                                    break;
+                                                    case 0:
+                                                    {
+                                                        // Option(,--doctest,0,False)
+                                                        f.Match(PatternMatcher.MatchOption, "--doctest", value: false, isList: false, isInt: false);
+                                                        break;
+                                                    }
+                                                    case 1:
+                                                    {
+                                                        // Option(,--testsuite,1,)
+                                                        f.Match(PatternMatcher.MatchOption, "--testsuite", value: null, isList: false, isInt: false);
+                                                        break;
+                                                    }
                                                 }
-                                                case 1:
-                                                {
-                                                    // Option(,--testsuite,1,)
-                                                    f.Match(PatternMatcher.MatchOption, "--testsuite", value: null, isList: false, isInt: false);
+                                                if (!f.LastMatched)
                                                     break;
-                                                }
                                             }
-                                            if (!f.LastMatched)
+                                            e.Fold(f.Result);
+                                            if (!e.LastMatched)
                                                 break;
                                         }
-                                        e.Fold(f.Result);
-                                        if (!e.LastMatched)
+                                        d.Fold(e.Result);
+                                        if (!d.LastMatched)
                                             break;
                                     }
-                                    d.Fold(e.Result);
-                                    if (!d.LastMatched)
-                                        break;
+                                    c.Fold(d.Result);
+                                    break;
                                 }
-                                c.Fold(d.Result);
-                                break;
-                            }
-                            case 2:
-                            {
-                                // Required(Option(,--version,0,False))
-                                var d = new RequiredMatcher(1, c.Left, c.Collected);
-                                while (d.Next())
+                                case 2:
                                 {
-                                    // Option(,--version,0,False)
-                                    d.Match(PatternMatcher.MatchOption, "--version", value: false, isList: false, isInt: false);
-                                    if (!d.LastMatched)
-                                        break;
+                                    // Required(Option(,--version,0,False))
+                                    var d = new RequiredMatcher(1, c.Left, c.Collected);
+                                    while (d.Next())
+                                    {
+                                        // Option(,--version,0,False)
+                                        d.Match(PatternMatcher.MatchOption, "--version", value: false, isList: false, isInt: false);
+                                        if (!d.LastMatched)
+                                            break;
+                                    }
+                                    c.Fold(d.Result);
+                                    break;
                                 }
-                                c.Fold(d.Result);
-                                break;
                             }
+                            if (!c.LastMatched)
+                                break;
                         }
-                        if (!c.LastMatched)
+                        b.Fold(c.Result);
+                        if (!b.LastMatched)
                             break;
                     }
-                    b.Fold(c.Result);
-                    if (!b.LastMatched)
-                        break;
+                    a.Fold(b.Result);
                 }
-                a.Fold(b.Result);
-            }
-            while (false);
+                while (false);
 
-            if (!a.Result || a.Left.Count > 0)
-            {
-                const string exitUsage = @"Usage:
+                if (!a.Result || a.Left.Count > 0)
+                {
+                    const string exitUsage = @"Usage:
   OptionsExample [-hvqrf NAME] [--exclude=PATTERNS]
                  [--select=ERRORS | --ignore=ERRORS] [--show-source]
                  [--statistics] [--count] [--benchmark] PATH...
   OptionsExample (--doctest | --testsuite=DIR)
   OptionsExample --version";
-                throw new DocoptInputErrorException(exitUsage);
+                    throw new DocoptInputErrorException(exitUsage);
+                }
+
+                collected = a.Collected;
+                var result = new Arguments();
+
+                foreach (var p in collected)
+                {
+                    var value = p.Value is { IsStringList: true } ? ((StringList)p.Value).Reverse() : p.Value;
+                    switch (p.Name)
+                    {
+                        case @"--help": result.OptHelp = (bool)value; break;
+                        case @"--verbose": result.OptVerbose = (bool)value; break;
+                        case @"--quiet": result.OptQuiet = (bool)value; break;
+                        case @"--repeat": result.OptRepeat = (bool)value; break;
+                        case @"--file": result.OptFile = (string)value; break;
+                        case @"--exclude": result.OptExclude = (string)value; break;
+                        case @"--select": result.OptSelect = (string?)value; break;
+                        case @"--ignore": result.OptIgnore = (string?)value; break;
+                        case @"--show-source": result.OptShowSource = (bool)value; break;
+                        case @"--statistics": result.OptStatistics = (bool)value; break;
+                        case @"--count": result.OptCount = (bool)value; break;
+                        case @"--benchmark": result.OptBenchmark = (bool)value; break;
+                        case @"PATH": result.ArgPath = (StringList)value; break;
+                        case @"--doctest": result.OptDoctest = (bool)value; break;
+                        case @"--testsuite": result.OptTestsuite = (string?)value; break;
+                        case @"--version": result.OptVersion = (bool)value; break;
+                    }
+                }
+
+                return result;
             }
 
-            var dict = new Dictionary<string, Value>
+            IEnumerator<KeyValuePair<string, object?>> GetEnumerator()
             {
-                [@"--help"] = false,
-                [@"--verbose"] = false,
-                [@"--quiet"] = false,
-                [@"--repeat"] = false,
-                [@"--file"] = "*.py",
-                [@"--exclude"] = ".svn,CVS,.bzr,.hg,.git",
-                [@"--select"] = Value.None,
-                [@"--ignore"] = Value.None,
-                [@"--show-source"] = false,
-                [@"--statistics"] = false,
-                [@"--count"] = false,
-                [@"--benchmark"] = false,
-                [@"PATH"] = StringList.Empty,
-                [@"--doctest"] = false,
-                [@"--testsuite"] = Value.None,
-                [@"--version"] = false,
-            };
-
-            collected = a.Collected;
-            foreach (var p in collected)
-            {
-                dict[p.Name] = p.Value is { IsStringList: true } ? ((StringList)p.Value).Reverse() : p.Value;
+                yield return KeyValuePair.Create("--help", (object?)OptHelp);
+                yield return KeyValuePair.Create("--verbose", (object?)OptVerbose);
+                yield return KeyValuePair.Create("--quiet", (object?)OptQuiet);
+                yield return KeyValuePair.Create("--repeat", (object?)OptRepeat);
+                yield return KeyValuePair.Create("--file", (object?)OptFile);
+                yield return KeyValuePair.Create("--exclude", (object?)OptExclude);
+                yield return KeyValuePair.Create("--select", (object?)OptSelect);
+                yield return KeyValuePair.Create("--ignore", (object?)OptIgnore);
+                yield return KeyValuePair.Create("--show-source", (object?)OptShowSource);
+                yield return KeyValuePair.Create("--statistics", (object?)OptStatistics);
+                yield return KeyValuePair.Create("--count", (object?)OptCount);
+                yield return KeyValuePair.Create("--benchmark", (object?)OptBenchmark);
+                yield return KeyValuePair.Create("PATH", (object?)ArgPath);
+                yield return KeyValuePair.Create("--doctest", (object?)OptDoctest);
+                yield return KeyValuePair.Create("--testsuite", (object?)OptTestsuite);
+                yield return KeyValuePair.Create("--version", (object?)OptVersion);
             }
 
-            return dict;
+            IEnumerator<KeyValuePair<string, object?>> IEnumerable<KeyValuePair<string, object?>>.GetEnumerator() => GetEnumerator();
+            IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
+
+            public bool OptHelp { get; private set; }
+            public bool OptVerbose { get; private set; }
+            public bool OptQuiet { get; private set; }
+            public bool OptRepeat { get; private set; }
+            public string OptFile { get; private set; } = "*.py";
+            public string OptExclude { get; private set; } = ".svn,CVS,.bzr,.hg,.git";
+            public string? OptSelect { get; private set; }
+            public string? OptIgnore { get; private set; }
+            public bool OptShowSource { get; private set; }
+            public bool OptStatistics { get; private set; }
+            public bool OptCount { get; private set; }
+            public bool OptBenchmark { get; private set; }
+            public StringList ArgPath { get; private set; } = StringList.Empty;
+            public bool OptDoctest { get; private set; }
+            public string? OptTestsuite { get; private set; }
+            public bool OptVersion { get; private set; }
         }
-
-        public bool OptHelp => _args["--help"].Object is true or (int and > 0);
-        public bool OptVerbose => _args["--verbose"].Object is true or (int and > 0);
-        public bool OptQuiet => _args["--quiet"].Object is true or (int and > 0);
-        public bool OptRepeat => _args["--repeat"].Object is true or (int and > 0);
-        public string OptFile => (string)_args["--file"].Object ?? "*.py";
-        public string OptExclude => (string)_args["--exclude"].Object ?? ".svn,CVS,.bzr,.hg,.git";
-        public string OptSelect => (string)_args["--select"].Object;
-        public string OptIgnore => (string)_args["--ignore"].Object;
-        public bool OptShowSource => _args["--show-source"].Object is true or (int and > 0);
-        public bool OptStatistics => _args["--statistics"].Object is true or (int and > 0);
-        public bool OptCount => _args["--count"].Object is true or (int and > 0);
-        public bool OptBenchmark => _args["--benchmark"].Object is true or (int and > 0);
-        public StringList ArgPath => (StringList)_args["PATH"];
-        public bool OptDoctest => _args["--doctest"].Object is true or (int and > 0);
-        public string OptTestsuite => (string)_args["--testsuite"].Object;
-        public bool OptVersion => _args["--version"].Object is true or (int and > 0);
     }
 }

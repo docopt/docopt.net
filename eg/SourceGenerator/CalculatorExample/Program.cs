@@ -1,14 +1,12 @@
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using DocoptNet.Generated;
 using CalculatorExample;
 
-Program program;
+Program.Arguments arguments;
 
 try
 {
-    program = new Program(args, exit: true);
+    arguments = Program.Arguments.Apply(args, exit: true);
 }
 catch (DocoptExitException e)
 {
@@ -21,34 +19,18 @@ catch (DocoptInputErrorException e)
     return 0xbd;
 }
 
-foreach (var (name, value) in program.Args)
-    Console.WriteLine("{0} = {1}", name, value);
+foreach (var (name, value) in arguments)
+    Console.WriteLine($"{name} = {value}");
 
 Console.WriteLine($@"{{
-    Help     = {program.OptHelp    },
-    +        = {program.CmdPlus    },
-    -        = {program.CmdMinus   },
-    *        = {program.CmdStar    },
-    /        = {program.CmdSlash   },
-    Function = {program.ArgFunction},
-    Comma    = {program.CmdComma   },
-    Value    = [{string.Join(", ", from object v in program.ArgValue select v)}],
+    Help     = {arguments.OptHelp    },
+    +        = {arguments.CmdPlus    },
+    -        = {arguments.CmdMinus   },
+    *        = {arguments.CmdStar    },
+    /        = {arguments.CmdSlash   },
+    Function = {arguments.ArgFunction},
+    Comma    = {arguments.CmdComma   },
+    Value    = [{string.Join(", ", arguments.ArgValue)}],
 }}");
 
 return 0;
-
-namespace CalculatorExample
-{
-    partial class Program
-    {
-        readonly IDictionary<string, Value> _args;
-
-        public Program(ICollection<string> argv, bool help = true,
-                       object version = null, bool optionsFirst = false, bool exit = false)
-        {
-            _args = Apply(argv, help, version, optionsFirst, exit);
-        }
-
-        public IDictionary<string, Value> Args => _args;
-    }
-}

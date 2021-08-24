@@ -1,14 +1,12 @@
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using DocoptNet.Generated;
 using OptionsExample;
 
-Program program;
+Program.Arguments arguments;
 
 try
 {
-    program = new Program(args, version: "1.0.0rc2", exit: true);
+    arguments = Program.Arguments.Apply(args, version: "1.0.0rc2", exit: true);
 }
 catch (DocoptExitException e)
 {
@@ -21,42 +19,26 @@ catch (DocoptInputErrorException e)
     return 0xbd;
 }
 
-foreach (var (name, value) in program.Args)
-    Console.WriteLine("{0} = {1}", name, value);
+foreach (var (name, value) in arguments)
+    Console.WriteLine($"{name} = {value}");
 
 Console.WriteLine($@"{{
-    Help       = {program.OptHelp      },
-    Verbose    = {program.OptVerbose   },
-    Quiet      = {program.OptQuiet     },
-    Repeat     = {program.OptRepeat    },
-    File       = {program.OptFile      },
-    Exclude    = {program.OptExclude   },
-    Select     = {program.OptSelect    },
-    Ignore     = {program.OptIgnore    },
-    ShowSource = {program.OptShowSource},
-    Statistics = {program.OptStatistics},
-    Count      = {program.OptCount     },
-    Benchmark  = {program.OptBenchmark },
-    Path       = [{string.Join(", ", from object path in program.ArgPath select path)}],
-    Doctest    = {program.OptDoctest   },
-    Testsuite  = {program.OptTestsuite },
-    Version    = {program.OptVersion   },
+    Help       = {arguments.OptHelp      },
+    Verbose    = {arguments.OptVerbose   },
+    Quiet      = {arguments.OptQuiet     },
+    Repeat     = {arguments.OptRepeat    },
+    File       = {arguments.OptFile      },
+    Exclude    = {arguments.OptExclude   },
+    Select     = {arguments.OptSelect    },
+    Ignore     = {arguments.OptIgnore    },
+    ShowSource = {arguments.OptShowSource},
+    Statistics = {arguments.OptStatistics},
+    Count      = {arguments.OptCount     },
+    Benchmark  = {arguments.OptBenchmark },
+    Path       = [{string.Join(", ", arguments.ArgPath)}],
+    Doctest    = {arguments.OptDoctest   },
+    Testsuite  = {arguments.OptTestsuite },
+    Version    = {arguments.OptVersion   },
 }}");
 
 return 0;
-
-namespace OptionsExample
-{
-    partial class Program
-    {
-        readonly IDictionary<string, Value> _args;
-
-        public Program(ICollection<string> argv, bool help = true,
-                       object version = null, bool optionsFirst = false, bool exit = false)
-        {
-            _args = Apply(argv, help, version, optionsFirst, exit);
-        }
-
-        public IDictionary<string, Value> Args => _args;
-    }
-}

@@ -1,14 +1,12 @@
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using DocoptNet.Generated;
 using CountedExample;
 
-Program program;
+Program.Arguments arguments;
 
 try
 {
-    program = new Program(args, exit: true);
+    arguments = Program.Arguments.Apply(args, exit: true);
 }
 catch (DocoptExitException e)
 {
@@ -21,31 +19,15 @@ catch (DocoptInputErrorException e)
     return 0xbd;
 }
 
-foreach (var (name, value) in program.Args)
-    Console.WriteLine("{0} = {1}", name, value);
+foreach (var (name, value) in arguments)
+    Console.WriteLine($"{name} = {value}");
 
 Console.WriteLine($@"{{
-    Help       = {program.OptHelp },
-    V          = {program.OptV    },
-    Go         = {program.CmdGo   },
-    File       = [{string.Join(", ", from object file in program.ArgFile select file)}],
-    Path       = {program.OptPath },
+    Help       = {arguments.OptHelp },
+    V          = {arguments.OptV    },
+    Go         = {arguments.CmdGo   },
+    File       = [{string.Join(", ", arguments.ArgFile)}],
+    Path       = {arguments.OptPath },
 }}");
 
 return 0;
-
-namespace CountedExample
-{
-    partial class Program
-    {
-        readonly IDictionary<string, Value> _args;
-
-        public Program(ICollection<string> argv, bool help = true,
-                       object version = null, bool optionsFirst = false, bool exit = false)
-        {
-            _args = Apply(argv, help, version, optionsFirst, exit);
-        }
-
-        public IDictionary<string, Value> Args => _args;
-    }
-}

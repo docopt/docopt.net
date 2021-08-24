@@ -35,13 +35,11 @@ public partial class Program
 
     public Program(IList<string> argv)
     {
-        var arguments = _args = Apply(argv, help: true, version: null, optionsFirst: false, exit: false);
+        var arguments = Arguments.Apply(argv, help: true, version: null, optionsFirst: false, exit: false);
         var dict = new Dictionary<string, object>();
         foreach (var (name, value) in arguments)
         {
-            if (value.IsNone)
-                dict[name] = null;
-            else if (value.TryAsStringList(out var items))
+            if (value is StringList items)
             {
                 var l = new ArrayList();
                 foreach (var item in items)
@@ -49,7 +47,7 @@ public partial class Program
                 dict[name] = l;
             }
             else
-                dict[name] = value.Object;
+                dict[name] = value;
         }
         Json = JsonConvert.SerializeObject(dict);
     }

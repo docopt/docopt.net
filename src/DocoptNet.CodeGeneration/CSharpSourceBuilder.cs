@@ -153,6 +153,9 @@ namespace DocoptNet.CodeGeneration
         public CSharpSourceBuilder Case(int n) =>
             this["case "][n][':'].NewLine;
 
+        public CSharpSourceBuilder Case(string s) =>
+            this["case "].Literal(s)[':'].NewLine;
+
         public CSharpSourceBuilder Do =>
             this["do"].NewLine;
 
