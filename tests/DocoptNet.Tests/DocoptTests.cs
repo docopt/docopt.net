@@ -204,5 +204,16 @@ namespace DocoptNet.Tests
             Assert.True(args["-x"].IsTrue);
             Assert.True(args["-y"].IsFalse);
         }
+
+        [Test]
+        public void Test_issue_32_should_parse()
+        {
+            const string doc = @"
+Usage: Conversion (load | brokers | loadnonxl | <pn>... [--clean]) [--whatif]
+
+-h --help    show this
+--verbose    print more text";
+            Assert.DoesNotThrow(() => new Docopt().Apply(doc, "dfg67 dfg4 dg2 --clean"));
+        }
     }
 }
