@@ -42,7 +42,7 @@ namespace DocoptNet
 
         public override string ToString() => $"current={Current()},count={_tokens.Count}";
 
-        partial class ContextualTokens<TError> : Tokens where TError : Exception
+        sealed class ContextualTokens<TError> : Tokens where TError : Exception
         {
             readonly Func<string, TError> _errorFactory;
 
