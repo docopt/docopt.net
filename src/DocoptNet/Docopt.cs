@@ -220,19 +220,19 @@ namespace DocoptNet
             //        argv ::= [ long | shorts | argument ]* [ '--' [ argument ]* ] ;
 
             var parsed = new List<LeafPattern>();
-            while (tokens.Current() != null)
+            while (tokens.Current() is { } token)
             {
-                if (tokens.Current() == "--")
+                if (token == "--")
                 {
                     parsed.AddRange(tokens.Select(v => new Argument(null, v)));
                     return parsed;
                 }
 
-                if (tokens.Current().StartsWith("--"))
+                if (token.StartsWith("--"))
                 {
                     parsed.AddRange(ParseLong(tokens, options));
                 }
-                else if (tokens.Current().StartsWith("-") && tokens.Current() != "-")
+                else if (token.StartsWith("-") && tokens.Current() != "-")
                 {
                     parsed.AddRange(ParseShorts(tokens, options));
                 }
@@ -331,7 +331,7 @@ namespace DocoptNet
             // atom ::= '(' expr ')' | '[' expr ']' | 'options'
             //  | long | shorts | argument | command ;
 
-            var token = tokens.Current();
+            var token = tokens.Current() ?? throw new NullReferenceException();
             var result = new List<Pattern>();
             switch (token)
             {
@@ -384,7 +384,7 @@ namespace DocoptNet
         {
             // shorts ::= '-' ( chars )* [ [ ' ' ] chars ] ;
 
-            var token = tokens.Move();
+            var token = tokens.Move() ?? throw new NullReferenceException();
             Debug.Assert(token.StartsWith("-") && !token.StartsWith("--"));
             var left = token.TrimStart(new[] {'-'});
             var parsed = new List<Option>();
@@ -416,11 +416,11 @@ namespace DocoptNet
                     {
                         if (left == "")
                         {
-                            if (tokens.Current() == null || tokens.Current() == "--")
+                            if (tokens.Current() is null or "--")
                             {
                                 throw tokens.CreateException(shortName + " requires argument");
                             }
-                            value = tokens.Move();
+                            value = tokens.Move() ?? Value.None;
                         }
                         else
                         {
