@@ -137,7 +137,7 @@ namespace DocoptNet.CodeGeneration
             if (isNamespaced)
                 code.Namespace(ns);
 
-            _ = code["partial class "][name].NewLine.Block;
+            _ = code["partial class "][name]["Arguments : IEnumerable<KeyValuePair<string, object?>>"].NewLine.Block;
 
             _ = code["public const string Usage = "].Literal(usage).EndStatement;
 
@@ -292,9 +292,8 @@ namespace DocoptNet.CodeGeneration
             _ = code.SkipNextNewLine.BlockEnd.EndStatement;
 
             _ = code.NewLine;
-            _ = code["public partial class Arguments : IEnumerable<KeyValuePair<string, object?>>"].NewLine.Block;
 
-            _ = code["public static Arguments Apply(IEnumerable<string> args, bool help = true, object? version = null, bool optionsFirst = false, bool exit = false)"].NewLine.Block
+            _ = code["public static "][name]["Arguments Apply(IEnumerable<string> args, bool help = true, object? version = null, bool optionsFirst = false, bool exit = false)"].NewLine.Block
                 .DeclareAssigned("tokens", "new Tokens(args, typeof(DocoptInputErrorException))")
                 ["var options = Options.Select(e => new Option(e.ShortName, e.LongName, e.ArgCount, e.Value)).ToList()"].EndStatement
                 .DeclareAssigned("arguments", "Docopt.ParseArgv(tokens, options, optionsFirst).AsReadOnly()")
@@ -318,7 +317,7 @@ namespace DocoptNet.CodeGeneration
                     .NewLine;
 
             _ = code.Assign("collected", "a.Collected")
-                    .DeclareAssigned("result", "new Arguments()");
+                    .DeclareAssigned("result", $"new {name}Arguments()");
 
             var leaves = Docopt.GetFlatPatterns(usage)
                                .GroupBy(p => p.Name)
@@ -386,8 +385,7 @@ namespace DocoptNet.CodeGeneration
                 _ = line(code).NewLine;
             }
 
-            _ = code.BlockEnd  // class Arguments
-                    .BlockEnd;
+            _ = code.BlockEnd;
 
             if (isNamespaced)
                 _ = code.BlockEnd;

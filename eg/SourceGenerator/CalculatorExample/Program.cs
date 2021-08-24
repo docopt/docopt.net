@@ -2,11 +2,11 @@ using System;
 using DocoptNet.Generated;
 using CalculatorExample;
 
-Program.Arguments arguments;
+ProgramArguments arguments;
 
 try
 {
-    arguments = Program.Arguments.Apply(args, exit: true);
+    arguments = ProgramArguments.Apply(args, exit: true);
 }
 catch (DocoptExitException e)
 {

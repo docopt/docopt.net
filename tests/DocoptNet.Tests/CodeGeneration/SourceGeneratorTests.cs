@@ -185,7 +185,7 @@ namespace DocoptNet.Tests.CodeGeneration
 using System.Collections.Generic;
 using DocoptNet.Generated;
 
-public partial class " + nameof(Program) + @" { }
+public partial class " + nameof(Program) + @"Arguments { }
 
 namespace DocoptNet.Generated
 {
@@ -195,7 +195,7 @@ namespace DocoptNet.Generated
 ";
 
             var assembly = GenerateProgram(usage, main);
-            return new Program(assembly.GetType(nameof(Program))?.GetNestedType("Arguments")!);
+            return new Program(assembly.GetType(nameof(Program) + "Arguments")!);
         }
 
         static int _assemblyUniqueCounter;

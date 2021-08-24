@@ -2,11 +2,11 @@ using System;
 using DocoptNet.Generated;
 using NavalFate;
 
-Program.Arguments arguments;
+ProgramArguments arguments;
 
 try
 {
-    arguments = Program.Arguments.Apply(args, version: "Naval Fate 2.0", exit: true);
+    arguments = ProgramArguments.Apply(args, version: "Naval Fate 2.0", exit: true);
 }
 catch (DocoptExitException e)
 {

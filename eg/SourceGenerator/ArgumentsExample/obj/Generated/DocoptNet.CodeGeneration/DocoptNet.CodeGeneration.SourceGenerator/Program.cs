@@ -8,7 +8,7 @@ using Leaves = DocoptNet.Generated.ReadOnlyList<DocoptNet.Generated.LeafPattern>
 
 namespace ArgumentsExample
 {
-    partial class Program
+    partial class ProgramArguments : IEnumerable<KeyValuePair<string, object?>>
     {
         public const string Usage = @"Usage: ArgumentsExample [-vqrh] [FILE] ...
        ArgumentsExample (--left | --right) CORRECTION FILE
@@ -94,238 +94,235 @@ Options:
             new Option(null, "--right", 0, false),
         };
 
-        public partial class Arguments : IEnumerable<KeyValuePair<string, object?>>
+        public static ProgramArguments Apply(IEnumerable<string> args, bool help = true, object? version = null, bool optionsFirst = false, bool exit = false)
         {
-            public static Arguments Apply(IEnumerable<string> args, bool help = true, object? version = null, bool optionsFirst = false, bool exit = false)
+            var tokens = new Tokens(args, typeof(DocoptInputErrorException));
+            var options = Options.Select(e => new Option(e.ShortName, e.LongName, e.ArgCount, e.Value)).ToList();
+            var arguments = Docopt.ParseArgv(tokens, options, optionsFirst).AsReadOnly();
+            if (help && arguments.Any(o => o is { Name: "-h" or "--help", Value: { IsTrue: true } }))
             {
-                var tokens = new Tokens(args, typeof(DocoptInputErrorException));
-                var options = Options.Select(e => new Option(e.ShortName, e.LongName, e.ArgCount, e.Value)).ToList();
-                var arguments = Docopt.ParseArgv(tokens, options, optionsFirst).AsReadOnly();
-                if (help && arguments.Any(o => o is { Name: "-h" or "--help", Value: { IsTrue: true } }))
+                throw new DocoptExitException(Usage);
+            }
+            if (version is not null && arguments.Any(o => o is { Name: "--version", Value: { IsTrue: true } }))
+            {
+                throw new DocoptExitException(version.ToString());
+            }
+            var left = arguments;
+            var collected = new Leaves();
+            var a = new RequiredMatcher(1, left, collected);
+            do
+            {
+                // Required(Either(Required(Optional(Option(-v,,0,False), Option(-q,,0,False), Option(-r,,0,False), Option(-h,--help,0,False)), OneOrMore(Optional(Argument(FILE, [])))), Required(Required(Either(Option(,--left,0,False), Option(,--right,0,False))), Argument(CORRECTION, ), Argument(FILE, []))))
+                var b = new RequiredMatcher(1, a.Left, a.Collected);
+                while (b.Next())
                 {
-                    throw new DocoptExitException(Usage);
-                }
-                if (version is not null && arguments.Any(o => o is { Name: "--version", Value: { IsTrue: true } }))
-                {
-                    throw new DocoptExitException(version.ToString());
-                }
-                var left = arguments;
-                var collected = new Leaves();
-                var a = new RequiredMatcher(1, left, collected);
-                do
-                {
-                    // Required(Either(Required(Optional(Option(-v,,0,False), Option(-q,,0,False), Option(-r,,0,False), Option(-h,--help,0,False)), OneOrMore(Optional(Argument(FILE, [])))), Required(Required(Either(Option(,--left,0,False), Option(,--right,0,False))), Argument(CORRECTION, ), Argument(FILE, []))))
-                    var b = new RequiredMatcher(1, a.Left, a.Collected);
-                    while (b.Next())
+                    // Either(Required(Optional(Option(-v,,0,False), Option(-q,,0,False), Option(-r,,0,False), Option(-h,--help,0,False)), OneOrMore(Optional(Argument(FILE, [])))), Required(Required(Either(Option(,--left,0,False), Option(,--right,0,False))), Argument(CORRECTION, ), Argument(FILE, [])))
+                    var c = new EitherMatcher(2, b.Left, b.Collected);
+                    while (c.Next())
                     {
-                        // Either(Required(Optional(Option(-v,,0,False), Option(-q,,0,False), Option(-r,,0,False), Option(-h,--help,0,False)), OneOrMore(Optional(Argument(FILE, [])))), Required(Required(Either(Option(,--left,0,False), Option(,--right,0,False))), Argument(CORRECTION, ), Argument(FILE, [])))
-                        var c = new EitherMatcher(2, b.Left, b.Collected);
-                        while (c.Next())
+                        switch (c.Index)
                         {
-                            switch (c.Index)
+                            case 0:
                             {
-                                case 0:
+                                // Required(Optional(Option(-v,,0,False), Option(-q,,0,False), Option(-r,,0,False), Option(-h,--help,0,False)), OneOrMore(Optional(Argument(FILE, []))))
+                                var d = new RequiredMatcher(2, c.Left, c.Collected);
+                                while (d.Next())
                                 {
-                                    // Required(Optional(Option(-v,,0,False), Option(-q,,0,False), Option(-r,,0,False), Option(-h,--help,0,False)), OneOrMore(Optional(Argument(FILE, []))))
-                                    var d = new RequiredMatcher(2, c.Left, c.Collected);
-                                    while (d.Next())
+                                    switch (d.Index)
                                     {
-                                        switch (d.Index)
+                                        case 0:
                                         {
-                                            case 0:
+                                            // Optional(Option(-v,,0,False), Option(-q,,0,False), Option(-r,,0,False), Option(-h,--help,0,False))
+                                            var e = new OptionalMatcher(4, d.Left, d.Collected);
+                                            while (e.Next())
                                             {
-                                                // Optional(Option(-v,,0,False), Option(-q,,0,False), Option(-r,,0,False), Option(-h,--help,0,False))
-                                                var e = new OptionalMatcher(4, d.Left, d.Collected);
-                                                while (e.Next())
+                                                switch (e.Index)
                                                 {
-                                                    switch (e.Index)
+                                                    case 0:
+                                                    {
+                                                        // Option(-v,,0,False)
+                                                        e.Match(PatternMatcher.MatchOption, "-v", value: false, isList: false, isInt: false);
+                                                        break;
+                                                    }
+                                                    case 1:
+                                                    {
+                                                        // Option(-q,,0,False)
+                                                        e.Match(PatternMatcher.MatchOption, "-q", value: false, isList: false, isInt: false);
+                                                        break;
+                                                    }
+                                                    case 2:
+                                                    {
+                                                        // Option(-r,,0,False)
+                                                        e.Match(PatternMatcher.MatchOption, "-r", value: false, isList: false, isInt: false);
+                                                        break;
+                                                    }
+                                                    case 3:
+                                                    {
+                                                        // Option(-h,--help,0,False)
+                                                        e.Match(PatternMatcher.MatchOption, "--help", value: false, isList: false, isInt: false);
+                                                        break;
+                                                    }
+                                                }
+                                                if (!e.LastMatched)
+                                                    break;
+                                            }
+                                            d.Fold(e.Result);
+                                            break;
+                                        }
+                                        case 1:
+                                        {
+                                            // OneOrMore(Optional(Argument(FILE, [])))
+                                            var e = new OneOrMoreMatcher(1, d.Left, d.Collected);
+                                            while (e.Next())
+                                            {
+                                                // Optional(Argument(FILE, []))
+                                                var f = new OptionalMatcher(1, e.Left, e.Collected);
+                                                while (f.Next())
+                                                {
+                                                    // Argument(FILE, [])
+                                                    f.Match(PatternMatcher.MatchArgument, "FILE", value: new ArrayList(), isList: true, isInt: false);
+                                                    if (!f.LastMatched)
+                                                        break;
+                                                }
+                                                e.Fold(f.Result);
+                                                if (!e.LastMatched)
+                                                    break;
+                                            }
+                                            d.Fold(e.Result);
+                                            break;
+                                        }
+                                    }
+                                    if (!d.LastMatched)
+                                        break;
+                                }
+                                c.Fold(d.Result);
+                                break;
+                            }
+                            case 1:
+                            {
+                                // Required(Required(Either(Option(,--left,0,False), Option(,--right,0,False))), Argument(CORRECTION, ), Argument(FILE, []))
+                                var d = new RequiredMatcher(3, c.Left, c.Collected);
+                                while (d.Next())
+                                {
+                                    switch (d.Index)
+                                    {
+                                        case 0:
+                                        {
+                                            // Required(Either(Option(,--left,0,False), Option(,--right,0,False)))
+                                            var e = new RequiredMatcher(1, d.Left, d.Collected);
+                                            while (e.Next())
+                                            {
+                                                // Either(Option(,--left,0,False), Option(,--right,0,False))
+                                                var f = new EitherMatcher(2, e.Left, e.Collected);
+                                                while (f.Next())
+                                                {
+                                                    switch (f.Index)
                                                     {
                                                         case 0:
                                                         {
-                                                            // Option(-v,,0,False)
-                                                            e.Match(PatternMatcher.MatchOption, "-v", value: false, isList: false, isInt: false);
+                                                            // Option(,--left,0,False)
+                                                            f.Match(PatternMatcher.MatchOption, "--left", value: false, isList: false, isInt: false);
                                                             break;
                                                         }
                                                         case 1:
                                                         {
-                                                            // Option(-q,,0,False)
-                                                            e.Match(PatternMatcher.MatchOption, "-q", value: false, isList: false, isInt: false);
-                                                            break;
-                                                        }
-                                                        case 2:
-                                                        {
-                                                            // Option(-r,,0,False)
-                                                            e.Match(PatternMatcher.MatchOption, "-r", value: false, isList: false, isInt: false);
-                                                            break;
-                                                        }
-                                                        case 3:
-                                                        {
-                                                            // Option(-h,--help,0,False)
-                                                            e.Match(PatternMatcher.MatchOption, "--help", value: false, isList: false, isInt: false);
+                                                            // Option(,--right,0,False)
+                                                            f.Match(PatternMatcher.MatchOption, "--right", value: false, isList: false, isInt: false);
                                                             break;
                                                         }
                                                     }
-                                                    if (!e.LastMatched)
+                                                    if (!f.LastMatched)
                                                         break;
                                                 }
-                                                d.Fold(e.Result);
-                                                break;
+                                                e.Fold(f.Result);
+                                                if (!e.LastMatched)
+                                                    break;
                                             }
-                                            case 1:
-                                            {
-                                                // OneOrMore(Optional(Argument(FILE, [])))
-                                                var e = new OneOrMoreMatcher(1, d.Left, d.Collected);
-                                                while (e.Next())
-                                                {
-                                                    // Optional(Argument(FILE, []))
-                                                    var f = new OptionalMatcher(1, e.Left, e.Collected);
-                                                    while (f.Next())
-                                                    {
-                                                        // Argument(FILE, [])
-                                                        f.Match(PatternMatcher.MatchArgument, "FILE", value: new ArrayList(), isList: true, isInt: false);
-                                                        if (!f.LastMatched)
-                                                            break;
-                                                    }
-                                                    e.Fold(f.Result);
-                                                    if (!e.LastMatched)
-                                                        break;
-                                                }
-                                                d.Fold(e.Result);
-                                                break;
-                                            }
-                                        }
-                                        if (!d.LastMatched)
+                                            d.Fold(e.Result);
                                             break;
-                                    }
-                                    c.Fold(d.Result);
-                                    break;
-                                }
-                                case 1:
-                                {
-                                    // Required(Required(Either(Option(,--left,0,False), Option(,--right,0,False))), Argument(CORRECTION, ), Argument(FILE, []))
-                                    var d = new RequiredMatcher(3, c.Left, c.Collected);
-                                    while (d.Next())
-                                    {
-                                        switch (d.Index)
+                                        }
+                                        case 1:
                                         {
-                                            case 0:
-                                            {
-                                                // Required(Either(Option(,--left,0,False), Option(,--right,0,False)))
-                                                var e = new RequiredMatcher(1, d.Left, d.Collected);
-                                                while (e.Next())
-                                                {
-                                                    // Either(Option(,--left,0,False), Option(,--right,0,False))
-                                                    var f = new EitherMatcher(2, e.Left, e.Collected);
-                                                    while (f.Next())
-                                                    {
-                                                        switch (f.Index)
-                                                        {
-                                                            case 0:
-                                                            {
-                                                                // Option(,--left,0,False)
-                                                                f.Match(PatternMatcher.MatchOption, "--left", value: false, isList: false, isInt: false);
-                                                                break;
-                                                            }
-                                                            case 1:
-                                                            {
-                                                                // Option(,--right,0,False)
-                                                                f.Match(PatternMatcher.MatchOption, "--right", value: false, isList: false, isInt: false);
-                                                                break;
-                                                            }
-                                                        }
-                                                        if (!f.LastMatched)
-                                                            break;
-                                                    }
-                                                    e.Fold(f.Result);
-                                                    if (!e.LastMatched)
-                                                        break;
-                                                }
-                                                d.Fold(e.Result);
-                                                break;
-                                            }
-                                            case 1:
-                                            {
-                                                // Argument(CORRECTION, )
-                                                d.Match(PatternMatcher.MatchArgument, "CORRECTION", value: null, isList: false, isInt: false);
-                                                break;
-                                            }
-                                            case 2:
-                                            {
-                                                // Argument(FILE, [])
-                                                d.Match(PatternMatcher.MatchArgument, "FILE", value: new ArrayList(), isList: true, isInt: false);
-                                                break;
-                                            }
-                                        }
-                                        if (!d.LastMatched)
+                                            // Argument(CORRECTION, )
+                                            d.Match(PatternMatcher.MatchArgument, "CORRECTION", value: null, isList: false, isInt: false);
                                             break;
+                                        }
+                                        case 2:
+                                        {
+                                            // Argument(FILE, [])
+                                            d.Match(PatternMatcher.MatchArgument, "FILE", value: new ArrayList(), isList: true, isInt: false);
+                                            break;
+                                        }
                                     }
-                                    c.Fold(d.Result);
-                                    break;
+                                    if (!d.LastMatched)
+                                        break;
                                 }
-                            }
-                            if (!c.LastMatched)
+                                c.Fold(d.Result);
                                 break;
+                            }
                         }
-                        b.Fold(c.Result);
-                        if (!b.LastMatched)
+                        if (!c.LastMatched)
                             break;
                     }
-                    a.Fold(b.Result);
+                    b.Fold(c.Result);
+                    if (!b.LastMatched)
+                        break;
                 }
-                while (false);
-
-                if (!a.Result || a.Left.Count > 0)
-                {
-                    const string exitUsage = @"Usage: ArgumentsExample [-vqrh] [FILE] ...
-       ArgumentsExample (--left | --right) CORRECTION FILE";
-                    throw new DocoptInputErrorException(exitUsage);
-                }
-
-                collected = a.Collected;
-                var result = new Arguments();
-
-                foreach (var p in collected)
-                {
-                    var value = p.Value is { IsStringList: true } ? ((StringList)p.Value).Reverse() : p.Value;
-                    switch (p.Name)
-                    {
-                        case @"-v": result.OptV = (bool)value; break;
-                        case @"-q": result.OptQ = (bool)value; break;
-                        case @"-r": result.OptR = (bool)value; break;
-                        case @"--help": result.OptHelp = (bool)value; break;
-                        case @"FILE": result.ArgFile = (StringList)value; break;
-                        case @"--left": result.OptLeft = (bool)value; break;
-                        case @"--right": result.OptRight = (bool)value; break;
-                        case @"CORRECTION": result.ArgCorrection = (string?)value; break;
-                    }
-                }
-
-                return result;
+                a.Fold(b.Result);
             }
+            while (false);
 
-            IEnumerator<KeyValuePair<string, object?>> GetEnumerator()
+            if (!a.Result || a.Left.Count > 0)
             {
-                yield return KeyValuePair.Create("-v", (object?)OptV);
-                yield return KeyValuePair.Create("-q", (object?)OptQ);
-                yield return KeyValuePair.Create("-r", (object?)OptR);
-                yield return KeyValuePair.Create("--help", (object?)OptHelp);
-                yield return KeyValuePair.Create("FILE", (object?)ArgFile);
-                yield return KeyValuePair.Create("--left", (object?)OptLeft);
-                yield return KeyValuePair.Create("--right", (object?)OptRight);
-                yield return KeyValuePair.Create("CORRECTION", (object?)ArgCorrection);
+                const string exitUsage = @"Usage: ArgumentsExample [-vqrh] [FILE] ...
+       ArgumentsExample (--left | --right) CORRECTION FILE";
+                throw new DocoptInputErrorException(exitUsage);
             }
 
-            IEnumerator<KeyValuePair<string, object?>> IEnumerable<KeyValuePair<string, object?>>.GetEnumerator() => GetEnumerator();
-            IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
+            collected = a.Collected;
+            var result = new ProgramArguments();
 
-            public bool OptV { get; private set; }
-            public bool OptQ { get; private set; }
-            public bool OptR { get; private set; }
-            public bool OptHelp { get; private set; }
-            public StringList ArgFile { get; private set; } = StringList.Empty;
-            public bool OptLeft { get; private set; }
-            public bool OptRight { get; private set; }
-            public string? ArgCorrection { get; private set; }
+            foreach (var p in collected)
+            {
+                var value = p.Value is { IsStringList: true } ? ((StringList)p.Value).Reverse() : p.Value;
+                switch (p.Name)
+                {
+                    case @"-v": result.OptV = (bool)value; break;
+                    case @"-q": result.OptQ = (bool)value; break;
+                    case @"-r": result.OptR = (bool)value; break;
+                    case @"--help": result.OptHelp = (bool)value; break;
+                    case @"FILE": result.ArgFile = (StringList)value; break;
+                    case @"--left": result.OptLeft = (bool)value; break;
+                    case @"--right": result.OptRight = (bool)value; break;
+                    case @"CORRECTION": result.ArgCorrection = (string?)value; break;
+                }
+            }
+
+            return result;
         }
+
+        IEnumerator<KeyValuePair<string, object?>> GetEnumerator()
+        {
+            yield return KeyValuePair.Create("-v", (object?)OptV);
+            yield return KeyValuePair.Create("-q", (object?)OptQ);
+            yield return KeyValuePair.Create("-r", (object?)OptR);
+            yield return KeyValuePair.Create("--help", (object?)OptHelp);
+            yield return KeyValuePair.Create("FILE", (object?)ArgFile);
+            yield return KeyValuePair.Create("--left", (object?)OptLeft);
+            yield return KeyValuePair.Create("--right", (object?)OptRight);
+            yield return KeyValuePair.Create("CORRECTION", (object?)ArgCorrection);
+        }
+
+        IEnumerator<KeyValuePair<string, object?>> IEnumerable<KeyValuePair<string, object?>>.GetEnumerator() => GetEnumerator();
+        IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
+
+        public bool OptV { get; private set; }
+        public bool OptQ { get; private set; }
+        public bool OptR { get; private set; }
+        public bool OptHelp { get; private set; }
+        public StringList ArgFile { get; private set; } = StringList.Empty;
+        public bool OptLeft { get; private set; }
+        public bool OptRight { get; private set; }
+        public string? ArgCorrection { get; private set; }
     }
 }

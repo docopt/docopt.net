@@ -2,11 +2,11 @@ using System;
 using DocoptNet.Generated;
 using OptionsShortcutExample;
 
-Program.Arguments arguments;
+ProgramArguments arguments;
 
 try
 {
-    arguments = Program.Arguments.Apply(args, version: "1.0.0rc2", exit: true);
+    arguments = ProgramArguments.Apply(args, version: "1.0.0rc2", exit: true);
 }
 catch (DocoptExitException e)
 {

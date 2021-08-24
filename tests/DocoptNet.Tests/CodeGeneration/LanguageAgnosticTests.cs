@@ -35,7 +35,7 @@ public partial class Program
 
     public Program(IList<string> argv)
     {
-        var arguments = Arguments.Apply(argv, help: true, version: null, optionsFirst: false, exit: false);
+        var arguments = ProgramArguments.Apply(argv, help: true, version: null, optionsFirst: false, exit: false);
         var dict = new Dictionary<string, object>();
         foreach (var (name, value) in arguments)
         {
