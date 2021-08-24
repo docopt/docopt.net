@@ -25,7 +25,7 @@ namespace DocoptNet
         internal ApplicationResult Apply(string doc, IEnumerable<string> argv,
                                          bool help = true, object version = null,
                                          bool optionsFirst = false, bool exit = false) =>
-            Apply(doc, new Tokens(argv, typeof (DocoptInputErrorException)), help, version, optionsFirst, exit);
+            Apply(doc, Tokens.From(argv), help, version, optionsFirst, exit);
 
         ApplicationResult Apply(string doc, Tokens tokens,
                                 bool help, object version, bool optionsFirst, bool exit)
