@@ -25,66 +25,33 @@ namespace DocoptNet
 
     abstract partial class Tokens : IEnumerable<string>
     {
-        private readonly Queue<string> _tokens;
+        readonly Queue<string> _tokens;
 
-        protected Tokens(IEnumerable<string> source)
-        {
-            _tokens = new Queue<string>(source);
-        }
+        protected Tokens(IEnumerable<string> source) => _tokens = new Queue<string>(source);
 
         public abstract Type ErrorType { get; }
-
-        public bool ThrowsInputError
-        {
-            get { return ErrorType == typeof (DocoptInputErrorException); }
-        }
-
-        public IEnumerator<string> GetEnumerator()
-        {
-            return _tokens.GetEnumerator();
-        }
-
-        IEnumerator IEnumerable.GetEnumerator()
-        {
-            return GetEnumerator();
-        }
-
-        public string Move()
-        {
-            return _tokens.Count > 0 ? _tokens.Dequeue() : null;
-        }
-
-        public string Current()
-        {
-            return _tokens.Count > 0 ? _tokens.Peek() : null;
-        }
-
         public abstract Exception CreateException(string message);
 
-        public override string ToString()
-        {
-            return $"current={Current()},count={_tokens.Count}";
-        }
+        public bool ThrowsInputError => ErrorType == typeof(DocoptInputErrorException);
+
+        public IEnumerator<string> GetEnumerator() => _tokens.GetEnumerator();
+        IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
+
+        public string Move()    => _tokens.Count > 0 ? _tokens.Dequeue() : null;
+        public string Current() => _tokens.Count > 0 ? _tokens.Peek() : null;
+
+        public override string ToString() => $"current={Current()},count={_tokens.Count}";
 
         partial class ContextualTokens<TError> : Tokens where TError : Exception
         {
-            private readonly Func<string, TError> _errorFactory;
+            readonly Func<string, TError> _errorFactory;
 
             public ContextualTokens(IEnumerable<string> source, Func<string, TError> errorFactory) :
-                base(source)
-            {
+                base(source) =>
                 _errorFactory = errorFactory;
-            }
 
-            public override Type ErrorType
-            {
-                get { return typeof(TError); }
-            }
-
-            public override Exception CreateException(string message)
-            {
-                return _errorFactory(message);
-            }
+            public override Type ErrorType => typeof(TError);
+            public override Exception CreateException(string message) => _errorFactory(message);
         }
     }
 }
