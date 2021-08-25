@@ -281,7 +281,7 @@ namespace DocoptNet
             if (tokens.Current() != "|")
                 return seq;
             var result = new List<Pattern>();
-            if (seq.Count() > 1)
+            if (seq.Count > 1)
             {
                 result.Add(new Required(seq.ToArray()));
             }
@@ -293,7 +293,7 @@ namespace DocoptNet
             {
                 tokens.Move();
                 seq = ParseSeq(tokens, options);
-                if (seq.Count() > 1)
+                if (seq.Count > 1)
                 {
                     result.Add(new Required(seq.ToArray()));
                 }
