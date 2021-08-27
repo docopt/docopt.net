@@ -300,13 +300,13 @@ namespace DocoptNet.CodeGeneration
                 select (Name: InferPropertyName(p), Pattern: p) into e
                 select (Func<CSharpSourceBuilder, CSharpSourceBuilder>)(e.Pattern switch
                 {
-                    Option { Value: { IsString: true } str } => c => c["public string "][e.Name][" { get; private set; } = "][str].SkipNextNewLine.EndStatement,
-                    Argument { Value: { IsNone: true } } or Option { ArgCount: not 0, Value: { Kind: not ValueKind.StringList } } => c => c["public string? "][e.Name][" { get; private set; }"],
-                    { Value: { Object: StringList list } } => c => c["public StringList "][e.Name][" { get; private set; } = "][list.Reverse()].SkipNextNewLine.EndStatement,
-                    { Value: { Kind: var kind } } => c => c["public "][InferType(kind)][' '][e.Name][" { get; private set; }"],
+                    Option { Value: { IsString: true } str } => c => c["string "][e.Name][" { get; private set; } = "][str].SkipNextNewLine.EndStatement,
+                    Argument { Value: { IsNone: true } } or Option { ArgCount: not 0, Value: { Kind: not ValueKind.StringList } } => c => c["string? "][e.Name][" { get; private set; }"],
+                    { Value: { Object: StringList list } } => c => c["StringList "][e.Name][" { get; private set; } = "][list.Reverse()].SkipNextNewLine.EndStatement,
+                    { Value: { Kind: var kind } } => c => c[InferType(kind)][' '][e.Name][" { get; private set; }"],
                 }))
             {
-                _ = line(code).NewLine;
+                _ = line(code["public "]).NewLine;
             }
 
             _ = code.BlockEnd;
