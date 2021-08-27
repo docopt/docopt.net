@@ -258,7 +258,7 @@ namespace DocoptNet.CodeGeneration
                     _ = code.SkipNextNewLine.Case(p.Name)
                             [" result."][InferPropertyName(p)][" = ("][p switch { Option   { Value: { IsString: true } } => "string",
                                                                                   Argument { Value: { IsNone: true } } or Option { ArgCount: not 0, Value: { Kind: not ValueKind.StringList } } => "string?",
-                                                                                  { Value: { Kind: var kind } } => InferType(kind) }][")value"]
+                                                                                  { Value: { Kind: var kind } } => MapType(kind) }][")value"]
                             .SkipNextNewLine.EndStatement[' ']
                             .Break;
                 }
@@ -301,7 +301,7 @@ namespace DocoptNet.CodeGeneration
                     Option { Value: { IsString: true } str } => c => c["string "][e.Name][" { get; private set; } = "][str].SkipNextNewLine.EndStatement,
                     Argument { Value: { IsNone: true } } or Option { ArgCount: not 0, Value: { Kind: not ValueKind.StringList } } => c => c["string? "][e.Name][" { get; private set; }"],
                     { Value: { Object: StringList list } } => c => c["StringList "][e.Name][" { get; private set; } = "][list.Reverse()].SkipNextNewLine.EndStatement,
-                    { Value: { Kind: var kind } } => c => c[InferType(kind)][' '][e.Name][" { get; private set; }"],
+                    { Value: { Kind: var kind } } => c => c[MapType(kind)][' '][e.Name][" { get; private set; }"],
                 })))
             {
                 _ = generator(code.NewLine["/// <summary><c>"][leaf.ToString().EncodeXmlText()]["</c></summary>"].NewLine["public "]).NewLine;
@@ -323,7 +323,7 @@ namespace DocoptNet.CodeGeneration
                     var p => throw new NotSupportedException($"Unsupported pattern: {p}")
                 };
 
-            static string InferType(ValueKind kind) =>
+            static string MapType(ValueKind kind) =>
                 kind switch
                 {
                     ValueKind.Boolean    => "bool",
