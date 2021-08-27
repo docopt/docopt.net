@@ -141,27 +141,7 @@ namespace DocoptNet.CodeGeneration
 
             _ = code["public const string Usage = "].Literal(usage).EndStatement;
 
-            void AppendTree(Pattern pattern, int level = 0)
-            {
-                _ = code["// "][' ', level * 2];
-                switch (pattern)
-                {
-                    case BranchPattern { Children: var children } branch:
-                        _ = code[branch.GetType().Name][':'].NewLine;
-                        foreach (var child in children)
-                            AppendTree(child, level + 1);
-                        break;
-                    case LeafPattern leaf:
-                        _ = code[leaf][" -> "][leaf.ToNode()].NewLine;
-                        break;
-                }
-            }
-
-            _ = code.NewLine;
-            var (pattern, options, exitUsage) = Docopt.ParsePattern(usage);
-            AppendTree(pattern);
-
-            void AppendCode(Pattern pattern, string pm, int level = 0)
+            void GeneratePatternMatchingCode(Pattern pattern, string pm, int level = 0)
             {
                 if (level >= 26) // todo proper diagnostics reporting
                     throw new NotSupportedException();
@@ -192,14 +172,14 @@ namespace DocoptNet.CodeGeneration
                                 foreach (var child in children)
                                 {
                                     _ = code.Case(i).Block;
-                                    AppendCode(child, m, level);
+                                    GeneratePatternMatchingCode(child, m, level);
                                     _ = code.Break.BlockEnd;
                                     i++;
                                 }
                                 _ = code.BlockEnd;
                                 break;
                             case 1:
-                                AppendCode(children[0], m, level);
+                                GeneratePatternMatchingCode(children[0], m, level);
                                 break;
                         }
                         _ = code["if (!"][m][".LastMatched)"].NewLine.Indent.Break.Outdent;
@@ -224,6 +204,8 @@ namespace DocoptNet.CodeGeneration
 
             _ = code.NewLine;
 
+            var (pattern, options, exitUsage) = Docopt.ParsePattern(usage);
+
             _ = code["public static "][name]["Arguments Apply(IEnumerable<string> args, bool help = true, object? version = null, bool optionsFirst = false, bool exit = false)"].NewLine.Block
                 .DeclareAssigned("tokens", "new Tokens(args, typeof(DocoptInputErrorException))")
                 ["var options = new List<Option>"].NewLine.Block;
@@ -246,7 +228,7 @@ namespace DocoptNet.CodeGeneration
                 .DeclareAssigned("collected", "new Leaves()")
                 .DeclareAssigned("a", "new RequiredMatcher(1, left, collected)")
                 .Do.Block;
-            AppendCode(pattern, "a");
+            GeneratePatternMatchingCode(pattern, "a");
             _ = code.BlockEnd
                     .DoWhile("false")
                     .NewLine

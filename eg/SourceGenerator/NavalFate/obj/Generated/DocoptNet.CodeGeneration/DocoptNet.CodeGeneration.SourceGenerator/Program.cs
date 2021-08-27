@@ -28,44 +28,6 @@ namespace NavalFate
       --drifting    Drifting mine.
 ";
 
-        // Required:
-        //   Either:
-        //     Required:
-        //       Command(ship, False) -> CommandNode ship Bool
-        //       Command(new, False) -> CommandNode new Bool
-        //       OneOrMore:
-        //         Argument(<name>, []) -> ArgumentNode <name> List
-        //     Required:
-        //       Command(ship, False) -> CommandNode ship Bool
-        //       Argument(<name>, []) -> ArgumentNode <name> List
-        //       Command(move, False) -> CommandNode move Bool
-        //       Argument(<x>, ) -> ArgumentNode <x> String
-        //       Argument(<y>, ) -> ArgumentNode <y> String
-        //       Optional:
-        //         Option(,--speed,1,10) -> OptionNode speed String
-        //     Required:
-        //       Command(ship, False) -> CommandNode ship Bool
-        //       Command(shoot, False) -> CommandNode shoot Bool
-        //       Argument(<x>, ) -> ArgumentNode <x> String
-        //       Argument(<y>, ) -> ArgumentNode <y> String
-        //     Required:
-        //       Command(mine, False) -> CommandNode mine Bool
-        //       Required:
-        //         Either:
-        //           Command(set, False) -> CommandNode set Bool
-        //           Command(remove, False) -> CommandNode remove Bool
-        //       Argument(<x>, ) -> ArgumentNode <x> String
-        //       Argument(<y>, ) -> ArgumentNode <y> String
-        //       Optional:
-        //         Either:
-        //           Option(,--moored,0,False) -> OptionNode moored Bool
-        //           Option(,--drifting,0,False) -> OptionNode drifting Bool
-        //     Required:
-        //       Required:
-        //         Option(-h,--help,0,False) -> OptionNode help Bool
-        //     Required:
-        //       Option(,--version,0,False) -> OptionNode version Bool
-
         public static ProgramArguments Apply(IEnumerable<string> args, bool help = true, object? version = null, bool optionsFirst = false, bool exit = false)
         {
             var tokens = new Tokens(args, typeof(DocoptInputErrorException));

@@ -16,27 +16,6 @@ namespace QuickExample
   QuickExample -h | --help | --version
 ";
 
-        // Required:
-        //   Either:
-        //     Required:
-        //       Command(tcp, False) -> CommandNode tcp Bool
-        //       Argument(<host>, ) -> ArgumentNode <host> String
-        //       Argument(<port>, ) -> ArgumentNode <port> String
-        //       Optional:
-        //         Option(,--timeout,1,) -> OptionNode timeout String
-        //     Required:
-        //       Command(serial, False) -> CommandNode serial Bool
-        //       Argument(<port>, ) -> ArgumentNode <port> String
-        //       Optional:
-        //         Option(,--baud,1,) -> OptionNode baud String
-        //       Optional:
-        //         Option(,--timeout,1,) -> OptionNode timeout String
-        //     Required:
-        //       Either:
-        //         Option(-h,,0,False) -> OptionNode h Bool
-        //         Option(,--help,0,False) -> OptionNode help Bool
-        //         Option(,--version,0,False) -> OptionNode version Bool
-
         public static ProgramArguments Apply(IEnumerable<string> args, bool help = true, object? version = null, bool optionsFirst = false, bool exit = false)
         {
             var tokens = new Tokens(args, typeof(DocoptInputErrorException));

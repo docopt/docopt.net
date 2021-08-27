@@ -26,31 +26,6 @@ Options:
   -h, --help
 ";
 
-        // Required:
-        //   Either:
-        //     Required:
-        //       Argument(<value>, []) -> ArgumentNode <value> List
-        //       OneOrMore:
-        //         Required:
-        //           Required:
-        //             Either:
-        //               Command(+, 0) -> CommandNode + Bool
-        //               Command(-, 0) -> CommandNode - Bool
-        //               Command(*, 0) -> CommandNode * Bool
-        //               Command(/, 0) -> CommandNode / Bool
-        //           Argument(<value>, []) -> ArgumentNode <value> List
-        //     Required:
-        //       Argument(<function>, ) -> ArgumentNode <function> String
-        //       Argument(<value>, []) -> ArgumentNode <value> List
-        //       OneOrMore:
-        //         Optional:
-        //           Required:
-        //             Command(,, 0) -> CommandNode , Bool
-        //             Argument(<value>, []) -> ArgumentNode <value> List
-        //     Required:
-        //       Required:
-        //         Option(-h,--help,0,False) -> OptionNode help Bool
-
         public static ProgramArguments Apply(IEnumerable<string> args, bool help = true, object? version = null, bool optionsFirst = false, bool exit = false)
         {
             var tokens = new Tokens(args, typeof(DocoptInputErrorException));

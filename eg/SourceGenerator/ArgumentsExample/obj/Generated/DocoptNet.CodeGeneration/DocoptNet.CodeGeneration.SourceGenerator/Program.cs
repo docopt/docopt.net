@@ -29,25 +29,6 @@ Options:
   --right  use right-hand side
 ";
 
-        // Required:
-        //   Either:
-        //     Required:
-        //       Optional:
-        //         Option(-v,,0,False) -> OptionNode v Bool
-        //         Option(-q,,0,False) -> OptionNode q Bool
-        //         Option(-r,,0,False) -> OptionNode r Bool
-        //         Option(-h,--help,0,False) -> OptionNode help Bool
-        //       OneOrMore:
-        //         Optional:
-        //           Argument(FILE, []) -> ArgumentNode FILE List
-        //     Required:
-        //       Required:
-        //         Either:
-        //           Option(,--left,0,False) -> OptionNode left Bool
-        //           Option(,--right,0,False) -> OptionNode right Bool
-        //       Argument(CORRECTION, ) -> ArgumentNode CORRECTION String
-        //       Argument(FILE, []) -> ArgumentNode FILE List
-
         public static ProgramArguments Apply(IEnumerable<string> args, bool help = true, object? version = null, bool optionsFirst = false, bool exit = false)
         {
             var tokens = new Tokens(args, typeof(DocoptInputErrorException));

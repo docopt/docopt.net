@@ -43,39 +43,6 @@ Options:
   --doctest            run doctest on myself
 ";
 
-        // Required:
-        //   Either:
-        //     Required:
-        //       Optional:
-        //         Option(-h,--help,0,False) -> OptionNode help Bool
-        //         Option(-v,--verbose,0,False) -> OptionNode verbose Bool
-        //         Option(-q,--quiet,0,False) -> OptionNode quiet Bool
-        //         Option(-r,--repeat,0,False) -> OptionNode repeat Bool
-        //         Option(-f,--file,1,*.py) -> OptionNode file String
-        //       Optional:
-        //         Option(,--exclude,1,.svn,CVS,.bzr,.hg,.git) -> OptionNode exclude String
-        //       Optional:
-        //         Either:
-        //           Option(,--select,1,) -> OptionNode select String
-        //           Option(,--ignore,1,) -> OptionNode ignore String
-        //       Optional:
-        //         Option(,--show-source,0,False) -> OptionNode show-source Bool
-        //       Optional:
-        //         Option(,--statistics,0,False) -> OptionNode statistics Bool
-        //       Optional:
-        //         Option(,--count,0,False) -> OptionNode count Bool
-        //       Optional:
-        //         Option(,--benchmark,0,False) -> OptionNode benchmark Bool
-        //       OneOrMore:
-        //         Argument(PATH, []) -> ArgumentNode PATH List
-        //     Required:
-        //       Required:
-        //         Either:
-        //           Option(,--doctest,0,False) -> OptionNode doctest Bool
-        //           Option(,--testsuite,1,) -> OptionNode testsuite String
-        //     Required:
-        //       Option(,--version,0,False) -> OptionNode version Bool
-
         public static ProgramArguments Apply(IEnumerable<string> args, bool help = true, object? version = null, bool optionsFirst = false, bool exit = false)
         {
             var tokens = new Tokens(args, typeof(DocoptInputErrorException));

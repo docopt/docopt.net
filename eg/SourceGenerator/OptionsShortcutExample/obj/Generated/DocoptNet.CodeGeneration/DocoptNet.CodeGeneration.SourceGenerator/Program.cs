@@ -24,18 +24,6 @@ Options:
   -q                       operate in quiet mode
 ";
 
-        // Required:
-        //   Required:
-        //     Optional:
-        //       OptionsShortcut:
-        //         Option(-h,--help,0,False) -> OptionNode help Bool
-        //         Option(,--version,0,False) -> OptionNode version Bool
-        //         Option(-n,--number,1,) -> OptionNode number String
-        //         Option(-t,--timeout,1,) -> OptionNode timeout String
-        //         Option(,--apply,0,False) -> OptionNode apply Bool
-        //         Option(-q,,0,False) -> OptionNode q Bool
-        //     Argument(<port>, ) -> ArgumentNode <port> String
-
         public static ProgramArguments Apply(IEnumerable<string> args, bool help = true, object? version = null, bool optionsFirst = false, bool exit = false)
         {
             var tokens = new Tokens(args, typeof(DocoptInputErrorException));

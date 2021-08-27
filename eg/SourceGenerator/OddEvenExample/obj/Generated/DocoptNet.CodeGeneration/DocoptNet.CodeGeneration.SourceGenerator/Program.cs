@@ -19,15 +19,6 @@ Options:
   -h, --help
 ";
 
-        // Required:
-        //   Required:
-        //     Optional:
-        //       Option(-h,--help,0,False) -> OptionNode help Bool
-        //     OneOrMore:
-        //       Required:
-        //         Argument(ODD, []) -> ArgumentNode ODD List
-        //         Argument(EVEN, []) -> ArgumentNode EVEN List
-
         public static ProgramArguments Apply(IEnumerable<string> args, bool help = true, object? version = null, bool optionsFirst = false, bool exit = false)
         {
             var tokens = new Tokens(args, typeof(DocoptInputErrorException));

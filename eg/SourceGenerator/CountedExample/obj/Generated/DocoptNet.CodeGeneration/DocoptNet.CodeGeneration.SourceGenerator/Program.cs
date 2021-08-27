@@ -22,25 +22,6 @@ Try: CountedExample -vvvvvvvvvv
      CountedExample this.txt that.txt
 ";
 
-        // Required:
-        //   Either:
-        //     Required:
-        //       Option(,--help,0,False) -> OptionNode help Bool
-        //     Required:
-        //       OneOrMore:
-        //         Option(-v,,0,0) -> OptionNode v Bool
-        //     Required:
-        //       Command(go, 0) -> CommandNode go Bool
-        //       Optional:
-        //         Command(go, 0) -> CommandNode go Bool
-        //     Required:
-        //       OneOrMore:
-        //         Required:
-        //           Option(,--path,1,[]) -> OptionNode path String
-        //     Required:
-        //       Argument(<file>, []) -> ArgumentNode <file> List
-        //       Argument(<file>, []) -> ArgumentNode <file> List
-
         public static ProgramArguments Apply(IEnumerable<string> args, bool help = true, object? version = null, bool optionsFirst = false, bool exit = false)
         {
             var tokens = new Tokens(args, typeof(DocoptInputErrorException));
