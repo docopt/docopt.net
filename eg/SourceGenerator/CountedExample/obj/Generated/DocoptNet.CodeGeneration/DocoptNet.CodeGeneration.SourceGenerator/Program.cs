@@ -81,7 +81,7 @@ Try: CountedExample -vvvvvvvvvv
                                 while (d.Next())
                                 {
                                     // Option(,--help,0,False)
-                                    d.Match(PatternMatcher.MatchOption, "--help", value: false, isList: false, isInt: false);
+                                    d.Match(PatternMatcher.MatchOption, "--help", false);
                                     if (!d.LastMatched)
                                         break;
                                 }
@@ -99,7 +99,7 @@ Try: CountedExample -vvvvvvvvvv
                                     while (e.Next())
                                     {
                                         // Option(-v,,0,0)
-                                        e.Match(PatternMatcher.MatchOption, "-v", value: 0, isList: false, isInt: true);
+                                        e.Match(PatternMatcher.MatchOption, "-v", 0);
                                         if (!e.LastMatched)
                                             break;
                                     }
@@ -121,7 +121,7 @@ Try: CountedExample -vvvvvvvvvv
                                         case 0:
                                         {
                                             // Command(go, 0)
-                                            d.Match(PatternMatcher.MatchCommand, "go", value: 0, isList: false, isInt: true);
+                                            d.Match(PatternMatcher.MatchCommand, "go", 0);
                                             break;
                                         }
                                         case 1:
@@ -131,7 +131,7 @@ Try: CountedExample -vvvvvvvvvv
                                             while (e.Next())
                                             {
                                                 // Command(go, 0)
-                                                e.Match(PatternMatcher.MatchCommand, "go", value: 0, isList: false, isInt: true);
+                                                e.Match(PatternMatcher.MatchCommand, "go", 0);
                                                 if (!e.LastMatched)
                                                     break;
                                             }
@@ -160,7 +160,7 @@ Try: CountedExample -vvvvvvvvvv
                                         while (f.Next())
                                         {
                                             // Option(,--path,1,[])
-                                            f.Match(PatternMatcher.MatchOption, "--path", value: new ArrayList(), isList: true, isInt: false);
+                                            f.Match(PatternMatcher.MatchOption, "--path", StringList.Empty);
                                             if (!f.LastMatched)
                                                 break;
                                         }
@@ -186,13 +186,13 @@ Try: CountedExample -vvvvvvvvvv
                                         case 0:
                                         {
                                             // Argument(<file>, [])
-                                            d.Match(PatternMatcher.MatchArgument, "<file>", value: new ArrayList(), isList: true, isInt: false);
+                                            d.Match(PatternMatcher.MatchArgument, "<file>", StringList.Empty);
                                             break;
                                         }
                                         case 1:
                                         {
                                             // Argument(<file>, [])
-                                            d.Match(PatternMatcher.MatchArgument, "<file>", value: new ArrayList(), isList: true, isInt: false);
+                                            d.Match(PatternMatcher.MatchArgument, "<file>", StringList.Empty);
                                             break;
                                         }
                                     }

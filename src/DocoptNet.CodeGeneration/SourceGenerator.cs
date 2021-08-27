@@ -216,23 +216,7 @@ namespace DocoptNet.CodeGeneration
                             Option => "MatchOption",
                             _ => throw new NotImplementedException()
                         };
-                        _ = code[pm]
-                                [".Match("]
-                                    ["PatternMatcher."][lfn][", "]
-                                    [Literal(name)][", "]
-                                    ["value: "][leaf.Value.ToValueObject() switch
-                                    {
-                                        null => "null",
-                                        { Value: null     } => "null",
-                                        { IsList: true    } => "new ArrayList()",
-                                        { IsInt: true, AsInt: var n } => Literal(n).ToString(),
-                                        { Value: string v } => Literal(v).ToString(),
-                                        { IsTrue: true    } => "true",
-                                        { IsFalse: true   } => "false",
-                                        _ => throw new NotSupportedException(leaf.Value.ToString()), // todo emit diagnostic
-                                    }][", "]
-                                    ["isList: "][leaf.Value.IsStringList ? "true" : "false"][", "]
-                                    ["isInt: "][leaf.Value.IsInteger ? "true" : "false"][')'].EndStatement;
+                        _ = code[pm][".Match("]["PatternMatcher."][lfn][", "][Literal(name)][", "][leaf.Value, "Value.None"][')'].EndStatement;
                         break;
                     }
                 }

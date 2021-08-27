@@ -87,37 +87,37 @@ Options:
                                             case 0:
                                             {
                                                 // Option(-h,--help,0,False)
-                                                e.Match(PatternMatcher.MatchOption, "--help", value: false, isList: false, isInt: false);
+                                                e.Match(PatternMatcher.MatchOption, "--help", false);
                                                 break;
                                             }
                                             case 1:
                                             {
                                                 // Option(,--version,0,False)
-                                                e.Match(PatternMatcher.MatchOption, "--version", value: false, isList: false, isInt: false);
+                                                e.Match(PatternMatcher.MatchOption, "--version", false);
                                                 break;
                                             }
                                             case 2:
                                             {
                                                 // Option(-n,--number,1,)
-                                                e.Match(PatternMatcher.MatchOption, "--number", value: null, isList: false, isInt: false);
+                                                e.Match(PatternMatcher.MatchOption, "--number", Value.None);
                                                 break;
                                             }
                                             case 3:
                                             {
                                                 // Option(-t,--timeout,1,)
-                                                e.Match(PatternMatcher.MatchOption, "--timeout", value: null, isList: false, isInt: false);
+                                                e.Match(PatternMatcher.MatchOption, "--timeout", Value.None);
                                                 break;
                                             }
                                             case 4:
                                             {
                                                 // Option(,--apply,0,False)
-                                                e.Match(PatternMatcher.MatchOption, "--apply", value: false, isList: false, isInt: false);
+                                                e.Match(PatternMatcher.MatchOption, "--apply", false);
                                                 break;
                                             }
                                             case 5:
                                             {
                                                 // Option(-q,,0,False)
-                                                e.Match(PatternMatcher.MatchOption, "-q", value: false, isList: false, isInt: false);
+                                                e.Match(PatternMatcher.MatchOption, "-q", false);
                                                 break;
                                             }
                                         }
@@ -134,7 +134,7 @@ Options:
                             case 1:
                             {
                                 // Argument(<port>, )
-                                c.Match(PatternMatcher.MatchArgument, "<port>", value: null, isList: false, isInt: false);
+                                c.Match(PatternMatcher.MatchArgument, "<port>", Value.None);
                                 break;
                             }
                         }

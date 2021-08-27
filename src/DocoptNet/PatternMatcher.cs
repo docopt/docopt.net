@@ -15,7 +15,7 @@ namespace DocoptNet
         bool Next();
         Leaves Left { get; }
         Leaves Collected { get; }
-        bool Match(LeafPatternMatcher matcher, string name, object? value, bool isList, bool isInt);
+        bool Match(LeafPatternMatcher matcher, string name, Value leafValue);
         bool Match(Pattern pattern);
         bool Fold(MatchResult match);
         bool LastMatched { get; }
@@ -24,13 +24,12 @@ namespace DocoptNet
 
     static class LeafMatcherExtensions
     {
-        public static MatchResult
-            Match(this LeafPatternMatcher matcher,
-                  Leaves left, Leaves collected,
-                  string name, object? value, bool isList, bool isInt)
+        public static MatchResult Match(this LeafPatternMatcher matcher,
+                                        Leaves left, Leaves collected,
+                                        string name, Value leafValue)
         {
             var (index, match) = matcher(left, name);
-            return PatternMatcher.MatchLeaf(left, collected, name, value, isList, isInt, index, match);
+            return PatternMatcher.MatchLeaf(left, collected, name, leafValue, index, match);
         }
     }
 
@@ -60,8 +59,8 @@ namespace DocoptNet
         public Leaves Left => l;
         public Leaves Collected => c;
 
-        public bool Match(LeafPatternMatcher matcher, string name, object? value, bool isList, bool isInt) =>
-            Fold(matcher.Match(l, c, name, value, isList, isInt));
+        public bool Match(LeafPatternMatcher matcher, string name, Value leafValue) =>
+            Fold(matcher.Match(l, c, name, leafValue));
 
         public bool Match(Pattern pattern) =>
             Fold(pattern.Match(l, c));
@@ -110,8 +109,8 @@ namespace DocoptNet
         public Leaves Left => left;
         public Leaves Collected => collected;
 
-        public bool Match(LeafPatternMatcher matcher, string name, object? value, bool isList, bool isInt) =>
-            Fold(matcher.Match(left, collected, name, value, isList, isInt));
+        public bool Match(LeafPatternMatcher matcher, string name, Value leafValue) =>
+            Fold(matcher.Match(left, collected, name, leafValue));
 
         public bool Match(Pattern pattern) =>
             Fold(pattern.Match(left, collected));
@@ -150,8 +149,8 @@ namespace DocoptNet
         public Leaves Left => l;
         public Leaves Collected => c;
 
-        public bool Match(LeafPatternMatcher matcher, string name, object? value, bool isList, bool isInt) =>
-            Fold(matcher.Match(l, c, name, value, isList, isInt));
+        public bool Match(LeafPatternMatcher matcher, string name, Value leafValue) =>
+            Fold(matcher.Match(l, c, name, leafValue));
 
         public bool Match(Pattern pattern) =>
             Fold(pattern.Match(l, c));
@@ -186,8 +185,8 @@ namespace DocoptNet
         public Leaves Left => l;
         public Leaves Collected => c;
 
-        public bool Match(LeafPatternMatcher matcher, string name, object? value, bool isList, bool isInt) =>
-            Fold(matcher.Match(l, c, name, value, isList, isInt));
+        public bool Match(LeafPatternMatcher matcher, string name, Value leafValue) =>
+            Fold(matcher.Match(l, c, name, leafValue));
 
         public bool Match(Pattern pattern) =>
             Fold(pattern.Match(l, c));
@@ -233,10 +232,7 @@ namespace DocoptNet
                         _ => throw new NotSupportedException()
                     };
 
-                    return matcher.Match(left, collected,
-                                         leaf.Name, leaf.Value.Object,
-                                         leaf.Value.IsStringList,
-                                         leaf.Value.IsInteger);
+                    return matcher.Match(left, collected, leaf.Name, leaf.Value);
                 }
                 default:
                     throw new ArgumentException(nameof(pattern));
@@ -253,25 +249,23 @@ namespace DocoptNet
             }
         }
 
-        public static MatchResult
-            MatchLeaf(Leaves left, Leaves collected,
-                      string name, object? value, bool isList, bool isInt,
-                      int index, LeafPattern? match)
+        public static MatchResult MatchLeaf(Leaves left, Leaves collected,
+                                            string name, Value value,
+                                            int index, LeafPattern? match)
         {
             if (match == null)
             {
                 return new MatchResult(false, left, collected);
             }
             var left_ = left.RemoveAt(index);
-            if (value != null && (isList || isInt))
+            if (value is { Kind: ValueKind.StringList or ValueKind.Integer })
             {
                 var sameNames = collected.Where(a => a.Name == name).ToList();
                 if (sameNames.Count == 0)
                 {
-                    match.Value = isInt ? 1
+                    match.Value = value.IsInteger ? 1
                                 : match.Value.TryAsString(out var s) ? StringList.Empty.Push(s)
                                 : match.Value;
-                    return new MatchResult(true, left_, collected.Append(match));
                 }
                 else
                 {

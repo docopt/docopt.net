@@ -103,25 +103,25 @@ Options:
                                                     case 0:
                                                     {
                                                         // Option(-v,,0,False)
-                                                        e.Match(PatternMatcher.MatchOption, "-v", value: false, isList: false, isInt: false);
+                                                        e.Match(PatternMatcher.MatchOption, "-v", false);
                                                         break;
                                                     }
                                                     case 1:
                                                     {
                                                         // Option(-q,,0,False)
-                                                        e.Match(PatternMatcher.MatchOption, "-q", value: false, isList: false, isInt: false);
+                                                        e.Match(PatternMatcher.MatchOption, "-q", false);
                                                         break;
                                                     }
                                                     case 2:
                                                     {
                                                         // Option(-r,,0,False)
-                                                        e.Match(PatternMatcher.MatchOption, "-r", value: false, isList: false, isInt: false);
+                                                        e.Match(PatternMatcher.MatchOption, "-r", false);
                                                         break;
                                                     }
                                                     case 3:
                                                     {
                                                         // Option(-h,--help,0,False)
-                                                        e.Match(PatternMatcher.MatchOption, "--help", value: false, isList: false, isInt: false);
+                                                        e.Match(PatternMatcher.MatchOption, "--help", false);
                                                         break;
                                                     }
                                                 }
@@ -142,7 +142,7 @@ Options:
                                                 while (f.Next())
                                                 {
                                                     // Argument(FILE, [])
-                                                    f.Match(PatternMatcher.MatchArgument, "FILE", value: new ArrayList(), isList: true, isInt: false);
+                                                    f.Match(PatternMatcher.MatchArgument, "FILE", StringList.Empty);
                                                     if (!f.LastMatched)
                                                         break;
                                                 }
@@ -183,13 +183,13 @@ Options:
                                                         case 0:
                                                         {
                                                             // Option(,--left,0,False)
-                                                            f.Match(PatternMatcher.MatchOption, "--left", value: false, isList: false, isInt: false);
+                                                            f.Match(PatternMatcher.MatchOption, "--left", false);
                                                             break;
                                                         }
                                                         case 1:
                                                         {
                                                             // Option(,--right,0,False)
-                                                            f.Match(PatternMatcher.MatchOption, "--right", value: false, isList: false, isInt: false);
+                                                            f.Match(PatternMatcher.MatchOption, "--right", false);
                                                             break;
                                                         }
                                                     }
@@ -206,13 +206,13 @@ Options:
                                         case 1:
                                         {
                                             // Argument(CORRECTION, )
-                                            d.Match(PatternMatcher.MatchArgument, "CORRECTION", value: null, isList: false, isInt: false);
+                                            d.Match(PatternMatcher.MatchArgument, "CORRECTION", Value.None);
                                             break;
                                         }
                                         case 2:
                                         {
                                             // Argument(FILE, [])
-                                            d.Match(PatternMatcher.MatchArgument, "FILE", value: new ArrayList(), isList: true, isInt: false);
+                                            d.Match(PatternMatcher.MatchArgument, "FILE", StringList.Empty);
                                             break;
                                         }
                                     }

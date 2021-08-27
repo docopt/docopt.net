@@ -93,7 +93,7 @@ Options:
                                         case 0:
                                         {
                                             // Argument(<value>, [])
-                                            d.Match(PatternMatcher.MatchArgument, "<value>", value: new ArrayList(), isList: true, isInt: false);
+                                            d.Match(PatternMatcher.MatchArgument, "<value>", StringList.Empty);
                                             break;
                                         }
                                         case 1:
@@ -123,25 +123,25 @@ Options:
                                                                         case 0:
                                                                         {
                                                                             // Command(+, 0)
-                                                                            h.Match(PatternMatcher.MatchCommand, "+", value: 0, isList: false, isInt: true);
+                                                                            h.Match(PatternMatcher.MatchCommand, "+", 0);
                                                                             break;
                                                                         }
                                                                         case 1:
                                                                         {
                                                                             // Command(-, 0)
-                                                                            h.Match(PatternMatcher.MatchCommand, "-", value: 0, isList: false, isInt: true);
+                                                                            h.Match(PatternMatcher.MatchCommand, "-", 0);
                                                                             break;
                                                                         }
                                                                         case 2:
                                                                         {
                                                                             // Command(*, 0)
-                                                                            h.Match(PatternMatcher.MatchCommand, "*", value: 0, isList: false, isInt: true);
+                                                                            h.Match(PatternMatcher.MatchCommand, "*", 0);
                                                                             break;
                                                                         }
                                                                         case 3:
                                                                         {
                                                                             // Command(/, 0)
-                                                                            h.Match(PatternMatcher.MatchCommand, "/", value: 0, isList: false, isInt: true);
+                                                                            h.Match(PatternMatcher.MatchCommand, "/", 0);
                                                                             break;
                                                                         }
                                                                     }
@@ -158,7 +158,7 @@ Options:
                                                         case 1:
                                                         {
                                                             // Argument(<value>, [])
-                                                            f.Match(PatternMatcher.MatchArgument, "<value>", value: new ArrayList(), isList: true, isInt: false);
+                                                            f.Match(PatternMatcher.MatchArgument, "<value>", StringList.Empty);
                                                             break;
                                                         }
                                                     }
@@ -190,13 +190,13 @@ Options:
                                         case 0:
                                         {
                                             // Argument(<function>, )
-                                            d.Match(PatternMatcher.MatchArgument, "<function>", value: null, isList: false, isInt: false);
+                                            d.Match(PatternMatcher.MatchArgument, "<function>", Value.None);
                                             break;
                                         }
                                         case 1:
                                         {
                                             // Argument(<value>, [])
-                                            d.Match(PatternMatcher.MatchArgument, "<value>", value: new ArrayList(), isList: true, isInt: false);
+                                            d.Match(PatternMatcher.MatchArgument, "<value>", StringList.Empty);
                                             break;
                                         }
                                         case 2:
@@ -218,13 +218,13 @@ Options:
                                                             case 0:
                                                             {
                                                                 // Command(,, 0)
-                                                                g.Match(PatternMatcher.MatchCommand, ",", value: 0, isList: false, isInt: true);
+                                                                g.Match(PatternMatcher.MatchCommand, ",", 0);
                                                                 break;
                                                             }
                                                             case 1:
                                                             {
                                                                 // Argument(<value>, [])
-                                                                g.Match(PatternMatcher.MatchArgument, "<value>", value: new ArrayList(), isList: true, isInt: false);
+                                                                g.Match(PatternMatcher.MatchArgument, "<value>", StringList.Empty);
                                                                 break;
                                                             }
                                                         }
@@ -260,7 +260,7 @@ Options:
                                     while (e.Next())
                                     {
                                         // Option(-h,--help,0,False)
-                                        e.Match(PatternMatcher.MatchOption, "--help", value: false, isList: false, isInt: false);
+                                        e.Match(PatternMatcher.MatchOption, "--help", false);
                                         if (!e.LastMatched)
                                             break;
                                     }
