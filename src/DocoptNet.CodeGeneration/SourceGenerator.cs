@@ -19,14 +19,20 @@
 namespace DocoptNet.CodeGeneration
 {
     using System;
+    using System.Collections.Generic;
+    using System.Collections.Immutable;
+    using System.Diagnostics.CodeAnalysis;
     using System.IO;
     using System.Linq;
     using System.Text;
     using System.Text.RegularExpressions;
     using Microsoft.CodeAnalysis;
+    using Microsoft.CodeAnalysis.CSharp.Syntax;
     using Microsoft.CodeAnalysis.Text;
+    using MoreLinq;
     using Argument = DocoptNet.Argument;
     using Unit = System.ValueTuple;
+    using static OptionModule;
 
     [Generator]
     public sealed class SourceGenerator : ISourceGenerator
@@ -39,7 +45,47 @@ namespace DocoptNet.CodeGeneration
                 DiagnosticSeverity.Error,
                 isEnabledByDefault: true);
 
-        public void Initialize(GeneratorInitializationContext context) {}
+        public void Initialize(GeneratorInitializationContext context)
+        {
+            context.RegisterForSyntaxNotifications(() => new SyntaxReceiver());
+            context.RegisterForPostInitialization(context =>
+            {
+                foreach (var (fn, source) in GetEmbeddedCSharpSources(fn => DoesFileNameEndIn(fn, "Attribute")))
+                    context.AddSource(fn, source);
+            });
+        }
+
+        sealed class SyntaxReceiver : ISyntaxContextReceiver
+        {
+            public List<(ClassDeclarationSyntax Class, AttributeData Attributes)> ClassAttributes { get; } = new();
+
+            public void OnVisitSyntaxNode(GeneratorSyntaxContext context)
+            {
+                if (TryGetClassWithAttributeData(context.Node, context.SemanticModel, out var cds, out var attributeData))
+                    ClassAttributes.Add((cds, attributeData));
+            }
+
+            static bool TryGetClassWithAttributeData(SyntaxNode node, SemanticModel model,
+                                                     [NotNullWhen(true)]out ClassDeclarationSyntax? classDeclarationSyntax,
+                                                     [NotNullWhen(true)]out AttributeData? attributeData)
+            {
+                const string attributeName = nameof(DocoptNet) + "." + nameof(DocoptArgumentsAttribute);
+                var attributeTypeSymbol = model.Compilation.GetTypeByMetadataName(attributeName);
+                if (node is AttributeSyntax attribute
+                    && SymbolEqualityComparer.Default.Equals(attributeTypeSymbol, model.GetTypeInfo(attribute).Type)
+                    && attribute.FirstAncestorOrSelf((ClassDeclarationSyntax _) => true) is { } cds
+                    && model.GetDeclaredSymbol(cds)?.GetAttributes() is { } attributes)
+                {
+                    classDeclarationSyntax = cds;
+                    attributeData = attributes.First(a => SymbolEqualityComparer.Default.Equals(a.AttributeClass, attributeTypeSymbol));
+                    return true;
+                }
+
+                classDeclarationSyntax = null;
+                attributeData = null;
+                return false;
+            }
+        }
 
         static class Metadata
         {
@@ -48,43 +94,69 @@ namespace DocoptNet.CodeGeneration
             public const string Name = Prefix + nameof(Name);
         }
 
+        static readonly SymbolDisplayFormat FullyQualifiedFormatWithoutGlobalNamespace =
+            SymbolDisplayFormat.FullyQualifiedFormat.WithGlobalNamespaceStyle(SymbolDisplayGlobalNamespaceStyle.Omitted);
+
         public void Execute(GeneratorExecutionContext context)
         {
             context.LaunchDebuggerIfFlagged(nameof(DocoptNet));
 
-            context.AnalyzerConfigOptions.GlobalOptions.TryGetValue("build_property.RootNamespace", out var rootNamespace);
-            context.AnalyzerConfigOptions.GlobalOptions.TryGetValue("build_property.DocoptNetNamespace", out var embeddingNamespace);
+            var syntaxReceiver = (SyntaxReceiver)(context.SyntaxContextReceiver ?? throw new NullReferenceException());
 
-            var docopts =
-                from at in context.AdditionalFiles
-                select context.AnalyzerConfigOptions.GetOptions(at) is {} options
-                    && options.TryGetValue(Metadata.SourceItemType, out var type)
-                    && "docopt".Equals(type, StringComparison.OrdinalIgnoreCase)
-                    && at.GetText() is {} text
-                     ? new
-                       {
-                           FilePath = at.Path,
-                           Name = options.TryGetValue(Metadata.Name, out var name)
-                                  && !string.IsNullOrWhiteSpace(name)
-                                ? name
-                                : Path.GetFileName(at.Path).Partition(".").Item1,
-                           Text = text,
-                       }
-                     : null
-                into e
-                where e is not null
-                select e;
+            SemanticModel? model = null;
+
+            var docoptTypes = new List<(string? Namespace, string Name, SourceText Help, GenerationOptions Options)>();
+
+            foreach (var (cds, attributeData) in syntaxReceiver.ClassAttributes)
+            {
+                model ??= context.Compilation.GetSemanticModel(cds.SyntaxTree);
+                var symbol = model.GetDeclaredSymbol(cds) as INamedTypeSymbol;
+                if (symbol is null)
+                    continue;
+                // TODO emit diagnostics on nested types? symbol.ContainingType != null
+                var className = symbol.ToDisplayString(SymbolDisplayFormat.MinimallyQualifiedFormat);
+                var namespaceName =
+                    symbol.ContainingNamespace.ToDisplayString(FullyQualifiedFormatWithoutGlobalNamespace)
+                    is { Length: > 0 } s ? s : null;
+                var attribute = DocoptArgumentsAttribute.From(attributeData);
+                attribute.HelpConstName ??= "Help";
+                var help = symbol.GetMembers()
+                                 .Choose(s => s is IFieldSymbol { IsConst: true, Name: var name, ConstantValue: string help }
+                                           && name == attribute.HelpConstName ? Some(help) : default)
+                                 .FirstOrDefault();
+                docoptTypes.Add((namespaceName, className, SourceText.From(help), GenerationOptions.SkipHelpConst));
+            }
+
+            var globalOptions = context.AnalyzerConfigOptions.GlobalOptions;
+            globalOptions.TryGetValue("build_property.RootNamespace", out var rootNamespace);
+            globalOptions.TryGetValue("build_property.DocoptNetNamespace", out var embeddingNamespace);
+
+            var docoptSources =
+                context.AdditionalFiles
+                       .Choose(at => context.AnalyzerConfigOptions.GetOptions(at) is {} options
+                                     && options.TryGetValue(Metadata.SourceItemType, out var type)
+                                     && "Docopt".Equals(type, StringComparison.OrdinalIgnoreCase)
+                                     && at.GetText() is {} text
+                                     ? Some((rootNamespace,
+                                             options.TryGetValue(Metadata.Name, out var name)
+                                             && !string.IsNullOrWhiteSpace(name)
+                                                 ? name
+                                                 : Path.GetFileName(at.Path).Partition(".").Item1 + "Arguments",
+                                             text,
+                                             GenerationOptions.None))
+                                     : default)
+                       .ToImmutableArray();
 
             var added = false;
 
-            foreach (var docopt in docopts)
+            foreach (var (ns, name, help, options) in docoptSources.Concat(docoptTypes))
             {
                 try
                 {
-                    if (Generate(rootNamespace, embeddingNamespace, docopt.Name, docopt.Text) is { Length: > 0 } source)
+                    if (Generate(ns, embeddingNamespace, name, help, options) is { Length: > 0 } source)
                     {
                         added = true;
-                        context.AddSource(docopt.Name + "Arguments.cs", source);
+                        context.AddSource(name + ".cs", source);
                     }
                 }
                 catch (DocoptLanguageErrorException e)
@@ -96,53 +168,88 @@ namespace DocoptNet.CodeGeneration
 
             if (added)
             {
-                const string resourceNamespace = "DocoptNet.CodeGeneration.Generated.";
                 var assembly = GetType().Assembly;
-                foreach (var (rn, fn) in from rn in assembly.GetManifestResourceNames()
-                                         where rn.StartsWith(resourceNamespace) && rn.EndsWith(".cs")
-                                         select (rn, rn.Substring(resourceNamespace.Length)))
-                {
-                    using var stream = assembly.GetManifestResourceStream(rn)!;
-                    if (embeddingNamespace is { Length: > 0 } and not nameof(DocoptNet))
-                    {
-                        using var reader = new StreamReader(stream);
-                        var source = Regex.Replace(reader.ReadToEnd(), @"(?<=\bnamespace\s+)DocoptNet(?:\.Generated)?\b", embeddingNamespace);
-                        context.AddSource(fn, SourceText.From(source, Utf8BomlessEncoding));
-                    }
-                    else
-                    {
-                        context.AddSource(fn, SourceText.From(stream, canBeEmbedded: true));
-                    }
-                }
+                foreach (var (fn, source) in GetEmbeddedCSharpSources(embeddingNamespace, fn => !DoesFileNameEndIn(fn, "Attribute")))
+                    context.AddSource(fn, source);
             }
         }
 
         static readonly SourceText EmptySourceText = SourceText.From(string.Empty);
         static readonly Encoding Utf8BomlessEncoding = new UTF8Encoding(encoderShouldEmitUTF8Identifier: false);
 
+        IEnumerable<(string, SourceText)> GetEmbeddedCSharpSources(Func<string, bool> predicate) =>
+            GetEmbeddedCSharpSources(null, predicate);
+
+        IEnumerable<(string, SourceText)> GetEmbeddedCSharpSources(string? embeddingNamespace,
+                                                                   Func<string, bool> predicate)
+        {
+            const string resourceNamespace = nameof(DocoptNet) + ".CodeGeneration.Generated.";
+            var assembly = GetType().Assembly;
+            foreach (var (rn, fn) in from rn in assembly.GetManifestResourceNames()
+                                     where rn.StartsWith(resourceNamespace) && rn.EndsWith(".cs")
+                                     select (ResourceName: rn, FileName: rn.Substring(resourceNamespace.Length)) into e
+                                     where predicate(e.FileName)
+                                     select e)
+            {
+                using var stream = assembly.GetManifestResourceStream(rn)!;
+                if (embeddingNamespace is { Length: > 0 } and not nameof(DocoptNet))
+                {
+                    using var reader = new StreamReader(stream);
+                    var source = Regex.Replace(reader.ReadToEnd(), @"(?<=\bnamespace\s+)DocoptNet(?:\.Generated)?\b", embeddingNamespace);
+                    yield return (fn, SourceText.From(source, Utf8BomlessEncoding));
+                }
+                else
+                {
+                    yield return (fn, SourceText.From(stream, canBeEmbedded: true));
+                }
+            }
+        }
+
+        static bool DoesFileNameEndIn(string fileName, string ending) =>
+            Path.GetFileNameWithoutExtension(fileName).EndsWith(ending, StringComparison.OrdinalIgnoreCase);
+
         static readonly string[] Vars = "abcdefghijklmnopqrstuvwxyz".Select(ch => ch.ToString()).ToArray();
 
-        public static SourceText Generate(string? ns, string? embeddingNamespace, string name, SourceText text) =>
-            Generate(ns, embeddingNamespace, name, text, null);
+        [Flags]
+        enum GenerationOptions
+        {
+            None,
+            SkipHelpConst,
+        }
 
-        public static SourceText Generate(string? ns, string? embeddingNamespace, string name, SourceText text, Encoding? outputEncoding)
+        public static SourceText Generate(string? ns, string? embeddingNamespace, string name, SourceText text) =>
+            Generate(ns, embeddingNamespace, name, text, GenerationOptions.None);
+
+        static SourceText Generate(string? ns, string? embeddingNamespace, string name, SourceText text,
+                                   GenerationOptions generationOptions) =>
+            Generate(ns, embeddingNamespace, name, text, null, generationOptions);
+
+        public static SourceText Generate(string? ns, string? embeddingNamespace, string name, SourceText text, Encoding? outputEncoding) =>
+            Generate(ns, embeddingNamespace, name, text, outputEncoding, GenerationOptions.None);
+
+        static SourceText Generate(string? ns, string? embeddingNamespace, string name, SourceText text, Encoding? outputEncoding,
+                                   GenerationOptions options)
         {
             if (text.Length == 0)
                 return EmptySourceText;
 
             var helpText = text.ToString();
             var code = new CSharpSourceBuilder();
+
             Generate(code,
                      ns is { Length: 0 } ? null : ns,
                      embeddingNamespace is { Length: > 0 } ? embeddingNamespace : nameof(DocoptNet),
-                     name, helpText);
+                     name, helpText,
+                     options);
+
             return new StringBuilderSourceText(code.StringBuilder, outputEncoding ?? text.Encoding ?? Utf8BomlessEncoding);
         }
 
         static void Generate(CSharpSourceBuilder code,
                              string? ns,
                              string embeddingNamespace,
-                             string name, string helpText)
+                             string name, string helpText,
+                             GenerationOptions generationOptions)
         {
             var (pattern, options, usage) = Docopt.ParsePattern(helpText);
 
@@ -167,14 +274,16 @@ namespace DocoptNet.CodeGeneration
                 .NewLine
                 [ns is not null ? code.Namespace(ns) : code.Blank()]
 
-                .Partial.Class[name]["Arguments : IEnumerable<KeyValuePair<string, object?>>"].NewLine.Block[code
-                    .Public.Const(helpConstName, helpText)
+                .Partial.Class[name][" : IEnumerable<KeyValuePair<string, object?>>"].NewLine.SkipNextNewLine.Block[code
+                    [(generationOptions & GenerationOptions.SkipHelpConst) == GenerationOptions.SkipHelpConst
+                         ? code.Blank()
+                         : code.NewLine.Public.Const(helpConstName, helpText)]
 
                     .NewLine
                     .Public.Const(usageConstName, usage)
 
                     .NewLine
-                    .Public.Static[name]["Arguments Apply(IEnumerable<string> args, bool help = true, object? version = null, bool optionsFirst = false)"]
+                    .Public.Static[name][" Apply(IEnumerable<string> args, bool help = true, object? version = null, bool optionsFirst = false)"]
                     .NewLine.Block[code
                         .Var("options")[
                             code.New["List<Option>"].NewLine
@@ -188,7 +297,7 @@ namespace DocoptNet.CodeGeneration
                         .Var("required")[code.New["RequiredMatcher(1, left, "].New["Leaves()"][')']]
                         ["Match(ref required)"].EndStatement
                         .Var("collected")["GetSuccessfulCollection(required, " + usageConstName + ")"]
-                        .Var("result")[code.New[name]["Arguments()"]]
+                        .Var("result")[code.New[name]["()"]]
                         [leaves.Any()
                              ? code.NewLine
                                    .ForEach["var leaf in collected"][

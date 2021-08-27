@@ -3,6 +3,7 @@
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
     <Nullable>annotations</Nullable>
+    <DefineConstants>$(DefineConstants);DOCOPTNET_INTERNAL</DefineConstants>
     <IsRoslynComponent>true</IsRoslynComponent>
     <IsPackable>true</IsPackable>
     <AssemblyOriginatorKeyFile>..\DocoptNet\DocoptNet.snk</AssemblyOriginatorKeyFile>
@@ -34,6 +35,7 @@
 
   <ItemGroup>
     <EmbeddedResource Include="..\DocoptNet\*.cs" Link="Generated\%(Filename)%(Extension)" />
+    <EmbeddedResource Include="Docopt*Attribute.cs" Link="Generated\%(Filename)%(Extension)" />
   </ItemGroup>
 
 </Project>
