@@ -36,27 +36,6 @@ Options:
         //         Option(-q,,0,False) -> OptionNode q Bool
         //     Argument(<port>, ) -> ArgumentNode <port> String
 
-        static readonly Pattern Pattern =
-            new Required(new Pattern[]
-            {
-                new Required(new Pattern[]
-                {
-                    new Optional(new Pattern[]
-                    {
-                        new OptionsShortcut(new Pattern[]
-                        {
-                            new Option("-h", "--help", 0, false),
-                            new Option(null, "--version", 0, false),
-                            new Option("-n", "--number", 1, null),
-                            new Option("-t", "--timeout", 1, null),
-                            new Option(null, "--apply", 0, false),
-                            new Option("-q", null, 0, false)
-                        })
-                    }),
-                    new Argument("<port>")
-                })
-            });
-
         static readonly ICollection<Option> Options = new Option[]
         {
             new Option("-h", "--help", 0, false),

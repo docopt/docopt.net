@@ -28,24 +28,6 @@ Options:
         //         Argument(ODD, []) -> ArgumentNode ODD List
         //         Argument(EVEN, []) -> ArgumentNode EVEN List
 
-        static readonly Pattern Pattern =
-            new Required(new Pattern[]
-            {
-                new Required(new Pattern[]
-                {
-                    new Optional(new Pattern[]
-                    {
-                        new Option("-h", "--help", 0, false)
-                    }),
-                    new OneOrMore(
-                    new Required(new Pattern[]
-                    {
-                        new Argument("ODD"),
-                        new Argument("EVEN")
-                    }))
-                })
-            });
-
         static readonly ICollection<Option> Options = new Option[]
         {
             new Option("-h", "--help", 0, false),

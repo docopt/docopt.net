@@ -51,54 +51,6 @@ Options:
         //       Required:
         //         Option(-h,--help,0,False) -> OptionNode help Bool
 
-        static readonly Pattern Pattern =
-            new Required(new Pattern[]
-            {
-                new Either(new Pattern[]
-                {
-                    new Required(new Pattern[]
-                    {
-                        new Argument("<value>"),
-                        new OneOrMore(
-                        new Required(new Pattern[]
-                        {
-                            new Required(new Pattern[]
-                            {
-                                new Either(new Pattern[]
-                                {
-                                    new Command("+"),
-                                    new Command("-"),
-                                    new Command("*"),
-                                    new Command("/")
-                                })
-                            }),
-                            new Argument("<value>")
-                        }))
-                    }),
-                    new Required(new Pattern[]
-                    {
-                        new Argument("<function>"),
-                        new Argument("<value>"),
-                        new OneOrMore(
-                        new Optional(new Pattern[]
-                        {
-                            new Required(new Pattern[]
-                            {
-                                new Command(","),
-                                new Argument("<value>")
-                            })
-                        }))
-                    }),
-                    new Required(new Pattern[]
-                    {
-                        new Required(new Pattern[]
-                        {
-                            new Option("-h", "--help", 0, false)
-                        })
-                    })
-                })
-            });
-
         static readonly ICollection<Option> Options = new Option[]
         {
             new Option("-h", "--help", 0, false),

@@ -41,44 +41,6 @@ Try: CountedExample -vvvvvvvvvv
         //       Argument(<file>, []) -> ArgumentNode <file> List
         //       Argument(<file>, []) -> ArgumentNode <file> List
 
-        static readonly Pattern Pattern =
-            new Required(new Pattern[]
-            {
-                new Either(new Pattern[]
-                {
-                    new Required(new Pattern[]
-                    {
-                        new Option(null, "--help", 0, false)
-                    }),
-                    new Required(new Pattern[]
-                    {
-                        new OneOrMore(
-                        new Option("-v", null, 0, 0))
-                    }),
-                    new Required(new Pattern[]
-                    {
-                        new Command("go"),
-                        new Optional(new Pattern[]
-                        {
-                            new Command("go")
-                        })
-                    }),
-                    new Required(new Pattern[]
-                    {
-                        new OneOrMore(
-                        new Required(new Pattern[]
-                        {
-                            new Option(null, "--path", 1, StringList.Empty)
-                        }))
-                    }),
-                    new Required(new Pattern[]
-                    {
-                        new Argument("<file>"),
-                        new Argument("<file>")
-                    })
-                })
-            });
-
         static readonly ICollection<Option> Options = new Option[]
         {
             new Option(null, "--help", 0, false),

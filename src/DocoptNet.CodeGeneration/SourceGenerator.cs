@@ -161,50 +161,6 @@ namespace DocoptNet.CodeGeneration
             var (pattern, options, exitUsage) = Docopt.ParsePattern(usage);
             AppendTree(pattern);
 
-            void AppendTreeCode(Pattern pattern)
-            {
-                switch (pattern)
-                {
-                    case OneOrMore { Children: { Count: 1 } children }:
-                        _ = code["new OneOrMore("].NewLine;
-                        AppendTreeCode(children[0]);
-                        _ = code[')'];
-                        break;
-                    case BranchPattern { Children: {} children } branch:
-                        _ = code["new "][branch.GetType().Name]["(new Pattern[]"].NewLine.Block;
-                        var i = 0;
-                        foreach (var child in children)
-                        {
-                            AppendTreeCode(child);
-                            if (++i < children.Count)
-                                _ = code[','].NewLine;
-                        }
-                        _ = code.NewLine.Outdent["})"];
-                        break;
-                    case Command command:
-                        _ = code["new Command("][Literal(command.Name)][')'];
-                        break;
-                    case Argument { Name: var name }:
-                        _ = code["new Argument("][Literal(name)][")"];
-                        break;
-                    case Option option:
-                        _ = code["new Option("]
-                                    [option.ShortName is {} sn ? Literal(sn) : "null"][", "]
-                                    [option.LongName is {} ln ? Literal(ln) : "null"][", "]
-                                    [option.ArgCount][", "]
-                                    [option.Value]
-                                [')'];
-                        break;
-                    default:
-                        throw new NotSupportedException("Unsupported: " + pattern);
-                }
-            }
-
-            _ = code.NewLine
-                ["static readonly Pattern Pattern ="].NewLine.Indent;
-            AppendTreeCode(pattern);
-            _ = code.EndStatement.Outdent;
-
             void AppendCode(Pattern pattern, string pm, int level = 0)
             {
                 if (level >= 26) // todo proper diagnostics reporting
@@ -286,8 +242,10 @@ namespace DocoptNet.CodeGeneration
             _ = code["static readonly ICollection<Option> Options = new Option[]"].NewLine.Block;
             foreach (var option in options)
             {
-                AppendTreeCode(option);
-                _ = code[','].NewLine;
+                _ = code["new Option("][option.ShortName is {} sn ? Literal(sn) : "null"][", "]
+                                       [option.LongName is {} ln ? Literal(ln) : "null"][", "]
+                                       [option.ArgCount][", "]
+                                       [option.Value]["),"].NewLine;
             }
             _ = code.SkipNextNewLine.BlockEnd.EndStatement;
 

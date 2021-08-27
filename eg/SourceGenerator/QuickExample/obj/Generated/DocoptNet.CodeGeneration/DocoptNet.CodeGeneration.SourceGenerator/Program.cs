@@ -37,46 +37,6 @@ namespace QuickExample
         //         Option(,--help,0,False) -> OptionNode help Bool
         //         Option(,--version,0,False) -> OptionNode version Bool
 
-        static readonly Pattern Pattern =
-            new Required(new Pattern[]
-            {
-                new Either(new Pattern[]
-                {
-                    new Required(new Pattern[]
-                    {
-                        new Command("tcp"),
-                        new Argument("<host>"),
-                        new Argument("<port>"),
-                        new Optional(new Pattern[]
-                        {
-                            new Option(null, "--timeout", 1, null)
-                        })
-                    }),
-                    new Required(new Pattern[]
-                    {
-                        new Command("serial"),
-                        new Argument("<port>"),
-                        new Optional(new Pattern[]
-                        {
-                            new Option(null, "--baud", 1, null)
-                        }),
-                        new Optional(new Pattern[]
-                        {
-                            new Option(null, "--timeout", 1, null)
-                        })
-                    }),
-                    new Required(new Pattern[]
-                    {
-                        new Either(new Pattern[]
-                        {
-                            new Option("-h", null, 0, false),
-                            new Option(null, "--help", 0, false),
-                            new Option(null, "--version", 0, false)
-                        })
-                    })
-                })
-            });
-
         static readonly ICollection<Option> Options = new Option[]
         {
             new Option(null, "--timeout", 1, null),

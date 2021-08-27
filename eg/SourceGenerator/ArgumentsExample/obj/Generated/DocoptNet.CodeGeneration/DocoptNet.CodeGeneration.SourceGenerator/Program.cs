@@ -48,42 +48,6 @@ Options:
         //       Argument(CORRECTION, ) -> ArgumentNode CORRECTION String
         //       Argument(FILE, []) -> ArgumentNode FILE List
 
-        static readonly Pattern Pattern =
-            new Required(new Pattern[]
-            {
-                new Either(new Pattern[]
-                {
-                    new Required(new Pattern[]
-                    {
-                        new Optional(new Pattern[]
-                        {
-                            new Option("-v", null, 0, false),
-                            new Option("-q", null, 0, false),
-                            new Option("-r", null, 0, false),
-                            new Option("-h", "--help", 0, false)
-                        }),
-                        new OneOrMore(
-                        new Optional(new Pattern[]
-                        {
-                            new Argument("FILE")
-                        }))
-                    }),
-                    new Required(new Pattern[]
-                    {
-                        new Required(new Pattern[]
-                        {
-                            new Either(new Pattern[]
-                            {
-                                new Option(null, "--left", 0, false),
-                                new Option(null, "--right", 0, false)
-                            })
-                        }),
-                        new Argument("CORRECTION"),
-                        new Argument("FILE")
-                    })
-                })
-            });
-
         static readonly ICollection<Option> Options = new Option[]
         {
             new Option("-h", "--help", 0, false),
