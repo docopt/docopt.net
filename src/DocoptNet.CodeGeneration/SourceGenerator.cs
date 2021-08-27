@@ -227,10 +227,9 @@ namespace DocoptNet.CodeGeneration
                 .DeclareAssigned("left", "arguments")
                 .DeclareAssigned("collected", "new Leaves()")
                 .DeclareAssigned("a", "new RequiredMatcher(1, left, collected)")
-                .Do.Block;
+                .Do;
             GeneratePatternMatchingCode(pattern, "a");
-            _ = code.BlockEnd
-                    .DoWhile("false")
+            _ = code.DoWhile("false")
                     .NewLine
                     .If("!a.Result || a.Left.Count > 0").Block
                     .Const("exitUsage", exitUsage)

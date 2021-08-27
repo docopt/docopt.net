@@ -157,10 +157,10 @@ namespace DocoptNet.CodeGeneration
             this["case "].Literal(s)[':'].NewLine;
 
         public CSharpSourceBuilder Do =>
-            this["do"].NewLine;
+            this["do"].NewLine.Block;
 
         public CSharpSourceBuilder DoWhile(string expression) =>
-            this["while ("][expression][')'].EndStatement;
+            BlockEnd["while ("][expression][')'].EndStatement;
 
         public CSharpSourceBuilder If(string expression) =>
             this["if ("][expression][')'].NewLine;
