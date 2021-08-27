@@ -16,9 +16,7 @@
 
 namespace DocoptNet.CodeGeneration
 {
-    using System;
     using System.Diagnostics;
-    using System.Globalization;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.Diagnostics;
 
@@ -43,8 +41,5 @@ namespace DocoptNet.CodeGeneration
 
         public static bool IsFlagged(this AnalyzerConfigOptions options, string name) =>
             options.TryGetValue(name, out var s) && bool.TryParse(s, out var flag) && flag;
-
-        public static string ToInvariantString<T>(this T formattable) where T : IFormattable =>
-            formattable.ToString(null, CultureInfo.InvariantCulture);
     }
 }
