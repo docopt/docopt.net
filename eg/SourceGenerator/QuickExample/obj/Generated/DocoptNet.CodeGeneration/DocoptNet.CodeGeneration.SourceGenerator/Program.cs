@@ -37,19 +37,17 @@ namespace QuickExample
         //         Option(,--help,0,False) -> OptionNode help Bool
         //         Option(,--version,0,False) -> OptionNode version Bool
 
-        static readonly ICollection<Option> Options = new Option[]
-        {
-            new Option(null, "--timeout", 1, null),
-            new Option(null, "--baud", 1, null),
-            new Option("-h", null, 0, false),
-            new Option(null, "--help", 0, false),
-            new Option(null, "--version", 0, false),
-        };
-
         public static ProgramArguments Apply(IEnumerable<string> args, bool help = true, object? version = null, bool optionsFirst = false, bool exit = false)
         {
             var tokens = new Tokens(args, typeof(DocoptInputErrorException));
-            var options = Options.Select(e => new Option(e.ShortName, e.LongName, e.ArgCount, e.Value)).ToList();
+            var options = new List<Option>
+            {
+                new Option(null, "--timeout", 1, null),
+                new Option(null, "--baud", 1, null),
+                new Option("-h", null, 0, false),
+                new Option(null, "--help", 0, false),
+                new Option(null, "--version", 0, false),
+            };
             var arguments = Docopt.ParseArgv(tokens, options, optionsFirst).AsReadOnly();
             if (help && arguments.Any(o => o is { Name: "-h" or "--help", Value: { IsTrue: true } }))
             {

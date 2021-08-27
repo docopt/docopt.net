@@ -66,19 +66,17 @@ namespace NavalFate
         //     Required:
         //       Option(,--version,0,False) -> OptionNode version Bool
 
-        static readonly ICollection<Option> Options = new Option[]
-        {
-            new Option("-h", "--help", 0, false),
-            new Option(null, "--version", 0, false),
-            new Option(null, "--speed", 1, "10"),
-            new Option(null, "--moored", 0, false),
-            new Option(null, "--drifting", 0, false),
-        };
-
         public static ProgramArguments Apply(IEnumerable<string> args, bool help = true, object? version = null, bool optionsFirst = false, bool exit = false)
         {
             var tokens = new Tokens(args, typeof(DocoptInputErrorException));
-            var options = Options.Select(e => new Option(e.ShortName, e.LongName, e.ArgCount, e.Value)).ToList();
+            var options = new List<Option>
+            {
+                new Option("-h", "--help", 0, false),
+                new Option(null, "--version", 0, false),
+                new Option(null, "--speed", 1, "10"),
+                new Option(null, "--moored", 0, false),
+                new Option(null, "--drifting", 0, false),
+            };
             var arguments = Docopt.ParseArgv(tokens, options, optionsFirst).AsReadOnly();
             if (help && arguments.Any(o => o is { Name: "-h" or "--help", Value: { IsTrue: true } }))
             {

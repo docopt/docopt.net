@@ -239,7 +239,10 @@ namespace DocoptNet.CodeGeneration
             }
 
             _ = code.NewLine;
-            _ = code["static readonly ICollection<Option> Options = new Option[]"].NewLine.Block;
+
+            _ = code["public static "][name]["Arguments Apply(IEnumerable<string> args, bool help = true, object? version = null, bool optionsFirst = false, bool exit = false)"].NewLine.Block
+                .DeclareAssigned("tokens", "new Tokens(args, typeof(DocoptInputErrorException))")
+                ["var options = new List<Option>"].NewLine.Block;
             foreach (var option in options)
             {
                 _ = code["new Option("][option.ShortName is {} sn ? Literal(sn) : "null"][", "]
@@ -247,13 +250,7 @@ namespace DocoptNet.CodeGeneration
                                        [option.ArgCount][", "]
                                        [option.Value]["),"].NewLine;
             }
-            _ = code.SkipNextNewLine.BlockEnd.EndStatement;
-
-            _ = code.NewLine;
-
-            _ = code["public static "][name]["Arguments Apply(IEnumerable<string> args, bool help = true, object? version = null, bool optionsFirst = false, bool exit = false)"].NewLine.Block
-                .DeclareAssigned("tokens", "new Tokens(args, typeof(DocoptInputErrorException))")
-                ["var options = Options.Select(e => new Option(e.ShortName, e.LongName, e.ArgCount, e.Value)).ToList()"].EndStatement
+            _ = code.SkipNextNewLine.BlockEnd.EndStatement
                 .DeclareAssigned("arguments", "Docopt.ParseArgv(tokens, options, optionsFirst).AsReadOnly()")
                 .If(@"help && arguments.Any(o => o is { Name: ""-h"" or ""--help"", Value: { IsTrue: true } })")
                 .Block

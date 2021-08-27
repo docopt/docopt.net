@@ -48,20 +48,18 @@ Options:
         //       Argument(CORRECTION, ) -> ArgumentNode CORRECTION String
         //       Argument(FILE, []) -> ArgumentNode FILE List
 
-        static readonly ICollection<Option> Options = new Option[]
-        {
-            new Option("-h", "--help", 0, false),
-            new Option("-v", null, 0, false),
-            new Option("-q", null, 0, false),
-            new Option("-r", null, 0, false),
-            new Option(null, "--left", 0, false),
-            new Option(null, "--right", 0, false),
-        };
-
         public static ProgramArguments Apply(IEnumerable<string> args, bool help = true, object? version = null, bool optionsFirst = false, bool exit = false)
         {
             var tokens = new Tokens(args, typeof(DocoptInputErrorException));
-            var options = Options.Select(e => new Option(e.ShortName, e.LongName, e.ArgCount, e.Value)).ToList();
+            var options = new List<Option>
+            {
+                new Option("-h", "--help", 0, false),
+                new Option("-v", null, 0, false),
+                new Option("-q", null, 0, false),
+                new Option("-r", null, 0, false),
+                new Option(null, "--left", 0, false),
+                new Option(null, "--right", 0, false),
+            };
             var arguments = Docopt.ParseArgv(tokens, options, optionsFirst).AsReadOnly();
             if (help && arguments.Any(o => o is { Name: "-h" or "--help", Value: { IsTrue: true } }))
             {

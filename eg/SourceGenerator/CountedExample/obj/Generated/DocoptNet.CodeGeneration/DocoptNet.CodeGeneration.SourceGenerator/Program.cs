@@ -41,17 +41,15 @@ Try: CountedExample -vvvvvvvvvv
         //       Argument(<file>, []) -> ArgumentNode <file> List
         //       Argument(<file>, []) -> ArgumentNode <file> List
 
-        static readonly ICollection<Option> Options = new Option[]
-        {
-            new Option(null, "--help", 0, false),
-            new Option("-v", null, 0, 0),
-            new Option(null, "--path", 1, StringList.Empty),
-        };
-
         public static ProgramArguments Apply(IEnumerable<string> args, bool help = true, object? version = null, bool optionsFirst = false, bool exit = false)
         {
             var tokens = new Tokens(args, typeof(DocoptInputErrorException));
-            var options = Options.Select(e => new Option(e.ShortName, e.LongName, e.ArgCount, e.Value)).ToList();
+            var options = new List<Option>
+            {
+                new Option(null, "--help", 0, false),
+                new Option("-v", null, 0, 0),
+                new Option(null, "--path", 1, StringList.Empty),
+            };
             var arguments = Docopt.ParseArgv(tokens, options, optionsFirst).AsReadOnly();
             if (help && arguments.Any(o => o is { Name: "-h" or "--help", Value: { IsTrue: true } }))
             {

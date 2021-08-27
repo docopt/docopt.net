@@ -76,29 +76,27 @@ Options:
         //     Required:
         //       Option(,--version,0,False) -> OptionNode version Bool
 
-        static readonly ICollection<Option> Options = new Option[]
-        {
-            new Option("-h", "--help", 0, false),
-            new Option(null, "--version", 0, false),
-            new Option("-v", "--verbose", 0, false),
-            new Option("-q", "--quiet", 0, false),
-            new Option("-r", "--repeat", 0, false),
-            new Option(null, "--exclude", 1, ".svn,CVS,.bzr,.hg,.git"),
-            new Option("-f", "--file", 1, "*.py"),
-            new Option(null, "--select", 1, null),
-            new Option(null, "--ignore", 1, null),
-            new Option(null, "--show-source", 0, false),
-            new Option(null, "--statistics", 0, false),
-            new Option(null, "--count", 0, false),
-            new Option(null, "--benchmark", 0, false),
-            new Option(null, "--testsuite", 1, null),
-            new Option(null, "--doctest", 0, false),
-        };
-
         public static ProgramArguments Apply(IEnumerable<string> args, bool help = true, object? version = null, bool optionsFirst = false, bool exit = false)
         {
             var tokens = new Tokens(args, typeof(DocoptInputErrorException));
-            var options = Options.Select(e => new Option(e.ShortName, e.LongName, e.ArgCount, e.Value)).ToList();
+            var options = new List<Option>
+            {
+                new Option("-h", "--help", 0, false),
+                new Option(null, "--version", 0, false),
+                new Option("-v", "--verbose", 0, false),
+                new Option("-q", "--quiet", 0, false),
+                new Option("-r", "--repeat", 0, false),
+                new Option(null, "--exclude", 1, ".svn,CVS,.bzr,.hg,.git"),
+                new Option("-f", "--file", 1, "*.py"),
+                new Option(null, "--select", 1, null),
+                new Option(null, "--ignore", 1, null),
+                new Option(null, "--show-source", 0, false),
+                new Option(null, "--statistics", 0, false),
+                new Option(null, "--count", 0, false),
+                new Option(null, "--benchmark", 0, false),
+                new Option(null, "--testsuite", 1, null),
+                new Option(null, "--doctest", 0, false),
+            };
             var arguments = Docopt.ParseArgv(tokens, options, optionsFirst).AsReadOnly();
             if (help && arguments.Any(o => o is { Name: "-h" or "--help", Value: { IsTrue: true } }))
             {

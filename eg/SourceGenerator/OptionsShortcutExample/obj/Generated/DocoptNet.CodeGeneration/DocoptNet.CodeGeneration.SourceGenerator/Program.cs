@@ -36,20 +36,18 @@ Options:
         //         Option(-q,,0,False) -> OptionNode q Bool
         //     Argument(<port>, ) -> ArgumentNode <port> String
 
-        static readonly ICollection<Option> Options = new Option[]
-        {
-            new Option("-h", "--help", 0, false),
-            new Option(null, "--version", 0, false),
-            new Option("-n", "--number", 1, null),
-            new Option("-t", "--timeout", 1, null),
-            new Option(null, "--apply", 0, false),
-            new Option("-q", null, 0, false),
-        };
-
         public static ProgramArguments Apply(IEnumerable<string> args, bool help = true, object? version = null, bool optionsFirst = false, bool exit = false)
         {
             var tokens = new Tokens(args, typeof(DocoptInputErrorException));
-            var options = Options.Select(e => new Option(e.ShortName, e.LongName, e.ArgCount, e.Value)).ToList();
+            var options = new List<Option>
+            {
+                new Option("-h", "--help", 0, false),
+                new Option(null, "--version", 0, false),
+                new Option("-n", "--number", 1, null),
+                new Option("-t", "--timeout", 1, null),
+                new Option(null, "--apply", 0, false),
+                new Option("-q", null, 0, false),
+            };
             var arguments = Docopt.ParseArgv(tokens, options, optionsFirst).AsReadOnly();
             if (help && arguments.Any(o => o is { Name: "-h" or "--help", Value: { IsTrue: true } }))
             {
