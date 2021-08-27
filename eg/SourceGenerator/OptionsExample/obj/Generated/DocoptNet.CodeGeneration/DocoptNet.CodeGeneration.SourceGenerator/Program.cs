@@ -140,31 +140,31 @@ Options:
                                                     case 0:
                                                     {
                                                         // Option(-h,--help,0,False)
-                                                        e.Match(PatternMatcher.MatchOption, "--help", false);
+                                                        e.Match(PatternMatcher.MatchOption, "--help", ValueKind.Boolean);
                                                         break;
                                                     }
                                                     case 1:
                                                     {
                                                         // Option(-v,--verbose,0,False)
-                                                        e.Match(PatternMatcher.MatchOption, "--verbose", false);
+                                                        e.Match(PatternMatcher.MatchOption, "--verbose", ValueKind.Boolean);
                                                         break;
                                                     }
                                                     case 2:
                                                     {
                                                         // Option(-q,--quiet,0,False)
-                                                        e.Match(PatternMatcher.MatchOption, "--quiet", false);
+                                                        e.Match(PatternMatcher.MatchOption, "--quiet", ValueKind.Boolean);
                                                         break;
                                                     }
                                                     case 3:
                                                     {
                                                         // Option(-r,--repeat,0,False)
-                                                        e.Match(PatternMatcher.MatchOption, "--repeat", false);
+                                                        e.Match(PatternMatcher.MatchOption, "--repeat", ValueKind.Boolean);
                                                         break;
                                                     }
                                                     case 4:
                                                     {
                                                         // Option(-f,--file,1,*.py)
-                                                        e.Match(PatternMatcher.MatchOption, "--file", "*.py");
+                                                        e.Match(PatternMatcher.MatchOption, "--file", ValueKind.String);
                                                         break;
                                                     }
                                                 }
@@ -181,7 +181,7 @@ Options:
                                             while (e.Next())
                                             {
                                                 // Option(,--exclude,1,.svn,CVS,.bzr,.hg,.git)
-                                                e.Match(PatternMatcher.MatchOption, "--exclude", ".svn,CVS,.bzr,.hg,.git");
+                                                e.Match(PatternMatcher.MatchOption, "--exclude", ValueKind.String);
                                                 if (!e.LastMatched)
                                                     break;
                                             }
@@ -203,13 +203,13 @@ Options:
                                                         case 0:
                                                         {
                                                             // Option(,--select,1,)
-                                                            f.Match(PatternMatcher.MatchOption, "--select", Value.None);
+                                                            f.Match(PatternMatcher.MatchOption, "--select", ValueKind.None);
                                                             break;
                                                         }
                                                         case 1:
                                                         {
                                                             // Option(,--ignore,1,)
-                                                            f.Match(PatternMatcher.MatchOption, "--ignore", Value.None);
+                                                            f.Match(PatternMatcher.MatchOption, "--ignore", ValueKind.None);
                                                             break;
                                                         }
                                                     }
@@ -230,7 +230,7 @@ Options:
                                             while (e.Next())
                                             {
                                                 // Option(,--show-source,0,False)
-                                                e.Match(PatternMatcher.MatchOption, "--show-source", false);
+                                                e.Match(PatternMatcher.MatchOption, "--show-source", ValueKind.Boolean);
                                                 if (!e.LastMatched)
                                                     break;
                                             }
@@ -244,7 +244,7 @@ Options:
                                             while (e.Next())
                                             {
                                                 // Option(,--statistics,0,False)
-                                                e.Match(PatternMatcher.MatchOption, "--statistics", false);
+                                                e.Match(PatternMatcher.MatchOption, "--statistics", ValueKind.Boolean);
                                                 if (!e.LastMatched)
                                                     break;
                                             }
@@ -258,7 +258,7 @@ Options:
                                             while (e.Next())
                                             {
                                                 // Option(,--count,0,False)
-                                                e.Match(PatternMatcher.MatchOption, "--count", false);
+                                                e.Match(PatternMatcher.MatchOption, "--count", ValueKind.Boolean);
                                                 if (!e.LastMatched)
                                                     break;
                                             }
@@ -272,7 +272,7 @@ Options:
                                             while (e.Next())
                                             {
                                                 // Option(,--benchmark,0,False)
-                                                e.Match(PatternMatcher.MatchOption, "--benchmark", false);
+                                                e.Match(PatternMatcher.MatchOption, "--benchmark", ValueKind.Boolean);
                                                 if (!e.LastMatched)
                                                     break;
                                             }
@@ -286,7 +286,7 @@ Options:
                                             while (e.Next())
                                             {
                                                 // Argument(PATH, [])
-                                                e.Match(PatternMatcher.MatchArgument, "PATH", StringList.Empty);
+                                                e.Match(PatternMatcher.MatchArgument, "PATH", ValueKind.StringList);
                                                 if (!e.LastMatched)
                                                     break;
                                             }
@@ -319,13 +319,13 @@ Options:
                                                 case 0:
                                                 {
                                                     // Option(,--doctest,0,False)
-                                                    f.Match(PatternMatcher.MatchOption, "--doctest", false);
+                                                    f.Match(PatternMatcher.MatchOption, "--doctest", ValueKind.Boolean);
                                                     break;
                                                 }
                                                 case 1:
                                                 {
                                                     // Option(,--testsuite,1,)
-                                                    f.Match(PatternMatcher.MatchOption, "--testsuite", Value.None);
+                                                    f.Match(PatternMatcher.MatchOption, "--testsuite", ValueKind.None);
                                                     break;
                                                 }
                                             }
@@ -350,7 +350,7 @@ Options:
                                 while (d.Next())
                                 {
                                     // Option(,--version,0,False)
-                                    d.Match(PatternMatcher.MatchOption, "--version", false);
+                                    d.Match(PatternMatcher.MatchOption, "--version", ValueKind.Boolean);
                                     if (!d.LastMatched)
                                         break;
                                 }

@@ -112,13 +112,13 @@ namespace NavalFate
                                         case 0:
                                         {
                                             // Command(ship, False)
-                                            d.Match(PatternMatcher.MatchCommand, "ship", false);
+                                            d.Match(PatternMatcher.MatchCommand, "ship", ValueKind.Boolean);
                                             break;
                                         }
                                         case 1:
                                         {
                                             // Command(new, False)
-                                            d.Match(PatternMatcher.MatchCommand, "new", false);
+                                            d.Match(PatternMatcher.MatchCommand, "new", ValueKind.Boolean);
                                             break;
                                         }
                                         case 2:
@@ -128,7 +128,7 @@ namespace NavalFate
                                             while (e.Next())
                                             {
                                                 // Argument(<name>, [])
-                                                e.Match(PatternMatcher.MatchArgument, "<name>", StringList.Empty);
+                                                e.Match(PatternMatcher.MatchArgument, "<name>", ValueKind.StringList);
                                                 if (!e.LastMatched)
                                                     break;
                                             }
@@ -153,31 +153,31 @@ namespace NavalFate
                                         case 0:
                                         {
                                             // Command(ship, False)
-                                            d.Match(PatternMatcher.MatchCommand, "ship", false);
+                                            d.Match(PatternMatcher.MatchCommand, "ship", ValueKind.Boolean);
                                             break;
                                         }
                                         case 1:
                                         {
                                             // Argument(<name>, [])
-                                            d.Match(PatternMatcher.MatchArgument, "<name>", StringList.Empty);
+                                            d.Match(PatternMatcher.MatchArgument, "<name>", ValueKind.StringList);
                                             break;
                                         }
                                         case 2:
                                         {
                                             // Command(move, False)
-                                            d.Match(PatternMatcher.MatchCommand, "move", false);
+                                            d.Match(PatternMatcher.MatchCommand, "move", ValueKind.Boolean);
                                             break;
                                         }
                                         case 3:
                                         {
                                             // Argument(<x>, )
-                                            d.Match(PatternMatcher.MatchArgument, "<x>", Value.None);
+                                            d.Match(PatternMatcher.MatchArgument, "<x>", ValueKind.None);
                                             break;
                                         }
                                         case 4:
                                         {
                                             // Argument(<y>, )
-                                            d.Match(PatternMatcher.MatchArgument, "<y>", Value.None);
+                                            d.Match(PatternMatcher.MatchArgument, "<y>", ValueKind.None);
                                             break;
                                         }
                                         case 5:
@@ -187,7 +187,7 @@ namespace NavalFate
                                             while (e.Next())
                                             {
                                                 // Option(,--speed,1,10)
-                                                e.Match(PatternMatcher.MatchOption, "--speed", "10");
+                                                e.Match(PatternMatcher.MatchOption, "--speed", ValueKind.String);
                                                 if (!e.LastMatched)
                                                     break;
                                             }
@@ -212,25 +212,25 @@ namespace NavalFate
                                         case 0:
                                         {
                                             // Command(ship, False)
-                                            d.Match(PatternMatcher.MatchCommand, "ship", false);
+                                            d.Match(PatternMatcher.MatchCommand, "ship", ValueKind.Boolean);
                                             break;
                                         }
                                         case 1:
                                         {
                                             // Command(shoot, False)
-                                            d.Match(PatternMatcher.MatchCommand, "shoot", false);
+                                            d.Match(PatternMatcher.MatchCommand, "shoot", ValueKind.Boolean);
                                             break;
                                         }
                                         case 2:
                                         {
                                             // Argument(<x>, )
-                                            d.Match(PatternMatcher.MatchArgument, "<x>", Value.None);
+                                            d.Match(PatternMatcher.MatchArgument, "<x>", ValueKind.None);
                                             break;
                                         }
                                         case 3:
                                         {
                                             // Argument(<y>, )
-                                            d.Match(PatternMatcher.MatchArgument, "<y>", Value.None);
+                                            d.Match(PatternMatcher.MatchArgument, "<y>", ValueKind.None);
                                             break;
                                         }
                                     }
@@ -251,7 +251,7 @@ namespace NavalFate
                                         case 0:
                                         {
                                             // Command(mine, False)
-                                            d.Match(PatternMatcher.MatchCommand, "mine", false);
+                                            d.Match(PatternMatcher.MatchCommand, "mine", ValueKind.Boolean);
                                             break;
                                         }
                                         case 1:
@@ -269,13 +269,13 @@ namespace NavalFate
                                                         case 0:
                                                         {
                                                             // Command(set, False)
-                                                            f.Match(PatternMatcher.MatchCommand, "set", false);
+                                                            f.Match(PatternMatcher.MatchCommand, "set", ValueKind.Boolean);
                                                             break;
                                                         }
                                                         case 1:
                                                         {
                                                             // Command(remove, False)
-                                                            f.Match(PatternMatcher.MatchCommand, "remove", false);
+                                                            f.Match(PatternMatcher.MatchCommand, "remove", ValueKind.Boolean);
                                                             break;
                                                         }
                                                     }
@@ -292,13 +292,13 @@ namespace NavalFate
                                         case 2:
                                         {
                                             // Argument(<x>, )
-                                            d.Match(PatternMatcher.MatchArgument, "<x>", Value.None);
+                                            d.Match(PatternMatcher.MatchArgument, "<x>", ValueKind.None);
                                             break;
                                         }
                                         case 3:
                                         {
                                             // Argument(<y>, )
-                                            d.Match(PatternMatcher.MatchArgument, "<y>", Value.None);
+                                            d.Match(PatternMatcher.MatchArgument, "<y>", ValueKind.None);
                                             break;
                                         }
                                         case 4:
@@ -316,13 +316,13 @@ namespace NavalFate
                                                         case 0:
                                                         {
                                                             // Option(,--moored,0,False)
-                                                            f.Match(PatternMatcher.MatchOption, "--moored", false);
+                                                            f.Match(PatternMatcher.MatchOption, "--moored", ValueKind.Boolean);
                                                             break;
                                                         }
                                                         case 1:
                                                         {
                                                             // Option(,--drifting,0,False)
-                                                            f.Match(PatternMatcher.MatchOption, "--drifting", false);
+                                                            f.Match(PatternMatcher.MatchOption, "--drifting", ValueKind.Boolean);
                                                             break;
                                                         }
                                                     }
@@ -354,7 +354,7 @@ namespace NavalFate
                                     while (e.Next())
                                     {
                                         // Option(-h,--help,0,False)
-                                        e.Match(PatternMatcher.MatchOption, "--help", false);
+                                        e.Match(PatternMatcher.MatchOption, "--help", ValueKind.Boolean);
                                         if (!e.LastMatched)
                                             break;
                                     }
@@ -372,7 +372,7 @@ namespace NavalFate
                                 while (d.Next())
                                 {
                                     // Option(,--version,0,False)
-                                    d.Match(PatternMatcher.MatchOption, "--version", false);
+                                    d.Match(PatternMatcher.MatchOption, "--version", ValueKind.Boolean);
                                     if (!d.LastMatched)
                                         break;
                                 }

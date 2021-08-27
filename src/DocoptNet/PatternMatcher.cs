@@ -15,7 +15,7 @@ namespace DocoptNet
         bool Next();
         Leaves Left { get; }
         Leaves Collected { get; }
-        bool Match(LeafPatternMatcher matcher, string name, Value leafValue);
+        bool Match(LeafPatternMatcher matcher, string name, ValueKind kind);
         bool Match(Pattern pattern);
         bool Fold(MatchResult match);
         bool LastMatched { get; }
@@ -26,10 +26,10 @@ namespace DocoptNet
     {
         public static MatchResult Match(this LeafPatternMatcher matcher,
                                         Leaves left, Leaves collected,
-                                        string name, Value leafValue)
+                                        string name, ValueKind kind)
         {
             var (index, match) = matcher(left, name);
-            return PatternMatcher.MatchLeaf(left, collected, name, leafValue, index, match);
+            return PatternMatcher.MatchLeaf(left, collected, name, kind, index, match);
         }
     }
 
@@ -59,8 +59,8 @@ namespace DocoptNet
         public Leaves Left => l;
         public Leaves Collected => c;
 
-        public bool Match(LeafPatternMatcher matcher, string name, Value leafValue) =>
-            Fold(matcher.Match(l, c, name, leafValue));
+        public bool Match(LeafPatternMatcher matcher, string name, ValueKind kind) =>
+            Fold(matcher.Match(l, c, name, kind));
 
         public bool Match(Pattern pattern) =>
             Fold(pattern.Match(l, c));
@@ -109,8 +109,8 @@ namespace DocoptNet
         public Leaves Left => left;
         public Leaves Collected => collected;
 
-        public bool Match(LeafPatternMatcher matcher, string name, Value leafValue) =>
-            Fold(matcher.Match(left, collected, name, leafValue));
+        public bool Match(LeafPatternMatcher matcher, string name, ValueKind kind) =>
+            Fold(matcher.Match(left, collected, name, kind));
 
         public bool Match(Pattern pattern) =>
             Fold(pattern.Match(left, collected));
@@ -149,8 +149,8 @@ namespace DocoptNet
         public Leaves Left => l;
         public Leaves Collected => c;
 
-        public bool Match(LeafPatternMatcher matcher, string name, Value leafValue) =>
-            Fold(matcher.Match(l, c, name, leafValue));
+        public bool Match(LeafPatternMatcher matcher, string name, ValueKind kind) =>
+            Fold(matcher.Match(l, c, name, kind));
 
         public bool Match(Pattern pattern) =>
             Fold(pattern.Match(l, c));
@@ -185,8 +185,8 @@ namespace DocoptNet
         public Leaves Left => l;
         public Leaves Collected => c;
 
-        public bool Match(LeafPatternMatcher matcher, string name, Value leafValue) =>
-            Fold(matcher.Match(l, c, name, leafValue));
+        public bool Match(LeafPatternMatcher matcher, string name, ValueKind kind) =>
+            Fold(matcher.Match(l, c, name, kind));
 
         public bool Match(Pattern pattern) =>
             Fold(pattern.Match(l, c));
@@ -232,7 +232,7 @@ namespace DocoptNet
                         _ => throw new NotSupportedException()
                     };
 
-                    return matcher.Match(left, collected, leaf.Name, leaf.Value);
+                    return matcher.Match(left, collected, leaf.Name, leaf.Value.Kind);
                 }
                 default:
                     throw new ArgumentException(nameof(pattern));
@@ -250,7 +250,7 @@ namespace DocoptNet
         }
 
         public static MatchResult MatchLeaf(Leaves left, Leaves collected,
-                                            string name, Value value,
+                                            string name, ValueKind kind,
                                             int index, LeafPattern? match)
         {
             if (match == null)
@@ -258,12 +258,12 @@ namespace DocoptNet
                 return new MatchResult(false, left, collected);
             }
             var left_ = left.RemoveAt(index);
-            if (value is { Kind: ValueKind.StringList or ValueKind.Integer })
+            if (kind is ValueKind.StringList or ValueKind.Integer)
             {
                 var sameNames = collected.Where(a => a.Name == name).ToList();
                 if (sameNames.Count == 0)
                 {
-                    match.Value = value.IsInteger ? 1
+                    match.Value = kind == ValueKind.Integer ? 1
                                 : match.Value.TryAsString(out var s) ? StringList.Empty.Push(s)
                                 : match.Value;
                 }

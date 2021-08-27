@@ -66,7 +66,7 @@ Options:
                                 while (d.Next())
                                 {
                                     // Option(-h,--help,0,False)
-                                    d.Match(PatternMatcher.MatchOption, "--help", false);
+                                    d.Match(PatternMatcher.MatchOption, "--help", ValueKind.Boolean);
                                     if (!d.LastMatched)
                                         break;
                                 }
@@ -88,13 +88,13 @@ Options:
                                             case 0:
                                             {
                                                 // Argument(ODD, [])
-                                                e.Match(PatternMatcher.MatchArgument, "ODD", StringList.Empty);
+                                                e.Match(PatternMatcher.MatchArgument, "ODD", ValueKind.StringList);
                                                 break;
                                             }
                                             case 1:
                                             {
                                                 // Argument(EVEN, [])
-                                                e.Match(PatternMatcher.MatchArgument, "EVEN", StringList.Empty);
+                                                e.Match(PatternMatcher.MatchArgument, "EVEN", ValueKind.StringList);
                                                 break;
                                             }
                                         }

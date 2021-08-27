@@ -83,19 +83,19 @@ namespace QuickExample
                                         case 0:
                                         {
                                             // Command(tcp, False)
-                                            d.Match(PatternMatcher.MatchCommand, "tcp", false);
+                                            d.Match(PatternMatcher.MatchCommand, "tcp", ValueKind.Boolean);
                                             break;
                                         }
                                         case 1:
                                         {
                                             // Argument(<host>, )
-                                            d.Match(PatternMatcher.MatchArgument, "<host>", Value.None);
+                                            d.Match(PatternMatcher.MatchArgument, "<host>", ValueKind.None);
                                             break;
                                         }
                                         case 2:
                                         {
                                             // Argument(<port>, )
-                                            d.Match(PatternMatcher.MatchArgument, "<port>", Value.None);
+                                            d.Match(PatternMatcher.MatchArgument, "<port>", ValueKind.None);
                                             break;
                                         }
                                         case 3:
@@ -105,7 +105,7 @@ namespace QuickExample
                                             while (e.Next())
                                             {
                                                 // Option(,--timeout,1,)
-                                                e.Match(PatternMatcher.MatchOption, "--timeout", Value.None);
+                                                e.Match(PatternMatcher.MatchOption, "--timeout", ValueKind.None);
                                                 if (!e.LastMatched)
                                                     break;
                                             }
@@ -130,13 +130,13 @@ namespace QuickExample
                                         case 0:
                                         {
                                             // Command(serial, False)
-                                            d.Match(PatternMatcher.MatchCommand, "serial", false);
+                                            d.Match(PatternMatcher.MatchCommand, "serial", ValueKind.Boolean);
                                             break;
                                         }
                                         case 1:
                                         {
                                             // Argument(<port>, )
-                                            d.Match(PatternMatcher.MatchArgument, "<port>", Value.None);
+                                            d.Match(PatternMatcher.MatchArgument, "<port>", ValueKind.None);
                                             break;
                                         }
                                         case 2:
@@ -146,7 +146,7 @@ namespace QuickExample
                                             while (e.Next())
                                             {
                                                 // Option(,--baud,1,)
-                                                e.Match(PatternMatcher.MatchOption, "--baud", Value.None);
+                                                e.Match(PatternMatcher.MatchOption, "--baud", ValueKind.None);
                                                 if (!e.LastMatched)
                                                     break;
                                             }
@@ -160,7 +160,7 @@ namespace QuickExample
                                             while (e.Next())
                                             {
                                                 // Option(,--timeout,1,)
-                                                e.Match(PatternMatcher.MatchOption, "--timeout", Value.None);
+                                                e.Match(PatternMatcher.MatchOption, "--timeout", ValueKind.None);
                                                 if (!e.LastMatched)
                                                     break;
                                             }
@@ -189,19 +189,19 @@ namespace QuickExample
                                             case 0:
                                             {
                                                 // Option(-h,,0,False)
-                                                e.Match(PatternMatcher.MatchOption, "-h", false);
+                                                e.Match(PatternMatcher.MatchOption, "-h", ValueKind.Boolean);
                                                 break;
                                             }
                                             case 1:
                                             {
                                                 // Option(,--help,0,False)
-                                                e.Match(PatternMatcher.MatchOption, "--help", false);
+                                                e.Match(PatternMatcher.MatchOption, "--help", ValueKind.Boolean);
                                                 break;
                                             }
                                             case 2:
                                             {
                                                 // Option(,--version,0,False)
-                                                e.Match(PatternMatcher.MatchOption, "--version", false);
+                                                e.Match(PatternMatcher.MatchOption, "--version", ValueKind.Boolean);
                                                 break;
                                             }
                                         }

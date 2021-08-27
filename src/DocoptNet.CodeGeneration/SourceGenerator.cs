@@ -216,7 +216,7 @@ namespace DocoptNet.CodeGeneration
                             Option => "MatchOption",
                             _ => throw new NotImplementedException()
                         };
-                        _ = code[pm][".Match("]["PatternMatcher."][lfn][", "][Literal(name)][", "][leaf.Value, "Value.None"][')'].EndStatement;
+                        _ = code[pm][".Match("]["PatternMatcher."][lfn][", "][Literal(name)][", ValueKind."][leaf.Value.Kind.ToString()][')'].EndStatement;
                         break;
                     }
                 }
