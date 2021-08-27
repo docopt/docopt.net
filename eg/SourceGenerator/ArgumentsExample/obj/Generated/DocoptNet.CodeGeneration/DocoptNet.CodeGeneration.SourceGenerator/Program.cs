@@ -259,13 +259,28 @@ Options:
         IEnumerator<KeyValuePair<string, object?>> IEnumerable<KeyValuePair<string, object?>>.GetEnumerator() => GetEnumerator();
         IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 
+        /// <summary><c>Option(-v,,0,False)</c></summary>
         public bool OptV { get; private set; }
+
+        /// <summary><c>Option(-q,,0,False)</c></summary>
         public bool OptQ { get; private set; }
+
+        /// <summary><c>Option(-r,,0,False)</c></summary>
         public bool OptR { get; private set; }
+
+        /// <summary><c>Option(-h,--help,0,False)</c></summary>
         public bool OptHelp { get; private set; }
+
+        /// <summary><c>Argument(FILE, [])</c></summary>
         public StringList ArgFile { get; private set; } = StringList.Empty;
+
+        /// <summary><c>Option(,--left,0,False)</c></summary>
         public bool OptLeft { get; private set; }
+
+        /// <summary><c>Option(,--right,0,False)</c></summary>
         public bool OptRight { get; private set; }
+
+        /// <summary><c>Argument(CORRECTION, )</c></summary>
         public string? ArgCorrection { get; private set; }
     }
 }

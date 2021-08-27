@@ -416,20 +416,49 @@ namespace NavalFate
         IEnumerator<KeyValuePair<string, object?>> IEnumerable<KeyValuePair<string, object?>>.GetEnumerator() => GetEnumerator();
         IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 
+        /// <summary><c>Command(ship, False)</c></summary>
         public bool CmdShip { get; private set; }
+
+        /// <summary><c>Command(new, False)</c></summary>
         public bool CmdNew { get; private set; }
+
+        /// <summary><c>Argument(&lt;name&gt;, [])</c></summary>
         public StringList ArgName { get; private set; } = StringList.Empty;
+
+        /// <summary><c>Command(move, False)</c></summary>
         public bool CmdMove { get; private set; }
+
+        /// <summary><c>Argument(&lt;x&gt;, )</c></summary>
         public string? ArgX { get; private set; }
+
+        /// <summary><c>Argument(&lt;y&gt;, )</c></summary>
         public string? ArgY { get; private set; }
+
+        /// <summary><c>Option(,--speed,1,10)</c></summary>
         public string OptSpeed { get; private set; } = "10";
+
+        /// <summary><c>Command(shoot, False)</c></summary>
         public bool CmdShoot { get; private set; }
+
+        /// <summary><c>Command(mine, False)</c></summary>
         public bool CmdMine { get; private set; }
+
+        /// <summary><c>Command(set, False)</c></summary>
         public bool CmdSet { get; private set; }
+
+        /// <summary><c>Command(remove, False)</c></summary>
         public bool CmdRemove { get; private set; }
+
+        /// <summary><c>Option(,--moored,0,False)</c></summary>
         public bool OptMoored { get; private set; }
+
+        /// <summary><c>Option(,--drifting,0,False)</c></summary>
         public bool OptDrifting { get; private set; }
+
+        /// <summary><c>Option(-h,--help,0,False)</c></summary>
         public bool OptHelp { get; private set; }
+
+        /// <summary><c>Option(,--version,0,False)</c></summary>
         public bool OptVersion { get; private set; }
     }
 }

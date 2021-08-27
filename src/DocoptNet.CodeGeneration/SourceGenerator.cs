@@ -293,20 +293,18 @@ namespace DocoptNet.CodeGeneration
                     ["IEnumerator<KeyValuePair<string, object?>> IEnumerable<KeyValuePair<string, object?>>.GetEnumerator() => GetEnumerator()"].EndStatement
                     ["IEnumerator IEnumerable.GetEnumerator() => GetEnumerator()"].EndStatement;
 
-            _ = code.NewLine;
-
-            foreach (var line in
+            foreach (var (leaf, generator) in
                 from p in leaves
                 select (Name: InferPropertyName(p), Pattern: p) into e
-                select (Func<CSharpSourceBuilder, CSharpSourceBuilder>)(e.Pattern switch
+                select (e.Pattern, (Func<CSharpSourceBuilder, CSharpSourceBuilder>)(e.Pattern switch
                 {
                     Option { Value: { IsString: true } str } => c => c["string "][e.Name][" { get; private set; } = "][str].SkipNextNewLine.EndStatement,
                     Argument { Value: { IsNone: true } } or Option { ArgCount: not 0, Value: { Kind: not ValueKind.StringList } } => c => c["string? "][e.Name][" { get; private set; }"],
                     { Value: { Object: StringList list } } => c => c["StringList "][e.Name][" { get; private set; } = "][list.Reverse()].SkipNextNewLine.EndStatement,
                     { Value: { Kind: var kind } } => c => c[InferType(kind)][' '][e.Name][" { get; private set; }"],
-                }))
+                })))
             {
-                _ = line(code["public "]).NewLine;
+                _ = generator(code.NewLine["/// <summary><c>"][leaf.ToString().EncodeXmlText()]["</c></summary>"].NewLine["public "]).NewLine;
             }
 
             _ = code.BlockEnd;

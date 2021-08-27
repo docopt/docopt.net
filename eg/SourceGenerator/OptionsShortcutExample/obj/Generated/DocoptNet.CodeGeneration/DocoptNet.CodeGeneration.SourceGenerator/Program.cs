@@ -179,12 +179,25 @@ Options:
         IEnumerator<KeyValuePair<string, object?>> IEnumerable<KeyValuePair<string, object?>>.GetEnumerator() => GetEnumerator();
         IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 
+        /// <summary><c>Option(-h,--help,0,False)</c></summary>
         public bool OptHelp { get; private set; }
+
+        /// <summary><c>Option(,--version,0,False)</c></summary>
         public bool OptVersion { get; private set; }
+
+        /// <summary><c>Option(-n,--number,1,)</c></summary>
         public string? OptNumber { get; private set; }
+
+        /// <summary><c>Option(-t,--timeout,1,)</c></summary>
         public string? OptTimeout { get; private set; }
+
+        /// <summary><c>Option(,--apply,0,False)</c></summary>
         public bool OptApply { get; private set; }
+
+        /// <summary><c>Option(-q,,0,False)</c></summary>
         public bool OptQ { get; private set; }
+
+        /// <summary><c>Argument(&lt;port&gt;, )</c></summary>
         public string? ArgPort { get; private set; }
     }
 }

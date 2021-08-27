@@ -304,13 +304,28 @@ Options:
         IEnumerator<KeyValuePair<string, object?>> IEnumerable<KeyValuePair<string, object?>>.GetEnumerator() => GetEnumerator();
         IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 
+        /// <summary><c>Argument(&lt;value&gt;, [])</c></summary>
         public StringList ArgValue { get; private set; } = StringList.Empty;
+
+        /// <summary><c>Command(+, 0)</c></summary>
         public int CmdPlus { get; private set; }
+
+        /// <summary><c>Command(-, 0)</c></summary>
         public int CmdMinus { get; private set; }
+
+        /// <summary><c>Command(*, 0)</c></summary>
         public int CmdStar { get; private set; }
+
+        /// <summary><c>Command(/, 0)</c></summary>
         public int CmdSlash { get; private set; }
+
+        /// <summary><c>Argument(&lt;function&gt;, )</c></summary>
         public string? ArgFunction { get; private set; }
+
+        /// <summary><c>Command(,, 0)</c></summary>
         public int CmdComma { get; private set; }
+
+        /// <summary><c>Option(-h,--help,0,False)</c></summary>
         public bool OptHelp { get; private set; }
     }
 }

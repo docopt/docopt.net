@@ -144,8 +144,13 @@ Options:
         IEnumerator<KeyValuePair<string, object?>> IEnumerable<KeyValuePair<string, object?>>.GetEnumerator() => GetEnumerator();
         IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 
+        /// <summary><c>Option(-h,--help,0,False)</c></summary>
         public bool OptHelp { get; private set; }
+
+        /// <summary><c>Argument(ODD, [])</c></summary>
         public StringList ArgOdd { get; private set; } = StringList.Empty;
+
+        /// <summary><c>Argument(EVEN, [])</c></summary>
         public StringList ArgEven { get; private set; } = StringList.Empty;
     }
 }

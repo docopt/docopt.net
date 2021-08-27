@@ -254,14 +254,31 @@ namespace QuickExample
         IEnumerator<KeyValuePair<string, object?>> IEnumerable<KeyValuePair<string, object?>>.GetEnumerator() => GetEnumerator();
         IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 
+        /// <summary><c>Command(tcp, False)</c></summary>
         public bool CmdTcp { get; private set; }
+
+        /// <summary><c>Argument(&lt;host&gt;, )</c></summary>
         public string? ArgHost { get; private set; }
+
+        /// <summary><c>Argument(&lt;port&gt;, )</c></summary>
         public string? ArgPort { get; private set; }
+
+        /// <summary><c>Option(,--timeout,1,)</c></summary>
         public string? OptTimeout { get; private set; }
+
+        /// <summary><c>Command(serial, False)</c></summary>
         public bool CmdSerial { get; private set; }
+
+        /// <summary><c>Option(,--baud,1,)</c></summary>
         public string? OptBaud { get; private set; }
+
+        /// <summary><c>Option(-h,,0,False)</c></summary>
         public bool OptH { get; private set; }
+
+        /// <summary><c>Option(,--help,0,False)</c></summary>
         public bool OptHelp { get; private set; }
+
+        /// <summary><c>Option(,--version,0,False)</c></summary>
         public bool OptVersion { get; private set; }
     }
 }

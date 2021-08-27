@@ -400,21 +400,52 @@ Options:
         IEnumerator<KeyValuePair<string, object?>> IEnumerable<KeyValuePair<string, object?>>.GetEnumerator() => GetEnumerator();
         IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 
+        /// <summary><c>Option(-h,--help,0,False)</c></summary>
         public bool OptHelp { get; private set; }
+
+        /// <summary><c>Option(-v,--verbose,0,False)</c></summary>
         public bool OptVerbose { get; private set; }
+
+        /// <summary><c>Option(-q,--quiet,0,False)</c></summary>
         public bool OptQuiet { get; private set; }
+
+        /// <summary><c>Option(-r,--repeat,0,False)</c></summary>
         public bool OptRepeat { get; private set; }
+
+        /// <summary><c>Option(-f,--file,1,*.py)</c></summary>
         public string OptFile { get; private set; } = "*.py";
+
+        /// <summary><c>Option(,--exclude,1,.svn,CVS,.bzr,.hg,.git)</c></summary>
         public string OptExclude { get; private set; } = ".svn,CVS,.bzr,.hg,.git";
+
+        /// <summary><c>Option(,--select,1,)</c></summary>
         public string? OptSelect { get; private set; }
+
+        /// <summary><c>Option(,--ignore,1,)</c></summary>
         public string? OptIgnore { get; private set; }
+
+        /// <summary><c>Option(,--show-source,0,False)</c></summary>
         public bool OptShowSource { get; private set; }
+
+        /// <summary><c>Option(,--statistics,0,False)</c></summary>
         public bool OptStatistics { get; private set; }
+
+        /// <summary><c>Option(,--count,0,False)</c></summary>
         public bool OptCount { get; private set; }
+
+        /// <summary><c>Option(,--benchmark,0,False)</c></summary>
         public bool OptBenchmark { get; private set; }
+
+        /// <summary><c>Argument(PATH, [])</c></summary>
         public StringList ArgPath { get; private set; } = StringList.Empty;
+
+        /// <summary><c>Option(,--doctest,0,False)</c></summary>
         public bool OptDoctest { get; private set; }
+
+        /// <summary><c>Option(,--testsuite,1,)</c></summary>
         public string? OptTestsuite { get; private set; }
+
+        /// <summary><c>Option(,--version,0,False)</c></summary>
         public bool OptVersion { get; private set; }
     }
 }

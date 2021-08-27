@@ -236,10 +236,19 @@ Try: CountedExample -vvvvvvvvvv
         IEnumerator<KeyValuePair<string, object?>> IEnumerable<KeyValuePair<string, object?>>.GetEnumerator() => GetEnumerator();
         IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 
+        /// <summary><c>Option(,--help,0,False)</c></summary>
         public bool OptHelp { get; private set; }
+
+        /// <summary><c>Option(-v,,0,0)</c></summary>
         public int OptV { get; private set; }
+
+        /// <summary><c>Command(go, 0)</c></summary>
         public int CmdGo { get; private set; }
+
+        /// <summary><c>Option(,--path,1,[])</c></summary>
         public StringList OptPath { get; private set; } = StringList.Empty;
+
+        /// <summary><c>Argument(&lt;file&gt;, [])</c></summary>
         public StringList ArgFile { get; private set; } = StringList.Empty;
     }
 }
