@@ -74,8 +74,8 @@ Options:
                                         {
                                             // Argument(<value>, [])
                                             d.Match(PatternMatcher.MatchArgument, "<value>", ValueKind.StringList);
-                                            break;
                                         }
+                                        break;
                                         case 1:
                                         {
                                             // OneOrMore(Required(Required(Either(Command(+, 0), Command(-, 0), Command(*, 0), Command(/, 0))), Argument(<value>, [])))
@@ -104,61 +104,71 @@ Options:
                                                                         {
                                                                             // Command(+, 0)
                                                                             h.Match(PatternMatcher.MatchCommand, "+", ValueKind.Integer);
-                                                                            break;
                                                                         }
+                                                                        break;
                                                                         case 1:
                                                                         {
                                                                             // Command(-, 0)
                                                                             h.Match(PatternMatcher.MatchCommand, "-", ValueKind.Integer);
-                                                                            break;
                                                                         }
+                                                                        break;
                                                                         case 2:
                                                                         {
                                                                             // Command(*, 0)
                                                                             h.Match(PatternMatcher.MatchCommand, "*", ValueKind.Integer);
-                                                                            break;
                                                                         }
+                                                                        break;
                                                                         case 3:
                                                                         {
                                                                             // Command(/, 0)
                                                                             h.Match(PatternMatcher.MatchCommand, "/", ValueKind.Integer);
-                                                                            break;
                                                                         }
+                                                                        break;
                                                                     }
                                                                     if (!h.LastMatched)
+                                                                    {
                                                                         break;
+                                                                    }
                                                                 }
                                                                 g.Fold(h.Result);
                                                                 if (!g.LastMatched)
+                                                                {
                                                                     break;
+                                                                }
                                                             }
                                                             f.Fold(g.Result);
-                                                            break;
                                                         }
+                                                        break;
                                                         case 1:
                                                         {
                                                             // Argument(<value>, [])
                                                             f.Match(PatternMatcher.MatchArgument, "<value>", ValueKind.StringList);
-                                                            break;
                                                         }
+                                                        break;
                                                     }
                                                     if (!f.LastMatched)
+                                                    {
                                                         break;
+                                                    }
                                                 }
                                                 e.Fold(f.Result);
                                                 if (!e.LastMatched)
+                                                {
                                                     break;
+                                                }
                                             }
                                             d.Fold(e.Result);
-                                            break;
                                         }
+                                        break;
                                     }
                                     if (!d.LastMatched)
+                                    {
                                         break;
+                                    }
                                 }
                                 c.Fold(d.Result);
-                                break;
                             }
+                            break;
                             case 1:
                             {
                                 // Required(Argument(<function>, ), Argument(<value>, []), OneOrMore(Optional(Required(Command(,, 0), Argument(<value>, [])))))
@@ -171,14 +181,14 @@ Options:
                                         {
                                             // Argument(<function>, )
                                             d.Match(PatternMatcher.MatchArgument, "<function>", ValueKind.None);
-                                            break;
                                         }
+                                        break;
                                         case 1:
                                         {
                                             // Argument(<value>, [])
                                             d.Match(PatternMatcher.MatchArgument, "<value>", ValueKind.StringList);
-                                            break;
                                         }
+                                        break;
                                         case 2:
                                         {
                                             // OneOrMore(Optional(Required(Command(,, 0), Argument(<value>, []))))
@@ -199,36 +209,44 @@ Options:
                                                             {
                                                                 // Command(,, 0)
                                                                 g.Match(PatternMatcher.MatchCommand, ",", ValueKind.Integer);
-                                                                break;
                                                             }
+                                                            break;
                                                             case 1:
                                                             {
                                                                 // Argument(<value>, [])
                                                                 g.Match(PatternMatcher.MatchArgument, "<value>", ValueKind.StringList);
-                                                                break;
                                                             }
+                                                            break;
                                                         }
                                                         if (!g.LastMatched)
+                                                        {
                                                             break;
+                                                        }
                                                     }
                                                     f.Fold(g.Result);
                                                     if (!f.LastMatched)
+                                                    {
                                                         break;
+                                                    }
                                                 }
                                                 e.Fold(f.Result);
                                                 if (!e.LastMatched)
+                                                {
                                                     break;
+                                                }
                                             }
                                             d.Fold(e.Result);
-                                            break;
                                         }
+                                        break;
                                     }
                                     if (!d.LastMatched)
+                                    {
                                         break;
+                                    }
                                 }
                                 c.Fold(d.Result);
-                                break;
                             }
+                            break;
                             case 2:
                             {
                                 // Required(Required(Option(-h,--help,0,False)))
@@ -242,22 +260,30 @@ Options:
                                         // Option(-h,--help,0,False)
                                         e.Match(PatternMatcher.MatchOption, "--help", ValueKind.Boolean);
                                         if (!e.LastMatched)
+                                        {
                                             break;
+                                        }
                                     }
                                     d.Fold(e.Result);
                                     if (!d.LastMatched)
+                                    {
                                         break;
+                                    }
                                 }
                                 c.Fold(d.Result);
-                                break;
                             }
+                            break;
                         }
                         if (!c.LastMatched)
+                        {
                             break;
+                        }
                     }
                     b.Fold(c.Result);
                     if (!b.LastMatched)
+                    {
                         break;
+                    }
                 }
                 a.Fold(b.Result);
             }
@@ -276,14 +302,14 @@ Options:
                 var value = p.Value is { IsStringList: true } ? ((StringList)p.Value).Reverse() : p.Value;
                 switch (p.Name)
                 {
-                    case @"<value>": result.ArgValue = (StringList)value; break;
-                    case @"+": result.CmdPlus = (int)value; break;
-                    case @"-": result.CmdMinus = (int)value; break;
-                    case @"*": result.CmdStar = (int)value; break;
-                    case @"/": result.CmdSlash = (int)value; break;
-                    case @"<function>": result.ArgFunction = (string?)value; break;
-                    case @",": result.CmdComma = (int)value; break;
-                    case @"--help": result.OptHelp = (bool)value; break;
+                    case "<value>": result.ArgValue = (StringList)value; break;
+                    case "+": result.CmdPlus = (int)value; break;
+                    case "-": result.CmdMinus = (int)value; break;
+                    case "*": result.CmdStar = (int)value; break;
+                    case "/": result.CmdSlash = (int)value; break;
+                    case "<function>": result.ArgFunction = (string?)value; break;
+                    case ",": result.CmdComma = (int)value; break;
+                    case "--help": result.OptHelp = (bool)value; break;
                 }
             }
 

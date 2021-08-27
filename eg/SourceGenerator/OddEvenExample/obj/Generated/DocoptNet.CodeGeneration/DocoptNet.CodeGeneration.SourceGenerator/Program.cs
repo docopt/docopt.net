@@ -19,7 +19,7 @@ Options:
   -h, --help
 ";
 
-        public const string Usage = @"Usage: OddEvenExample [-h | --help] (ODD EVEN)...";
+        public const string Usage = "Usage: OddEvenExample [-h | --help] (ODD EVEN)...";
 
         public static ProgramArguments Apply(IEnumerable<string> args, bool help = true, object? version = null, bool optionsFirst = false, bool exit = false)
         {
@@ -61,11 +61,13 @@ Options:
                                     // Option(-h,--help,0,False)
                                     d.Match(PatternMatcher.MatchOption, "--help", ValueKind.Boolean);
                                     if (!d.LastMatched)
+                                    {
                                         break;
+                                    }
                                 }
                                 c.Fold(d.Result);
-                                break;
                             }
+                            break;
                             case 1:
                             {
                                 // OneOrMore(Required(Argument(ODD, []), Argument(EVEN, [])))
@@ -82,32 +84,40 @@ Options:
                                             {
                                                 // Argument(ODD, [])
                                                 e.Match(PatternMatcher.MatchArgument, "ODD", ValueKind.StringList);
-                                                break;
                                             }
+                                            break;
                                             case 1:
                                             {
                                                 // Argument(EVEN, [])
                                                 e.Match(PatternMatcher.MatchArgument, "EVEN", ValueKind.StringList);
-                                                break;
                                             }
+                                            break;
                                         }
                                         if (!e.LastMatched)
+                                        {
                                             break;
+                                        }
                                     }
                                     d.Fold(e.Result);
                                     if (!d.LastMatched)
+                                    {
                                         break;
+                                    }
                                 }
                                 c.Fold(d.Result);
-                                break;
                             }
+                            break;
                         }
                         if (!c.LastMatched)
+                        {
                             break;
+                        }
                     }
                     b.Fold(c.Result);
                     if (!b.LastMatched)
+                    {
                         break;
+                    }
                 }
                 a.Fold(b.Result);
             }
@@ -126,9 +136,9 @@ Options:
                 var value = p.Value is { IsStringList: true } ? ((StringList)p.Value).Reverse() : p.Value;
                 switch (p.Name)
                 {
-                    case @"--help": result.OptHelp = (bool)value; break;
-                    case @"ODD": result.ArgOdd = (StringList)value; break;
-                    case @"EVEN": result.ArgEven = (StringList)value; break;
+                    case "--help": result.OptHelp = (bool)value; break;
+                    case "ODD": result.ArgOdd = (StringList)value; break;
+                    case "EVEN": result.ArgEven = (StringList)value; break;
                 }
             }
 

@@ -115,39 +115,41 @@ Options:
                                                     {
                                                         // Option(-h,--help,0,False)
                                                         e.Match(PatternMatcher.MatchOption, "--help", ValueKind.Boolean);
-                                                        break;
                                                     }
+                                                    break;
                                                     case 1:
                                                     {
                                                         // Option(-v,--verbose,0,False)
                                                         e.Match(PatternMatcher.MatchOption, "--verbose", ValueKind.Boolean);
-                                                        break;
                                                     }
+                                                    break;
                                                     case 2:
                                                     {
                                                         // Option(-q,--quiet,0,False)
                                                         e.Match(PatternMatcher.MatchOption, "--quiet", ValueKind.Boolean);
-                                                        break;
                                                     }
+                                                    break;
                                                     case 3:
                                                     {
                                                         // Option(-r,--repeat,0,False)
                                                         e.Match(PatternMatcher.MatchOption, "--repeat", ValueKind.Boolean);
-                                                        break;
                                                     }
+                                                    break;
                                                     case 4:
                                                     {
                                                         // Option(-f,--file,1,*.py)
                                                         e.Match(PatternMatcher.MatchOption, "--file", ValueKind.String);
-                                                        break;
                                                     }
+                                                    break;
                                                 }
                                                 if (!e.LastMatched)
+                                                {
                                                     break;
+                                                }
                                             }
                                             d.Fold(e.Result);
-                                            break;
                                         }
+                                        break;
                                         case 1:
                                         {
                                             // Optional(Option(,--exclude,1,.svn,CVS,.bzr,.hg,.git))
@@ -157,11 +159,13 @@ Options:
                                                 // Option(,--exclude,1,.svn,CVS,.bzr,.hg,.git)
                                                 e.Match(PatternMatcher.MatchOption, "--exclude", ValueKind.String);
                                                 if (!e.LastMatched)
+                                                {
                                                     break;
+                                                }
                                             }
                                             d.Fold(e.Result);
-                                            break;
                                         }
+                                        break;
                                         case 2:
                                         {
                                             // Optional(Either(Option(,--select,1,), Option(,--ignore,1,)))
@@ -178,25 +182,29 @@ Options:
                                                         {
                                                             // Option(,--select,1,)
                                                             f.Match(PatternMatcher.MatchOption, "--select", ValueKind.None);
-                                                            break;
                                                         }
+                                                        break;
                                                         case 1:
                                                         {
                                                             // Option(,--ignore,1,)
                                                             f.Match(PatternMatcher.MatchOption, "--ignore", ValueKind.None);
-                                                            break;
                                                         }
+                                                        break;
                                                     }
                                                     if (!f.LastMatched)
+                                                    {
                                                         break;
+                                                    }
                                                 }
                                                 e.Fold(f.Result);
                                                 if (!e.LastMatched)
+                                                {
                                                     break;
+                                                }
                                             }
                                             d.Fold(e.Result);
-                                            break;
                                         }
+                                        break;
                                         case 3:
                                         {
                                             // Optional(Option(,--show-source,0,False))
@@ -206,11 +214,13 @@ Options:
                                                 // Option(,--show-source,0,False)
                                                 e.Match(PatternMatcher.MatchOption, "--show-source", ValueKind.Boolean);
                                                 if (!e.LastMatched)
+                                                {
                                                     break;
+                                                }
                                             }
                                             d.Fold(e.Result);
-                                            break;
                                         }
+                                        break;
                                         case 4:
                                         {
                                             // Optional(Option(,--statistics,0,False))
@@ -220,11 +230,13 @@ Options:
                                                 // Option(,--statistics,0,False)
                                                 e.Match(PatternMatcher.MatchOption, "--statistics", ValueKind.Boolean);
                                                 if (!e.LastMatched)
+                                                {
                                                     break;
+                                                }
                                             }
                                             d.Fold(e.Result);
-                                            break;
                                         }
+                                        break;
                                         case 5:
                                         {
                                             // Optional(Option(,--count,0,False))
@@ -234,11 +246,13 @@ Options:
                                                 // Option(,--count,0,False)
                                                 e.Match(PatternMatcher.MatchOption, "--count", ValueKind.Boolean);
                                                 if (!e.LastMatched)
+                                                {
                                                     break;
+                                                }
                                             }
                                             d.Fold(e.Result);
-                                            break;
                                         }
+                                        break;
                                         case 6:
                                         {
                                             // Optional(Option(,--benchmark,0,False))
@@ -248,11 +262,13 @@ Options:
                                                 // Option(,--benchmark,0,False)
                                                 e.Match(PatternMatcher.MatchOption, "--benchmark", ValueKind.Boolean);
                                                 if (!e.LastMatched)
+                                                {
                                                     break;
+                                                }
                                             }
                                             d.Fold(e.Result);
-                                            break;
                                         }
+                                        break;
                                         case 7:
                                         {
                                             // OneOrMore(Argument(PATH, []))
@@ -262,18 +278,22 @@ Options:
                                                 // Argument(PATH, [])
                                                 e.Match(PatternMatcher.MatchArgument, "PATH", ValueKind.StringList);
                                                 if (!e.LastMatched)
+                                                {
                                                     break;
+                                                }
                                             }
                                             d.Fold(e.Result);
-                                            break;
                                         }
+                                        break;
                                     }
                                     if (!d.LastMatched)
+                                    {
                                         break;
+                                    }
                                 }
                                 c.Fold(d.Result);
-                                break;
                             }
+                            break;
                             case 1:
                             {
                                 // Required(Required(Either(Option(,--doctest,0,False), Option(,--testsuite,1,))))
@@ -294,29 +314,35 @@ Options:
                                                 {
                                                     // Option(,--doctest,0,False)
                                                     f.Match(PatternMatcher.MatchOption, "--doctest", ValueKind.Boolean);
-                                                    break;
                                                 }
+                                                break;
                                                 case 1:
                                                 {
                                                     // Option(,--testsuite,1,)
                                                     f.Match(PatternMatcher.MatchOption, "--testsuite", ValueKind.None);
-                                                    break;
                                                 }
+                                                break;
                                             }
                                             if (!f.LastMatched)
+                                            {
                                                 break;
+                                            }
                                         }
                                         e.Fold(f.Result);
                                         if (!e.LastMatched)
+                                        {
                                             break;
+                                        }
                                     }
                                     d.Fold(e.Result);
                                     if (!d.LastMatched)
+                                    {
                                         break;
+                                    }
                                 }
                                 c.Fold(d.Result);
-                                break;
                             }
+                            break;
                             case 2:
                             {
                                 // Required(Option(,--version,0,False))
@@ -326,18 +352,24 @@ Options:
                                     // Option(,--version,0,False)
                                     d.Match(PatternMatcher.MatchOption, "--version", ValueKind.Boolean);
                                     if (!d.LastMatched)
+                                    {
                                         break;
+                                    }
                                 }
                                 c.Fold(d.Result);
-                                break;
                             }
+                            break;
                         }
                         if (!c.LastMatched)
+                        {
                             break;
+                        }
                     }
                     b.Fold(c.Result);
                     if (!b.LastMatched)
+                    {
                         break;
+                    }
                 }
                 a.Fold(b.Result);
             }
@@ -356,22 +388,22 @@ Options:
                 var value = p.Value is { IsStringList: true } ? ((StringList)p.Value).Reverse() : p.Value;
                 switch (p.Name)
                 {
-                    case @"--help": result.OptHelp = (bool)value; break;
-                    case @"--verbose": result.OptVerbose = (bool)value; break;
-                    case @"--quiet": result.OptQuiet = (bool)value; break;
-                    case @"--repeat": result.OptRepeat = (bool)value; break;
-                    case @"--file": result.OptFile = (string)value; break;
-                    case @"--exclude": result.OptExclude = (string)value; break;
-                    case @"--select": result.OptSelect = (string?)value; break;
-                    case @"--ignore": result.OptIgnore = (string?)value; break;
-                    case @"--show-source": result.OptShowSource = (bool)value; break;
-                    case @"--statistics": result.OptStatistics = (bool)value; break;
-                    case @"--count": result.OptCount = (bool)value; break;
-                    case @"--benchmark": result.OptBenchmark = (bool)value; break;
-                    case @"PATH": result.ArgPath = (StringList)value; break;
-                    case @"--doctest": result.OptDoctest = (bool)value; break;
-                    case @"--testsuite": result.OptTestsuite = (string?)value; break;
-                    case @"--version": result.OptVersion = (bool)value; break;
+                    case "--help": result.OptHelp = (bool)value; break;
+                    case "--verbose": result.OptVerbose = (bool)value; break;
+                    case "--quiet": result.OptQuiet = (bool)value; break;
+                    case "--repeat": result.OptRepeat = (bool)value; break;
+                    case "--file": result.OptFile = (string)value; break;
+                    case "--exclude": result.OptExclude = (string)value; break;
+                    case "--select": result.OptSelect = (string?)value; break;
+                    case "--ignore": result.OptIgnore = (string?)value; break;
+                    case "--show-source": result.OptShowSource = (bool)value; break;
+                    case "--statistics": result.OptStatistics = (bool)value; break;
+                    case "--count": result.OptCount = (bool)value; break;
+                    case "--benchmark": result.OptBenchmark = (bool)value; break;
+                    case "PATH": result.ArgPath = (StringList)value; break;
+                    case "--doctest": result.OptDoctest = (bool)value; break;
+                    case "--testsuite": result.OptTestsuite = (string?)value; break;
+                    case "--version": result.OptVersion = (bool)value; break;
                 }
             }
 

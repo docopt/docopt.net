@@ -88,33 +88,35 @@ Options:
                                                     {
                                                         // Option(-v,,0,False)
                                                         e.Match(PatternMatcher.MatchOption, "-v", ValueKind.Boolean);
-                                                        break;
                                                     }
+                                                    break;
                                                     case 1:
                                                     {
                                                         // Option(-q,,0,False)
                                                         e.Match(PatternMatcher.MatchOption, "-q", ValueKind.Boolean);
-                                                        break;
                                                     }
+                                                    break;
                                                     case 2:
                                                     {
                                                         // Option(-r,,0,False)
                                                         e.Match(PatternMatcher.MatchOption, "-r", ValueKind.Boolean);
-                                                        break;
                                                     }
+                                                    break;
                                                     case 3:
                                                     {
                                                         // Option(-h,--help,0,False)
                                                         e.Match(PatternMatcher.MatchOption, "--help", ValueKind.Boolean);
-                                                        break;
                                                     }
+                                                    break;
                                                 }
                                                 if (!e.LastMatched)
+                                                {
                                                     break;
+                                                }
                                             }
                                             d.Fold(e.Result);
-                                            break;
                                         }
+                                        break;
                                         case 1:
                                         {
                                             // OneOrMore(Optional(Argument(FILE, [])))
@@ -128,22 +130,28 @@ Options:
                                                     // Argument(FILE, [])
                                                     f.Match(PatternMatcher.MatchArgument, "FILE", ValueKind.StringList);
                                                     if (!f.LastMatched)
+                                                    {
                                                         break;
+                                                    }
                                                 }
                                                 e.Fold(f.Result);
                                                 if (!e.LastMatched)
+                                                {
                                                     break;
+                                                }
                                             }
                                             d.Fold(e.Result);
-                                            break;
                                         }
+                                        break;
                                     }
                                     if (!d.LastMatched)
+                                    {
                                         break;
+                                    }
                                 }
                                 c.Fold(d.Result);
-                                break;
                             }
+                            break;
                             case 1:
                             {
                                 // Required(Required(Either(Option(,--left,0,False), Option(,--right,0,False))), Argument(CORRECTION, ), Argument(FILE, []))
@@ -168,51 +176,61 @@ Options:
                                                         {
                                                             // Option(,--left,0,False)
                                                             f.Match(PatternMatcher.MatchOption, "--left", ValueKind.Boolean);
-                                                            break;
                                                         }
+                                                        break;
                                                         case 1:
                                                         {
                                                             // Option(,--right,0,False)
                                                             f.Match(PatternMatcher.MatchOption, "--right", ValueKind.Boolean);
-                                                            break;
                                                         }
+                                                        break;
                                                     }
                                                     if (!f.LastMatched)
+                                                    {
                                                         break;
+                                                    }
                                                 }
                                                 e.Fold(f.Result);
                                                 if (!e.LastMatched)
+                                                {
                                                     break;
+                                                }
                                             }
                                             d.Fold(e.Result);
-                                            break;
                                         }
+                                        break;
                                         case 1:
                                         {
                                             // Argument(CORRECTION, )
                                             d.Match(PatternMatcher.MatchArgument, "CORRECTION", ValueKind.None);
-                                            break;
                                         }
+                                        break;
                                         case 2:
                                         {
                                             // Argument(FILE, [])
                                             d.Match(PatternMatcher.MatchArgument, "FILE", ValueKind.StringList);
-                                            break;
                                         }
+                                        break;
                                     }
                                     if (!d.LastMatched)
+                                    {
                                         break;
+                                    }
                                 }
                                 c.Fold(d.Result);
-                                break;
                             }
+                            break;
                         }
                         if (!c.LastMatched)
+                        {
                             break;
+                        }
                     }
                     b.Fold(c.Result);
                     if (!b.LastMatched)
+                    {
                         break;
+                    }
                 }
                 a.Fold(b.Result);
             }
@@ -231,14 +249,14 @@ Options:
                 var value = p.Value is { IsStringList: true } ? ((StringList)p.Value).Reverse() : p.Value;
                 switch (p.Name)
                 {
-                    case @"-v": result.OptV = (bool)value; break;
-                    case @"-q": result.OptQ = (bool)value; break;
-                    case @"-r": result.OptR = (bool)value; break;
-                    case @"--help": result.OptHelp = (bool)value; break;
-                    case @"FILE": result.ArgFile = (StringList)value; break;
-                    case @"--left": result.OptLeft = (bool)value; break;
-                    case @"--right": result.OptRight = (bool)value; break;
-                    case @"CORRECTION": result.ArgCorrection = (string?)value; break;
+                    case "-v": result.OptV = (bool)value; break;
+                    case "-q": result.OptQ = (bool)value; break;
+                    case "-r": result.OptR = (bool)value; break;
+                    case "--help": result.OptHelp = (bool)value; break;
+                    case "FILE": result.ArgFile = (StringList)value; break;
+                    case "--left": result.OptLeft = (bool)value; break;
+                    case "--right": result.OptRight = (bool)value; break;
+                    case "CORRECTION": result.ArgCorrection = (string?)value; break;
                 }
             }
 

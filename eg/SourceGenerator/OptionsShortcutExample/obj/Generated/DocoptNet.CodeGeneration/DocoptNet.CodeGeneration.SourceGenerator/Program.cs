@@ -79,62 +79,70 @@ Options:
                                             {
                                                 // Option(-h,--help,0,False)
                                                 e.Match(PatternMatcher.MatchOption, "--help", ValueKind.Boolean);
-                                                break;
                                             }
+                                            break;
                                             case 1:
                                             {
                                                 // Option(,--version,0,False)
                                                 e.Match(PatternMatcher.MatchOption, "--version", ValueKind.Boolean);
-                                                break;
                                             }
+                                            break;
                                             case 2:
                                             {
                                                 // Option(-n,--number,1,)
                                                 e.Match(PatternMatcher.MatchOption, "--number", ValueKind.None);
-                                                break;
                                             }
+                                            break;
                                             case 3:
                                             {
                                                 // Option(-t,--timeout,1,)
                                                 e.Match(PatternMatcher.MatchOption, "--timeout", ValueKind.None);
-                                                break;
                                             }
+                                            break;
                                             case 4:
                                             {
                                                 // Option(,--apply,0,False)
                                                 e.Match(PatternMatcher.MatchOption, "--apply", ValueKind.Boolean);
-                                                break;
                                             }
+                                            break;
                                             case 5:
                                             {
                                                 // Option(-q,,0,False)
                                                 e.Match(PatternMatcher.MatchOption, "-q", ValueKind.Boolean);
-                                                break;
                                             }
+                                            break;
                                         }
                                         if (!e.LastMatched)
+                                        {
                                             break;
+                                        }
                                     }
                                     d.Fold(e.Result);
                                     if (!d.LastMatched)
+                                    {
                                         break;
+                                    }
                                 }
                                 c.Fold(d.Result);
-                                break;
                             }
+                            break;
                             case 1:
                             {
                                 // Argument(<port>, )
                                 c.Match(PatternMatcher.MatchArgument, "<port>", ValueKind.None);
-                                break;
                             }
+                            break;
                         }
                         if (!c.LastMatched)
+                        {
                             break;
+                        }
                     }
                     b.Fold(c.Result);
                     if (!b.LastMatched)
+                    {
                         break;
+                    }
                 }
                 a.Fold(b.Result);
             }
@@ -153,13 +161,13 @@ Options:
                 var value = p.Value is { IsStringList: true } ? ((StringList)p.Value).Reverse() : p.Value;
                 switch (p.Name)
                 {
-                    case @"--help": result.OptHelp = (bool)value; break;
-                    case @"--version": result.OptVersion = (bool)value; break;
-                    case @"--number": result.OptNumber = (string?)value; break;
-                    case @"--timeout": result.OptTimeout = (string?)value; break;
-                    case @"--apply": result.OptApply = (bool)value; break;
-                    case @"-q": result.OptQ = (bool)value; break;
-                    case @"<port>": result.ArgPort = (string?)value; break;
+                    case "--help": result.OptHelp = (bool)value; break;
+                    case "--version": result.OptVersion = (bool)value; break;
+                    case "--number": result.OptNumber = (string?)value; break;
+                    case "--timeout": result.OptTimeout = (string?)value; break;
+                    case "--apply": result.OptApply = (bool)value; break;
+                    case "-q": result.OptQ = (bool)value; break;
+                    case "<port>": result.ArgPort = (string?)value; break;
                 }
             }
 

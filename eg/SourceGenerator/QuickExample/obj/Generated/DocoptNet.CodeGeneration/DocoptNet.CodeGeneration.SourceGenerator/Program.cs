@@ -68,20 +68,20 @@ namespace QuickExample
                                         {
                                             // Command(tcp, False)
                                             d.Match(PatternMatcher.MatchCommand, "tcp", ValueKind.Boolean);
-                                            break;
                                         }
+                                        break;
                                         case 1:
                                         {
                                             // Argument(<host>, )
                                             d.Match(PatternMatcher.MatchArgument, "<host>", ValueKind.None);
-                                            break;
                                         }
+                                        break;
                                         case 2:
                                         {
                                             // Argument(<port>, )
                                             d.Match(PatternMatcher.MatchArgument, "<port>", ValueKind.None);
-                                            break;
                                         }
+                                        break;
                                         case 3:
                                         {
                                             // Optional(Option(,--timeout,1,))
@@ -91,18 +91,22 @@ namespace QuickExample
                                                 // Option(,--timeout,1,)
                                                 e.Match(PatternMatcher.MatchOption, "--timeout", ValueKind.None);
                                                 if (!e.LastMatched)
+                                                {
                                                     break;
+                                                }
                                             }
                                             d.Fold(e.Result);
-                                            break;
                                         }
+                                        break;
                                     }
                                     if (!d.LastMatched)
+                                    {
                                         break;
+                                    }
                                 }
                                 c.Fold(d.Result);
-                                break;
                             }
+                            break;
                             case 1:
                             {
                                 // Required(Command(serial, False), Argument(<port>, ), Optional(Option(,--baud,1,)), Optional(Option(,--timeout,1,)))
@@ -115,14 +119,14 @@ namespace QuickExample
                                         {
                                             // Command(serial, False)
                                             d.Match(PatternMatcher.MatchCommand, "serial", ValueKind.Boolean);
-                                            break;
                                         }
+                                        break;
                                         case 1:
                                         {
                                             // Argument(<port>, )
                                             d.Match(PatternMatcher.MatchArgument, "<port>", ValueKind.None);
-                                            break;
                                         }
+                                        break;
                                         case 2:
                                         {
                                             // Optional(Option(,--baud,1,))
@@ -132,11 +136,13 @@ namespace QuickExample
                                                 // Option(,--baud,1,)
                                                 e.Match(PatternMatcher.MatchOption, "--baud", ValueKind.None);
                                                 if (!e.LastMatched)
+                                                {
                                                     break;
+                                                }
                                             }
                                             d.Fold(e.Result);
-                                            break;
                                         }
+                                        break;
                                         case 3:
                                         {
                                             // Optional(Option(,--timeout,1,))
@@ -146,18 +152,22 @@ namespace QuickExample
                                                 // Option(,--timeout,1,)
                                                 e.Match(PatternMatcher.MatchOption, "--timeout", ValueKind.None);
                                                 if (!e.LastMatched)
+                                                {
                                                     break;
+                                                }
                                             }
                                             d.Fold(e.Result);
-                                            break;
                                         }
+                                        break;
                                     }
                                     if (!d.LastMatched)
+                                    {
                                         break;
+                                    }
                                 }
                                 c.Fold(d.Result);
-                                break;
                             }
+                            break;
                             case 2:
                             {
                                 // Required(Either(Option(-h,,0,False), Option(,--help,0,False), Option(,--version,0,False)))
@@ -174,38 +184,46 @@ namespace QuickExample
                                             {
                                                 // Option(-h,,0,False)
                                                 e.Match(PatternMatcher.MatchOption, "-h", ValueKind.Boolean);
-                                                break;
                                             }
+                                            break;
                                             case 1:
                                             {
                                                 // Option(,--help,0,False)
                                                 e.Match(PatternMatcher.MatchOption, "--help", ValueKind.Boolean);
-                                                break;
                                             }
+                                            break;
                                             case 2:
                                             {
                                                 // Option(,--version,0,False)
                                                 e.Match(PatternMatcher.MatchOption, "--version", ValueKind.Boolean);
-                                                break;
                                             }
+                                            break;
                                         }
                                         if (!e.LastMatched)
+                                        {
                                             break;
+                                        }
                                     }
                                     d.Fold(e.Result);
                                     if (!d.LastMatched)
+                                    {
                                         break;
+                                    }
                                 }
                                 c.Fold(d.Result);
-                                break;
                             }
+                            break;
                         }
                         if (!c.LastMatched)
+                        {
                             break;
+                        }
                     }
                     b.Fold(c.Result);
                     if (!b.LastMatched)
+                    {
                         break;
+                    }
                 }
                 a.Fold(b.Result);
             }
@@ -224,15 +242,15 @@ namespace QuickExample
                 var value = p.Value is { IsStringList: true } ? ((StringList)p.Value).Reverse() : p.Value;
                 switch (p.Name)
                 {
-                    case @"tcp": result.CmdTcp = (bool)value; break;
-                    case @"<host>": result.ArgHost = (string?)value; break;
-                    case @"<port>": result.ArgPort = (string?)value; break;
-                    case @"--timeout": result.OptTimeout = (string?)value; break;
-                    case @"serial": result.CmdSerial = (bool)value; break;
-                    case @"--baud": result.OptBaud = (string?)value; break;
-                    case @"-h": result.OptH = (bool)value; break;
-                    case @"--help": result.OptHelp = (bool)value; break;
-                    case @"--version": result.OptVersion = (bool)value; break;
+                    case "tcp": result.CmdTcp = (bool)value; break;
+                    case "<host>": result.ArgHost = (string?)value; break;
+                    case "<port>": result.ArgPort = (string?)value; break;
+                    case "--timeout": result.OptTimeout = (string?)value; break;
+                    case "serial": result.CmdSerial = (bool)value; break;
+                    case "--baud": result.OptBaud = (string?)value; break;
+                    case "-h": result.OptH = (bool)value; break;
+                    case "--help": result.OptHelp = (bool)value; break;
+                    case "--version": result.OptVersion = (bool)value; break;
                 }
             }
 

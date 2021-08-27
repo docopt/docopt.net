@@ -23,8 +23,8 @@ namespace DocoptNet.CodeGeneration
     using System.Text.RegularExpressions;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.Text;
-    using static Microsoft.CodeAnalysis.CSharp.SyntaxFactory;
     using Argument = DocoptNet.Argument;
+    using static CSharpSourceModule;
 
     [Generator]
     public sealed class SourceGenerator : ISourceGenerator
@@ -122,31 +122,39 @@ namespace DocoptNet.CodeGeneration
                 return EmptySourceText;
 
             var helpText = text.ToString();
-            var code = new CSharpSourceBuilder();
+            using (CurrentSourceBuilder.Push())
+            {
+                Generate(ns, name, helpText);
+                return new StringBuilderSourceText(CurrentSourceBuilder.Pop(), outputEncoding ?? text.Encoding ?? Utf8BomlessEncoding);
+            }
+        }
 
-            _ = code["#nullable enable annotations"].NewLine
-                    .NewLine
-                    .Using("System.Collections")
-                    .Using("System.Collections.Generic")
-                    .Using("System.Linq")
-                    .Using("DocoptNet.Generated")
-                    .Using("Leaves", "DocoptNet.Generated.ReadOnlyList<DocoptNet.Generated.LeafPattern>")
-                    .NewLine;
-
+        static void Generate(string? ns, string name, string helpText)
+        {
             var isNamespaced = !string.IsNullOrEmpty(ns);
-            if (isNamespaced)
-                code.Namespace(ns);
 
-            _ = code["partial class "][name]["Arguments : IEnumerable<KeyValuePair<string, object?>>"].NewLine.Block;
+            _ = Code("#nullable enable annotations") + NewLine
 
-            _ = code["public "].Const("HelpText", helpText);
+              + NewLine
+              + Using("System.Collections")
+              + Using("System.Collections.Generic")
+              + Using("System.Linq")
+              + Using("DocoptNet.Generated")
+              + Using("Leaves", "DocoptNet.Generated.ReadOnlyList<DocoptNet.Generated.LeafPattern>")
 
-            void GeneratePatternMatchingCode(Pattern pattern, string pm, int level = 0)
+              + NewLine
+              + (isNamespaced ? Namespace(ns) : Blank)
+
+              + Partial + Class + name + "Arguments : IEnumerable<KeyValuePair<string, object?>>" + NewLine
+              + BlockStart
+              + Public + Const("HelpText", helpText);
+
+            static CurrentSourceBuilder GeneratePatternMatchingCode(Pattern pattern, string pmv, int level = 0)
             {
                 if (level >= 26) // todo proper diagnostics reporting
                     throw new NotSupportedException();
 
-                _ = code["// "][pattern?.ToString() ?? string.Empty].NewLine;
+                LineComment(pattern?.ToString() ?? string.Empty);
 
                 switch (pattern)
                 {
@@ -160,84 +168,76 @@ namespace DocoptNet.CodeGeneration
                             Required => nameof(RequiredMatcher),
                             _ => throw new ArgumentOutOfRangeException(nameof(pattern))
                         };
-                        level++;
-                        var m = Vars[level];
-                        _ = code["var "][m][" = "]["new "][matcher]['('][children.Count][", "][pm][".Left, "][pm][".Collected)"].EndStatement;
-                        _ = code["while ("][m][".Next())"].NewLine.Block;
-                        switch (pattern.Children.Count)
-                        {
-                            case > 1:
-                                _ = code["switch ("][m][".Index)"].NewLine.Block;
-                                var i = 0;
-                                foreach (var child in children)
-                                {
-                                    _ = code.Case(i).Block;
-                                    GeneratePatternMatchingCode(child, m, level);
-                                    _ = code.Break.BlockEnd;
-                                    i++;
-                                }
-                                _ = code.BlockEnd;
-                                break;
-                            case 1:
-                                GeneratePatternMatchingCode(children[0], m, level);
-                                break;
-                        }
-                        _ = code["if (!"][m][".LastMatched)"].NewLine.Indent.Break.Outdent;
-                        _ = code.BlockEnd;
-                        _ = code[pm][".Fold("][m][".Result)"].EndStatement;
+                        var mv = Vars[++level];
+                        _ = Var(mv, (Matcher: matcher, Children: children, PrevMatchVar: pmv),
+                                static e => New + e.Matcher + '(' + e.Children.Count + ", " + e.PrevMatchVar + ".Left, " + e.PrevMatchVar + ".Collected)")
+                          + While((Level: level, MatchVar: mv, PrevMatchVar: pmv, Pattern: pattern, Children: children),
+                                  static e => Code(e.MatchVar) + ".Next()",
+                                  static e => e.Pattern.Children.Count switch
+                                              {
+                                                  > 1 => Switch(e,
+                                                                static arg => Code(arg.MatchVar) + ".Index",
+                                                                e.Children,
+                                                                static (_, _, i) => SwitchCaseChoice.Choose(i),
+                                                                static (e, child) => NewLine +
+                                                                    Block((Pattern: child, e.MatchVar, e.Level),
+                                                                        static e => GeneratePatternMatchingCode(e.Pattern, e.MatchVar, e.Level))),
+                                                  1 => GeneratePatternMatchingCode(e.Children[0], e.MatchVar, e.Level),
+                                                  _ => Blank,
+                                              }
+                                            + If(e.MatchVar, static m => Code('!') + m + ".LastMatched", static _ => Break))
+                          + pmv + ".Fold(" + mv + ".Result)" + EndStatement;
                         break;
                     }
                     case LeafPattern { Name: var name } leaf:
                     {
                         var lfn = leaf switch
                         {
-                            Command => "MatchCommand",
-                            Argument => "MatchArgument",
-                            Option => "MatchOption",
+                            Command  => nameof(PatternMatcher.MatchCommand),
+                            Argument => nameof(PatternMatcher.MatchArgument),
+                            Option   => nameof(PatternMatcher.MatchOption),
                             _ => throw new NotImplementedException()
                         };
-                        _ = code[pm][".Match("]["PatternMatcher."][lfn][", "][Literal(name)][", ValueKind."][leaf.Value.Kind.ToString()][')'].EndStatement;
+                        _ = Blank
+                          + pmv + ".Match(" + "PatternMatcher." + lfn + ", " + Literal(name) + ", ValueKind." + leaf.Value.Kind.ToString() + ')' + EndStatement;
                         break;
                     }
                 }
+
+                return CurrentCode;
             }
 
             var (pattern, options, usage) = Docopt.ParsePattern(helpText);
 
-            _ = code.NewLine["public "].Const("Usage", usage);
+            _ = NewLine
+              + Public + Const("Usage", usage)
 
-            _ = code.NewLine
-                ["public static "][name]["Arguments Apply(IEnumerable<string> args, bool help = true, object? version = null, bool optionsFirst = false, bool exit = false)"].NewLine.Block
-                .DeclareAssigned("tokens", "new Tokens(args, typeof(DocoptInputErrorException))")
-                ["var options = new List<Option>"].NewLine.Block;
-            foreach (var option in options)
-            {
-                _ = code["new Option("][option.ShortName is {} sn ? Literal(sn) : "null"][", "]
-                                       [option.LongName is {} ln ? Literal(ln) : "null"][", "]
-                                       [option.ArgCount][", "]
-                                       [option.Value]["),"].NewLine;
-            }
-            _ = code.SkipNextNewLine.BlockEnd.EndStatement
-                .DeclareAssigned("arguments", "Docopt.ParseArgv(tokens, options, optionsFirst).AsReadOnly()")
-                .If(@"help && arguments.Any(o => o is { Name: ""-h"" or ""--help"", Value: { IsTrue: true } })")
-                .Block
-                .Throw("new DocoptExitException(HelpText)").BlockEnd
-                .If(@"version is not null && arguments.Any(o => o is { Name: ""--version"", Value: { IsTrue: true } })")
-                .Block
-                .Throw("new DocoptExitException(version.ToString())").BlockEnd
-                .DeclareAssigned("left", "arguments")
-                .DeclareAssigned("collected", "new Leaves()")
-                .DeclareAssigned("a", "new RequiredMatcher(1, left, collected)")
-                .Do;
-            GeneratePatternMatchingCode(pattern, "a");
-            _ = code.DoWhile("false")
-                    .NewLine
-                    .If("!a.Result || a.Left.Count > 0").Block
-                    .Throw("new DocoptInputErrorException(Usage)").BlockEnd
-                    .NewLine;
+              + NewLine
+              + Public + Static + name + "Arguments Apply(IEnumerable<string> args, bool help = true, object? version = null, bool optionsFirst = false, bool exit = false)" + NewLine + BlockStart
+              + Var("tokens", "new Tokens(args, typeof(DocoptInputErrorException))")
+              + Var("options", options, static options => New + "List<Option>" + NewLine + Block(options, static options =>
+                    Each(options, static (option, _) =>
+                         New + "Option(" + (option.ShortName is {} sn ? Literal(sn) : Null) + ", "
+                             + (option.LongName is {} ln ? Literal(ln) : Null) + ", "
+                             + option.ArgCount + ", "
+                             + Value(option.Value) + ")," + NewLine) + SkipNextNewLine))
+              + Var("arguments", "Docopt.ParseArgv(tokens, options, optionsFirst).AsReadOnly()")
+              + If(@"help && arguments.Any(o => o is { Name: ""-h"" or ""--help"", Value: { IsTrue: true } })",
+                    static () => ThrowNew(nameof(DocoptExitException), "HelpText"))
+              + If(@"version is not null && arguments.Any(o => o is { Name: ""--version"", Value: { IsTrue: true } })",
+                    static () => ThrowNew(nameof(DocoptExitException), "version.ToString()"))
+              + Var("left", "arguments")
+              + Var("collected", "new Leaves()")
+              + Var("a", "new RequiredMatcher(1, left, collected)")
 
-            _ = code.Assign("collected", "a.Collected")
-                    .DeclareAssigned("result", $"new {name}Arguments()");
+              + DoWhile("false", pattern, static pattern => GeneratePatternMatchingCode(pattern, "a"))
+
+              + NewLine
+              + If("!a.Result || a.Left.Count > 0", static () => ThrowNew(nameof(DocoptInputErrorException), "Usage"))
+
+              + NewLine
+              + Assign("collected", "a.Collected")
+              + Var("result", name, static name => New + name + "Arguments()");
 
             var leaves = Docopt.GetFlatPatterns(helpText)
                                .GroupBy(p => p.Name)
@@ -246,72 +246,53 @@ namespace DocoptNet.CodeGeneration
 
             if (leaves.Any())
             {
-                _ = code.NewLine
-                        .ForEach("p", "collected").Block
-                        .DeclareAssigned("value", "p.Value is { IsStringList: true } ? ((StringList)p.Value).Reverse() : p.Value")
-                        ["switch (p.Name)"].NewLine
-                        .Block;
-
-                foreach (var p in leaves)
-                {
-                    _ = code.SkipNextNewLine.Case(p.Name)
-                            [" result."][InferPropertyName(p)][" = ("][p switch { Option   { Value: { IsString: true } } => "string",
-                                                                                  Argument { Value: { IsNone: true } } or Option { ArgCount: not 0, Value: { Kind: not ValueKind.StringList } } => "string?",
-                                                                                  { Value: { Kind: var kind } } => MapType(kind) }][")value"]
-                            .SkipNextNewLine.EndStatement[' ']
-                            .Break;
-                }
-
-                _ = code.BlockEnd   // switch
-                        .BlockEnd;  // foreach
-
+                _ = NewLine
+                  + ForEach("p", "collected", leaves, static leaves =>
+                        Var("value", "p.Value is { IsStringList: true } ? ((StringList)p.Value).Reverse() : p.Value")
+                        + Switch(static () => Code("p.Name"), leaves, static (p, _) => SwitchCaseChoice.Choose(p.Name),
+                                 static p => Blank
+                                           + " result." + InferPropertyName(p)
+                                           + Equal + '('
+                                           + p switch
+                                             {
+                                                 Option   { Value: { IsString: true } } => "string",
+                                                 Argument { Value: { IsNone: true } } or Option { ArgCount: not 0, Value: { Kind: not ValueKind.StringList } } => "string?",
+                                                 { Value: { Kind: var kind } } => MapType(kind)
+                                             }
+                                           + ")value" + SkipNextNewLine + EndStatement + ' '));
             }
 
-            _ = code.NewLine
-                    .Return("result")
-                    .BlockEnd;  // Apply
+            _ = NewLine
+              + Return("result")
+              + BlockEnd   // Apply
 
-            _ = code.NewLine;
-            _ = code["IEnumerator<KeyValuePair<string, object?>> GetEnumerator()"].NewLine.Block;
-            if (leaves.Any())
-            {
-                foreach (var line in from p in leaves
-                                     select $"yield return KeyValuePair.Create({Literal(p.Name)}, (object?){InferPropertyName(p)})")
-                {
-                    _ = code[line].EndStatement;
-                }
-            }
-            else
-            {
-                _ = code["yield break"].EndStatement;
-            }
+              + NewLine
+              + "IEnumerator<KeyValuePair<string, object?>> GetEnumerator()" + NewLine + BlockStart
+              + (leaves.Any() ? Each(leaves, static (p, _) => Yield + Return(p, static p => Code("KeyValuePair.Create(") + Literal(p.Name) + ", (object?)" + InferPropertyName(p) + ')'))
+                              : Yield + Break)
+              + BlockEnd
 
-            _ = code.BlockEnd;
+              + NewLine
+              + "IEnumerator<KeyValuePair<string, object?>> IEnumerable<KeyValuePair<string, object?>>.GetEnumerator() => GetEnumerator()" + EndStatement
+              + "IEnumerator IEnumerable.GetEnumerator() => GetEnumerator()" + EndStatement
 
-            _ = code.NewLine
-                    ["IEnumerator<KeyValuePair<string, object?>> IEnumerable<KeyValuePair<string, object?>>.GetEnumerator() => GetEnumerator()"].EndStatement
-                    ["IEnumerator IEnumerable.GetEnumerator() => GetEnumerator()"].EndStatement;
+              + Each(from p in leaves
+                     select (Name: InferPropertyName(p), Leaf: p),
+                     static (e, _) =>
+                         NewLine
+                         + "/// <summary><c>" + e.Leaf.ToString().EncodeXmlText() + "</c></summary>"
+                         + NewLine
+                         + Public + e.Leaf switch
+                           {
+                               Option { Value: { IsString: true } str } => Code("string ") + e.Name + " { get; private set; } = " + Literal((string)str) + SkipNextNewLine + EndStatement,
+                               Argument { Value: { IsNone: true } } or Option { ArgCount: not 0, Value: { Kind: not ValueKind.StringList } } => Code("string? ") + e.Name + " { get; private set; }",
+                               { Value: { Object: StringList list } } => Code("StringList ") + e.Name + " { get; private set; } = " + Value(list.Reverse()) + SkipNextNewLine + EndStatement,
+                               { Value: { Kind: var kind } } => Code(MapType(kind)) + ' ' + e.Name + " { get; private set; }",
+                           }
+                         + NewLine)
 
-            foreach (var (leaf, generator) in
-                from p in leaves
-                select (Name: InferPropertyName(p), Pattern: p) into e
-                select (e.Pattern, (Func<CSharpSourceBuilder, CSharpSourceBuilder>)(e.Pattern switch
-                {
-                    Option { Value: { IsString: true } str } => c => c["string "][e.Name][" { get; private set; } = "][str].SkipNextNewLine.EndStatement,
-                    Argument { Value: { IsNone: true } } or Option { ArgCount: not 0, Value: { Kind: not ValueKind.StringList } } => c => c["string? "][e.Name][" { get; private set; }"],
-                    { Value: { Object: StringList list } } => c => c["StringList "][e.Name][" { get; private set; } = "][list.Reverse()].SkipNextNewLine.EndStatement,
-                    { Value: { Kind: var kind } } => c => c[MapType(kind)][' '][e.Name][" { get; private set; }"],
-                })))
-            {
-                _ = generator(code.NewLine["/// <summary><c>"][leaf.ToString().EncodeXmlText()]["</c></summary>"].NewLine["public "]).NewLine;
-            }
-
-            _ = code.BlockEnd;
-
-            if (isNamespaced)
-                _ = code.BlockEnd;
-
-            return new StringBuilderSourceText(code.StringBuilder, outputEncoding ?? text.Encoding ?? Utf8BomlessEncoding);
+              + BlockEnd
+              + (isNamespaced ? BlockEnd : Blank);
 
             static string InferPropertyName(LeafPattern leaf) =>
                 leaf switch
@@ -331,6 +312,31 @@ namespace DocoptNet.CodeGeneration
                     ValueKind.StringList => nameof(StringList),
                     _ => throw new ArgumentOutOfRangeException(nameof(kind), kind, null)
                 };
+
+            static CurrentSourceBuilder Value(Value value)
+            {
+                if (value.TryAsStringList(out var items) && items.Count > 0)
+                {
+                    _ = Code("StringList.TopBottom(")
+                      + Each(items, static (item, i) => (i > 0 ? Code(", ") : Blank) + Literal(item))
+                      + ')';
+                }
+                else
+                {
+                    _ = value.Object switch
+                    {
+                        null => Null,
+                        int n => Literal(n),
+                        string s => Literal(s),
+                        true => True,
+                        false => False,
+                        StringList { IsEmpty: true } => Code("StringList.Empty"),
+                        _ => throw new NotSupportedException(), // todo emit diagnostic
+                    };
+                }
+
+                return CurrentCode;
+            }
         }
     }
 }

@@ -70,11 +70,13 @@ Try: CountedExample -vvvvvvvvvv
                                     // Option(,--help,0,False)
                                     d.Match(PatternMatcher.MatchOption, "--help", ValueKind.Boolean);
                                     if (!d.LastMatched)
+                                    {
                                         break;
+                                    }
                                 }
                                 c.Fold(d.Result);
-                                break;
                             }
+                            break;
                             case 1:
                             {
                                 // Required(OneOrMore(Option(-v,,0,0)))
@@ -88,15 +90,19 @@ Try: CountedExample -vvvvvvvvvv
                                         // Option(-v,,0,0)
                                         e.Match(PatternMatcher.MatchOption, "-v", ValueKind.Integer);
                                         if (!e.LastMatched)
+                                        {
                                             break;
+                                        }
                                     }
                                     d.Fold(e.Result);
                                     if (!d.LastMatched)
+                                    {
                                         break;
+                                    }
                                 }
                                 c.Fold(d.Result);
-                                break;
                             }
+                            break;
                             case 2:
                             {
                                 // Required(Command(go, 0), Optional(Command(go, 0)))
@@ -109,8 +115,8 @@ Try: CountedExample -vvvvvvvvvv
                                         {
                                             // Command(go, 0)
                                             d.Match(PatternMatcher.MatchCommand, "go", ValueKind.Integer);
-                                            break;
                                         }
+                                        break;
                                         case 1:
                                         {
                                             // Optional(Command(go, 0))
@@ -120,18 +126,22 @@ Try: CountedExample -vvvvvvvvvv
                                                 // Command(go, 0)
                                                 e.Match(PatternMatcher.MatchCommand, "go", ValueKind.Integer);
                                                 if (!e.LastMatched)
+                                                {
                                                     break;
+                                                }
                                             }
                                             d.Fold(e.Result);
-                                            break;
                                         }
+                                        break;
                                     }
                                     if (!d.LastMatched)
+                                    {
                                         break;
+                                    }
                                 }
                                 c.Fold(d.Result);
-                                break;
                             }
+                            break;
                             case 3:
                             {
                                 // Required(OneOrMore(Required(Option(,--path,1,[]))))
@@ -149,19 +159,25 @@ Try: CountedExample -vvvvvvvvvv
                                             // Option(,--path,1,[])
                                             f.Match(PatternMatcher.MatchOption, "--path", ValueKind.StringList);
                                             if (!f.LastMatched)
+                                            {
                                                 break;
+                                            }
                                         }
                                         e.Fold(f.Result);
                                         if (!e.LastMatched)
+                                        {
                                             break;
+                                        }
                                     }
                                     d.Fold(e.Result);
                                     if (!d.LastMatched)
+                                    {
                                         break;
+                                    }
                                 }
                                 c.Fold(d.Result);
-                                break;
                             }
+                            break;
                             case 4:
                             {
                                 // Required(Argument(<file>, []), Argument(<file>, []))
@@ -174,28 +190,34 @@ Try: CountedExample -vvvvvvvvvv
                                         {
                                             // Argument(<file>, [])
                                             d.Match(PatternMatcher.MatchArgument, "<file>", ValueKind.StringList);
-                                            break;
                                         }
+                                        break;
                                         case 1:
                                         {
                                             // Argument(<file>, [])
                                             d.Match(PatternMatcher.MatchArgument, "<file>", ValueKind.StringList);
-                                            break;
                                         }
+                                        break;
                                     }
                                     if (!d.LastMatched)
+                                    {
                                         break;
+                                    }
                                 }
                                 c.Fold(d.Result);
-                                break;
                             }
+                            break;
                         }
                         if (!c.LastMatched)
+                        {
                             break;
+                        }
                     }
                     b.Fold(c.Result);
                     if (!b.LastMatched)
+                    {
                         break;
+                    }
                 }
                 a.Fold(b.Result);
             }
@@ -214,11 +236,11 @@ Try: CountedExample -vvvvvvvvvv
                 var value = p.Value is { IsStringList: true } ? ((StringList)p.Value).Reverse() : p.Value;
                 switch (p.Name)
                 {
-                    case @"--help": result.OptHelp = (bool)value; break;
-                    case @"-v": result.OptV = (int)value; break;
-                    case @"go": result.CmdGo = (int)value; break;
-                    case @"--path": result.OptPath = (StringList)value; break;
-                    case @"<file>": result.ArgFile = (StringList)value; break;
+                    case "--help": result.OptHelp = (bool)value; break;
+                    case "-v": result.OptV = (int)value; break;
+                    case "go": result.CmdGo = (int)value; break;
+                    case "--path": result.OptPath = (StringList)value; break;
+                    case "<file>": result.ArgFile = (StringList)value; break;
                 }
             }
 
