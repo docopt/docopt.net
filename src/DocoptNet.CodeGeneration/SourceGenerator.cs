@@ -287,9 +287,12 @@ namespace DocoptNet.CodeGeneration
                 _ = code["yield break"].EndStatement;
             }
 
-            _ = code.BlockEnd.NewLine;
-            _ = code["IEnumerator<KeyValuePair<string, object?>> IEnumerable<KeyValuePair<string, object?>>.GetEnumerator() => GetEnumerator()"].EndStatement;
-            _ = code["IEnumerator IEnumerable.GetEnumerator() => GetEnumerator()"].EndStatement;
+            _ = code.BlockEnd;
+
+            _ = code.NewLine
+                    ["IEnumerator<KeyValuePair<string, object?>> IEnumerable<KeyValuePair<string, object?>>.GetEnumerator() => GetEnumerator()"].EndStatement
+                    ["IEnumerator IEnumerable.GetEnumerator() => GetEnumerator()"].EndStatement;
+
             _ = code.NewLine;
 
             foreach (var line in
