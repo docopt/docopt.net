@@ -10,7 +10,8 @@ namespace OptionsShortcutExample
 {
     partial class ProgramArguments : IEnumerable<KeyValuePair<string, object?>>
     {
-        public const string Usage = @"Example of program which uses [options] shortcut in pattern.
+
+        public const string HelpText = @"Example of program which uses [options] shortcut in pattern.
 
 Usage:
   OptionsShortcutExample [options] <port>
@@ -23,6 +24,9 @@ Options:
   --apply                  apply changes to database
   -q                       operate in quiet mode
 ";
+
+        public const string Usage = @"Usage:
+  OptionsShortcutExample [options] <port>";
 
         public static ProgramArguments Apply(IEnumerable<string> args, bool help = true, object? version = null, bool optionsFirst = false, bool exit = false)
         {
@@ -39,7 +43,7 @@ Options:
             var arguments = Docopt.ParseArgv(tokens, options, optionsFirst).AsReadOnly();
             if (help && arguments.Any(o => o is { Name: "-h" or "--help", Value: { IsTrue: true } }))
             {
-                throw new DocoptExitException(Usage);
+                throw new DocoptExitException(HelpText);
             }
             if (version is not null && arguments.Any(o => o is { Name: "--version", Value: { IsTrue: true } }))
             {
@@ -139,9 +143,7 @@ Options:
 
             if (!a.Result || a.Left.Count > 0)
             {
-                const string exitUsage = @"Usage:
-  OptionsShortcutExample [options] <port>";
-                throw new DocoptInputErrorException(exitUsage);
+                throw new DocoptInputErrorException(Usage);
             }
 
             collected = a.Collected;

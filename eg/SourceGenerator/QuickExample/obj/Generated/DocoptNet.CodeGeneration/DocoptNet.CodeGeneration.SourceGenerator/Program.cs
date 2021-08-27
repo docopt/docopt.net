@@ -10,11 +10,17 @@ namespace QuickExample
 {
     partial class ProgramArguments : IEnumerable<KeyValuePair<string, object?>>
     {
-        public const string Usage = @"Usage:
+
+        public const string HelpText = @"Usage:
   QuickExample tcp <host> <port> [--timeout=<seconds>]
   QuickExample serial <port> [--baud=9600] [--timeout=<seconds>]
   QuickExample -h | --help | --version
 ";
+
+        public const string Usage = @"Usage:
+  QuickExample tcp <host> <port> [--timeout=<seconds>]
+  QuickExample serial <port> [--baud=9600] [--timeout=<seconds>]
+  QuickExample -h | --help | --version";
 
         public static ProgramArguments Apply(IEnumerable<string> args, bool help = true, object? version = null, bool optionsFirst = false, bool exit = false)
         {
@@ -30,7 +36,7 @@ namespace QuickExample
             var arguments = Docopt.ParseArgv(tokens, options, optionsFirst).AsReadOnly();
             if (help && arguments.Any(o => o is { Name: "-h" or "--help", Value: { IsTrue: true } }))
             {
-                throw new DocoptExitException(Usage);
+                throw new DocoptExitException(HelpText);
             }
             if (version is not null && arguments.Any(o => o is { Name: "--version", Value: { IsTrue: true } }))
             {
@@ -208,11 +214,7 @@ namespace QuickExample
 
             if (!a.Result || a.Left.Count > 0)
             {
-                const string exitUsage = @"Usage:
-  QuickExample tcp <host> <port> [--timeout=<seconds>]
-  QuickExample serial <port> [--baud=9600] [--timeout=<seconds>]
-  QuickExample -h | --help | --version";
-                throw new DocoptInputErrorException(exitUsage);
+                throw new DocoptInputErrorException(Usage);
             }
 
             collected = a.Collected;

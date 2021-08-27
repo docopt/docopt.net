@@ -121,7 +121,7 @@ namespace DocoptNet.CodeGeneration
             if (text.Length == 0)
                 return EmptySourceText;
 
-            var usage = text.ToString();
+            var helpText = text.ToString();
             var code = new CSharpSourceBuilder();
 
             _ = code["#nullable enable annotations"].NewLine
@@ -139,7 +139,7 @@ namespace DocoptNet.CodeGeneration
 
             _ = code["partial class "][name]["Arguments : IEnumerable<KeyValuePair<string, object?>>"].NewLine.Block;
 
-            _ = code["public const string Usage = "].Literal(usage).EndStatement;
+            _ = code.NewLine["public "].Const("HelpText", helpText);
 
             void GeneratePatternMatchingCode(Pattern pattern, string pm, int level = 0)
             {
@@ -202,11 +202,12 @@ namespace DocoptNet.CodeGeneration
                 }
             }
 
-            _ = code.NewLine;
+            var (pattern, options, usage) = Docopt.ParsePattern(helpText);
 
-            var (pattern, options, exitUsage) = Docopt.ParsePattern(usage);
+            _ = code.NewLine["public "].Const("Usage", usage);
 
-            _ = code["public static "][name]["Arguments Apply(IEnumerable<string> args, bool help = true, object? version = null, bool optionsFirst = false, bool exit = false)"].NewLine.Block
+            _ = code.NewLine
+                ["public static "][name]["Arguments Apply(IEnumerable<string> args, bool help = true, object? version = null, bool optionsFirst = false, bool exit = false)"].NewLine.Block
                 .DeclareAssigned("tokens", "new Tokens(args, typeof(DocoptInputErrorException))")
                 ["var options = new List<Option>"].NewLine.Block;
             foreach (var option in options)
@@ -220,7 +221,7 @@ namespace DocoptNet.CodeGeneration
                 .DeclareAssigned("arguments", "Docopt.ParseArgv(tokens, options, optionsFirst).AsReadOnly()")
                 .If(@"help && arguments.Any(o => o is { Name: ""-h"" or ""--help"", Value: { IsTrue: true } })")
                 .Block
-                .Throw("new DocoptExitException(Usage)").BlockEnd
+                .Throw("new DocoptExitException(HelpText)").BlockEnd
                 .If(@"version is not null && arguments.Any(o => o is { Name: ""--version"", Value: { IsTrue: true } })")
                 .Block
                 .Throw("new DocoptExitException(version.ToString())").BlockEnd
@@ -232,14 +233,13 @@ namespace DocoptNet.CodeGeneration
             _ = code.DoWhile("false")
                     .NewLine
                     .If("!a.Result || a.Left.Count > 0").Block
-                    .Const("exitUsage", exitUsage)
-                    .Throw("new DocoptInputErrorException(exitUsage)").BlockEnd
+                    .Throw("new DocoptInputErrorException(Usage)").BlockEnd
                     .NewLine;
 
             _ = code.Assign("collected", "a.Collected")
                     .DeclareAssigned("result", $"new {name}Arguments()");
 
-            var leaves = Docopt.GetFlatPatterns(usage)
+            var leaves = Docopt.GetFlatPatterns(helpText)
                                .GroupBy(p => p.Name)
                                .Select(g => (LeafPattern)g.First())
                                .ToList();

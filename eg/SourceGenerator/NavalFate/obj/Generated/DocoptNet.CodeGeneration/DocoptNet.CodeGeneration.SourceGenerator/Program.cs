@@ -10,7 +10,8 @@ namespace NavalFate
 {
     partial class ProgramArguments : IEnumerable<KeyValuePair<string, object?>>
     {
-        public const string Usage = @"Naval Fate.
+
+        public const string HelpText = @"Naval Fate.
 
     Usage:
       naval_fate.exe ship new <name>...
@@ -28,6 +29,14 @@ namespace NavalFate
       --drifting    Drifting mine.
 ";
 
+        public const string Usage = @"Usage:
+      naval_fate.exe ship new <name>...
+      naval_fate.exe ship <name> move <x> <y> [--speed=<kn>]
+      naval_fate.exe ship shoot <x> <y>
+      naval_fate.exe mine (set|remove) <x> <y> [--moored | --drifting]
+      naval_fate.exe (-h | --help)
+      naval_fate.exe --version";
+
         public static ProgramArguments Apply(IEnumerable<string> args, bool help = true, object? version = null, bool optionsFirst = false, bool exit = false)
         {
             var tokens = new Tokens(args, typeof(DocoptInputErrorException));
@@ -42,7 +51,7 @@ namespace NavalFate
             var arguments = Docopt.ParseArgv(tokens, options, optionsFirst).AsReadOnly();
             if (help && arguments.Any(o => o is { Name: "-h" or "--help", Value: { IsTrue: true } }))
             {
-                throw new DocoptExitException(Usage);
+                throw new DocoptExitException(HelpText);
             }
             if (version is not null && arguments.Any(o => o is { Name: "--version", Value: { IsTrue: true } }))
             {
@@ -355,14 +364,7 @@ namespace NavalFate
 
             if (!a.Result || a.Left.Count > 0)
             {
-                const string exitUsage = @"Usage:
-      naval_fate.exe ship new <name>...
-      naval_fate.exe ship <name> move <x> <y> [--speed=<kn>]
-      naval_fate.exe ship shoot <x> <y>
-      naval_fate.exe mine (set|remove) <x> <y> [--moored | --drifting]
-      naval_fate.exe (-h | --help)
-      naval_fate.exe --version";
-                throw new DocoptInputErrorException(exitUsage);
+                throw new DocoptInputErrorException(Usage);
             }
 
             collected = a.Collected;

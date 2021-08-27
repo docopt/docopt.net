@@ -10,7 +10,8 @@ namespace ArgumentsExample
 {
     partial class ProgramArguments : IEnumerable<KeyValuePair<string, object?>>
     {
-        public const string Usage = @"Usage: ArgumentsExample [-vqrh] [FILE] ...
+
+        public const string HelpText = @"Usage: ArgumentsExample [-vqrh] [FILE] ...
        ArgumentsExample (--left | --right) CORRECTION FILE
 
 Process FILE and optionally apply correction to either left-hand side or
@@ -29,6 +30,9 @@ Options:
   --right  use right-hand side
 ";
 
+        public const string Usage = @"Usage: ArgumentsExample [-vqrh] [FILE] ...
+       ArgumentsExample (--left | --right) CORRECTION FILE";
+
         public static ProgramArguments Apply(IEnumerable<string> args, bool help = true, object? version = null, bool optionsFirst = false, bool exit = false)
         {
             var tokens = new Tokens(args, typeof(DocoptInputErrorException));
@@ -44,7 +48,7 @@ Options:
             var arguments = Docopt.ParseArgv(tokens, options, optionsFirst).AsReadOnly();
             if (help && arguments.Any(o => o is { Name: "-h" or "--help", Value: { IsTrue: true } }))
             {
-                throw new DocoptExitException(Usage);
+                throw new DocoptExitException(HelpText);
             }
             if (version is not null && arguments.Any(o => o is { Name: "--version", Value: { IsTrue: true } }))
             {
@@ -217,9 +221,7 @@ Options:
 
             if (!a.Result || a.Left.Count > 0)
             {
-                const string exitUsage = @"Usage: ArgumentsExample [-vqrh] [FILE] ...
-       ArgumentsExample (--left | --right) CORRECTION FILE";
-                throw new DocoptInputErrorException(exitUsage);
+                throw new DocoptInputErrorException(Usage);
             }
 
             collected = a.Collected;

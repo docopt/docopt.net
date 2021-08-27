@@ -10,7 +10,8 @@ namespace CalculatorExample
 {
     partial class ProgramArguments : IEnumerable<KeyValuePair<string, object?>>
     {
-        public const string Usage = @"Not a serious example.
+
+        public const string HelpText = @"Not a serious example.
 
 Usage:
   calculator_example.py <value> ( ( + | - | * | / ) <value> )...
@@ -26,6 +27,11 @@ Options:
   -h, --help
 ";
 
+        public const string Usage = @"Usage:
+  calculator_example.py <value> ( ( + | - | * | / ) <value> )...
+  calculator_example.py <function> <value> [( , <value> )]...
+  calculator_example.py (-h | --help)";
+
         public static ProgramArguments Apply(IEnumerable<string> args, bool help = true, object? version = null, bool optionsFirst = false, bool exit = false)
         {
             var tokens = new Tokens(args, typeof(DocoptInputErrorException));
@@ -36,7 +42,7 @@ Options:
             var arguments = Docopt.ParseArgv(tokens, options, optionsFirst).AsReadOnly();
             if (help && arguments.Any(o => o is { Name: "-h" or "--help", Value: { IsTrue: true } }))
             {
-                throw new DocoptExitException(Usage);
+                throw new DocoptExitException(HelpText);
             }
             if (version is not null && arguments.Any(o => o is { Name: "--version", Value: { IsTrue: true } }))
             {
@@ -260,11 +266,7 @@ Options:
 
             if (!a.Result || a.Left.Count > 0)
             {
-                const string exitUsage = @"Usage:
-  calculator_example.py <value> ( ( + | - | * | / ) <value> )...
-  calculator_example.py <function> <value> [( , <value> )]...
-  calculator_example.py (-h | --help)";
-                throw new DocoptInputErrorException(exitUsage);
+                throw new DocoptInputErrorException(Usage);
             }
 
             collected = a.Collected;

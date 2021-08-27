@@ -10,7 +10,8 @@ namespace CountedExample
 {
     partial class ProgramArguments : IEnumerable<KeyValuePair<string, object?>>
     {
-        public const string Usage = @"Usage: CountedExample --help
+
+        public const string HelpText = @"Usage: CountedExample --help
        CountedExample -v...
        CountedExample go [go]
        CountedExample (--path=<path>)...
@@ -21,6 +22,12 @@ Try: CountedExample -vvvvvvvvvv
      CountedExample --path ./here --path ./there
      CountedExample this.txt that.txt
 ";
+
+        public const string Usage = @"Usage: CountedExample --help
+       CountedExample -v...
+       CountedExample go [go]
+       CountedExample (--path=<path>)...
+       CountedExample <file> <file>";
 
         public static ProgramArguments Apply(IEnumerable<string> args, bool help = true, object? version = null, bool optionsFirst = false, bool exit = false)
         {
@@ -34,7 +41,7 @@ Try: CountedExample -vvvvvvvvvv
             var arguments = Docopt.ParseArgv(tokens, options, optionsFirst).AsReadOnly();
             if (help && arguments.Any(o => o is { Name: "-h" or "--help", Value: { IsTrue: true } }))
             {
-                throw new DocoptExitException(Usage);
+                throw new DocoptExitException(HelpText);
             }
             if (version is not null && arguments.Any(o => o is { Name: "--version", Value: { IsTrue: true } }))
             {
@@ -197,12 +204,7 @@ Try: CountedExample -vvvvvvvvvv
 
             if (!a.Result || a.Left.Count > 0)
             {
-                const string exitUsage = @"Usage: CountedExample --help
-       CountedExample -v...
-       CountedExample go [go]
-       CountedExample (--path=<path>)...
-       CountedExample <file> <file>";
-                throw new DocoptInputErrorException(exitUsage);
+                throw new DocoptInputErrorException(Usage);
             }
 
             collected = a.Collected;

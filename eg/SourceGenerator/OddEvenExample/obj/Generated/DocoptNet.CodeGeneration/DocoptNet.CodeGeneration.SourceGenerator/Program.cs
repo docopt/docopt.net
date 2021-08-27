@@ -10,7 +10,8 @@ namespace OddEvenExample
 {
     partial class ProgramArguments : IEnumerable<KeyValuePair<string, object?>>
     {
-        public const string Usage = @"Usage: OddEvenExample [-h | --help] (ODD EVEN)...
+
+        public const string HelpText = @"Usage: OddEvenExample [-h | --help] (ODD EVEN)...
 
 Example, try:
   OddEvenExample 1 2 3 4
@@ -18,6 +19,8 @@ Example, try:
 Options:
   -h, --help
 ";
+
+        public const string Usage = @"Usage: OddEvenExample [-h | --help] (ODD EVEN)...";
 
         public static ProgramArguments Apply(IEnumerable<string> args, bool help = true, object? version = null, bool optionsFirst = false, bool exit = false)
         {
@@ -29,7 +32,7 @@ Options:
             var arguments = Docopt.ParseArgv(tokens, options, optionsFirst).AsReadOnly();
             if (help && arguments.Any(o => o is { Name: "-h" or "--help", Value: { IsTrue: true } }))
             {
-                throw new DocoptExitException(Usage);
+                throw new DocoptExitException(HelpText);
             }
             if (version is not null && arguments.Any(o => o is { Name: "--version", Value: { IsTrue: true } }))
             {
@@ -113,8 +116,7 @@ Options:
 
             if (!a.Result || a.Left.Count > 0)
             {
-                const string exitUsage = @"Usage: OddEvenExample [-h | --help] (ODD EVEN)...";
-                throw new DocoptInputErrorException(exitUsage);
+                throw new DocoptInputErrorException(Usage);
             }
 
             collected = a.Collected;

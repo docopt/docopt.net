@@ -10,7 +10,8 @@ namespace OptionsExample
 {
     partial class ProgramArguments : IEnumerable<KeyValuePair<string, object?>>
     {
-        public const string Usage = @"Example of program with many options using docopt.
+
+        public const string HelpText = @"Example of program with many options using docopt.
 
 Usage:
   OptionsExample [-hvqrf NAME] [--exclude=PATTERNS]
@@ -43,6 +44,13 @@ Options:
   --doctest            run doctest on myself
 ";
 
+        public const string Usage = @"Usage:
+  OptionsExample [-hvqrf NAME] [--exclude=PATTERNS]
+                 [--select=ERRORS | --ignore=ERRORS] [--show-source]
+                 [--statistics] [--count] [--benchmark] PATH...
+  OptionsExample (--doctest | --testsuite=DIR)
+  OptionsExample --version";
+
         public static ProgramArguments Apply(IEnumerable<string> args, bool help = true, object? version = null, bool optionsFirst = false, bool exit = false)
         {
             var tokens = new Tokens(args, typeof(DocoptInputErrorException));
@@ -67,7 +75,7 @@ Options:
             var arguments = Docopt.ParseArgv(tokens, options, optionsFirst).AsReadOnly();
             if (help && arguments.Any(o => o is { Name: "-h" or "--help", Value: { IsTrue: true } }))
             {
-                throw new DocoptExitException(Usage);
+                throw new DocoptExitException(HelpText);
             }
             if (version is not null && arguments.Any(o => o is { Name: "--version", Value: { IsTrue: true } }))
             {
@@ -338,13 +346,7 @@ Options:
 
             if (!a.Result || a.Left.Count > 0)
             {
-                const string exitUsage = @"Usage:
-  OptionsExample [-hvqrf NAME] [--exclude=PATTERNS]
-                 [--select=ERRORS | --ignore=ERRORS] [--show-source]
-                 [--statistics] [--count] [--benchmark] PATH...
-  OptionsExample (--doctest | --testsuite=DIR)
-  OptionsExample --version";
-                throw new DocoptInputErrorException(exitUsage);
+                throw new DocoptInputErrorException(Usage);
             }
 
             collected = a.Collected;
