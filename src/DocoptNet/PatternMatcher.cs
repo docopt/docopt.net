@@ -294,9 +294,9 @@ namespace DocoptNet
         {
             for (var i = 0; i < left.Count; i++)
             {
-                if (left[i] is Argument { Value: { } value })
+                if (left[i] is Argument { Value: var value })
                 {
-                    if (value.ToString() == command)
+                    if ((string)value == command)
                         return (i, new Command(command, true));
                     break;
                 }
