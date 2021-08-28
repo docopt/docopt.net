@@ -10,7 +10,6 @@ namespace OptionsExample
 {
     partial class ProgramArguments : IEnumerable<KeyValuePair<string, object?>>
     {
-
         public const string HelpText = @"Example of program with many options using docopt.
 
 Usage:

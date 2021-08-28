@@ -10,7 +10,6 @@ namespace NavalFate
 {
     partial class ProgramArguments : IEnumerable<KeyValuePair<string, object?>>
     {
-
         public const string HelpText = @"Naval Fate.
 
     Usage:

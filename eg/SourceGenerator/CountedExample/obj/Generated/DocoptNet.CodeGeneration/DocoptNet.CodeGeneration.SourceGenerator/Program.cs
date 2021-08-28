@@ -10,7 +10,6 @@ namespace CountedExample
 {
     partial class ProgramArguments : IEnumerable<KeyValuePair<string, object?>>
     {
-
         public const string HelpText = @"Usage: CountedExample --help
        CountedExample -v...
        CountedExample go [go]

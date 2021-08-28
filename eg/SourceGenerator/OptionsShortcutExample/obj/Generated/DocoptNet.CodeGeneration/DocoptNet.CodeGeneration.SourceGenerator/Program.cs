@@ -10,7 +10,6 @@ namespace OptionsShortcutExample
 {
     partial class ProgramArguments : IEnumerable<KeyValuePair<string, object?>>
     {
-
         public const string HelpText = @"Example of program which uses [options] shortcut in pattern.
 
 Usage:

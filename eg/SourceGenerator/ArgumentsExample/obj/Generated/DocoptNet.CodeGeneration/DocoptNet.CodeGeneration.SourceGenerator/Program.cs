@@ -10,7 +10,6 @@ namespace ArgumentsExample
 {
     partial class ProgramArguments : IEnumerable<KeyValuePair<string, object?>>
     {
-
         public const string HelpText = @"Usage: ArgumentsExample [-vqrh] [FILE] ...
        ArgumentsExample (--left | --right) CORRECTION FILE
 

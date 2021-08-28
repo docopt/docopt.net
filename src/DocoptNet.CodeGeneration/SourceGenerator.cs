@@ -139,7 +139,7 @@ namespace DocoptNet.CodeGeneration
 
             _ = code["partial class "][name]["Arguments : IEnumerable<KeyValuePair<string, object?>>"].NewLine.Block;
 
-            _ = code.NewLine["public "].Const("HelpText", helpText);
+            _ = code["public "].Const("HelpText", helpText);
 
             void GeneratePatternMatchingCode(Pattern pattern, string pm, int level = 0)
             {

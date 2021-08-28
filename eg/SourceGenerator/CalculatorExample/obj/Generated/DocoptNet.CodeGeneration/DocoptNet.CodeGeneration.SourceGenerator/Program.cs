@@ -10,7 +10,6 @@ namespace CalculatorExample
 {
     partial class ProgramArguments : IEnumerable<KeyValuePair<string, object?>>
     {
-
         public const string HelpText = @"Not a serious example.
 
 Usage:

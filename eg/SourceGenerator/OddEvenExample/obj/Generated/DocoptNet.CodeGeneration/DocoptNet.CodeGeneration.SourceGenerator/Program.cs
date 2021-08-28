@@ -10,7 +10,6 @@ namespace OddEvenExample
 {
     partial class ProgramArguments : IEnumerable<KeyValuePair<string, object?>>
     {
-
         public const string HelpText = @"Usage: OddEvenExample [-h | --help] (ODD EVEN)...
 
 Example, try:

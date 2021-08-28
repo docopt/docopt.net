@@ -10,7 +10,6 @@ namespace QuickExample
 {
     partial class ProgramArguments : IEnumerable<KeyValuePair<string, object?>>
     {
-
         public const string HelpText = @"Usage:
   QuickExample tcp <host> <port> [--timeout=<seconds>]
   QuickExample serial <port> [--baud=9600] [--timeout=<seconds>]
