@@ -1,3 +1,5 @@
+#nullable enable
+
 namespace DocoptNet.CodeGeneration
 {
     using System;
@@ -5,52 +7,30 @@ namespace DocoptNet.CodeGeneration
     using System.Diagnostics;
     using System.Text;
 
-    sealed class CurrentSourceBuilder : IDisposable
+    sealed class CSharpSourceBuilder :
+        CSharpSourceBuilder.IStatementFlow,
+        CSharpSourceBuilder.IBlockFlow,
+        CSharpSourceBuilder.IIfFlow,
+        CSharpSourceBuilder.IDoFlow,
+        CSharpSourceBuilder.IDoWhileFlow,
+        CSharpSourceBuilder.IDoWhileConditionFlow,
+        CSharpSourceBuilder.IControlBlockFlow,
+        CSharpSourceBuilder.ISwitchFlow,
+        CSharpSourceBuilder.ISwitchCasesFlow,
+        CSharpSourceBuilder.IForEachFlow
     {
-        [ThreadStatic]
-        static CurrentSourceBuilder? _current;
-
         readonly StringBuilder _sb;
-        bool _popped;
-        CurrentSourceBuilder? _previous;
         bool _skipNextNewLine;
 
-        CurrentSourceBuilder(StringBuilder sb, CurrentSourceBuilder? previous) =>
-            (_sb, _previous) = (sb, previous);
+        public CSharpSourceBuilder() : this(new()) { }
+        public CSharpSourceBuilder(StringBuilder sb) => _sb = sb;
 
-        public static CurrentSourceBuilder Push() =>
-            _current = new CurrentSourceBuilder(new StringBuilder(), _current);
-
-        public static StringBuilder Pop()
-        {
-            var sb = Instance._sb;
-            Instance.Dispose();
-            return sb;
-        }
-
-        public static CurrentSourceBuilder Instance
-        {
-            get
-            {
-                Debug.Assert(_current is not null);
-                return _current;
-            }
-        }
-
-        void IDisposable.Dispose() => Dispose();
-
-        void Dispose()
-        {
-            if (_popped)
-                return;
-            _popped = true;
-            (_current, _previous) = (_previous, null);
-        }
+        public StringBuilder StringBuilder => _sb;
 
         public int Level { get; private set; }
         public bool IsNewLine { get; private set; } = true;
 
-        public CurrentSourceBuilder Indent
+        public CSharpSourceBuilder Indent
         {
             get
             {
@@ -59,7 +39,7 @@ namespace DocoptNet.CodeGeneration
             }
         }
 
-        public CurrentSourceBuilder Outdent
+        public CSharpSourceBuilder Outdent
         {
             get
             {
@@ -79,60 +59,35 @@ namespace DocoptNet.CodeGeneration
             return _sb;
         }
 
-        CurrentSourceBuilder Append(char value)
-        {
-            OnAppending().Append(value);
-            return this;
-        }
+        void Append(char value) => OnAppending().Append(value);
+        void Append(string value) => OnAppending().Append(value);
+        void Append(int value) => OnAppending().Append(value);
 
-        CurrentSourceBuilder Append(string value)
-        {
-            OnAppending().Append(value);
-            return this;
-        }
-
-        CurrentSourceBuilder Append(int value)
-        {
-            OnAppending().Append(value);
-            return this;
-        }
-
-        public CurrentSourceBuilder AppendLine()
+        public void AppendLine()
         {
             if (_skipNextNewLine)
             {
                 _skipNextNewLine = false;
-                return this;
+                return;
             }
+
             _sb.AppendLine();
             IsNewLine = true;
-            return this;
         }
 
         public override string ToString() => _sb.ToString();
 
-        public CurrentSourceBuilder SkipNextNewLine { get { _skipNextNewLine = true; return this; } }
+        public CSharpSourceBuilder SkipNextNewLine { get { _skipNextNewLine = true; return this; } }
 
-        public static CurrentSourceBuilder operator+(CurrentSourceBuilder sb, string str) => sb.Append(str);
-        public static CurrentSourceBuilder operator+(CurrentSourceBuilder sb, char ch) => sb.Append(ch);
-        public static CurrentSourceBuilder operator+(CurrentSourceBuilder sb, int n) => sb.Append(n);
+        [Conditional("DEBUG")]
+        void AssertSame(CSharpSourceBuilder other) => Debug.Assert(ReferenceEquals(this, other));
 
-        public static CurrentSourceBuilder operator+(CurrentSourceBuilder a, CurrentSourceBuilder b)
-        {
-            Debug.Assert(ReferenceEquals(a, b));
-            return b;
-        }
-    }
+        public CSharpSourceBuilder this[string code] { get { Append(code); return this; } }
+        public CSharpSourceBuilder this[char code] { get { Append(code); return this; } }
+        public CSharpSourceBuilder this[CSharpSourceBuilder code] { get { AssertSame(code); return this; } }
 
-    static class CSharpSourceModule
-    {
-        public static CurrentSourceBuilder CurrentCode => CurrentSourceBuilder.Instance;
-
-        public static CurrentSourceBuilder Blank => CurrentCode;
-        public static CurrentSourceBuilder NewLine => CurrentCode.AppendLine();
-
-        public static CurrentSourceBuilder Code(string raw) => CurrentCode + raw;
-        public static CurrentSourceBuilder Code(char raw) => CurrentCode + raw;
+        public CSharpSourceBuilder Blank() => this;
+        public CSharpSourceBuilder NewLine { get { AppendLine(); return this; } }
 
         static readonly char[] ForbiddenRegularStringLiteralChars =
         {
@@ -144,7 +99,7 @@ namespace DocoptNet.CodeGeneration
 
         const string Quote = "\"";
 
-        public static CurrentSourceBuilder Literal(string value) =>
+        public CSharpSourceBuilder Literal(string value) =>
             //
             // https://github.com/dotnet/csharplang/blob/f1533732b093e54665471fcf92aba5c77f0acedd/spec/lexical-structure.md
             //
@@ -160,131 +115,185 @@ namespace DocoptNet.CodeGeneration
             //     ;
             //
             _ = value.IndexOfAny(ForbiddenRegularStringLiteralChars) >= 0
-              ? CurrentCode + '@' + Quote + value.Replace(Quote, Quote + Quote) + Quote
-              : CurrentCode + Quote + value + Quote;
+              ? this['@'][Quote][value.Replace(Quote, Quote + Quote)][Quote]
+              : this[Quote][value][Quote];
 
-        public static CurrentSourceBuilder Literal(int value) => CurrentCode + value;
+        public CSharpSourceBuilder Literal(int value) { Append(value); return this; }
 
-        public static CurrentSourceBuilder Each<T>(IEnumerable<T> source, Func<T, int, CurrentSourceBuilder> builder)
+        public CSharpSourceBuilder Each<T>(IEnumerable<T> source, Func<CSharpSourceBuilder, T, int, CSharpSourceBuilder> builder)
         {
             var i = 0;
             foreach (var item in source)
-                builder(item, i++);
-            return CurrentCode;
+                builder(this, item, i++);
+            return this;
         }
 
-        public static CurrentSourceBuilder Using(string ns) =>
-            Blank + "using " + ns + EndStatement;
+        public CSharpSourceBuilder Using(string ns) =>
+            this["using "][ns].EndStatement;
 
-        public static CurrentSourceBuilder Using(string alias, string typeName) =>
-            Blank + "using " + alias + Equal + typeName + EndStatement;
+        public CSharpSourceBuilder Using(string alias, string typeName) =>
+            this["using "][alias].Equal[typeName].EndStatement;
 
-        public static CurrentSourceBuilder Namespace(string name) =>
-            Blank + "namespace " + name + NewLine + BlockStart;
+        public CSharpSourceBuilder Namespace(string name) =>
+            this["namespace "][name].NewLine.BlockStart;
 
-        public static CurrentSourceBuilder Null    => Blank + "null";
-        public static CurrentSourceBuilder True    => Blank + "true";
-        public static CurrentSourceBuilder False   => Blank + "false";
+        public CSharpSourceBuilder Null    => this["null"];
+        public CSharpSourceBuilder True    => this["true"];
+        public CSharpSourceBuilder False   => this["false"];
 
-        public static CurrentSourceBuilder Break   => Blank + "break" + EndStatement;
+        public CSharpSourceBuilder Break   => this["break"].EndStatement;
 
-        public static CurrentSourceBuilder Partial => Blank + "partial ";
-        public static CurrentSourceBuilder Static  => Blank + "static ";
-        public static CurrentSourceBuilder Class   => Blank + "class ";
-        public static CurrentSourceBuilder Public  => Blank + "public ";
-        public static CurrentSourceBuilder Yield   => Blank + "yield ";
-        public static CurrentSourceBuilder New     => Blank + "new ";
+        public CSharpSourceBuilder Partial => this["partial "];
+        public CSharpSourceBuilder Static  => this["static "];
+        public CSharpSourceBuilder Class   => this["class "];
+        public CSharpSourceBuilder Public  => this["public "];
+        public CSharpSourceBuilder Yield   => this["yield "];
+        public CSharpSourceBuilder New     => this["new "];
 
-        public static CurrentSourceBuilder Equal   => Blank + " = ";
+        public CSharpSourceBuilder Equal   => this[" = "];
 
-        public static CurrentSourceBuilder BlockStart => Blank + '{' + NewLine + CurrentCode.Indent;
-        public static CurrentSourceBuilder BlockEnd   => CurrentCode.Outdent + '}' + NewLine;
+        public CSharpSourceBuilder BlockStart => this['{'].NewLine.Indent;
+        public CSharpSourceBuilder BlockEnd   => Outdent['}'].NewLine;
 
-        public static CurrentSourceBuilder Block<T>(T arg, Func<T, CurrentSourceBuilder> block) =>
-            BlockStart + block(arg) + BlockEnd;
+        public CSharpSourceBuilder EndStatement => this[';'].NewLine;
 
-        public static CurrentSourceBuilder SkipNextNewLine => CurrentCode.SkipNextNewLine;
+        public CSharpSourceBuilder LineComment(string comment) =>
+            this["// "][comment].NewLine;
 
-        public static CurrentSourceBuilder EndStatement => Blank + ';' + NewLine;
+        public CSharpSourceBuilder Const(string name, string value) =>
+            this["const string "][name].Equal.Literal(value).EndStatement;
 
-        public static CurrentSourceBuilder LineComment(string comment) =>
-            Blank + "// " + comment + NewLine;
+        public CSharpSourceBuilder ThrowNew(string type, string args) =>
+            this["throw "].New[type]['('][args][')'].EndStatement;
 
-        public static CurrentSourceBuilder Const(string name, string value) =>
-            Blank + "const string " + name + Equal + Literal(value) + EndStatement;
+        public IStatementFlow Return => this["return "];
+        public IStatementFlow Var(string name) => this["var "].Assign(name);
+        public IStatementFlow Assign(string name) => this[name].Equal;
+        public IStatementFlow Assign(CSharpSourceBuilder code) { AssertSame(code); return Equal; }
 
-        public static CurrentSourceBuilder Return(string expression) =>
-            Return(expression, static expression => Blank + expression);
+        public IBlockFlow Block => BlockStart;
 
-        public static CurrentSourceBuilder Return<T>(T arg, Func<T, CurrentSourceBuilder> expression) =>
-            Blank + "return " + expression(arg) + EndStatement;
-
-        public static CurrentSourceBuilder Assign(string name, string rhs) =>
-            Assign(name, rhs, static rhs => Blank + rhs);
-
-        public static CurrentSourceBuilder Assign<T>(string name, T arg, Func<T, CurrentSourceBuilder> rhs) =>
-            Blank + name + Equal + rhs(arg) + EndStatement;
-
-        public static CurrentSourceBuilder Var(string name, string rhs) =>
-            Var(name, rhs, static rhs => Blank + rhs);
-
-        public static CurrentSourceBuilder Var<T>(string name, T arg, Func<T, CurrentSourceBuilder> rhs) =>
-            Blank + "var " + Assign(name, arg, rhs);
-
-        public static CurrentSourceBuilder If(string condition, Func<CurrentSourceBuilder> thenBlock) =>
-            If((Condition: condition, ThenBlock: thenBlock),
-               static e => Blank + e.Condition,
-               static e => e.ThenBlock());
-
-        public static CurrentSourceBuilder If<T>(T arg, Func<T, CurrentSourceBuilder> condition,
-                                                Func<T, CurrentSourceBuilder> thenBlock) =>
-            Blank + "if (" + condition(arg) + ')' + NewLine + Block(arg, thenBlock);
-
-        public static CurrentSourceBuilder ThrowNew(string type, string args) =>
-            Blank + "throw " + New + type + '(' + args + ')' + EndStatement;
-
-        public static CurrentSourceBuilder DoWhile<T>(string condition, T arg, Func<T, CurrentSourceBuilder> block) =>
-            Blank + "do" + NewLine + Block(arg, block) + "while (" + condition + ')' + EndStatement;
-
-        public static CurrentSourceBuilder While<T>(T arg, Func<T, CurrentSourceBuilder> condition,
-                                                   Func<T, CurrentSourceBuilder> block) =>
-            Blank + "while (" + condition(arg) + ')' + NewLine + Block(arg, block);
-
-        public static CurrentSourceBuilder ForEach<T>(string var, string expression,
-                                                     T arg, Func<T, CurrentSourceBuilder> block) =>
-            Blank + "foreach (var " + var + " in " + expression + ')' + NewLine + Block(arg, block);
-
-        public static CurrentSourceBuilder
-            Switch<T>(Func<CurrentSourceBuilder> expression,
-                      IEnumerable<T> source,
-                      Func<T, int, SwitchCaseChoice> caseChooser,
-                      Func<T, CurrentSourceBuilder> caseBlock) =>
-            Switch((Expression: expression, CaseChooser: caseChooser, CaseBlock: caseBlock),
-                   static f => f.Expression(),
-                   source,
-                   static (f, e, i) => f.CaseChooser(e, i),
-                   static (f, e) => f.CaseBlock(e));
-
-        public static CurrentSourceBuilder
-            Switch<TArg, TItem>(TArg arg, Func<TArg, CurrentSourceBuilder> expression,
-                                IEnumerable<TItem> source,
-                                Func<TArg, TItem, int, SwitchCaseChoice> caseChooser,
-                                Func<TArg, TItem, CurrentSourceBuilder> caseBlock)
+        public interface IBlockFlow
         {
-            _ = Blank + "switch (" + expression(arg) + ')' + NewLine + BlockStart;
+            CSharpSourceBuilder this[string code] { get; }
+            CSharpSourceBuilder this[CSharpSourceBuilder code] { get; }
+        }
 
+        CSharpSourceBuilder IBlockFlow.this[string code] => BlockFlow(this[code]);
+        CSharpSourceBuilder IBlockFlow.this[CSharpSourceBuilder code] => BlockFlow(code);
+        CSharpSourceBuilder BlockFlow(CSharpSourceBuilder code) { AssertSame(code); return BlockEnd; }
+
+        public interface IStatementFlow
+        {
+            CSharpSourceBuilder this[string code] { get; }
+            CSharpSourceBuilder this[CSharpSourceBuilder code] { get; }
+        }
+
+        CSharpSourceBuilder IStatementFlow.this[string code] => StatementFlow(this[code]);
+        CSharpSourceBuilder IStatementFlow.this[CSharpSourceBuilder code] => StatementFlow(code);
+        CSharpSourceBuilder StatementFlow(CSharpSourceBuilder code) { AssertSame(code); return EndStatement; }
+
+        public IIfFlow If => this["if ("];
+
+        public interface IIfFlow
+        {
+            IBlockFlow this[string code] { get; }
+            IBlockFlow this[CSharpSourceBuilder code] { get; }
+        }
+
+        IBlockFlow IIfFlow.this[string code] => IfFlow(this[code]);
+        IBlockFlow IIfFlow.this[CSharpSourceBuilder code] => IfFlow(code);
+        CSharpSourceBuilder IfFlow(CSharpSourceBuilder code) { AssertSame(code); return this[')'].NewLine.BlockStart; }
+
+        public IDoFlow Do => this["do"].NewLine.BlockStart;
+
+        public interface IDoFlow
+        {
+            IDoWhileFlow this[string code] { get; }
+            IDoWhileFlow this[CSharpSourceBuilder code] { get; }
+        }
+
+        IDoWhileFlow IDoFlow.this[string code] => DoFlow(this[code]);
+        IDoWhileFlow IDoFlow.this[CSharpSourceBuilder code] => DoFlow(code);
+        CSharpSourceBuilder DoFlow(CSharpSourceBuilder code) { AssertSame(code); return BlockEnd; }
+
+        IDoWhileConditionFlow IDoWhileFlow.While => this["while ("];
+
+        public interface IDoWhileFlow
+        {
+            IDoWhileConditionFlow While { get; }
+        }
+
+        public interface IDoWhileConditionFlow
+        {
+            CSharpSourceBuilder this[string code] { get; }
+            CSharpSourceBuilder this[CSharpSourceBuilder code] { get; }
+        }
+
+        CSharpSourceBuilder IDoWhileConditionFlow.this[string code] => DoWhileConditionFlow(this[code]);
+        CSharpSourceBuilder IDoWhileConditionFlow.this[CSharpSourceBuilder code] => DoWhileConditionFlow(code);
+        CSharpSourceBuilder DoWhileConditionFlow(CSharpSourceBuilder code) { AssertSame(code); return this[')'].EndStatement; }
+
+        public IControlBlockFlow While => this["while ("];
+
+        public interface IControlBlockFlow
+        {
+            IBlockFlow this[string code] { get; }
+            IBlockFlow this[CSharpSourceBuilder code] { get; }
+        }
+
+        IBlockFlow IControlBlockFlow.this[string code] => ControlBlockFlow(this[code]);
+        IBlockFlow IControlBlockFlow.this[CSharpSourceBuilder code] => ControlBlockFlow(code);
+        IBlockFlow ControlBlockFlow(CSharpSourceBuilder code) { AssertSame(code); return this[')'].NewLine.Block; }
+
+        public IForEachFlow ForEach => this["foreach (var "];
+
+        public interface IForEachFlow
+        {
+            IControlBlockFlow this[string code] { get; }
+            IControlBlockFlow this[CSharpSourceBuilder code] { get; }
+        }
+
+        IControlBlockFlow IForEachFlow.this[string code] => ForEachFlow(this[code]);
+        IControlBlockFlow IForEachFlow.this[CSharpSourceBuilder code] => ForEachFlow(code);
+        CSharpSourceBuilder ForEachFlow(CSharpSourceBuilder code) { AssertSame(code); return this[" in "]; }
+
+        public ISwitchFlow Switch => this["switch ("];
+
+        public interface ISwitchFlow
+        {
+            ISwitchCasesFlow this[string code] { get; }
+            ISwitchCasesFlow this[CSharpSourceBuilder code] { get; }
+        }
+
+        ISwitchCasesFlow ISwitchFlow.this[string code] => SwitchFlow(this[code]);
+        ISwitchCasesFlow ISwitchFlow.this[CSharpSourceBuilder code] => SwitchFlow(code);
+        CSharpSourceBuilder SwitchFlow(CSharpSourceBuilder code) { AssertSame(code); return this[')'].NewLine.BlockStart; }
+
+        public interface ISwitchCasesFlow
+        {
+            CSharpSourceBuilder Cases<T, TArg>(IEnumerable<T> source,
+                                               TArg arg,
+                                               Func<TArg, T, int, SwitchCaseChoice> caseChooser,
+                                               Func<CSharpSourceBuilder, TArg, T, CSharpSourceBuilder> caseBlock);
+        }
+
+        CSharpSourceBuilder ISwitchCasesFlow.Cases<T, TArg>(
+            IEnumerable<T> source,
+            TArg arg,
+            Func<TArg, T, int, SwitchCaseChoice> caseChooser,
+            Func<CSharpSourceBuilder, TArg, T, CSharpSourceBuilder> caseBlock)
+        {
             var i = 0;
             foreach (var item in source)
             {
-                _ = Blank
-                  + "case " + caseChooser(arg, item, i++) switch
-                              {
-                                  { IsInteger: true, Integer: var n } => Blank + n,
-                                  { IsString: true, String: var str } => Literal(str),
-                                  _ => throw new NotSupportedException(),
-                              }
-                  + ':' + caseBlock(arg, item)
-                  + Break;
+                _ = this["case "][caseChooser(arg, item, i++) switch
+                    {
+                        { IsInteger: true, Integer: var n } => Literal(n),
+                        { IsString: true, String: var str } => Literal(str),
+                        _ => throw new NotSupportedException(),
+                    }]
+                    [':'][caseBlock(this, arg, item)].Break;
             }
 
             return BlockEnd;
