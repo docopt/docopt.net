@@ -178,18 +178,18 @@ namespace DocoptNet.CodeGeneration
                         .Var("result")[code.New[name]["Arguments()"]]
                         [leaves.Any()
                              ? code.NewLine
-                                   .ForEach["var p in collected"][
-                                        code.Var("value")["p.Value is { IsStringList: true } ? ((StringList)p.Value).Reverse() : p.Value"]
-                                            .Switch["p.Name"]
+                                   .ForEach["var leaf in collected"][
+                                        code.Var("value")["leaf.Value is { IsStringList: true } ? ((StringList)leaf.Value).Reverse() : leaf.Value"]
+                                            .Switch["leaf.Name"]
                                             .Cases(leaves, default(Unit),
-                                                   static (_, p, _) => CSharpSourceBuilder.SwitchCaseChoice.Choose(p.Name),
-                                                   static (code, _, p) =>
+                                                   static (_, leaf, _) => CSharpSourceBuilder.SwitchCaseChoice.Choose(leaf.Name),
+                                                   static (code, _, leaf) =>
                                                        code[' ']
-                                                          .Assign(code["result."][InferPropertyName(p)])[
+                                                          .Assign(code["result."][InferPropertyName(leaf)])[
                                                                code['(']
-                                                                   [p switch { Option   { Value: { IsString: true } } => "string",
-                                                                               Argument { Value: { IsNone: true } } or Option { ArgCount: not 0, Value: { Kind: not ValueKind.StringList } } => "string?",
-                                                                               { Value: { Kind: var kind } } => MapType(kind) }]
+                                                                   [leaf switch { Option   { Value: { IsString: true } } => "string",
+                                                                                  Argument { Value: { IsNone: true } } or Option { ArgCount: not 0, Value: { Kind: not ValueKind.StringList } } => "string?",
+                                                                                  { Value: { Kind: var kind } } => MapType(kind) }]
                                                                    [")value"].SkipNextNewLine][' '])]
                              : code.Blank()
                         ]

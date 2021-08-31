@@ -38,10 +38,10 @@ namespace QuickExample
             var collected = GetSuccessfulCollection(required, Usage);
             var result = new ProgramArguments();
 
-            foreach (var p in collected)
+            foreach (var leaf in collected)
             {
-                var value = p.Value is { IsStringList: true } ? ((StringList)p.Value).Reverse() : p.Value;
-                switch (p.Name)
+                var value = leaf.Value is { IsStringList: true } ? ((StringList)leaf.Value).Reverse() : leaf.Value;
+                switch (leaf.Name)
                 {
                     case "tcp": result.CmdTcp = (bool)value; break;
                     case "<host>": result.ArgHost = (string?)value; break;

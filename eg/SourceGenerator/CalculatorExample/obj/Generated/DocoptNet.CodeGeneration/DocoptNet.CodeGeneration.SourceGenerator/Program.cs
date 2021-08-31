@@ -44,10 +44,10 @@ Options:
             var collected = GetSuccessfulCollection(required, Usage);
             var result = new ProgramArguments();
 
-            foreach (var p in collected)
+            foreach (var leaf in collected)
             {
-                var value = p.Value is { IsStringList: true } ? ((StringList)p.Value).Reverse() : p.Value;
-                switch (p.Name)
+                var value = leaf.Value is { IsStringList: true } ? ((StringList)leaf.Value).Reverse() : leaf.Value;
+                switch (leaf.Name)
                 {
                     case "<value>": result.ArgValue = (StringList)value; break;
                     case "+": result.CmdPlus = (int)value; break;
