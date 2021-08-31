@@ -214,7 +214,7 @@ namespace DocoptNet.CodeGeneration
 
         ISwitchCasesFlow ISwitchFlow.this[string code] => SwitchFlow(this[code]);
         ISwitchCasesFlow ISwitchFlow.this[CSharpSourceBuilder code] => SwitchFlow(code);
-        CSharpSourceBuilder SwitchFlow(CSharpSourceBuilder code) { AssertSame(code); return this[')'].NewLine.BlockStart; }
+        ISwitchCasesFlow SwitchFlow(CSharpSourceBuilder code) { AssertSame(code); return this[')'].NewLine.BlockStart; }
 
         public interface ISwitchCasesFlow
         {
