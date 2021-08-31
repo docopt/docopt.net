@@ -138,6 +138,9 @@ namespace DocoptNet.CodeGeneration
 
             var isNamespaced = !string.IsNullOrEmpty(ns);
 
+            const string helpConstName = "HelpText";
+            const string usageConstName = "Usage";
+
             code["#nullable enable annotations"].NewLine
 
                 .NewLine
@@ -153,10 +156,10 @@ namespace DocoptNet.CodeGeneration
 
                 .Partial.Class[name]["Arguments : IEnumerable<KeyValuePair<string, object?>>"].NewLine
                 .BlockStart
-                .Public.Const("HelpText", helpText)
+                .Public.Const(helpConstName, helpText)
 
                 .NewLine
-                .Public.Const("Usage", usage)
+                .Public.Const(usageConstName, usage)
 
                 .NewLine
                 .Public.Static[name]["Arguments Apply(IEnumerable<string> args, bool help = true, object? version = null, bool optionsFirst = false, bool exit = false)"].NewLine.BlockStart
@@ -169,10 +172,10 @@ namespace DocoptNet.CodeGeneration
                                                   [option.LongName is {} ln ? code.Literal(ln) : code.Null][", "]
                                                   .Literal(option.ArgCount)[", "]
                                                   [Value(code, option.Value)]["),"].NewLine).SkipNextNewLine]]
-                .Var("left")["ParseArgv(HelpText, args, options, optionsFirst, help, version)"]
+                .Var("left")["ParseArgv(" + helpConstName + ", args, options, optionsFirst, help, version)"]
                 .Var("required")[code.New["RequiredMatcher(1, left, "].New["Leaves()"][')']]
                 ["Match(ref required)"].EndStatement
-                .Var("collected")["GetSuccessfulCollection(required, Usage)"]
+                .Var("collected")["GetSuccessfulCollection(required, " + usageConstName + ")"]
                 .Var("result")[code.New[name]["Arguments()"]]
                 [leaves.Any()
                      ? code.NewLine
