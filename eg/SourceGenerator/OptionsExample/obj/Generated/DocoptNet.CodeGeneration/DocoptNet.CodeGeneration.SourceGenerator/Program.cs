@@ -73,298 +73,298 @@ Options:
             };
             var left = ParseArgv(HelpText, args, options, optionsFirst, help, version);
             var collected = new Leaves();
-            var a = new RequiredMatcher(1, left, collected);
+            var required = new RequiredMatcher(1, left, collected);
             {
                 // Required(Either(Required(Optional(Option(-h,--help,0,False), Option(-v,--verbose,0,False), Option(-q,--quiet,0,False), Option(-r,--repeat,0,False), Option(-f,--file,1,*.py)), Optional(Option(,--exclude,1,.svn,CVS,.bzr,.hg,.git)), Optional(Either(Option(,--select,1,), Option(,--ignore,1,))), Optional(Option(,--show-source,0,False)), Optional(Option(,--statistics,0,False)), Optional(Option(,--count,0,False)), Optional(Option(,--benchmark,0,False)), OneOrMore(Argument(PATH, []))), Required(Required(Either(Option(,--doctest,0,False), Option(,--testsuite,1,)))), Required(Option(,--version,0,False))))
-                var b = new RequiredMatcher(1, a.Left, a.Collected);
-                while (b.Next())
+                var a = new RequiredMatcher(1, required.Left, required.Collected);
+                while (a.Next())
                 {
                     // Either(Required(Optional(Option(-h,--help,0,False), Option(-v,--verbose,0,False), Option(-q,--quiet,0,False), Option(-r,--repeat,0,False), Option(-f,--file,1,*.py)), Optional(Option(,--exclude,1,.svn,CVS,.bzr,.hg,.git)), Optional(Either(Option(,--select,1,), Option(,--ignore,1,))), Optional(Option(,--show-source,0,False)), Optional(Option(,--statistics,0,False)), Optional(Option(,--count,0,False)), Optional(Option(,--benchmark,0,False)), OneOrMore(Argument(PATH, []))), Required(Required(Either(Option(,--doctest,0,False), Option(,--testsuite,1,)))), Required(Option(,--version,0,False)))
-                    var c = new EitherMatcher(3, b.Left, b.Collected);
-                    while (c.Next())
+                    var b = new EitherMatcher(3, a.Left, a.Collected);
+                    while (b.Next())
                     {
-                        switch (c.Index)
+                        switch (b.Index)
                         {
                             case 0:
                             {
                                 // Required(Optional(Option(-h,--help,0,False), Option(-v,--verbose,0,False), Option(-q,--quiet,0,False), Option(-r,--repeat,0,False), Option(-f,--file,1,*.py)), Optional(Option(,--exclude,1,.svn,CVS,.bzr,.hg,.git)), Optional(Either(Option(,--select,1,), Option(,--ignore,1,))), Optional(Option(,--show-source,0,False)), Optional(Option(,--statistics,0,False)), Optional(Option(,--count,0,False)), Optional(Option(,--benchmark,0,False)), OneOrMore(Argument(PATH, [])))
-                                var d = new RequiredMatcher(8, c.Left, c.Collected);
-                                while (d.Next())
+                                var c = new RequiredMatcher(8, b.Left, b.Collected);
+                                while (c.Next())
                                 {
-                                    switch (d.Index)
+                                    switch (c.Index)
                                     {
                                         case 0:
                                         {
                                             // Optional(Option(-h,--help,0,False), Option(-v,--verbose,0,False), Option(-q,--quiet,0,False), Option(-r,--repeat,0,False), Option(-f,--file,1,*.py))
-                                            var e = new OptionalMatcher(5, d.Left, d.Collected);
-                                            while (e.Next())
+                                            var d = new OptionalMatcher(5, c.Left, c.Collected);
+                                            while (d.Next())
                                             {
-                                                switch (e.Index)
+                                                switch (d.Index)
                                                 {
                                                     case 0:
                                                     {
                                                         // Option(-h,--help,0,False)
-                                                        e.Match(PatternMatcher.MatchOption, "--help", ValueKind.Boolean);
+                                                        d.Match(PatternMatcher.MatchOption, "--help", ValueKind.Boolean);
                                                     }
                                                     break;
                                                     case 1:
                                                     {
                                                         // Option(-v,--verbose,0,False)
-                                                        e.Match(PatternMatcher.MatchOption, "--verbose", ValueKind.Boolean);
+                                                        d.Match(PatternMatcher.MatchOption, "--verbose", ValueKind.Boolean);
                                                     }
                                                     break;
                                                     case 2:
                                                     {
                                                         // Option(-q,--quiet,0,False)
-                                                        e.Match(PatternMatcher.MatchOption, "--quiet", ValueKind.Boolean);
+                                                        d.Match(PatternMatcher.MatchOption, "--quiet", ValueKind.Boolean);
                                                     }
                                                     break;
                                                     case 3:
                                                     {
                                                         // Option(-r,--repeat,0,False)
-                                                        e.Match(PatternMatcher.MatchOption, "--repeat", ValueKind.Boolean);
+                                                        d.Match(PatternMatcher.MatchOption, "--repeat", ValueKind.Boolean);
                                                     }
                                                     break;
                                                     case 4:
                                                     {
                                                         // Option(-f,--file,1,*.py)
-                                                        e.Match(PatternMatcher.MatchOption, "--file", ValueKind.String);
+                                                        d.Match(PatternMatcher.MatchOption, "--file", ValueKind.String);
                                                     }
                                                     break;
                                                 }
-                                                if (!e.LastMatched)
+                                                if (!d.LastMatched)
                                                 {
                                                     break;
                                                 }
                                             }
-                                            d.Fold(e.Result);
+                                            c.Fold(d.Result);
                                         }
                                         break;
                                         case 1:
                                         {
                                             // Optional(Option(,--exclude,1,.svn,CVS,.bzr,.hg,.git))
-                                            var e = new OptionalMatcher(1, d.Left, d.Collected);
-                                            while (e.Next())
+                                            var d = new OptionalMatcher(1, c.Left, c.Collected);
+                                            while (d.Next())
                                             {
                                                 // Option(,--exclude,1,.svn,CVS,.bzr,.hg,.git)
-                                                e.Match(PatternMatcher.MatchOption, "--exclude", ValueKind.String);
-                                                if (!e.LastMatched)
+                                                d.Match(PatternMatcher.MatchOption, "--exclude", ValueKind.String);
+                                                if (!d.LastMatched)
                                                 {
                                                     break;
                                                 }
                                             }
-                                            d.Fold(e.Result);
+                                            c.Fold(d.Result);
                                         }
                                         break;
                                         case 2:
                                         {
                                             // Optional(Either(Option(,--select,1,), Option(,--ignore,1,)))
-                                            var e = new OptionalMatcher(1, d.Left, d.Collected);
-                                            while (e.Next())
+                                            var d = new OptionalMatcher(1, c.Left, c.Collected);
+                                            while (d.Next())
                                             {
                                                 // Either(Option(,--select,1,), Option(,--ignore,1,))
-                                                var f = new EitherMatcher(2, e.Left, e.Collected);
-                                                while (f.Next())
+                                                var e = new EitherMatcher(2, d.Left, d.Collected);
+                                                while (e.Next())
                                                 {
-                                                    switch (f.Index)
+                                                    switch (e.Index)
                                                     {
                                                         case 0:
                                                         {
                                                             // Option(,--select,1,)
-                                                            f.Match(PatternMatcher.MatchOption, "--select", ValueKind.None);
+                                                            e.Match(PatternMatcher.MatchOption, "--select", ValueKind.None);
                                                         }
                                                         break;
                                                         case 1:
                                                         {
                                                             // Option(,--ignore,1,)
-                                                            f.Match(PatternMatcher.MatchOption, "--ignore", ValueKind.None);
+                                                            e.Match(PatternMatcher.MatchOption, "--ignore", ValueKind.None);
                                                         }
                                                         break;
                                                     }
-                                                    if (!f.LastMatched)
+                                                    if (!e.LastMatched)
                                                     {
                                                         break;
                                                     }
                                                 }
-                                                e.Fold(f.Result);
-                                                if (!e.LastMatched)
+                                                d.Fold(e.Result);
+                                                if (!d.LastMatched)
                                                 {
                                                     break;
                                                 }
                                             }
-                                            d.Fold(e.Result);
+                                            c.Fold(d.Result);
                                         }
                                         break;
                                         case 3:
                                         {
                                             // Optional(Option(,--show-source,0,False))
-                                            var e = new OptionalMatcher(1, d.Left, d.Collected);
-                                            while (e.Next())
+                                            var d = new OptionalMatcher(1, c.Left, c.Collected);
+                                            while (d.Next())
                                             {
                                                 // Option(,--show-source,0,False)
-                                                e.Match(PatternMatcher.MatchOption, "--show-source", ValueKind.Boolean);
-                                                if (!e.LastMatched)
+                                                d.Match(PatternMatcher.MatchOption, "--show-source", ValueKind.Boolean);
+                                                if (!d.LastMatched)
                                                 {
                                                     break;
                                                 }
                                             }
-                                            d.Fold(e.Result);
+                                            c.Fold(d.Result);
                                         }
                                         break;
                                         case 4:
                                         {
                                             // Optional(Option(,--statistics,0,False))
-                                            var e = new OptionalMatcher(1, d.Left, d.Collected);
-                                            while (e.Next())
+                                            var d = new OptionalMatcher(1, c.Left, c.Collected);
+                                            while (d.Next())
                                             {
                                                 // Option(,--statistics,0,False)
-                                                e.Match(PatternMatcher.MatchOption, "--statistics", ValueKind.Boolean);
-                                                if (!e.LastMatched)
+                                                d.Match(PatternMatcher.MatchOption, "--statistics", ValueKind.Boolean);
+                                                if (!d.LastMatched)
                                                 {
                                                     break;
                                                 }
                                             }
-                                            d.Fold(e.Result);
+                                            c.Fold(d.Result);
                                         }
                                         break;
                                         case 5:
                                         {
                                             // Optional(Option(,--count,0,False))
-                                            var e = new OptionalMatcher(1, d.Left, d.Collected);
-                                            while (e.Next())
+                                            var d = new OptionalMatcher(1, c.Left, c.Collected);
+                                            while (d.Next())
                                             {
                                                 // Option(,--count,0,False)
-                                                e.Match(PatternMatcher.MatchOption, "--count", ValueKind.Boolean);
-                                                if (!e.LastMatched)
+                                                d.Match(PatternMatcher.MatchOption, "--count", ValueKind.Boolean);
+                                                if (!d.LastMatched)
                                                 {
                                                     break;
                                                 }
                                             }
-                                            d.Fold(e.Result);
+                                            c.Fold(d.Result);
                                         }
                                         break;
                                         case 6:
                                         {
                                             // Optional(Option(,--benchmark,0,False))
-                                            var e = new OptionalMatcher(1, d.Left, d.Collected);
-                                            while (e.Next())
+                                            var d = new OptionalMatcher(1, c.Left, c.Collected);
+                                            while (d.Next())
                                             {
                                                 // Option(,--benchmark,0,False)
-                                                e.Match(PatternMatcher.MatchOption, "--benchmark", ValueKind.Boolean);
-                                                if (!e.LastMatched)
+                                                d.Match(PatternMatcher.MatchOption, "--benchmark", ValueKind.Boolean);
+                                                if (!d.LastMatched)
                                                 {
                                                     break;
                                                 }
                                             }
-                                            d.Fold(e.Result);
+                                            c.Fold(d.Result);
                                         }
                                         break;
                                         case 7:
                                         {
                                             // OneOrMore(Argument(PATH, []))
-                                            var e = new OneOrMoreMatcher(1, d.Left, d.Collected);
-                                            while (e.Next())
+                                            var d = new OneOrMoreMatcher(1, c.Left, c.Collected);
+                                            while (d.Next())
                                             {
                                                 // Argument(PATH, [])
-                                                e.Match(PatternMatcher.MatchArgument, "PATH", ValueKind.StringList);
-                                                if (!e.LastMatched)
+                                                d.Match(PatternMatcher.MatchArgument, "PATH", ValueKind.StringList);
+                                                if (!d.LastMatched)
                                                 {
                                                     break;
                                                 }
                                             }
-                                            d.Fold(e.Result);
+                                            c.Fold(d.Result);
                                         }
                                         break;
                                     }
-                                    if (!d.LastMatched)
+                                    if (!c.LastMatched)
                                     {
                                         break;
                                     }
                                 }
-                                c.Fold(d.Result);
+                                b.Fold(c.Result);
                             }
                             break;
                             case 1:
                             {
                                 // Required(Required(Either(Option(,--doctest,0,False), Option(,--testsuite,1,))))
-                                var d = new RequiredMatcher(1, c.Left, c.Collected);
-                                while (d.Next())
+                                var c = new RequiredMatcher(1, b.Left, b.Collected);
+                                while (c.Next())
                                 {
                                     // Required(Either(Option(,--doctest,0,False), Option(,--testsuite,1,)))
-                                    var e = new RequiredMatcher(1, d.Left, d.Collected);
-                                    while (e.Next())
+                                    var d = new RequiredMatcher(1, c.Left, c.Collected);
+                                    while (d.Next())
                                     {
                                         // Either(Option(,--doctest,0,False), Option(,--testsuite,1,))
-                                        var f = new EitherMatcher(2, e.Left, e.Collected);
-                                        while (f.Next())
+                                        var e = new EitherMatcher(2, d.Left, d.Collected);
+                                        while (e.Next())
                                         {
-                                            switch (f.Index)
+                                            switch (e.Index)
                                             {
                                                 case 0:
                                                 {
                                                     // Option(,--doctest,0,False)
-                                                    f.Match(PatternMatcher.MatchOption, "--doctest", ValueKind.Boolean);
+                                                    e.Match(PatternMatcher.MatchOption, "--doctest", ValueKind.Boolean);
                                                 }
                                                 break;
                                                 case 1:
                                                 {
                                                     // Option(,--testsuite,1,)
-                                                    f.Match(PatternMatcher.MatchOption, "--testsuite", ValueKind.None);
+                                                    e.Match(PatternMatcher.MatchOption, "--testsuite", ValueKind.None);
                                                 }
                                                 break;
                                             }
-                                            if (!f.LastMatched)
+                                            if (!e.LastMatched)
                                             {
                                                 break;
                                             }
                                         }
-                                        e.Fold(f.Result);
-                                        if (!e.LastMatched)
+                                        d.Fold(e.Result);
+                                        if (!d.LastMatched)
                                         {
                                             break;
                                         }
                                     }
-                                    d.Fold(e.Result);
-                                    if (!d.LastMatched)
+                                    c.Fold(d.Result);
+                                    if (!c.LastMatched)
                                     {
                                         break;
                                     }
                                 }
-                                c.Fold(d.Result);
+                                b.Fold(c.Result);
                             }
                             break;
                             case 2:
                             {
                                 // Required(Option(,--version,0,False))
-                                var d = new RequiredMatcher(1, c.Left, c.Collected);
-                                while (d.Next())
+                                var c = new RequiredMatcher(1, b.Left, b.Collected);
+                                while (c.Next())
                                 {
                                     // Option(,--version,0,False)
-                                    d.Match(PatternMatcher.MatchOption, "--version", ValueKind.Boolean);
-                                    if (!d.LastMatched)
+                                    c.Match(PatternMatcher.MatchOption, "--version", ValueKind.Boolean);
+                                    if (!c.LastMatched)
                                     {
                                         break;
                                     }
                                 }
-                                c.Fold(d.Result);
+                                b.Fold(c.Result);
                             }
                             break;
                         }
-                        if (!c.LastMatched)
+                        if (!b.LastMatched)
                         {
                             break;
                         }
                     }
-                    b.Fold(c.Result);
-                    if (!b.LastMatched)
+                    a.Fold(b.Result);
+                    if (!a.LastMatched)
                     {
                         break;
                     }
                 }
-                a.Fold(b.Result);
+                required.Fold(a.Result);
             }
 
-            collected = GetSuccessfulCollection(a, Usage);
+            collected = GetSuccessfulCollection(required, Usage);
             var result = new ProgramArguments();
 
             foreach (var p in collected)

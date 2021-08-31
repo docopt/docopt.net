@@ -41,103 +41,103 @@ Options:
             };
             var left = ParseArgv(HelpText, args, options, optionsFirst, help, version);
             var collected = new Leaves();
-            var a = new RequiredMatcher(1, left, collected);
+            var required = new RequiredMatcher(1, left, collected);
             {
                 // Required(Required(Optional(OptionsShortcut(Option(-h,--help,0,False), Option(,--version,0,False), Option(-n,--number,1,), Option(-t,--timeout,1,), Option(,--apply,0,False), Option(-q,,0,False))), Argument(<port>, )))
-                var b = new RequiredMatcher(1, a.Left, a.Collected);
-                while (b.Next())
+                var a = new RequiredMatcher(1, required.Left, required.Collected);
+                while (a.Next())
                 {
                     // Required(Optional(OptionsShortcut(Option(-h,--help,0,False), Option(,--version,0,False), Option(-n,--number,1,), Option(-t,--timeout,1,), Option(,--apply,0,False), Option(-q,,0,False))), Argument(<port>, ))
-                    var c = new RequiredMatcher(2, b.Left, b.Collected);
-                    while (c.Next())
+                    var b = new RequiredMatcher(2, a.Left, a.Collected);
+                    while (b.Next())
                     {
-                        switch (c.Index)
+                        switch (b.Index)
                         {
                             case 0:
                             {
                                 // Optional(OptionsShortcut(Option(-h,--help,0,False), Option(,--version,0,False), Option(-n,--number,1,), Option(-t,--timeout,1,), Option(,--apply,0,False), Option(-q,,0,False)))
-                                var d = new OptionalMatcher(1, c.Left, c.Collected);
-                                while (d.Next())
+                                var c = new OptionalMatcher(1, b.Left, b.Collected);
+                                while (c.Next())
                                 {
                                     // OptionsShortcut(Option(-h,--help,0,False), Option(,--version,0,False), Option(-n,--number,1,), Option(-t,--timeout,1,), Option(,--apply,0,False), Option(-q,,0,False))
-                                    var e = new OptionalMatcher(6, d.Left, d.Collected);
-                                    while (e.Next())
+                                    var d = new OptionalMatcher(6, c.Left, c.Collected);
+                                    while (d.Next())
                                     {
-                                        switch (e.Index)
+                                        switch (d.Index)
                                         {
                                             case 0:
                                             {
                                                 // Option(-h,--help,0,False)
-                                                e.Match(PatternMatcher.MatchOption, "--help", ValueKind.Boolean);
+                                                d.Match(PatternMatcher.MatchOption, "--help", ValueKind.Boolean);
                                             }
                                             break;
                                             case 1:
                                             {
                                                 // Option(,--version,0,False)
-                                                e.Match(PatternMatcher.MatchOption, "--version", ValueKind.Boolean);
+                                                d.Match(PatternMatcher.MatchOption, "--version", ValueKind.Boolean);
                                             }
                                             break;
                                             case 2:
                                             {
                                                 // Option(-n,--number,1,)
-                                                e.Match(PatternMatcher.MatchOption, "--number", ValueKind.None);
+                                                d.Match(PatternMatcher.MatchOption, "--number", ValueKind.None);
                                             }
                                             break;
                                             case 3:
                                             {
                                                 // Option(-t,--timeout,1,)
-                                                e.Match(PatternMatcher.MatchOption, "--timeout", ValueKind.None);
+                                                d.Match(PatternMatcher.MatchOption, "--timeout", ValueKind.None);
                                             }
                                             break;
                                             case 4:
                                             {
                                                 // Option(,--apply,0,False)
-                                                e.Match(PatternMatcher.MatchOption, "--apply", ValueKind.Boolean);
+                                                d.Match(PatternMatcher.MatchOption, "--apply", ValueKind.Boolean);
                                             }
                                             break;
                                             case 5:
                                             {
                                                 // Option(-q,,0,False)
-                                                e.Match(PatternMatcher.MatchOption, "-q", ValueKind.Boolean);
+                                                d.Match(PatternMatcher.MatchOption, "-q", ValueKind.Boolean);
                                             }
                                             break;
                                         }
-                                        if (!e.LastMatched)
+                                        if (!d.LastMatched)
                                         {
                                             break;
                                         }
                                     }
-                                    d.Fold(e.Result);
-                                    if (!d.LastMatched)
+                                    c.Fold(d.Result);
+                                    if (!c.LastMatched)
                                     {
                                         break;
                                     }
                                 }
-                                c.Fold(d.Result);
+                                b.Fold(c.Result);
                             }
                             break;
                             case 1:
                             {
                                 // Argument(<port>, )
-                                c.Match(PatternMatcher.MatchArgument, "<port>", ValueKind.None);
+                                b.Match(PatternMatcher.MatchArgument, "<port>", ValueKind.None);
                             }
                             break;
                         }
-                        if (!c.LastMatched)
+                        if (!b.LastMatched)
                         {
                             break;
                         }
                     }
-                    b.Fold(c.Result);
-                    if (!b.LastMatched)
+                    a.Fold(b.Result);
+                    if (!a.LastMatched)
                     {
                         break;
                     }
                 }
-                a.Fold(b.Result);
+                required.Fold(a.Result);
             }
 
-            collected = GetSuccessfulCollection(a, Usage);
+            collected = GetSuccessfulCollection(required, Usage);
             var result = new ProgramArguments();
 
             foreach (var p in collected)

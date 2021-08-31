@@ -168,7 +168,7 @@ namespace DocoptNet.CodeGeneration
                             Required => nameof(RequiredMatcher),
                             _ => throw new ArgumentOutOfRangeException(nameof(pattern))
                         };
-                        var mv = Vars[++level];
+                        var mv = Vars[level++];
                         code.Var(mv)[code.New[matcher]['('].Literal(children.Count)[", "][pmv][".Left, "][pmv][".Collected)"]]
                             .While[code[mv][".Next()"]][
                                        (pattern.Children.Count switch
@@ -221,12 +221,12 @@ namespace DocoptNet.CodeGeneration
                                                   [Value(code, option.Value)]["),"].NewLine).SkipNextNewLine]]
                 .Var("left")["ParseArgv(HelpText, args, options, optionsFirst, help, version)"]
                 .Var("collected")[code.New["Leaves()"]]
-                .Var("a")[code.New["RequiredMatcher(1, left, collected)"]]
+                .Var("required")[code.New["RequiredMatcher(1, left, collected)"]]
 
-                .Block[GeneratePatternMatchingCode(code, pattern, "a")]
+                .Block[GeneratePatternMatchingCode(code, pattern, "required")]
 
                 .NewLine
-                .Assign("collected")["GetSuccessfulCollection(a, Usage)"]
+                .Assign("collected")["GetSuccessfulCollection(required, Usage)"]
                 .Var("result")[code.New[name]["Arguments()"]].Blank();
 
             var leaves = Docopt.GetFlatPatterns(helpText)

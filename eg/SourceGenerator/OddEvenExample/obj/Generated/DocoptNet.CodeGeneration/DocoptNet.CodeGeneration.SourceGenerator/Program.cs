@@ -30,89 +30,89 @@ Options:
             };
             var left = ParseArgv(HelpText, args, options, optionsFirst, help, version);
             var collected = new Leaves();
-            var a = new RequiredMatcher(1, left, collected);
+            var required = new RequiredMatcher(1, left, collected);
             {
                 // Required(Required(Optional(Option(-h,--help,0,False)), OneOrMore(Required(Argument(ODD, []), Argument(EVEN, [])))))
-                var b = new RequiredMatcher(1, a.Left, a.Collected);
-                while (b.Next())
+                var a = new RequiredMatcher(1, required.Left, required.Collected);
+                while (a.Next())
                 {
                     // Required(Optional(Option(-h,--help,0,False)), OneOrMore(Required(Argument(ODD, []), Argument(EVEN, []))))
-                    var c = new RequiredMatcher(2, b.Left, b.Collected);
-                    while (c.Next())
+                    var b = new RequiredMatcher(2, a.Left, a.Collected);
+                    while (b.Next())
                     {
-                        switch (c.Index)
+                        switch (b.Index)
                         {
                             case 0:
                             {
                                 // Optional(Option(-h,--help,0,False))
-                                var d = new OptionalMatcher(1, c.Left, c.Collected);
-                                while (d.Next())
+                                var c = new OptionalMatcher(1, b.Left, b.Collected);
+                                while (c.Next())
                                 {
                                     // Option(-h,--help,0,False)
-                                    d.Match(PatternMatcher.MatchOption, "--help", ValueKind.Boolean);
-                                    if (!d.LastMatched)
+                                    c.Match(PatternMatcher.MatchOption, "--help", ValueKind.Boolean);
+                                    if (!c.LastMatched)
                                     {
                                         break;
                                     }
                                 }
-                                c.Fold(d.Result);
+                                b.Fold(c.Result);
                             }
                             break;
                             case 1:
                             {
                                 // OneOrMore(Required(Argument(ODD, []), Argument(EVEN, [])))
-                                var d = new OneOrMoreMatcher(1, c.Left, c.Collected);
-                                while (d.Next())
+                                var c = new OneOrMoreMatcher(1, b.Left, b.Collected);
+                                while (c.Next())
                                 {
                                     // Required(Argument(ODD, []), Argument(EVEN, []))
-                                    var e = new RequiredMatcher(2, d.Left, d.Collected);
-                                    while (e.Next())
+                                    var d = new RequiredMatcher(2, c.Left, c.Collected);
+                                    while (d.Next())
                                     {
-                                        switch (e.Index)
+                                        switch (d.Index)
                                         {
                                             case 0:
                                             {
                                                 // Argument(ODD, [])
-                                                e.Match(PatternMatcher.MatchArgument, "ODD", ValueKind.StringList);
+                                                d.Match(PatternMatcher.MatchArgument, "ODD", ValueKind.StringList);
                                             }
                                             break;
                                             case 1:
                                             {
                                                 // Argument(EVEN, [])
-                                                e.Match(PatternMatcher.MatchArgument, "EVEN", ValueKind.StringList);
+                                                d.Match(PatternMatcher.MatchArgument, "EVEN", ValueKind.StringList);
                                             }
                                             break;
                                         }
-                                        if (!e.LastMatched)
+                                        if (!d.LastMatched)
                                         {
                                             break;
                                         }
                                     }
-                                    d.Fold(e.Result);
-                                    if (!d.LastMatched)
+                                    c.Fold(d.Result);
+                                    if (!c.LastMatched)
                                     {
                                         break;
                                     }
                                 }
-                                c.Fold(d.Result);
+                                b.Fold(c.Result);
                             }
                             break;
                         }
-                        if (!c.LastMatched)
+                        if (!b.LastMatched)
                         {
                             break;
                         }
                     }
-                    b.Fold(c.Result);
-                    if (!b.LastMatched)
+                    a.Fold(b.Result);
+                    if (!a.LastMatched)
                     {
                         break;
                     }
                 }
-                a.Fold(b.Result);
+                required.Fold(a.Result);
             }
 
-            collected = GetSuccessfulCollection(a, Usage);
+            collected = GetSuccessfulCollection(required, Usage);
             var result = new ProgramArguments();
 
             foreach (var p in collected)

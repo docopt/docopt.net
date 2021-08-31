@@ -49,338 +49,338 @@ namespace NavalFate
             };
             var left = ParseArgv(HelpText, args, options, optionsFirst, help, version);
             var collected = new Leaves();
-            var a = new RequiredMatcher(1, left, collected);
+            var required = new RequiredMatcher(1, left, collected);
             {
                 // Required(Either(Required(Command(ship, False), Command(new, False), OneOrMore(Argument(<name>, []))), Required(Command(ship, False), Argument(<name>, []), Command(move, False), Argument(<x>, ), Argument(<y>, ), Optional(Option(,--speed,1,10))), Required(Command(ship, False), Command(shoot, False), Argument(<x>, ), Argument(<y>, )), Required(Command(mine, False), Required(Either(Command(set, False), Command(remove, False))), Argument(<x>, ), Argument(<y>, ), Optional(Either(Option(,--moored,0,False), Option(,--drifting,0,False)))), Required(Required(Option(-h,--help,0,False))), Required(Option(,--version,0,False))))
-                var b = new RequiredMatcher(1, a.Left, a.Collected);
-                while (b.Next())
+                var a = new RequiredMatcher(1, required.Left, required.Collected);
+                while (a.Next())
                 {
                     // Either(Required(Command(ship, False), Command(new, False), OneOrMore(Argument(<name>, []))), Required(Command(ship, False), Argument(<name>, []), Command(move, False), Argument(<x>, ), Argument(<y>, ), Optional(Option(,--speed,1,10))), Required(Command(ship, False), Command(shoot, False), Argument(<x>, ), Argument(<y>, )), Required(Command(mine, False), Required(Either(Command(set, False), Command(remove, False))), Argument(<x>, ), Argument(<y>, ), Optional(Either(Option(,--moored,0,False), Option(,--drifting,0,False)))), Required(Required(Option(-h,--help,0,False))), Required(Option(,--version,0,False)))
-                    var c = new EitherMatcher(6, b.Left, b.Collected);
-                    while (c.Next())
+                    var b = new EitherMatcher(6, a.Left, a.Collected);
+                    while (b.Next())
                     {
-                        switch (c.Index)
+                        switch (b.Index)
                         {
                             case 0:
                             {
                                 // Required(Command(ship, False), Command(new, False), OneOrMore(Argument(<name>, [])))
-                                var d = new RequiredMatcher(3, c.Left, c.Collected);
-                                while (d.Next())
+                                var c = new RequiredMatcher(3, b.Left, b.Collected);
+                                while (c.Next())
                                 {
-                                    switch (d.Index)
+                                    switch (c.Index)
                                     {
                                         case 0:
                                         {
                                             // Command(ship, False)
-                                            d.Match(PatternMatcher.MatchCommand, "ship", ValueKind.Boolean);
+                                            c.Match(PatternMatcher.MatchCommand, "ship", ValueKind.Boolean);
                                         }
                                         break;
                                         case 1:
                                         {
                                             // Command(new, False)
-                                            d.Match(PatternMatcher.MatchCommand, "new", ValueKind.Boolean);
+                                            c.Match(PatternMatcher.MatchCommand, "new", ValueKind.Boolean);
                                         }
                                         break;
                                         case 2:
                                         {
                                             // OneOrMore(Argument(<name>, []))
-                                            var e = new OneOrMoreMatcher(1, d.Left, d.Collected);
-                                            while (e.Next())
+                                            var d = new OneOrMoreMatcher(1, c.Left, c.Collected);
+                                            while (d.Next())
                                             {
                                                 // Argument(<name>, [])
-                                                e.Match(PatternMatcher.MatchArgument, "<name>", ValueKind.StringList);
-                                                if (!e.LastMatched)
+                                                d.Match(PatternMatcher.MatchArgument, "<name>", ValueKind.StringList);
+                                                if (!d.LastMatched)
                                                 {
                                                     break;
                                                 }
                                             }
-                                            d.Fold(e.Result);
+                                            c.Fold(d.Result);
                                         }
                                         break;
                                     }
-                                    if (!d.LastMatched)
+                                    if (!c.LastMatched)
                                     {
                                         break;
                                     }
                                 }
-                                c.Fold(d.Result);
+                                b.Fold(c.Result);
                             }
                             break;
                             case 1:
                             {
                                 // Required(Command(ship, False), Argument(<name>, []), Command(move, False), Argument(<x>, ), Argument(<y>, ), Optional(Option(,--speed,1,10)))
-                                var d = new RequiredMatcher(6, c.Left, c.Collected);
-                                while (d.Next())
+                                var c = new RequiredMatcher(6, b.Left, b.Collected);
+                                while (c.Next())
                                 {
-                                    switch (d.Index)
+                                    switch (c.Index)
                                     {
                                         case 0:
                                         {
                                             // Command(ship, False)
-                                            d.Match(PatternMatcher.MatchCommand, "ship", ValueKind.Boolean);
+                                            c.Match(PatternMatcher.MatchCommand, "ship", ValueKind.Boolean);
                                         }
                                         break;
                                         case 1:
                                         {
                                             // Argument(<name>, [])
-                                            d.Match(PatternMatcher.MatchArgument, "<name>", ValueKind.StringList);
+                                            c.Match(PatternMatcher.MatchArgument, "<name>", ValueKind.StringList);
                                         }
                                         break;
                                         case 2:
                                         {
                                             // Command(move, False)
-                                            d.Match(PatternMatcher.MatchCommand, "move", ValueKind.Boolean);
+                                            c.Match(PatternMatcher.MatchCommand, "move", ValueKind.Boolean);
                                         }
                                         break;
                                         case 3:
                                         {
                                             // Argument(<x>, )
-                                            d.Match(PatternMatcher.MatchArgument, "<x>", ValueKind.None);
+                                            c.Match(PatternMatcher.MatchArgument, "<x>", ValueKind.None);
                                         }
                                         break;
                                         case 4:
                                         {
                                             // Argument(<y>, )
-                                            d.Match(PatternMatcher.MatchArgument, "<y>", ValueKind.None);
+                                            c.Match(PatternMatcher.MatchArgument, "<y>", ValueKind.None);
                                         }
                                         break;
                                         case 5:
                                         {
                                             // Optional(Option(,--speed,1,10))
-                                            var e = new OptionalMatcher(1, d.Left, d.Collected);
-                                            while (e.Next())
+                                            var d = new OptionalMatcher(1, c.Left, c.Collected);
+                                            while (d.Next())
                                             {
                                                 // Option(,--speed,1,10)
-                                                e.Match(PatternMatcher.MatchOption, "--speed", ValueKind.String);
-                                                if (!e.LastMatched)
+                                                d.Match(PatternMatcher.MatchOption, "--speed", ValueKind.String);
+                                                if (!d.LastMatched)
                                                 {
                                                     break;
                                                 }
                                             }
-                                            d.Fold(e.Result);
+                                            c.Fold(d.Result);
                                         }
                                         break;
                                     }
-                                    if (!d.LastMatched)
+                                    if (!c.LastMatched)
                                     {
                                         break;
                                     }
                                 }
-                                c.Fold(d.Result);
+                                b.Fold(c.Result);
                             }
                             break;
                             case 2:
                             {
                                 // Required(Command(ship, False), Command(shoot, False), Argument(<x>, ), Argument(<y>, ))
-                                var d = new RequiredMatcher(4, c.Left, c.Collected);
-                                while (d.Next())
+                                var c = new RequiredMatcher(4, b.Left, b.Collected);
+                                while (c.Next())
                                 {
-                                    switch (d.Index)
+                                    switch (c.Index)
                                     {
                                         case 0:
                                         {
                                             // Command(ship, False)
-                                            d.Match(PatternMatcher.MatchCommand, "ship", ValueKind.Boolean);
+                                            c.Match(PatternMatcher.MatchCommand, "ship", ValueKind.Boolean);
                                         }
                                         break;
                                         case 1:
                                         {
                                             // Command(shoot, False)
-                                            d.Match(PatternMatcher.MatchCommand, "shoot", ValueKind.Boolean);
+                                            c.Match(PatternMatcher.MatchCommand, "shoot", ValueKind.Boolean);
                                         }
                                         break;
                                         case 2:
                                         {
                                             // Argument(<x>, )
-                                            d.Match(PatternMatcher.MatchArgument, "<x>", ValueKind.None);
+                                            c.Match(PatternMatcher.MatchArgument, "<x>", ValueKind.None);
                                         }
                                         break;
                                         case 3:
                                         {
                                             // Argument(<y>, )
-                                            d.Match(PatternMatcher.MatchArgument, "<y>", ValueKind.None);
+                                            c.Match(PatternMatcher.MatchArgument, "<y>", ValueKind.None);
                                         }
                                         break;
                                     }
-                                    if (!d.LastMatched)
+                                    if (!c.LastMatched)
                                     {
                                         break;
                                     }
                                 }
-                                c.Fold(d.Result);
+                                b.Fold(c.Result);
                             }
                             break;
                             case 3:
                             {
                                 // Required(Command(mine, False), Required(Either(Command(set, False), Command(remove, False))), Argument(<x>, ), Argument(<y>, ), Optional(Either(Option(,--moored,0,False), Option(,--drifting,0,False))))
-                                var d = new RequiredMatcher(5, c.Left, c.Collected);
-                                while (d.Next())
+                                var c = new RequiredMatcher(5, b.Left, b.Collected);
+                                while (c.Next())
                                 {
-                                    switch (d.Index)
+                                    switch (c.Index)
                                     {
                                         case 0:
                                         {
                                             // Command(mine, False)
-                                            d.Match(PatternMatcher.MatchCommand, "mine", ValueKind.Boolean);
+                                            c.Match(PatternMatcher.MatchCommand, "mine", ValueKind.Boolean);
                                         }
                                         break;
                                         case 1:
                                         {
                                             // Required(Either(Command(set, False), Command(remove, False)))
-                                            var e = new RequiredMatcher(1, d.Left, d.Collected);
-                                            while (e.Next())
+                                            var d = new RequiredMatcher(1, c.Left, c.Collected);
+                                            while (d.Next())
                                             {
                                                 // Either(Command(set, False), Command(remove, False))
-                                                var f = new EitherMatcher(2, e.Left, e.Collected);
-                                                while (f.Next())
+                                                var e = new EitherMatcher(2, d.Left, d.Collected);
+                                                while (e.Next())
                                                 {
-                                                    switch (f.Index)
+                                                    switch (e.Index)
                                                     {
                                                         case 0:
                                                         {
                                                             // Command(set, False)
-                                                            f.Match(PatternMatcher.MatchCommand, "set", ValueKind.Boolean);
+                                                            e.Match(PatternMatcher.MatchCommand, "set", ValueKind.Boolean);
                                                         }
                                                         break;
                                                         case 1:
                                                         {
                                                             // Command(remove, False)
-                                                            f.Match(PatternMatcher.MatchCommand, "remove", ValueKind.Boolean);
+                                                            e.Match(PatternMatcher.MatchCommand, "remove", ValueKind.Boolean);
                                                         }
                                                         break;
                                                     }
-                                                    if (!f.LastMatched)
+                                                    if (!e.LastMatched)
                                                     {
                                                         break;
                                                     }
                                                 }
-                                                e.Fold(f.Result);
-                                                if (!e.LastMatched)
+                                                d.Fold(e.Result);
+                                                if (!d.LastMatched)
                                                 {
                                                     break;
                                                 }
                                             }
-                                            d.Fold(e.Result);
+                                            c.Fold(d.Result);
                                         }
                                         break;
                                         case 2:
                                         {
                                             // Argument(<x>, )
-                                            d.Match(PatternMatcher.MatchArgument, "<x>", ValueKind.None);
+                                            c.Match(PatternMatcher.MatchArgument, "<x>", ValueKind.None);
                                         }
                                         break;
                                         case 3:
                                         {
                                             // Argument(<y>, )
-                                            d.Match(PatternMatcher.MatchArgument, "<y>", ValueKind.None);
+                                            c.Match(PatternMatcher.MatchArgument, "<y>", ValueKind.None);
                                         }
                                         break;
                                         case 4:
                                         {
                                             // Optional(Either(Option(,--moored,0,False), Option(,--drifting,0,False)))
-                                            var e = new OptionalMatcher(1, d.Left, d.Collected);
-                                            while (e.Next())
+                                            var d = new OptionalMatcher(1, c.Left, c.Collected);
+                                            while (d.Next())
                                             {
                                                 // Either(Option(,--moored,0,False), Option(,--drifting,0,False))
-                                                var f = new EitherMatcher(2, e.Left, e.Collected);
-                                                while (f.Next())
+                                                var e = new EitherMatcher(2, d.Left, d.Collected);
+                                                while (e.Next())
                                                 {
-                                                    switch (f.Index)
+                                                    switch (e.Index)
                                                     {
                                                         case 0:
                                                         {
                                                             // Option(,--moored,0,False)
-                                                            f.Match(PatternMatcher.MatchOption, "--moored", ValueKind.Boolean);
+                                                            e.Match(PatternMatcher.MatchOption, "--moored", ValueKind.Boolean);
                                                         }
                                                         break;
                                                         case 1:
                                                         {
                                                             // Option(,--drifting,0,False)
-                                                            f.Match(PatternMatcher.MatchOption, "--drifting", ValueKind.Boolean);
+                                                            e.Match(PatternMatcher.MatchOption, "--drifting", ValueKind.Boolean);
                                                         }
                                                         break;
                                                     }
-                                                    if (!f.LastMatched)
+                                                    if (!e.LastMatched)
                                                     {
                                                         break;
                                                     }
                                                 }
-                                                e.Fold(f.Result);
-                                                if (!e.LastMatched)
+                                                d.Fold(e.Result);
+                                                if (!d.LastMatched)
                                                 {
                                                     break;
                                                 }
                                             }
-                                            d.Fold(e.Result);
+                                            c.Fold(d.Result);
                                         }
                                         break;
                                     }
-                                    if (!d.LastMatched)
+                                    if (!c.LastMatched)
                                     {
                                         break;
                                     }
                                 }
-                                c.Fold(d.Result);
+                                b.Fold(c.Result);
                             }
                             break;
                             case 4:
                             {
                                 // Required(Required(Option(-h,--help,0,False)))
-                                var d = new RequiredMatcher(1, c.Left, c.Collected);
-                                while (d.Next())
+                                var c = new RequiredMatcher(1, b.Left, b.Collected);
+                                while (c.Next())
                                 {
                                     // Required(Option(-h,--help,0,False))
-                                    var e = new RequiredMatcher(1, d.Left, d.Collected);
-                                    while (e.Next())
+                                    var d = new RequiredMatcher(1, c.Left, c.Collected);
+                                    while (d.Next())
                                     {
                                         // Option(-h,--help,0,False)
-                                        e.Match(PatternMatcher.MatchOption, "--help", ValueKind.Boolean);
-                                        if (!e.LastMatched)
+                                        d.Match(PatternMatcher.MatchOption, "--help", ValueKind.Boolean);
+                                        if (!d.LastMatched)
                                         {
                                             break;
                                         }
                                     }
-                                    d.Fold(e.Result);
-                                    if (!d.LastMatched)
+                                    c.Fold(d.Result);
+                                    if (!c.LastMatched)
                                     {
                                         break;
                                     }
                                 }
-                                c.Fold(d.Result);
+                                b.Fold(c.Result);
                             }
                             break;
                             case 5:
                             {
                                 // Required(Option(,--version,0,False))
-                                var d = new RequiredMatcher(1, c.Left, c.Collected);
-                                while (d.Next())
+                                var c = new RequiredMatcher(1, b.Left, b.Collected);
+                                while (c.Next())
                                 {
                                     // Option(,--version,0,False)
-                                    d.Match(PatternMatcher.MatchOption, "--version", ValueKind.Boolean);
-                                    if (!d.LastMatched)
+                                    c.Match(PatternMatcher.MatchOption, "--version", ValueKind.Boolean);
+                                    if (!c.LastMatched)
                                     {
                                         break;
                                     }
                                 }
-                                c.Fold(d.Result);
+                                b.Fold(c.Result);
                             }
                             break;
                         }
-                        if (!c.LastMatched)
+                        if (!b.LastMatched)
                         {
                             break;
                         }
                     }
-                    b.Fold(c.Result);
-                    if (!b.LastMatched)
+                    a.Fold(b.Result);
+                    if (!a.LastMatched)
                     {
                         break;
                     }
                 }
-                a.Fold(b.Result);
+                required.Fold(a.Result);
             }
 
-            collected = GetSuccessfulCollection(a, Usage);
+            collected = GetSuccessfulCollection(required, Usage);
             var result = new ProgramArguments();
 
             foreach (var p in collected)
