@@ -129,6 +129,13 @@ namespace DocoptNet.CodeGeneration
 
         static void Generate(CSharpSourceBuilder code, string? ns, string name, string helpText)
         {
+            var (pattern, options, usage) = Docopt.ParsePattern(helpText);
+
+            var leaves = Docopt.GetFlatPatterns(helpText)
+                               .GroupBy(p => p.Name)
+                               .Select(g => (LeafPattern)g.First())
+                               .ToList();
+
             var isNamespaced = !string.IsNullOrEmpty(ns);
 
             code["#nullable enable annotations"].NewLine
@@ -146,11 +153,9 @@ namespace DocoptNet.CodeGeneration
 
                 .Partial.Class[name]["Arguments : IEnumerable<KeyValuePair<string, object?>>"].NewLine
                 .BlockStart
-                .Public.Const("HelpText", helpText);
+                .Public.Const("HelpText", helpText)
 
-            var (pattern, options, usage) = Docopt.ParsePattern(helpText);
-
-            code.NewLine
+                .NewLine
                 .Public.Const("Usage", usage)
 
                 .NewLine
@@ -168,33 +173,28 @@ namespace DocoptNet.CodeGeneration
                 .Var("required")[code.New["RequiredMatcher(1, left, "].New["Leaves()"][')']]
                 ["Match(ref required)"].EndStatement
                 .Var("collected")["GetSuccessfulCollection(required, Usage)"]
-                .Var("result")[code.New[name]["Arguments()"]].Blank();
+                .Var("result")[code.New[name]["Arguments()"]]
+                [leaves.Any()
+                     ? code.NewLine
+                           .ForEach["var p in collected"][
+                                code.Var("value")["p.Value is { IsStringList: true } ? ((StringList)p.Value).Reverse() : p.Value"]
+                                    .Switch["p.Name"]
+                                    .Cases(leaves, default(Unit),
+                                           static (_, p, _) => CSharpSourceBuilder.SwitchCaseChoice.Choose(p.Name),
+                                           static (code, _, p) =>
+                                               code[' ']
+                                                  .Assign(code["result."][InferPropertyName(p)])[
+                                                       code['(']
+                                                           [p switch { Option   { Value: { IsString: true } } => "string",
+                                                                       Argument { Value: { IsNone: true } } or Option { ArgCount: not 0, Value: { Kind: not ValueKind.StringList } } => "string?",
+                                                                       { Value: { Kind: var kind } } => MapType(kind) }]
+                                                           [")value"].SkipNextNewLine][' '])]
+                     : code.Blank()
+                ]
 
-            var leaves = Docopt.GetFlatPatterns(helpText)
-                               .GroupBy(p => p.Name)
-                               .Select(g => (LeafPattern)g.First())
-                               .ToList();
-
-            if (leaves.Any())
-            {
-                code.NewLine
-                    .ForEach["var p in collected"][
-                         code.Var("value")["p.Value is { IsStringList: true } ? ((StringList)p.Value).Reverse() : p.Value"]
-                             .Switch["p.Name"]
-                             .Cases(leaves, default(Unit),
-                                    static (_, p, _) => CSharpSourceBuilder.SwitchCaseChoice.Choose(p.Name),
-                                    static (code, _, p) =>
-                                        code[' ']
-                                            .Assign(code["result."][InferPropertyName(p)])[
-                                                code['(']
-                                                    [p switch { Option   { Value: { IsString: true } } => "string",
-                                                                Argument { Value: { IsNone: true } } or Option { ArgCount: not 0, Value: { Kind: not ValueKind.StringList } } => "string?",
-                                                                { Value: { Kind: var kind } } => MapType(kind) }]
-                                                    [")value"].SkipNextNewLine][' '])].Blank();
-            }
-
-            code.NewLine
+                .NewLine
                 .Return["result"]
+
                 .NewLine
                 ["static void Match(ref RequiredMatcher required)"].NewLine.Block[
                      GeneratePatternMatchingCode(code, pattern, "required")]
