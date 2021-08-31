@@ -35,176 +35,173 @@ namespace DocoptNet
 
     struct RequiredMatcher : IBranchPatternMatcher
     {
-        readonly int count;
-        readonly Leaves left;
-        readonly Leaves collected;
-        int i;
-        Leaves l;
-        Leaves c;
-        MatchResult? result;
+        readonly int _count;
+        readonly Leaves _initLeft, _initCollected;
+        int _i;
+        MatchResult? _result;
 
-        public RequiredMatcher(int count, Leaves left, Leaves collected) : this() =>
-            (this.count, this.left, this.collected, l, c) = (count, left, collected, left, collected);
+        public RequiredMatcher(int count, Leaves left, Leaves collected) : this()
+        {
+            _count = count;
+            Left = _initLeft = left;
+            Collected = _initCollected = collected;
+        }
 
-        public int Index => i - 1;
+        public int Index => _i - 1;
 
         public bool Next()
         {
-            if (i == count)
+            if (_i == _count)
                 return false;
-            i++;
+            _i++;
             return true;
         }
 
-        public Leaves Left => l;
-        public Leaves Collected => c;
+        public Leaves Left { get; private set; }
+        public Leaves Collected { get; private set; }
 
         public bool Match(LeafPatternMatcher matcher, string name, ValueKind kind) =>
-            Fold(matcher.Match(l, c, name, kind));
+            Fold(matcher.Match(Left, Collected, name, kind));
 
         public bool Match(Pattern pattern) =>
-            Fold(pattern.Match(l, c));
+            Fold(pattern.Match(Left, Collected));
 
         public bool Fold(MatchResult match)
         {
             if (!match)
             {
-                result = new MatchResult(false, left, collected);
+                _result = new MatchResult(false, _initLeft, _initCollected);
                 return LastMatched = false;
             }
-            (_, l, c) = match;
+            (_, Left, Collected) = match;
             return LastMatched = true;
         }
 
         public bool LastMatched { get; private set; }
 
-        public MatchResult Result => result ?? new MatchResult(true, l, c);
+        public MatchResult Result => _result ?? new MatchResult(true, Left, Collected);
     }
 
     struct EitherMatcher : IBranchPatternMatcher
     {
-        readonly int count;
-        readonly Leaves left;
-        readonly Leaves collected;
-        int i;
-        MatchResult match;
+        readonly int _count;
+        int _i;
+        MatchResult _match;
 
         public EitherMatcher(int count, Leaves left, Leaves collected) : this()
         {
-            this.count = count;
-            (this.left, this.collected) = (left, collected);
-            match = new MatchResult(false, left, collected);
+            _count = count;
+            (Left, Collected) = (left, collected);
+            _match = new MatchResult(false, left, collected);
         }
 
-        public int Index => i - 1;
+        public int Index => _i - 1;
 
         public bool Next()
         {
-            if (i == count)
+            if (_i == _count)
                 return false;
-            i++;
+            _i++;
             return true;
         }
 
-        public Leaves Left => left;
-        public Leaves Collected => collected;
+        public Leaves Left { get; }
+        public Leaves Collected { get; }
 
         public bool Match(LeafPatternMatcher matcher, string name, ValueKind kind) =>
-            Fold(matcher.Match(left, collected, name, kind));
+            Fold(matcher.Match(Left, Collected, name, kind));
 
         public bool Match(Pattern pattern) =>
-            Fold(pattern.Match(left, collected));
+            Fold(pattern.Match(Left, Collected));
 
         public bool Fold(MatchResult match)
         {
-            if (match is (true, var l, var c) && (!this.match || l.Count < this.match.Left.Count))
-                this.match = new MatchResult(true, l, c);
+            if (match is (true, var left, var collected) && (!_match || left.Count < _match.Left.Count))
+                _match = new MatchResult(true, left, collected);
             return true;
         }
 
         public bool LastMatched => true;
 
-        public MatchResult Result => match;
+        public MatchResult Result => _match;
     }
 
     struct OptionalMatcher : IBranchPatternMatcher
     {
-        readonly int count;
-        int i;
-        Leaves l, c;
+        readonly int _count;
+        int _i;
 
         public OptionalMatcher(int count, Leaves left, Leaves collected) : this() =>
-            (this.count, l, c) = (count, left, collected);
+            (_count, Left, Collected) = (count, left, collected);
 
-        public int Index => i - 1;
+        public int Index => _i - 1;
 
         public bool Next()
         {
-            if (i == count)
+            if (_i == _count)
                 return false;
-            i++;
+            _i++;
             return true;
         }
 
-        public Leaves Left => l;
-        public Leaves Collected => c;
+        public Leaves Left { get; private set; }
+        public Leaves Collected { get; private set; }
 
         public bool Match(LeafPatternMatcher matcher, string name, ValueKind kind) =>
-            Fold(matcher.Match(l, c, name, kind));
+            Fold(matcher.Match(Left, Collected, name, kind));
 
         public bool Match(Pattern pattern) =>
-            Fold(pattern.Match(l, c));
+            Fold(pattern.Match(Left, Collected));
 
         public bool Fold(MatchResult match)
         {
-            (_, l, c) = match;
+            (_, Left, Collected) = match;
             return true;
         }
 
         public bool LastMatched => true;
 
-        public MatchResult Result => new(true, l, c);
+        public MatchResult Result => new(true, Left, Collected);
     }
 
     struct OneOrMoreMatcher : IBranchPatternMatcher
     {
-        readonly Leaves left, collected;
-        Leaves l, c;
-        int times;
-        Leaves? l_;
+        readonly Leaves _initLeft, _initCollected;
+        int _times;
+        Leaves? _lastLeft;
 
         public OneOrMoreMatcher(int count, Leaves left, Leaves collected) : this()
         {
-            (this.left, this.collected) = (left, collected);
-            (l, c) = (left, collected);
+            Left = _initLeft = left;
+            Collected = _initCollected = collected;
         }
 
         public int Index => 0;
         public bool Next() => true;
 
-        public Leaves Left => l;
-        public Leaves Collected => c;
+        public Leaves Left { get; private set; }
+        public Leaves Collected { get; private set; }
 
         public bool Match(LeafPatternMatcher matcher, string name, ValueKind kind) =>
-            Fold(matcher.Match(l, c, name, kind));
+            Fold(matcher.Match(Left, Collected, name, kind));
 
         public bool Match(Pattern pattern) =>
-            Fold(pattern.Match(l, c));
+            Fold(pattern.Match(Left, Collected));
 
         public bool Fold(MatchResult match)
         {
             bool matched;
-            (matched, l, c) = match;
-            times += matched ? 1 : 0;
-            if (l_ != null && l_.Equals(l))
+            (matched, Left, Collected) = match;
+            _times += matched ? 1 : 0;
+            if (_lastLeft != null && _lastLeft.Equals(Left))
                 return LastMatched = false;
-            l_ = l;
+            _lastLeft = Left;
             return LastMatched = true;
         }
 
         public bool LastMatched { get; private set; }
 
-        public MatchResult Result => times >= 1 ? new MatchResult(true, l, c) : new MatchResult(false, left, collected);
+        public MatchResult Result => _times >= 1 ? new MatchResult(true, Left, Collected) : new MatchResult(false, _initLeft, _initCollected);
     }
 
     static class PatternMatcher
