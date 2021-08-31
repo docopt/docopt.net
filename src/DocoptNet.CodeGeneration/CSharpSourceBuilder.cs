@@ -25,7 +25,7 @@ namespace DocoptNet.CodeGeneration
         public int Level { get; private set; }
         public bool IsNewLine { get; private set; } = true;
 
-        public CSharpSourceBuilder Indent
+        CSharpSourceBuilder Indent
         {
             get
             {
@@ -34,7 +34,7 @@ namespace DocoptNet.CodeGeneration
             }
         }
 
-        public CSharpSourceBuilder Outdent
+        CSharpSourceBuilder Outdent
         {
             get
             {
@@ -58,7 +58,7 @@ namespace DocoptNet.CodeGeneration
         void Append(string value) => OnAppending().Append(value);
         void Append(int value) => OnAppending().Append(value);
 
-        public void AppendLine()
+        void AppendLine()
         {
             if (_skipNextNewLine)
             {
@@ -123,6 +123,8 @@ namespace DocoptNet.CodeGeneration
             return this;
         }
 
+        CSharpSourceBuilder Equal => this[" = "];
+
         public CSharpSourceBuilder Using(string ns) =>
             this["using "][ns].EndStatement;
 
@@ -151,8 +153,6 @@ namespace DocoptNet.CodeGeneration
         public IControlBlockFlow If      => this["if "].Control;
         public IControlBlockFlow While   => this["while "].Control;
         public IControlBlockFlow ForEach => this["foreach "].Control;
-
-        public CSharpSourceBuilder Equal   => this[" = "];
 
         public CSharpSourceBuilder BlockStart => this['{'].NewLine.Indent;
         public CSharpSourceBuilder BlockEnd   => Outdent['}'].NewLine;
