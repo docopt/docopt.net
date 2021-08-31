@@ -14,13 +14,12 @@ namespace DocoptNet.CodeGeneration
         CSharpSourceBuilder.ISwitchFlow,
         CSharpSourceBuilder.ISwitchCasesFlow
     {
-        readonly StringBuilder _sb;
         bool _skipNextNewLine;
 
         public CSharpSourceBuilder() : this(new()) { }
-        public CSharpSourceBuilder(StringBuilder sb) => _sb = sb;
+        public CSharpSourceBuilder(StringBuilder sb) => StringBuilder = sb;
 
-        public StringBuilder StringBuilder => _sb;
+        public StringBuilder StringBuilder { get; }
 
         public int Level { get; private set; }
         public bool IsNewLine { get; private set; } = true;
@@ -48,10 +47,9 @@ namespace DocoptNet.CodeGeneration
         StringBuilder OnAppending()
         {
             if (!IsNewLine)
-                return _sb;
+                return StringBuilder;
             IsNewLine = false;
-            _sb.Append(' ', Level * 4);
-            return _sb;
+            return StringBuilder.Append(' ', Level * 4);
         }
 
         void Append(char value) => OnAppending().Append(value);
@@ -66,11 +64,11 @@ namespace DocoptNet.CodeGeneration
                 return;
             }
 
-            _sb.AppendLine();
+            StringBuilder.AppendLine();
             IsNewLine = true;
         }
 
-        public override string ToString() => _sb.ToString();
+        public override string ToString() => StringBuilder.ToString();
 
         public CSharpSourceBuilder SkipNextNewLine { get { _skipNextNewLine = true; return this; } }
 
