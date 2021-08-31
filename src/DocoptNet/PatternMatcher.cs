@@ -9,6 +9,17 @@ namespace DocoptNet
 
     delegate (int Index, LeafPattern Match) LeafPatternMatcher(Leaves left, string name);
 
+    static class LeafMatcherExtensions
+    {
+        public static MatchResult Match(this LeafPatternMatcher matcher,
+                                        Leaves left, Leaves collected,
+                                        string name, ValueKind kind)
+        {
+            var (index, match) = matcher(left, name);
+            return PatternMatcher.MatchLeaf(left, collected, name, kind, index, match);
+        }
+    }
+
     interface IBranchPatternMatcher
     {
         int Index { get; }
@@ -20,17 +31,6 @@ namespace DocoptNet
         bool Fold(MatchResult match);
         bool LastMatched { get; }
         MatchResult Result { get; }
-    }
-
-    static class LeafMatcherExtensions
-    {
-        public static MatchResult Match(this LeafPatternMatcher matcher,
-                                        Leaves left, Leaves collected,
-                                        string name, ValueKind kind)
-        {
-            var (index, match) = matcher(left, name);
-            return PatternMatcher.MatchLeaf(left, collected, name, kind, index, match);
-        }
     }
 
     static class BranchPatternMatcher
