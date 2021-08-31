@@ -1,3 +1,5 @@
+#nullable enable
+
 #region Copyright (c) 2021 Atif Aziz. All rights reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -123,7 +125,7 @@ namespace DocoptNet.CodeGeneration
 
             var helpText = text.ToString();
             var code = new CSharpSourceBuilder();
-            Generate(code, ns, name, helpText);
+            Generate(code, ns is { Length: 0 } ? null : ns, name, helpText);
             return new StringBuilderSourceText(code.StringBuilder, outputEncoding ?? text.Encoding ?? Utf8BomlessEncoding);
         }
 
@@ -135,8 +137,6 @@ namespace DocoptNet.CodeGeneration
                                .GroupBy(p => p.Name)
                                .Select(g => (LeafPattern)g.First())
                                .ToList();
-
-            var isNamespaced = !string.IsNullOrEmpty(ns);
 
             const string helpConstName = "Help";
             const string usageConstName = "Usage";
@@ -152,7 +152,7 @@ namespace DocoptNet.CodeGeneration
                 .UsingStatic("DocoptNet.Generated.GeneratedSourceModule")
 
                 .NewLine
-                [isNamespaced ? code.Namespace(ns) : code.Blank()]
+                [ns is not null ? code.Namespace(ns) : code.Blank()]
 
                 .Partial.Class[name]["Arguments : IEnumerable<KeyValuePair<string, object?>>"].NewLine.Block[code
                     .Public.Const(helpConstName, helpText)
@@ -225,7 +225,7 @@ namespace DocoptNet.CodeGeneration
                                    }]
                                   .NewLine)
                 ] // class
-                [isNamespaced ? code.BlockEnd : code.Blank()]
+                [ns is not null ? code.BlockEnd : code.Blank()]
                 .Blank();
 
             static CSharpSourceBuilder GeneratePatternMatchingCode(CSharpSourceBuilder code,
