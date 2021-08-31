@@ -154,54 +154,78 @@ namespace DocoptNet.CodeGeneration
                 .NewLine
                 [isNamespaced ? code.Namespace(ns) : code.Blank()]
 
-                .Partial.Class[name]["Arguments : IEnumerable<KeyValuePair<string, object?>>"].NewLine
-                .BlockStart
-                .Public.Const(helpConstName, helpText)
+                .Partial.Class[name]["Arguments : IEnumerable<KeyValuePair<string, object?>>"].NewLine.Block[code
+                    .Public.Const(helpConstName, helpText)
 
-                .NewLine
-                .Public.Const(usageConstName, usage)
+                    .NewLine
+                    .Public.Const(usageConstName, usage)
 
-                .NewLine
-                .Public.Static[name]["Arguments Apply(IEnumerable<string> args, bool help = true, object? version = null, bool optionsFirst = false, bool exit = false)"].NewLine.BlockStart
+                    .NewLine
+                    .Public.Static[name]["Arguments Apply(IEnumerable<string> args, bool help = true, object? version = null, bool optionsFirst = false, bool exit = false)"]
+                    .NewLine.Block[code
+                        .Var("options")[
+                            code.New["List<Option>"].NewLine
+                                .Block[code.Each(options,
+                                                 static (code, option, _) =>
+                                                     code.New["Option("][option.ShortName is {} sn ? code.Literal(sn) : code.Null][", "]
+                                                         [option.LongName is {} ln ? code.Literal(ln) : code.Null][", "]
+                                                         .Literal(option.ArgCount)[", "]
+                                                         [Value(code, option.Value)]["),"].NewLine).SkipNextNewLine]]
+                        .Var("left")["ParseArgv(" + helpConstName + ", args, options, optionsFirst, help, version)"]
+                        .Var("required")[code.New["RequiredMatcher(1, left, "].New["Leaves()"][')']]
+                        ["Match(ref required)"].EndStatement
+                        .Var("collected")["GetSuccessfulCollection(required, " + usageConstName + ")"]
+                        .Var("result")[code.New[name]["Arguments()"]]
+                        [leaves.Any()
+                             ? code.NewLine
+                                   .ForEach["var p in collected"][
+                                        code.Var("value")["p.Value is { IsStringList: true } ? ((StringList)p.Value).Reverse() : p.Value"]
+                                            .Switch["p.Name"]
+                                            .Cases(leaves, default(Unit),
+                                                   static (_, p, _) => CSharpSourceBuilder.SwitchCaseChoice.Choose(p.Name),
+                                                   static (code, _, p) =>
+                                                       code[' ']
+                                                          .Assign(code["result."][InferPropertyName(p)])[
+                                                               code['(']
+                                                                   [p switch { Option   { Value: { IsString: true } } => "string",
+                                                                               Argument { Value: { IsNone: true } } or Option { ArgCount: not 0, Value: { Kind: not ValueKind.StringList } } => "string?",
+                                                                               { Value: { Kind: var kind } } => MapType(kind) }]
+                                                                   [")value"].SkipNextNewLine][' '])]
+                             : code.Blank()
+                        ]
 
-                .Var("options")[
-                     code.New["List<Option>"].NewLine
-                         .Block[code.Each(options,
-                                          static (code, option, _) =>
-                                              code.New["Option("][option.ShortName is {} sn ? code.Literal(sn) : code.Null][", "]
-                                                  [option.LongName is {} ln ? code.Literal(ln) : code.Null][", "]
-                                                  .Literal(option.ArgCount)[", "]
-                                                  [Value(code, option.Value)]["),"].NewLine).SkipNextNewLine]]
-                .Var("left")["ParseArgv(" + helpConstName + ", args, options, optionsFirst, help, version)"]
-                .Var("required")[code.New["RequiredMatcher(1, left, "].New["Leaves()"][')']]
-                ["Match(ref required)"].EndStatement
-                .Var("collected")["GetSuccessfulCollection(required, " + usageConstName + ")"]
-                .Var("result")[code.New[name]["Arguments()"]]
-                [leaves.Any()
-                     ? code.NewLine
-                           .ForEach["var p in collected"][
-                                code.Var("value")["p.Value is { IsStringList: true } ? ((StringList)p.Value).Reverse() : p.Value"]
-                                    .Switch["p.Name"]
-                                    .Cases(leaves, default(Unit),
-                                           static (_, p, _) => CSharpSourceBuilder.SwitchCaseChoice.Choose(p.Name),
-                                           static (code, _, p) =>
-                                               code[' ']
-                                                  .Assign(code["result."][InferPropertyName(p)])[
-                                                       code['(']
-                                                           [p switch { Option   { Value: { IsString: true } } => "string",
-                                                                       Argument { Value: { IsNone: true } } or Option { ArgCount: not 0, Value: { Kind: not ValueKind.StringList } } => "string?",
-                                                                       { Value: { Kind: var kind } } => MapType(kind) }]
-                                                           [")value"].SkipNextNewLine][' '])]
-                     : code.Blank()
-                ]
+                        .NewLine
+                        .Return["result"]
 
-                .NewLine
-                .Return["result"]
+                        .NewLine
+                        ["static void Match(ref RequiredMatcher required)"].NewLine.Block[
+                            GeneratePatternMatchingCode(code, pattern, "required")]
+                    ] // Apply
 
-                .NewLine
-                ["static void Match(ref RequiredMatcher required)"].NewLine.Block[
-                     GeneratePatternMatchingCode(code, pattern, "required")]
-                .BlockEnd   // Apply
+                    .NewLine
+                    ["IEnumerator<KeyValuePair<string, object?>> GetEnumerator()"].NewLine.Block[
+                        leaves.Any() ? code.Each(leaves, static (code, p, _) => code.Yield.Return[code["KeyValuePair.Create("].Literal(p.Name)[", (object?)"][InferPropertyName(p)][')']])
+                                     : code.Yield.Break]
+
+                    .NewLine
+                    ["IEnumerator<KeyValuePair<string, object?>> IEnumerable<KeyValuePair<string, object?>>.GetEnumerator() => GetEnumerator()"].EndStatement
+                    ["IEnumerator IEnumerable.GetEnumerator() => GetEnumerator()"].EndStatement
+
+                    .Each(from p in leaves
+                          select (Name: InferPropertyName(p), Leaf: p),
+                          static (code, e, _) =>
+                              code.NewLine["/// <summary><c>"][e.Leaf.ToString().EncodeXmlText()]["</c></summary>"]
+                                  .NewLine
+                                  .Public[e.Leaf switch
+                                   {
+                                       Option { Value: { IsString: true } str } => code["string "][e.Name][" { get; private set; } = "].Literal((string)str).SkipNextNewLine.EndStatement,
+                                       Argument { Value: { IsNone: true } } or Option { ArgCount: not 0, Value: { Kind: not ValueKind.StringList } } => code["string? "][e.Name][" { get; private set; }"],
+                                       { Value: { Object: StringList list } } => code["StringList "][e.Name][" { get; private set; } = "][Value(code, list.Reverse())].SkipNextNewLine.EndStatement,
+                                       { Value: { Kind: var kind } } => code[MapType(kind)][' '][e.Name][" { get; private set; }"],
+                                   }]
+                                  .NewLine)
+                ] // class
+                [isNamespaced ? code.BlockEnd : code.Blank()]
                 .Blank();
 
             static CSharpSourceBuilder GeneratePatternMatchingCode(CSharpSourceBuilder code,
@@ -258,33 +282,6 @@ namespace DocoptNet.CodeGeneration
 
                 return code;
             }
-
-            code.NewLine
-                ["IEnumerator<KeyValuePair<string, object?>> GetEnumerator()"].NewLine.Block[
-                    leaves.Any() ? code.Each(leaves, static (code, p, _) => code.Yield.Return[code["KeyValuePair.Create("].Literal(p.Name)[", (object?)"][InferPropertyName(p)][')']])
-                                 : code.Yield.Break]
-
-                .NewLine
-                ["IEnumerator<KeyValuePair<string, object?>> IEnumerable<KeyValuePair<string, object?>>.GetEnumerator() => GetEnumerator()"].EndStatement
-                ["IEnumerator IEnumerable.GetEnumerator() => GetEnumerator()"].EndStatement
-
-                .Each(from p in leaves
-                      select (Name: InferPropertyName(p), Leaf: p),
-                      static (code, e, _) =>
-                          code.NewLine["/// <summary><c>"][e.Leaf.ToString().EncodeXmlText()]["</c></summary>"]
-                              .NewLine
-                              .Public[e.Leaf switch
-                               {
-                                   Option { Value: { IsString: true } str } => code["string "][e.Name][" { get; private set; } = "].Literal((string)str).SkipNextNewLine.EndStatement,
-                                   Argument { Value: { IsNone: true } } or Option { ArgCount: not 0, Value: { Kind: not ValueKind.StringList } } => code["string? "][e.Name][" { get; private set; }"],
-                                   { Value: { Object: StringList list } } => code["StringList "][e.Name][" { get; private set; } = "][Value(code, list.Reverse())].SkipNextNewLine.EndStatement,
-                                   { Value: { Kind: var kind } } => code[MapType(kind)][' '][e.Name][" { get; private set; }"],
-                               }]
-                              .NewLine)
-
-                .BlockEnd
-                [isNamespaced ? code.BlockEnd : code.Blank()]
-                .Blank();
 
             static string InferPropertyName(LeafPattern leaf) =>
                 leaf switch
