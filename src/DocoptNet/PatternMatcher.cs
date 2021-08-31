@@ -194,7 +194,9 @@ namespace DocoptNet
 
         public bool LastMatched { get; private set; }
 
-        public MatchResult Result => _times >= 1 ? new MatchResult(true, Left, Collected) : new MatchResult(false, _initLeft, _initCollected);
+        public MatchResult Result =>
+            _times >= 1 ? new MatchResult(true, Left, Collected)
+                        : new MatchResult(false, _initLeft, _initCollected);
     }
 
     static class PatternMatcher
