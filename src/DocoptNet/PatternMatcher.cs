@@ -33,6 +33,17 @@ namespace DocoptNet
         }
     }
 
+    static class BranchPatternMatcher
+    {
+        public static bool Next(ref int i, int count)
+        {
+            if (i == count)
+                return false;
+            i++;
+            return true;
+        }
+    }
+
     struct RequiredMatcher : IBranchPatternMatcher
     {
         readonly int _count;
@@ -49,13 +60,7 @@ namespace DocoptNet
 
         public int Index => _i - 1;
 
-        public bool Next()
-        {
-            if (_i == _count)
-                return false;
-            _i++;
-            return true;
-        }
+        public bool Next() => BranchPatternMatcher.Next(ref _i, _count);
 
         public Leaves Left { get; private set; }
         public Leaves Collected { get; private set; }
@@ -97,13 +102,7 @@ namespace DocoptNet
 
         public int Index => _i - 1;
 
-        public bool Next()
-        {
-            if (_i == _count)
-                return false;
-            _i++;
-            return true;
-        }
+        public bool Next() => BranchPatternMatcher.Next(ref _i, _count);
 
         public Leaves Left { get; }
         public Leaves Collected { get; }
@@ -136,13 +135,7 @@ namespace DocoptNet
 
         public int Index => _i - 1;
 
-        public bool Next()
-        {
-            if (_i == _count)
-                return false;
-            _i++;
-            return true;
-        }
+        public bool Next() => BranchPatternMatcher.Next(ref _i, _count);
 
         public Leaves Left { get; private set; }
         public Leaves Collected { get; private set; }
