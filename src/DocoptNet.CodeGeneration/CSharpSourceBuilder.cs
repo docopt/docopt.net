@@ -10,11 +10,9 @@ namespace DocoptNet.CodeGeneration
     sealed class CSharpSourceBuilder :
         CSharpSourceBuilder.IStatementFlow,
         CSharpSourceBuilder.IBlockFlow,
-        CSharpSourceBuilder.IIfFlow,
         CSharpSourceBuilder.IControlBlockFlow,
         CSharpSourceBuilder.ISwitchFlow,
-        CSharpSourceBuilder.ISwitchCasesFlow,
-        CSharpSourceBuilder.IForEachFlow
+        CSharpSourceBuilder.ISwitchCasesFlow
     {
         readonly StringBuilder _sb;
         bool _skipNextNewLine;
@@ -150,6 +148,10 @@ namespace DocoptNet.CodeGeneration
         public CSharpSourceBuilder Yield   => this["yield "];
         public CSharpSourceBuilder New     => this["new "];
 
+        public IControlBlockFlow If      => this["if "].Control;
+        public IControlBlockFlow While   => this["while "].Control;
+        public IControlBlockFlow ForEach => this["foreach "].Control;
+
         public CSharpSourceBuilder Equal   => this[" = "];
 
         public CSharpSourceBuilder BlockStart => this['{'].NewLine.Indent;
@@ -161,7 +163,7 @@ namespace DocoptNet.CodeGeneration
             this["// "][comment].NewLine;
 
         public CSharpSourceBuilder Const(string name, string value) =>
-            this["const string "][name].Equal.Literal(value).EndStatement;
+            this["const string "].Assign(name)[Literal(value)];
 
         public IStatementFlow Return => this["return "];
         public IStatementFlow Var(string name) => this["var "].Assign(name);
@@ -190,19 +192,7 @@ namespace DocoptNet.CodeGeneration
         CSharpSourceBuilder IStatementFlow.this[CSharpSourceBuilder code] => StatementFlow(code);
         CSharpSourceBuilder StatementFlow(CSharpSourceBuilder code) { AssertSame(code); return EndStatement; }
 
-        public IIfFlow If => this["if ("];
-
-        public interface IIfFlow
-        {
-            IBlockFlow this[string code] { get; }
-            IBlockFlow this[CSharpSourceBuilder code] { get; }
-        }
-
-        IBlockFlow IIfFlow.this[string code] => IfFlow(this[code]);
-        IBlockFlow IIfFlow.this[CSharpSourceBuilder code] => IfFlow(code);
-        CSharpSourceBuilder IfFlow(CSharpSourceBuilder code) { AssertSame(code); return this[')'].NewLine.BlockStart; }
-
-        public IControlBlockFlow While => this["while ("];
+        IControlBlockFlow Control => this['('];
 
         public interface IControlBlockFlow
         {
@@ -213,18 +203,6 @@ namespace DocoptNet.CodeGeneration
         IBlockFlow IControlBlockFlow.this[string code] => ControlBlockFlow(this[code]);
         IBlockFlow IControlBlockFlow.this[CSharpSourceBuilder code] => ControlBlockFlow(code);
         IBlockFlow ControlBlockFlow(CSharpSourceBuilder code) { AssertSame(code); return this[')'].NewLine.Block; }
-
-        public IForEachFlow ForEach => this["foreach (var "];
-
-        public interface IForEachFlow
-        {
-            IControlBlockFlow this[string code] { get; }
-            IControlBlockFlow this[CSharpSourceBuilder code] { get; }
-        }
-
-        IControlBlockFlow IForEachFlow.this[string code] => ForEachFlow(this[code]);
-        IControlBlockFlow IForEachFlow.this[CSharpSourceBuilder code] => ForEachFlow(code);
-        CSharpSourceBuilder ForEachFlow(CSharpSourceBuilder code) { AssertSame(code); return this[" in "]; }
 
         public ISwitchFlow Switch => this["switch ("];
 

@@ -178,7 +178,7 @@ namespace DocoptNet.CodeGeneration
             if (leaves.Any())
             {
                 code.NewLine
-                    .ForEach["p"]["collected"][
+                    .ForEach["var p in collected"][
                          code.Var("value")["p.Value is { IsStringList: true } ? ((StringList)p.Value).Reverse() : p.Value"]
                              .Switch["p.Name"]
                              .Cases(leaves, default(Unit),
@@ -224,18 +224,18 @@ namespace DocoptNet.CodeGeneration
                         var mv = Vars[level++];
                         code.Var(mv)[code.New[matcher]['('].Literal(children.Count)[", "][pmv][".Left, "][pmv][".Collected)"]]
                             .While[code[mv][".Next()"]][
-                                       (pattern.Children.Count switch
-                                       {
-                                           > 1 => code.Switch[code[mv][".Index"]]
-                                                      .Cases(children, arg: (MatchVar: mv, Level: level),
-                                                             static (_, _, i) => CSharpSourceBuilder.SwitchCaseChoice.Choose(i),
-                                                             static (code, arg, child) =>
-                                                                 code.NewLine.Block[GeneratePatternMatchingCode(code, child, arg.MatchVar, arg.Level)]),
-                                           1 => GeneratePatternMatchingCode(code, children[0], mv, level),
-                                           _ => code.Blank(),
-                                       })
-                                      .If[code['!'][mv][".LastMatched"]][
-                                           code.Break]]
+                                (pattern.Children.Count switch
+                                {
+                                    > 1 => code.Switch[code[mv][".Index"]]
+                                               .Cases(children, arg: (MatchVar: mv, Level: level),
+                                                      static (_, _, i) => CSharpSourceBuilder.SwitchCaseChoice.Choose(i),
+                                                      static (code, arg, child) =>
+                                                          code.NewLine.Block[GeneratePatternMatchingCode(code, child, arg.MatchVar, arg.Level)]),
+                                    1 => GeneratePatternMatchingCode(code, children[0], mv, level),
+                                    _ => code.Blank(),
+                                })
+                                .If[code['!'][mv][".LastMatched"]][
+                                    code.Break]]
                             [pmv][".Fold(" + mv + ".Result)"].EndStatement.Blank();
                         break;
                     }
