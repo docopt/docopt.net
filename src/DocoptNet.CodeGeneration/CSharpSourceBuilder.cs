@@ -134,6 +134,9 @@ namespace DocoptNet.CodeGeneration
         public CSharpSourceBuilder Using(string alias, string typeName) =>
             this["using "][alias].Equal[typeName].EndStatement;
 
+        public CSharpSourceBuilder UsingStatic(string typeName) =>
+            this["using "].Static[typeName].EndStatement;
+
         public CSharpSourceBuilder Namespace(string name) =>
             this["namespace "][name].NewLine.BlockStart;
 
@@ -162,9 +165,6 @@ namespace DocoptNet.CodeGeneration
 
         public CSharpSourceBuilder Const(string name, string value) =>
             this["const string "][name].Equal.Literal(value).EndStatement;
-
-        public CSharpSourceBuilder ThrowNew(string type, string args) =>
-            this["throw "].New[type]['('][args][')'].EndStatement;
 
         public IStatementFlow Return => this["return "];
         public IStatementFlow Var(string name) => this["var "].Assign(name);

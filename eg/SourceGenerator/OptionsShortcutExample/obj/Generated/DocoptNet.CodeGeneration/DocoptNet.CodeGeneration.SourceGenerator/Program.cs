@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using DocoptNet.Generated;
 using Leaves = DocoptNet.Generated.ReadOnlyList<DocoptNet.Generated.LeafPattern>;
+using static DocoptNet.Generated.GeneratedSourceModule;
 
 namespace OptionsShortcutExample
 {
@@ -29,7 +30,6 @@ Options:
 
         public static ProgramArguments Apply(IEnumerable<string> args, bool help = true, object? version = null, bool optionsFirst = false, bool exit = false)
         {
-            var tokens = new Tokens(args, typeof(DocoptInputErrorException));
             var options = new List<Option>
             {
                 new Option("-h", "--help", 0, false),
@@ -39,16 +39,7 @@ Options:
                 new Option(null, "--apply", 0, false),
                 new Option("-q", null, 0, false),
             };
-            var arguments = Docopt.ParseArgv(tokens, options, optionsFirst).AsReadOnly();
-            if (help && arguments.Any(o => o is { Name: "-h" or "--help", Value: { IsTrue: true } }))
-            {
-                throw new DocoptExitException(HelpText);
-            }
-            if (version is not null && arguments.Any(o => o is { Name: "--version", Value: { IsTrue: true } }))
-            {
-                throw new DocoptExitException(version.ToString());
-            }
-            var left = arguments;
+            var left = ParseArgv(HelpText, args, options, optionsFirst, help, version);
             var collected = new Leaves();
             var a = new RequiredMatcher(1, left, collected);
             do
@@ -148,12 +139,7 @@ Options:
             }
             while (false);
 
-            if (!a.Result || a.Left.Count > 0)
-            {
-                throw new DocoptInputErrorException(Usage);
-            }
-
-            collected = a.Collected;
+            collected = GetSuccessfulCollection(a, Usage);
             var result = new ProgramArguments();
 
             foreach (var p in collected)

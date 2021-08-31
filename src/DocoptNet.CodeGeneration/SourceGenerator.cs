@@ -139,6 +139,7 @@ namespace DocoptNet.CodeGeneration
                 .Using("System.Linq")
                 .Using("DocoptNet.Generated")
                 .Using("Leaves", "DocoptNet.Generated.ReadOnlyList<DocoptNet.Generated.LeafPattern>")
+                .UsingStatic("DocoptNet.Generated.GeneratedSourceModule")
 
                 .NewLine
                 [isNamespaced ? code.Namespace(ns) : code.Blank()]
@@ -209,7 +210,7 @@ namespace DocoptNet.CodeGeneration
 
                 .NewLine
                 .Public.Static[name]["Arguments Apply(IEnumerable<string> args, bool help = true, object? version = null, bool optionsFirst = false, bool exit = false)"].NewLine.BlockStart
-                .Var("tokens")[code.New["Tokens(args, typeof(DocoptInputErrorException))"]]
+
                 .Var("options")[
                      code.New["List<Option>"].NewLine
                          .Block[code.Each(options,
@@ -218,23 +219,14 @@ namespace DocoptNet.CodeGeneration
                                                   [option.LongName is {} ln ? code.Literal(ln) : code.Null][", "]
                                                   .Literal(option.ArgCount)[", "]
                                                   [Value(code, option.Value)]["),"].NewLine).SkipNextNewLine]]
-                .Var("arguments")["Docopt.ParseArgv(tokens, options, optionsFirst).AsReadOnly()"]
-                .If[@"help && arguments.Any(o => o is { Name: ""-h"" or ""--help"", Value: { IsTrue: true } })"][
-                    code.ThrowNew(nameof(DocoptExitException), "HelpText")]
-                .If[@"version is not null && arguments.Any(o => o is { Name: ""--version"", Value: { IsTrue: true } })"][
-                    code.ThrowNew(nameof(DocoptExitException), "version.ToString()")]
-                .Var("left")["arguments"]
+                .Var("left")["ParseArgv(HelpText, args, options, optionsFirst, help, version)"]
                 .Var("collected")[code.New["Leaves()"]]
                 .Var("a")[code.New["RequiredMatcher(1, left, collected)"]]
 
                 .Do[GeneratePatternMatchingCode(code, pattern, "a")].While[code.False]
 
                 .NewLine
-                .If["!a.Result || a.Left.Count > 0"][
-                    code.ThrowNew(nameof(DocoptInputErrorException), "Usage")]
-
-                .NewLine
-                .Assign("collected")["a.Collected"]
+                .Assign("collected")["GetSuccessfulCollection(a, Usage)"]
                 .Var("result")[code.New[name]["Arguments()"]].Blank();
 
             var leaves = Docopt.GetFlatPatterns(helpText)
