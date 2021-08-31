@@ -39,8 +39,30 @@ Options:
                 new Option("-h", "--help", 0, false),
             };
             var left = ParseArgv(HelpText, args, options, optionsFirst, help, version);
-            var collected = new Leaves();
-            var required = new RequiredMatcher(1, left, collected);
+            var required = new RequiredMatcher(1, left, new Leaves());
+            Match(ref required);
+            var collected = GetSuccessfulCollection(required, Usage);
+            var result = new ProgramArguments();
+
+            foreach (var p in collected)
+            {
+                var value = p.Value is { IsStringList: true } ? ((StringList)p.Value).Reverse() : p.Value;
+                switch (p.Name)
+                {
+                    case "<value>": result.ArgValue = (StringList)value; break;
+                    case "+": result.CmdPlus = (int)value; break;
+                    case "-": result.CmdMinus = (int)value; break;
+                    case "*": result.CmdStar = (int)value; break;
+                    case "/": result.CmdSlash = (int)value; break;
+                    case "<function>": result.ArgFunction = (string?)value; break;
+                    case ",": result.CmdComma = (int)value; break;
+                    case "--help": result.OptHelp = (bool)value; break;
+                }
+            }
+
+            return result;
+
+            static void Match(ref RequiredMatcher required)
             {
                 // Required(Either(Required(Argument(<value>, []), OneOrMore(Required(Required(Either(Command(+, 0), Command(-, 0), Command(*, 0), Command(/, 0))), Argument(<value>, [])))), Required(Argument(<function>, ), Argument(<value>, []), OneOrMore(Optional(Required(Command(,, 0), Argument(<value>, []))))), Required(Required(Option(-h,--help,0,False)))))
                 var a = new RequiredMatcher(1, required.Left, required.Collected);
@@ -277,27 +299,6 @@ Options:
                 }
                 required.Fold(a.Result);
             }
-
-            collected = GetSuccessfulCollection(required, Usage);
-            var result = new ProgramArguments();
-
-            foreach (var p in collected)
-            {
-                var value = p.Value is { IsStringList: true } ? ((StringList)p.Value).Reverse() : p.Value;
-                switch (p.Name)
-                {
-                    case "<value>": result.ArgValue = (StringList)value; break;
-                    case "+": result.CmdPlus = (int)value; break;
-                    case "-": result.CmdMinus = (int)value; break;
-                    case "*": result.CmdStar = (int)value; break;
-                    case "/": result.CmdSlash = (int)value; break;
-                    case "<function>": result.ArgFunction = (string?)value; break;
-                    case ",": result.CmdComma = (int)value; break;
-                    case "--help": result.OptHelp = (bool)value; break;
-                }
-            }
-
-            return result;
         }
 
         IEnumerator<KeyValuePair<string, object?>> GetEnumerator()

@@ -40,8 +40,29 @@ Options:
                 new Option("-q", null, 0, false),
             };
             var left = ParseArgv(HelpText, args, options, optionsFirst, help, version);
-            var collected = new Leaves();
-            var required = new RequiredMatcher(1, left, collected);
+            var required = new RequiredMatcher(1, left, new Leaves());
+            Match(ref required);
+            var collected = GetSuccessfulCollection(required, Usage);
+            var result = new ProgramArguments();
+
+            foreach (var p in collected)
+            {
+                var value = p.Value is { IsStringList: true } ? ((StringList)p.Value).Reverse() : p.Value;
+                switch (p.Name)
+                {
+                    case "--help": result.OptHelp = (bool)value; break;
+                    case "--version": result.OptVersion = (bool)value; break;
+                    case "--number": result.OptNumber = (string?)value; break;
+                    case "--timeout": result.OptTimeout = (string?)value; break;
+                    case "--apply": result.OptApply = (bool)value; break;
+                    case "-q": result.OptQ = (bool)value; break;
+                    case "<port>": result.ArgPort = (string?)value; break;
+                }
+            }
+
+            return result;
+
+            static void Match(ref RequiredMatcher required)
             {
                 // Required(Required(Optional(OptionsShortcut(Option(-h,--help,0,False), Option(,--version,0,False), Option(-n,--number,1,), Option(-t,--timeout,1,), Option(,--apply,0,False), Option(-q,,0,False))), Argument(<port>, )))
                 var a = new RequiredMatcher(1, required.Left, required.Collected);
@@ -136,26 +157,6 @@ Options:
                 }
                 required.Fold(a.Result);
             }
-
-            collected = GetSuccessfulCollection(required, Usage);
-            var result = new ProgramArguments();
-
-            foreach (var p in collected)
-            {
-                var value = p.Value is { IsStringList: true } ? ((StringList)p.Value).Reverse() : p.Value;
-                switch (p.Name)
-                {
-                    case "--help": result.OptHelp = (bool)value; break;
-                    case "--version": result.OptVersion = (bool)value; break;
-                    case "--number": result.OptNumber = (string?)value; break;
-                    case "--timeout": result.OptTimeout = (string?)value; break;
-                    case "--apply": result.OptApply = (bool)value; break;
-                    case "-q": result.OptQ = (bool)value; break;
-                    case "<port>": result.ArgPort = (string?)value; break;
-                }
-            }
-
-            return result;
         }
 
         IEnumerator<KeyValuePair<string, object?>> GetEnumerator()

@@ -45,8 +45,30 @@ Options:
                 new Option(null, "--right", 0, false),
             };
             var left = ParseArgv(HelpText, args, options, optionsFirst, help, version);
-            var collected = new Leaves();
-            var required = new RequiredMatcher(1, left, collected);
+            var required = new RequiredMatcher(1, left, new Leaves());
+            Match(ref required);
+            var collected = GetSuccessfulCollection(required, Usage);
+            var result = new ProgramArguments();
+
+            foreach (var p in collected)
+            {
+                var value = p.Value is { IsStringList: true } ? ((StringList)p.Value).Reverse() : p.Value;
+                switch (p.Name)
+                {
+                    case "-v": result.OptV = (bool)value; break;
+                    case "-q": result.OptQ = (bool)value; break;
+                    case "-r": result.OptR = (bool)value; break;
+                    case "--help": result.OptHelp = (bool)value; break;
+                    case "FILE": result.ArgFile = (StringList)value; break;
+                    case "--left": result.OptLeft = (bool)value; break;
+                    case "--right": result.OptRight = (bool)value; break;
+                    case "CORRECTION": result.ArgCorrection = (string?)value; break;
+                }
+            }
+
+            return result;
+
+            static void Match(ref RequiredMatcher required)
             {
                 // Required(Either(Required(Optional(Option(-v,,0,False), Option(-q,,0,False), Option(-r,,0,False), Option(-h,--help,0,False)), OneOrMore(Optional(Argument(FILE, [])))), Required(Required(Either(Option(,--left,0,False), Option(,--right,0,False))), Argument(CORRECTION, ), Argument(FILE, []))))
                 var a = new RequiredMatcher(1, required.Left, required.Collected);
@@ -224,27 +246,6 @@ Options:
                 }
                 required.Fold(a.Result);
             }
-
-            collected = GetSuccessfulCollection(required, Usage);
-            var result = new ProgramArguments();
-
-            foreach (var p in collected)
-            {
-                var value = p.Value is { IsStringList: true } ? ((StringList)p.Value).Reverse() : p.Value;
-                switch (p.Name)
-                {
-                    case "-v": result.OptV = (bool)value; break;
-                    case "-q": result.OptQ = (bool)value; break;
-                    case "-r": result.OptR = (bool)value; break;
-                    case "--help": result.OptHelp = (bool)value; break;
-                    case "FILE": result.ArgFile = (StringList)value; break;
-                    case "--left": result.OptLeft = (bool)value; break;
-                    case "--right": result.OptRight = (bool)value; break;
-                    case "CORRECTION": result.ArgCorrection = (string?)value; break;
-                }
-            }
-
-            return result;
         }
 
         IEnumerator<KeyValuePair<string, object?>> GetEnumerator()

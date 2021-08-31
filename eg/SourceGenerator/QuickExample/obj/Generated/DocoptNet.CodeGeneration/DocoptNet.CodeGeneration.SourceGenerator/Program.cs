@@ -33,8 +33,31 @@ namespace QuickExample
                 new Option(null, "--version", 0, false),
             };
             var left = ParseArgv(HelpText, args, options, optionsFirst, help, version);
-            var collected = new Leaves();
-            var required = new RequiredMatcher(1, left, collected);
+            var required = new RequiredMatcher(1, left, new Leaves());
+            Match(ref required);
+            var collected = GetSuccessfulCollection(required, Usage);
+            var result = new ProgramArguments();
+
+            foreach (var p in collected)
+            {
+                var value = p.Value is { IsStringList: true } ? ((StringList)p.Value).Reverse() : p.Value;
+                switch (p.Name)
+                {
+                    case "tcp": result.CmdTcp = (bool)value; break;
+                    case "<host>": result.ArgHost = (string?)value; break;
+                    case "<port>": result.ArgPort = (string?)value; break;
+                    case "--timeout": result.OptTimeout = (string?)value; break;
+                    case "serial": result.CmdSerial = (bool)value; break;
+                    case "--baud": result.OptBaud = (string?)value; break;
+                    case "-h": result.OptH = (bool)value; break;
+                    case "--help": result.OptHelp = (bool)value; break;
+                    case "--version": result.OptVersion = (bool)value; break;
+                }
+            }
+
+            return result;
+
+            static void Match(ref RequiredMatcher required)
             {
                 // Required(Either(Required(Command(tcp, False), Argument(<host>, ), Argument(<port>, ), Optional(Option(,--timeout,1,))), Required(Command(serial, False), Argument(<port>, ), Optional(Option(,--baud,1,)), Optional(Option(,--timeout,1,))), Required(Either(Option(-h,,0,False), Option(,--help,0,False), Option(,--version,0,False)))))
                 var a = new RequiredMatcher(1, required.Left, required.Collected);
@@ -217,28 +240,6 @@ namespace QuickExample
                 }
                 required.Fold(a.Result);
             }
-
-            collected = GetSuccessfulCollection(required, Usage);
-            var result = new ProgramArguments();
-
-            foreach (var p in collected)
-            {
-                var value = p.Value is { IsStringList: true } ? ((StringList)p.Value).Reverse() : p.Value;
-                switch (p.Name)
-                {
-                    case "tcp": result.CmdTcp = (bool)value; break;
-                    case "<host>": result.ArgHost = (string?)value; break;
-                    case "<port>": result.ArgPort = (string?)value; break;
-                    case "--timeout": result.OptTimeout = (string?)value; break;
-                    case "serial": result.CmdSerial = (bool)value; break;
-                    case "--baud": result.OptBaud = (string?)value; break;
-                    case "-h": result.OptH = (bool)value; break;
-                    case "--help": result.OptHelp = (bool)value; break;
-                    case "--version": result.OptVersion = (bool)value; break;
-                }
-            }
-
-            return result;
         }
 
         IEnumerator<KeyValuePair<string, object?>> GetEnumerator()

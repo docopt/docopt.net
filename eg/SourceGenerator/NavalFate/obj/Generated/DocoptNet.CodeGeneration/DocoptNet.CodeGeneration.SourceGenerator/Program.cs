@@ -48,8 +48,37 @@ namespace NavalFate
                 new Option(null, "--drifting", 0, false),
             };
             var left = ParseArgv(HelpText, args, options, optionsFirst, help, version);
-            var collected = new Leaves();
-            var required = new RequiredMatcher(1, left, collected);
+            var required = new RequiredMatcher(1, left, new Leaves());
+            Match(ref required);
+            var collected = GetSuccessfulCollection(required, Usage);
+            var result = new ProgramArguments();
+
+            foreach (var p in collected)
+            {
+                var value = p.Value is { IsStringList: true } ? ((StringList)p.Value).Reverse() : p.Value;
+                switch (p.Name)
+                {
+                    case "ship": result.CmdShip = (bool)value; break;
+                    case "new": result.CmdNew = (bool)value; break;
+                    case "<name>": result.ArgName = (StringList)value; break;
+                    case "move": result.CmdMove = (bool)value; break;
+                    case "<x>": result.ArgX = (string?)value; break;
+                    case "<y>": result.ArgY = (string?)value; break;
+                    case "--speed": result.OptSpeed = (string)value; break;
+                    case "shoot": result.CmdShoot = (bool)value; break;
+                    case "mine": result.CmdMine = (bool)value; break;
+                    case "set": result.CmdSet = (bool)value; break;
+                    case "remove": result.CmdRemove = (bool)value; break;
+                    case "--moored": result.OptMoored = (bool)value; break;
+                    case "--drifting": result.OptDrifting = (bool)value; break;
+                    case "--help": result.OptHelp = (bool)value; break;
+                    case "--version": result.OptVersion = (bool)value; break;
+                }
+            }
+
+            return result;
+
+            static void Match(ref RequiredMatcher required)
             {
                 // Required(Either(Required(Command(ship, False), Command(new, False), OneOrMore(Argument(<name>, []))), Required(Command(ship, False), Argument(<name>, []), Command(move, False), Argument(<x>, ), Argument(<y>, ), Optional(Option(,--speed,1,10))), Required(Command(ship, False), Command(shoot, False), Argument(<x>, ), Argument(<y>, )), Required(Command(mine, False), Required(Either(Command(set, False), Command(remove, False))), Argument(<x>, ), Argument(<y>, ), Optional(Either(Option(,--moored,0,False), Option(,--drifting,0,False)))), Required(Required(Option(-h,--help,0,False))), Required(Option(,--version,0,False))))
                 var a = new RequiredMatcher(1, required.Left, required.Collected);
@@ -379,34 +408,6 @@ namespace NavalFate
                 }
                 required.Fold(a.Result);
             }
-
-            collected = GetSuccessfulCollection(required, Usage);
-            var result = new ProgramArguments();
-
-            foreach (var p in collected)
-            {
-                var value = p.Value is { IsStringList: true } ? ((StringList)p.Value).Reverse() : p.Value;
-                switch (p.Name)
-                {
-                    case "ship": result.CmdShip = (bool)value; break;
-                    case "new": result.CmdNew = (bool)value; break;
-                    case "<name>": result.ArgName = (StringList)value; break;
-                    case "move": result.CmdMove = (bool)value; break;
-                    case "<x>": result.ArgX = (string?)value; break;
-                    case "<y>": result.ArgY = (string?)value; break;
-                    case "--speed": result.OptSpeed = (string)value; break;
-                    case "shoot": result.CmdShoot = (bool)value; break;
-                    case "mine": result.CmdMine = (bool)value; break;
-                    case "set": result.CmdSet = (bool)value; break;
-                    case "remove": result.CmdRemove = (bool)value; break;
-                    case "--moored": result.OptMoored = (bool)value; break;
-                    case "--drifting": result.OptDrifting = (bool)value; break;
-                    case "--help": result.OptHelp = (bool)value; break;
-                    case "--version": result.OptVersion = (bool)value; break;
-                }
-            }
-
-            return result;
         }
 
         IEnumerator<KeyValuePair<string, object?>> GetEnumerator()

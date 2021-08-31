@@ -148,6 +148,59 @@ namespace DocoptNet.CodeGeneration
                 .BlockStart
                 .Public.Const("HelpText", helpText);
 
+            var (pattern, options, usage) = Docopt.ParsePattern(helpText);
+
+            code.NewLine
+                .Public.Const("Usage", usage)
+
+                .NewLine
+                .Public.Static[name]["Arguments Apply(IEnumerable<string> args, bool help = true, object? version = null, bool optionsFirst = false, bool exit = false)"].NewLine.BlockStart
+
+                .Var("options")[
+                     code.New["List<Option>"].NewLine
+                         .Block[code.Each(options,
+                                          static (code, option, _) =>
+                                              code.New["Option("][option.ShortName is {} sn ? code.Literal(sn) : code.Null][", "]
+                                                  [option.LongName is {} ln ? code.Literal(ln) : code.Null][", "]
+                                                  .Literal(option.ArgCount)[", "]
+                                                  [Value(code, option.Value)]["),"].NewLine).SkipNextNewLine]]
+                .Var("left")["ParseArgv(HelpText, args, options, optionsFirst, help, version)"]
+                .Var("required")[code.New["RequiredMatcher(1, left, "].New["Leaves()"][')']]
+                ["Match(ref required)"].EndStatement
+                .Var("collected")["GetSuccessfulCollection(required, Usage)"]
+                .Var("result")[code.New[name]["Arguments()"]].Blank();
+
+            var leaves = Docopt.GetFlatPatterns(helpText)
+                               .GroupBy(p => p.Name)
+                               .Select(g => (LeafPattern)g.First())
+                               .ToList();
+
+            if (leaves.Any())
+            {
+                code.NewLine
+                    .ForEach["p"]["collected"][
+                         code.Var("value")["p.Value is { IsStringList: true } ? ((StringList)p.Value).Reverse() : p.Value"]
+                             .Switch["p.Name"]
+                             .Cases(leaves, default(Unit),
+                                    static (_, p, _) => CSharpSourceBuilder.SwitchCaseChoice.Choose(p.Name),
+                                    static (code, _, p) =>
+                                        code[' ']
+                                            .Assign(code["result."][InferPropertyName(p)])[
+                                                code['(']
+                                                    [p switch { Option   { Value: { IsString: true } } => "string",
+                                                                Argument { Value: { IsNone: true } } or Option { ArgCount: not 0, Value: { Kind: not ValueKind.StringList } } => "string?",
+                                                                { Value: { Kind: var kind } } => MapType(kind) }]
+                                                    [")value"].SkipNextNewLine][' '])].Blank();
+            }
+
+            code.NewLine
+                .Return["result"]
+                .NewLine
+                ["static void Match(ref RequiredMatcher required)"].NewLine.Block[
+                     GeneratePatternMatchingCode(code, pattern, "required")]
+                .BlockEnd   // Apply
+                .Blank();
+
             static CSharpSourceBuilder GeneratePatternMatchingCode(CSharpSourceBuilder code,
                                                                    Pattern pattern, string pmv, int level = 0)
             {
@@ -203,60 +256,7 @@ namespace DocoptNet.CodeGeneration
                 return code;
             }
 
-            var (pattern, options, usage) = Docopt.ParsePattern(helpText);
-
             code.NewLine
-                .Public.Const("Usage", usage)
-
-                .NewLine
-                .Public.Static[name]["Arguments Apply(IEnumerable<string> args, bool help = true, object? version = null, bool optionsFirst = false, bool exit = false)"].NewLine.BlockStart
-
-                .Var("options")[
-                     code.New["List<Option>"].NewLine
-                         .Block[code.Each(options,
-                                          static (code, option, _) =>
-                                              code.New["Option("][option.ShortName is {} sn ? code.Literal(sn) : code.Null][", "]
-                                                  [option.LongName is {} ln ? code.Literal(ln) : code.Null][", "]
-                                                  .Literal(option.ArgCount)[", "]
-                                                  [Value(code, option.Value)]["),"].NewLine).SkipNextNewLine]]
-                .Var("left")["ParseArgv(HelpText, args, options, optionsFirst, help, version)"]
-                .Var("collected")[code.New["Leaves()"]]
-                .Var("required")[code.New["RequiredMatcher(1, left, collected)"]]
-
-                .Block[GeneratePatternMatchingCode(code, pattern, "required")]
-
-                .NewLine
-                .Assign("collected")["GetSuccessfulCollection(required, Usage)"]
-                .Var("result")[code.New[name]["Arguments()"]].Blank();
-
-            var leaves = Docopt.GetFlatPatterns(helpText)
-                               .GroupBy(p => p.Name)
-                               .Select(g => (LeafPattern)g.First())
-                               .ToList();
-
-            if (leaves.Any())
-            {
-                code.NewLine
-                    .ForEach["p"]["collected"][
-                         code.Var("value")["p.Value is { IsStringList: true } ? ((StringList)p.Value).Reverse() : p.Value"]
-                             .Switch["p.Name"]
-                             .Cases(leaves, default(Unit),
-                                    static (_, p, _) => CSharpSourceBuilder.SwitchCaseChoice.Choose(p.Name),
-                                    static (code, _, p) =>
-                                        code[' ']
-                                            .Assign(code["result."][InferPropertyName(p)])[
-                                                code['(']
-                                                    [p switch { Option   { Value: { IsString: true } } => "string",
-                                                                Argument { Value: { IsNone: true } } or Option { ArgCount: not 0, Value: { Kind: not ValueKind.StringList } } => "string?",
-                                                                { Value: { Kind: var kind } } => MapType(kind) }]
-                                                    [")value"].SkipNextNewLine][' '])].Blank();
-            }
-
-            code.NewLine
-                .Return["result"]
-                .BlockEnd   // Apply
-
-                .NewLine
                 ["IEnumerator<KeyValuePair<string, object?>> GetEnumerator()"].NewLine.Block[
                     leaves.Any() ? code.Each(leaves, static (code, p, _) => code.Yield.Return[code["KeyValuePair.Create("].Literal(p.Name)[", (object?)"][InferPropertyName(p)][')']])
                                  : code.Yield.Break]

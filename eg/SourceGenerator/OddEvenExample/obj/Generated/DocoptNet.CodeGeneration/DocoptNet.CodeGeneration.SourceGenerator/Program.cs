@@ -29,8 +29,25 @@ Options:
                 new Option("-h", "--help", 0, false),
             };
             var left = ParseArgv(HelpText, args, options, optionsFirst, help, version);
-            var collected = new Leaves();
-            var required = new RequiredMatcher(1, left, collected);
+            var required = new RequiredMatcher(1, left, new Leaves());
+            Match(ref required);
+            var collected = GetSuccessfulCollection(required, Usage);
+            var result = new ProgramArguments();
+
+            foreach (var p in collected)
+            {
+                var value = p.Value is { IsStringList: true } ? ((StringList)p.Value).Reverse() : p.Value;
+                switch (p.Name)
+                {
+                    case "--help": result.OptHelp = (bool)value; break;
+                    case "ODD": result.ArgOdd = (StringList)value; break;
+                    case "EVEN": result.ArgEven = (StringList)value; break;
+                }
+            }
+
+            return result;
+
+            static void Match(ref RequiredMatcher required)
             {
                 // Required(Required(Optional(Option(-h,--help,0,False)), OneOrMore(Required(Argument(ODD, []), Argument(EVEN, [])))))
                 var a = new RequiredMatcher(1, required.Left, required.Collected);
@@ -111,22 +128,6 @@ Options:
                 }
                 required.Fold(a.Result);
             }
-
-            collected = GetSuccessfulCollection(required, Usage);
-            var result = new ProgramArguments();
-
-            foreach (var p in collected)
-            {
-                var value = p.Value is { IsStringList: true } ? ((StringList)p.Value).Reverse() : p.Value;
-                switch (p.Name)
-                {
-                    case "--help": result.OptHelp = (bool)value; break;
-                    case "ODD": result.ArgOdd = (StringList)value; break;
-                    case "EVEN": result.ArgEven = (StringList)value; break;
-                }
-            }
-
-            return result;
         }
 
         IEnumerator<KeyValuePair<string, object?>> GetEnumerator()

@@ -38,8 +38,27 @@ Try: CountedExample -vvvvvvvvvv
                 new Option(null, "--path", 1, StringList.Empty),
             };
             var left = ParseArgv(HelpText, args, options, optionsFirst, help, version);
-            var collected = new Leaves();
-            var required = new RequiredMatcher(1, left, collected);
+            var required = new RequiredMatcher(1, left, new Leaves());
+            Match(ref required);
+            var collected = GetSuccessfulCollection(required, Usage);
+            var result = new ProgramArguments();
+
+            foreach (var p in collected)
+            {
+                var value = p.Value is { IsStringList: true } ? ((StringList)p.Value).Reverse() : p.Value;
+                switch (p.Name)
+                {
+                    case "--help": result.OptHelp = (bool)value; break;
+                    case "-v": result.OptV = (int)value; break;
+                    case "go": result.CmdGo = (int)value; break;
+                    case "--path": result.OptPath = (StringList)value; break;
+                    case "<file>": result.ArgFile = (StringList)value; break;
+                }
+            }
+
+            return result;
+
+            static void Match(ref RequiredMatcher required)
             {
                 // Required(Either(Required(Option(,--help,0,False)), Required(OneOrMore(Option(-v,,0,0))), Required(Command(go, 0), Optional(Command(go, 0))), Required(OneOrMore(Required(Option(,--path,1,[])))), Required(Argument(<file>, []), Argument(<file>, []))))
                 var a = new RequiredMatcher(1, required.Left, required.Collected);
@@ -211,24 +230,6 @@ Try: CountedExample -vvvvvvvvvv
                 }
                 required.Fold(a.Result);
             }
-
-            collected = GetSuccessfulCollection(required, Usage);
-            var result = new ProgramArguments();
-
-            foreach (var p in collected)
-            {
-                var value = p.Value is { IsStringList: true } ? ((StringList)p.Value).Reverse() : p.Value;
-                switch (p.Name)
-                {
-                    case "--help": result.OptHelp = (bool)value; break;
-                    case "-v": result.OptV = (int)value; break;
-                    case "go": result.CmdGo = (int)value; break;
-                    case "--path": result.OptPath = (StringList)value; break;
-                    case "<file>": result.ArgFile = (StringList)value; break;
-                }
-            }
-
-            return result;
         }
 
         IEnumerator<KeyValuePair<string, object?>> GetEnumerator()

@@ -72,8 +72,38 @@ Options:
                 new Option(null, "--doctest", 0, false),
             };
             var left = ParseArgv(HelpText, args, options, optionsFirst, help, version);
-            var collected = new Leaves();
-            var required = new RequiredMatcher(1, left, collected);
+            var required = new RequiredMatcher(1, left, new Leaves());
+            Match(ref required);
+            var collected = GetSuccessfulCollection(required, Usage);
+            var result = new ProgramArguments();
+
+            foreach (var p in collected)
+            {
+                var value = p.Value is { IsStringList: true } ? ((StringList)p.Value).Reverse() : p.Value;
+                switch (p.Name)
+                {
+                    case "--help": result.OptHelp = (bool)value; break;
+                    case "--verbose": result.OptVerbose = (bool)value; break;
+                    case "--quiet": result.OptQuiet = (bool)value; break;
+                    case "--repeat": result.OptRepeat = (bool)value; break;
+                    case "--file": result.OptFile = (string)value; break;
+                    case "--exclude": result.OptExclude = (string)value; break;
+                    case "--select": result.OptSelect = (string?)value; break;
+                    case "--ignore": result.OptIgnore = (string?)value; break;
+                    case "--show-source": result.OptShowSource = (bool)value; break;
+                    case "--statistics": result.OptStatistics = (bool)value; break;
+                    case "--count": result.OptCount = (bool)value; break;
+                    case "--benchmark": result.OptBenchmark = (bool)value; break;
+                    case "PATH": result.ArgPath = (StringList)value; break;
+                    case "--doctest": result.OptDoctest = (bool)value; break;
+                    case "--testsuite": result.OptTestsuite = (string?)value; break;
+                    case "--version": result.OptVersion = (bool)value; break;
+                }
+            }
+
+            return result;
+
+            static void Match(ref RequiredMatcher required)
             {
                 // Required(Either(Required(Optional(Option(-h,--help,0,False), Option(-v,--verbose,0,False), Option(-q,--quiet,0,False), Option(-r,--repeat,0,False), Option(-f,--file,1,*.py)), Optional(Option(,--exclude,1,.svn,CVS,.bzr,.hg,.git)), Optional(Either(Option(,--select,1,), Option(,--ignore,1,))), Optional(Option(,--show-source,0,False)), Optional(Option(,--statistics,0,False)), Optional(Option(,--count,0,False)), Optional(Option(,--benchmark,0,False)), OneOrMore(Argument(PATH, []))), Required(Required(Either(Option(,--doctest,0,False), Option(,--testsuite,1,)))), Required(Option(,--version,0,False))))
                 var a = new RequiredMatcher(1, required.Left, required.Collected);
@@ -363,35 +393,6 @@ Options:
                 }
                 required.Fold(a.Result);
             }
-
-            collected = GetSuccessfulCollection(required, Usage);
-            var result = new ProgramArguments();
-
-            foreach (var p in collected)
-            {
-                var value = p.Value is { IsStringList: true } ? ((StringList)p.Value).Reverse() : p.Value;
-                switch (p.Name)
-                {
-                    case "--help": result.OptHelp = (bool)value; break;
-                    case "--verbose": result.OptVerbose = (bool)value; break;
-                    case "--quiet": result.OptQuiet = (bool)value; break;
-                    case "--repeat": result.OptRepeat = (bool)value; break;
-                    case "--file": result.OptFile = (string)value; break;
-                    case "--exclude": result.OptExclude = (string)value; break;
-                    case "--select": result.OptSelect = (string?)value; break;
-                    case "--ignore": result.OptIgnore = (string?)value; break;
-                    case "--show-source": result.OptShowSource = (bool)value; break;
-                    case "--statistics": result.OptStatistics = (bool)value; break;
-                    case "--count": result.OptCount = (bool)value; break;
-                    case "--benchmark": result.OptBenchmark = (bool)value; break;
-                    case "PATH": result.ArgPath = (StringList)value; break;
-                    case "--doctest": result.OptDoctest = (bool)value; break;
-                    case "--testsuite": result.OptTestsuite = (string?)value; break;
-                    case "--version": result.OptVersion = (bool)value; break;
-                }
-            }
-
-            return result;
         }
 
         IEnumerator<KeyValuePair<string, object?>> GetEnumerator()
