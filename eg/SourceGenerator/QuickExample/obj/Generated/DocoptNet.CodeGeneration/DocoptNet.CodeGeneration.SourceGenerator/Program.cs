@@ -11,7 +11,7 @@ namespace QuickExample
 {
     partial class ProgramArguments : IEnumerable<KeyValuePair<string, object?>>
     {
-        public const string HelpText = @"Usage:
+        public const string Help = @"Usage:
   QuickExample tcp <host> <port> [--timeout=<seconds>]
   QuickExample serial <port> [--baud=9600] [--timeout=<seconds>]
   QuickExample -h | --help | --version
@@ -32,7 +32,7 @@ namespace QuickExample
                 new Option(null, "--help", 0, false),
                 new Option(null, "--version", 0, false),
             };
-            var left = ParseArgv(HelpText, args, options, optionsFirst, help, version);
+            var left = ParseArgv(Help, args, options, optionsFirst, help, version);
             var required = new RequiredMatcher(1, left, new Leaves());
             Match(ref required);
             var collected = GetSuccessfulCollection(required, Usage);

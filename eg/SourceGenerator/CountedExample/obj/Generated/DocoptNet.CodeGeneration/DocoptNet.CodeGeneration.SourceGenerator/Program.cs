@@ -11,7 +11,7 @@ namespace CountedExample
 {
     partial class ProgramArguments : IEnumerable<KeyValuePair<string, object?>>
     {
-        public const string HelpText = @"Usage: CountedExample --help
+        public const string Help = @"Usage: CountedExample --help
        CountedExample -v...
        CountedExample go [go]
        CountedExample (--path=<path>)...
@@ -37,7 +37,7 @@ Try: CountedExample -vvvvvvvvvv
                 new Option("-v", null, 0, 0),
                 new Option(null, "--path", 1, StringList.Empty),
             };
-            var left = ParseArgv(HelpText, args, options, optionsFirst, help, version);
+            var left = ParseArgv(Help, args, options, optionsFirst, help, version);
             var required = new RequiredMatcher(1, left, new Leaves());
             Match(ref required);
             var collected = GetSuccessfulCollection(required, Usage);

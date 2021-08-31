@@ -11,7 +11,7 @@ namespace OddEvenExample
 {
     partial class ProgramArguments : IEnumerable<KeyValuePair<string, object?>>
     {
-        public const string HelpText = @"Usage: OddEvenExample [-h | --help] (ODD EVEN)...
+        public const string Help = @"Usage: OddEvenExample [-h | --help] (ODD EVEN)...
 
 Example, try:
   OddEvenExample 1 2 3 4
@@ -28,7 +28,7 @@ Options:
             {
                 new Option("-h", "--help", 0, false),
             };
-            var left = ParseArgv(HelpText, args, options, optionsFirst, help, version);
+            var left = ParseArgv(Help, args, options, optionsFirst, help, version);
             var required = new RequiredMatcher(1, left, new Leaves());
             Match(ref required);
             var collected = GetSuccessfulCollection(required, Usage);

@@ -138,7 +138,7 @@ namespace DocoptNet.CodeGeneration
 
             var isNamespaced = !string.IsNullOrEmpty(ns);
 
-            const string helpConstName = "HelpText";
+            const string helpConstName = "Help";
             const string usageConstName = "Usage";
 
             code["#nullable enable annotations"].NewLine

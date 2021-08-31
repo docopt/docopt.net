@@ -11,7 +11,7 @@ namespace OptionsExample
 {
     partial class ProgramArguments : IEnumerable<KeyValuePair<string, object?>>
     {
-        public const string HelpText = @"Example of program with many options using docopt.
+        public const string Help = @"Example of program with many options using docopt.
 
 Usage:
   OptionsExample [-hvqrf NAME] [--exclude=PATTERNS]
@@ -71,7 +71,7 @@ Options:
                 new Option(null, "--testsuite", 1, null),
                 new Option(null, "--doctest", 0, false),
             };
-            var left = ParseArgv(HelpText, args, options, optionsFirst, help, version);
+            var left = ParseArgv(Help, args, options, optionsFirst, help, version);
             var required = new RequiredMatcher(1, left, new Leaves());
             Match(ref required);
             var collected = GetSuccessfulCollection(required, Usage);

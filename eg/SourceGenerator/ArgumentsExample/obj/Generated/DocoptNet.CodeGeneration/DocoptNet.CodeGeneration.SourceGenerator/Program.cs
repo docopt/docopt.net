@@ -11,7 +11,7 @@ namespace ArgumentsExample
 {
     partial class ProgramArguments : IEnumerable<KeyValuePair<string, object?>>
     {
-        public const string HelpText = @"Usage: ArgumentsExample [-vqrh] [FILE] ...
+        public const string Help = @"Usage: ArgumentsExample [-vqrh] [FILE] ...
        ArgumentsExample (--left | --right) CORRECTION FILE
 
 Process FILE and optionally apply correction to either left-hand side or
@@ -44,7 +44,7 @@ Options:
                 new Option(null, "--left", 0, false),
                 new Option(null, "--right", 0, false),
             };
-            var left = ParseArgv(HelpText, args, options, optionsFirst, help, version);
+            var left = ParseArgv(Help, args, options, optionsFirst, help, version);
             var required = new RequiredMatcher(1, left, new Leaves());
             Match(ref required);
             var collected = GetSuccessfulCollection(required, Usage);

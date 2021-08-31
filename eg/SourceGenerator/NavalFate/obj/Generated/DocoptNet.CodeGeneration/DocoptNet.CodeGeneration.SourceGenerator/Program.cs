@@ -11,7 +11,7 @@ namespace NavalFate
 {
     partial class ProgramArguments : IEnumerable<KeyValuePair<string, object?>>
     {
-        public const string HelpText = @"Naval Fate.
+        public const string Help = @"Naval Fate.
 
     Usage:
       naval_fate.exe ship new <name>...
@@ -47,7 +47,7 @@ namespace NavalFate
                 new Option(null, "--moored", 0, false),
                 new Option(null, "--drifting", 0, false),
             };
-            var left = ParseArgv(HelpText, args, options, optionsFirst, help, version);
+            var left = ParseArgv(Help, args, options, optionsFirst, help, version);
             var required = new RequiredMatcher(1, left, new Leaves());
             Match(ref required);
             var collected = GetSuccessfulCollection(required, Usage);

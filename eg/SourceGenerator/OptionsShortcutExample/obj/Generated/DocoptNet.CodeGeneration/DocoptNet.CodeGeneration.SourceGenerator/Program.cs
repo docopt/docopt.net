@@ -11,7 +11,7 @@ namespace OptionsShortcutExample
 {
     partial class ProgramArguments : IEnumerable<KeyValuePair<string, object?>>
     {
-        public const string HelpText = @"Example of program which uses [options] shortcut in pattern.
+        public const string Help = @"Example of program which uses [options] shortcut in pattern.
 
 Usage:
   OptionsShortcutExample [options] <port>
@@ -39,7 +39,7 @@ Options:
                 new Option(null, "--apply", 0, false),
                 new Option("-q", null, 0, false),
             };
-            var left = ParseArgv(HelpText, args, options, optionsFirst, help, version);
+            var left = ParseArgv(Help, args, options, optionsFirst, help, version);
             var required = new RequiredMatcher(1, left, new Leaves());
             Match(ref required);
             var collected = GetSuccessfulCollection(required, Usage);
