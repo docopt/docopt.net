@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "NavalFate": {
+      "commandName": "Project",
+      "commandLineArgs": "ship new foo bar baz"
+    }
+  }
+}

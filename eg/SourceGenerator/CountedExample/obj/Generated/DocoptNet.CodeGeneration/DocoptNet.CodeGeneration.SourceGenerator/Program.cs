@@ -40,7 +40,6 @@ Try: CountedExample -vvvvvvvvvv
             var left = ParseArgv(HelpText, args, options, optionsFirst, help, version);
             var collected = new Leaves();
             var a = new RequiredMatcher(1, left, collected);
-            do
             {
                 // Required(Either(Required(Option(,--help,0,False)), Required(OneOrMore(Option(-v,,0,0))), Required(Command(go, 0), Optional(Command(go, 0))), Required(OneOrMore(Required(Option(,--path,1,[])))), Required(Argument(<file>, []), Argument(<file>, []))))
                 var b = new RequiredMatcher(1, a.Left, a.Collected);
@@ -212,7 +211,6 @@ Try: CountedExample -vvvvvvvvvv
                 }
                 a.Fold(b.Result);
             }
-            while (false);
 
             collected = GetSuccessfulCollection(a, Usage);
             var result = new ProgramArguments();

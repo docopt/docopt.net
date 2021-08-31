@@ -74,7 +74,6 @@ Options:
             var left = ParseArgv(HelpText, args, options, optionsFirst, help, version);
             var collected = new Leaves();
             var a = new RequiredMatcher(1, left, collected);
-            do
             {
                 // Required(Either(Required(Optional(Option(-h,--help,0,False), Option(-v,--verbose,0,False), Option(-q,--quiet,0,False), Option(-r,--repeat,0,False), Option(-f,--file,1,*.py)), Optional(Option(,--exclude,1,.svn,CVS,.bzr,.hg,.git)), Optional(Either(Option(,--select,1,), Option(,--ignore,1,))), Optional(Option(,--show-source,0,False)), Optional(Option(,--statistics,0,False)), Optional(Option(,--count,0,False)), Optional(Option(,--benchmark,0,False)), OneOrMore(Argument(PATH, []))), Required(Required(Either(Option(,--doctest,0,False), Option(,--testsuite,1,)))), Required(Option(,--version,0,False))))
                 var b = new RequiredMatcher(1, a.Left, a.Collected);
@@ -364,7 +363,6 @@ Options:
                 }
                 a.Fold(b.Result);
             }
-            while (false);
 
             collected = GetSuccessfulCollection(a, Usage);
             var result = new ProgramArguments();

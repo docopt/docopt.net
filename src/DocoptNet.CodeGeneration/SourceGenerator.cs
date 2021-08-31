@@ -223,7 +223,7 @@ namespace DocoptNet.CodeGeneration
                 .Var("collected")[code.New["Leaves()"]]
                 .Var("a")[code.New["RequiredMatcher(1, left, collected)"]]
 
-                .Do[GeneratePatternMatchingCode(code, pattern, "a")].While[code.False]
+                .Block[GeneratePatternMatchingCode(code, pattern, "a")]
 
                 .NewLine
                 .Assign("collected")["GetSuccessfulCollection(a, Usage)"]

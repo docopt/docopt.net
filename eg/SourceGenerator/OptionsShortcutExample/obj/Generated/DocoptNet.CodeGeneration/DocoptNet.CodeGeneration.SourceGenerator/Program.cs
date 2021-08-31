@@ -42,7 +42,6 @@ Options:
             var left = ParseArgv(HelpText, args, options, optionsFirst, help, version);
             var collected = new Leaves();
             var a = new RequiredMatcher(1, left, collected);
-            do
             {
                 // Required(Required(Optional(OptionsShortcut(Option(-h,--help,0,False), Option(,--version,0,False), Option(-n,--number,1,), Option(-t,--timeout,1,), Option(,--apply,0,False), Option(-q,,0,False))), Argument(<port>, )))
                 var b = new RequiredMatcher(1, a.Left, a.Collected);
@@ -137,7 +136,6 @@ Options:
                 }
                 a.Fold(b.Result);
             }
-            while (false);
 
             collected = GetSuccessfulCollection(a, Usage);
             var result = new ProgramArguments();

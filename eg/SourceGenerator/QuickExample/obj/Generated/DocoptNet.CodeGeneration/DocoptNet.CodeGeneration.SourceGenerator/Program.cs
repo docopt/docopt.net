@@ -35,7 +35,6 @@ namespace QuickExample
             var left = ParseArgv(HelpText, args, options, optionsFirst, help, version);
             var collected = new Leaves();
             var a = new RequiredMatcher(1, left, collected);
-            do
             {
                 // Required(Either(Required(Command(tcp, False), Argument(<host>, ), Argument(<port>, ), Optional(Option(,--timeout,1,))), Required(Command(serial, False), Argument(<port>, ), Optional(Option(,--baud,1,)), Optional(Option(,--timeout,1,))), Required(Either(Option(-h,,0,False), Option(,--help,0,False), Option(,--version,0,False)))))
                 var b = new RequiredMatcher(1, a.Left, a.Collected);
@@ -218,7 +217,6 @@ namespace QuickExample
                 }
                 a.Fold(b.Result);
             }
-            while (false);
 
             collected = GetSuccessfulCollection(a, Usage);
             var result = new ProgramArguments();

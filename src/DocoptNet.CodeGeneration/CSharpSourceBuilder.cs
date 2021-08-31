@@ -11,9 +11,6 @@ namespace DocoptNet.CodeGeneration
         CSharpSourceBuilder.IStatementFlow,
         CSharpSourceBuilder.IBlockFlow,
         CSharpSourceBuilder.IIfFlow,
-        CSharpSourceBuilder.IDoFlow,
-        CSharpSourceBuilder.IDoWhileFlow,
-        CSharpSourceBuilder.IDoWhileConditionFlow,
         CSharpSourceBuilder.IControlBlockFlow,
         CSharpSourceBuilder.ISwitchFlow,
         CSharpSourceBuilder.ISwitchCasesFlow,
@@ -204,35 +201,6 @@ namespace DocoptNet.CodeGeneration
         IBlockFlow IIfFlow.this[string code] => IfFlow(this[code]);
         IBlockFlow IIfFlow.this[CSharpSourceBuilder code] => IfFlow(code);
         CSharpSourceBuilder IfFlow(CSharpSourceBuilder code) { AssertSame(code); return this[')'].NewLine.BlockStart; }
-
-        public IDoFlow Do => this["do"].NewLine.BlockStart;
-
-        public interface IDoFlow
-        {
-            IDoWhileFlow this[string code] { get; }
-            IDoWhileFlow this[CSharpSourceBuilder code] { get; }
-        }
-
-        IDoWhileFlow IDoFlow.this[string code] => DoFlow(this[code]);
-        IDoWhileFlow IDoFlow.this[CSharpSourceBuilder code] => DoFlow(code);
-        CSharpSourceBuilder DoFlow(CSharpSourceBuilder code) { AssertSame(code); return BlockEnd; }
-
-        IDoWhileConditionFlow IDoWhileFlow.While => this["while ("];
-
-        public interface IDoWhileFlow
-        {
-            IDoWhileConditionFlow While { get; }
-        }
-
-        public interface IDoWhileConditionFlow
-        {
-            CSharpSourceBuilder this[string code] { get; }
-            CSharpSourceBuilder this[CSharpSourceBuilder code] { get; }
-        }
-
-        CSharpSourceBuilder IDoWhileConditionFlow.this[string code] => DoWhileConditionFlow(this[code]);
-        CSharpSourceBuilder IDoWhileConditionFlow.this[CSharpSourceBuilder code] => DoWhileConditionFlow(code);
-        CSharpSourceBuilder DoWhileConditionFlow(CSharpSourceBuilder code) { AssertSame(code); return this[')'].EndStatement; }
 
         public IControlBlockFlow While => this["while ("];
 
