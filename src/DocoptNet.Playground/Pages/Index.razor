@@ -25,7 +25,7 @@
               @bind:event="oninput"
               @onkeyup=@(_ => Docoptify())
               autofocus
-		      placeholder="Enter command-line"></textarea>
+              placeholder="Enter command-line"></textarea>
 </div>
 
 <div id="result-pane">
@@ -76,15 +76,15 @@
 
 @functions
 {
-	bool _optionsFirst;
-	bool _lastOptionsFirst;
-	string _commandLine;
-	string _lastCommandLine;
+    bool _optionsFirst;
+    bool _lastOptionsFirst;
+    string _commandLine;
+    string _lastCommandLine;
     string _input;
     string _lastInput;
     string _output;
-	IDictionary<string, Value> _args;
-	List<Node> _nodes;
+    IDictionary<string, Value> _args;
+    List<Node> _nodes;
     bool _error;
     TimeSpan? _ms;
     ElementReference _inputTextArea;
@@ -102,9 +102,9 @@
         await base.OnAfterRenderAsync(firstRender);
         if (firstRender)
         {
-			_output = string.Empty;
-			_commandLine = "ship Guardian move 10 50 --speed=20";
-			_input = @"Naval Fate.
+            _output = string.Empty;
+            _commandLine = "ship Guardian move 10 50 --speed=20";
+            _input = @"Naval Fate.
 
 Usage:
   naval_fate ship new <name>...
@@ -121,9 +121,9 @@ Options:
   --moored      Moored (anchored) mine.
   --drifting    Drifting mine.
  ";
-			Docoptify();
+            Docoptify();
             StateHasChanged();
-		}
+        }
     }
 
     void Docoptify()
@@ -137,7 +137,7 @@ Options:
 
         _lastOptionsFirst = _optionsFirst;
         _lastInput = _input;
-		_lastCommandLine = _commandLine;
+        _lastCommandLine = _commandLine;
         _error = false;
         _ms = null;
 
@@ -170,9 +170,9 @@ Options:
             var (pattern, _, _) = Docopt.ParsePattern(_input);
             AppendTree(sb, pattern);
 
-			var docopt = new Docopt();
+            var docopt = new Docopt();
             var argv = _commandLine.Split((char[])null, StringSplitOptions.RemoveEmptyEntries);
-			_nodes = docopt.GetNodes(_input,
+            _nodes = docopt.GetNodes(_input,
                                      (name, value) => new Node(name, value.Kind, 0, Value.None),
                                      (name, value) => new Node(name, value.IsStringList ? ValueKind.StringList : ValueKind.String, 0, Value.None),
                                      (name, _, _, _, value) => new Node(name, value.Kind, 0, Value.None))
@@ -180,13 +180,13 @@ Options:
                            .ToList();
             _args = docopt.Apply(_input, argv.AsEnumerable(), help: false, version: null, optionsFirst: _optionsFirst, exit: false).ToValueDictionary();
             _nodes = _nodes.Select(n => new Node(n.Name, n.ValueKind, n.Count, _args.TryGetValue(n.Name, out var v) ? v : Value.None)).ToList();
-			_output = string.Empty;
+            _output = string.Empty;
             _output = sb.ToString();
             _ms = sw.Elapsed;
         }
         catch (DocoptBaseException e)
         {
-			_args = null;
+            _args = null;
             _output = e.Message;
             _error = true;
         }
