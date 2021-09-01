@@ -138,13 +138,12 @@ Options:
         _lastOptionsFirst = _optionsFirst;
         _lastInput = _input;
         _lastCommandLine = _commandLine;
+        _output = string.Empty;
         _error = false;
         _ms = null;
 
-        if (_input.Length == 0) {
-            _output = string.Empty;
+        if (_input.Length == 0)
             return;
-        }
 
         var sw = Stopwatch.StartNew();
 
@@ -169,6 +168,7 @@ Options:
             var sb = new StringBuilder();
             var (pattern, _, _) = Docopt.ParsePattern(_input);
             AppendTree(sb, pattern);
+            _output = sb.ToString();
 
             var docopt = new Docopt();
             var argv = _commandLine.Split((char[])null, StringSplitOptions.RemoveEmptyEntries);
@@ -180,15 +180,17 @@ Options:
                            .ToList();
             _args = docopt.Apply(_input, argv.AsEnumerable(), help: false, version: null, optionsFirst: _optionsFirst, exit: false).ToValueDictionary();
             _nodes = _nodes.Select(n => new Node(n.Name, n.ValueKind, n.Count, _args.TryGetValue(n.Name, out var v) ? v : Value.None)).ToList();
-            _output = string.Empty;
-            _output = sb.ToString();
             _ms = sw.Elapsed;
         }
         catch (DocoptBaseException e)
         {
             _args = null;
-            _output = e.Message;
+            var width = _output.Split(NewLineChars, StringSplitOptions.RemoveEmptyEntries).Select(s => s.Length).DefaultIfEmpty().Max();
+            var ruler = new string('=', width);
+            _output = $"{e.Message.TrimEnd()}\r\n\r\n{ruler}\r\n{_output}";
             _error = true;
         }
     }
+
+    static readonly char[] NewLineChars = { '\r', '\n' };
 }
