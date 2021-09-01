@@ -1,8 +1,0 @@
-{
-  "profiles": {
-    "CountedExample": {
-      "commandName": "Project",
-      "commandLineArgs": "-vvvvvvvvvv"
-    }
-  }
-}
