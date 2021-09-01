@@ -84,7 +84,7 @@ namespace DocoptNet.CodeGeneration
                     if (Generate(ns, docopt.Name, docopt.Text) is { Length: > 0 } source)
                     {
                         added = true;
-                        context.AddSource(docopt.Name + ".cs", source);
+                        context.AddSource(docopt.Name + "Arguments.cs", source);
                     }
                 }
                 catch (DocoptLanguageErrorException e)
