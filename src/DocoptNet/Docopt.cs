@@ -25,7 +25,7 @@ namespace DocoptNet
         internal ApplicationResult Apply(string doc, IEnumerable<string> argv,
                                          bool help = true, object version = null,
                                          bool optionsFirst = false, bool exit = false) =>
-            Apply(doc, new Tokens(argv, typeof (DocoptInputErrorException)), help, version, optionsFirst, exit);
+            Apply(doc, Tokens.From(argv), help, version, optionsFirst, exit);
 
         ApplicationResult Apply(string doc, Tokens tokens,
                                 bool help, object version, bool optionsFirst, bool exit)
@@ -220,19 +220,19 @@ namespace DocoptNet
             //        argv ::= [ long | shorts | argument ]* [ '--' [ argument ]* ] ;
 
             var parsed = new List<LeafPattern>();
-            while (tokens.Current() != null)
+            while (tokens.Current() is { } token)
             {
-                if (tokens.Current() == "--")
+                if (token == "--")
                 {
                     parsed.AddRange(tokens.Select(v => new Argument(null, v)));
                     return parsed;
                 }
 
-                if (tokens.Current().StartsWith("--"))
+                if (token.StartsWith("--"))
                 {
                     parsed.AddRange(ParseLong(tokens, options));
                 }
-                else if (tokens.Current().StartsWith("-") && tokens.Current() != "-")
+                else if (token.StartsWith("-") && tokens.Current() != "-")
                 {
                     parsed.AddRange(ParseShorts(tokens, options));
                 }
@@ -281,7 +281,7 @@ namespace DocoptNet
             if (tokens.Current() != "|")
                 return seq;
             var result = new List<Pattern>();
-            if (seq.Count() > 1)
+            if (seq.Count > 1)
             {
                 result.Add(new Required(seq.ToArray()));
             }
@@ -293,7 +293,7 @@ namespace DocoptNet
             {
                 tokens.Move();
                 seq = ParseSeq(tokens, options);
-                if (seq.Count() > 1)
+                if (seq.Count > 1)
                 {
                     result.Add(new Required(seq.ToArray()));
                 }
@@ -317,9 +317,8 @@ namespace DocoptNet
                 var atom = ParseAtom(tokens, options);
                 if (tokens.Current() == "...")
                 {
-                    result.Add(new OneOrMore(atom.ToArray()));
+                    atom = new[] { new OneOrMore(atom.ToArray()) };
                     tokens.Move();
-                    return result;
                 }
                 result.AddRange(atom);
             }
@@ -331,7 +330,7 @@ namespace DocoptNet
             // atom ::= '(' expr ')' | '[' expr ']' | 'options'
             //  | long | shorts | argument | command ;
 
-            var token = tokens.Current();
+            var token = tokens.Current() ?? throw new NullReferenceException();
             var result = new List<Pattern>();
             switch (token)
             {
@@ -384,7 +383,7 @@ namespace DocoptNet
         {
             // shorts ::= '-' ( chars )* [ [ ' ' ] chars ] ;
 
-            var token = tokens.Move();
+            var token = tokens.Move() ?? throw new NullReferenceException();
             Debug.Assert(token.StartsWith("-") && !token.StartsWith("--"));
             var left = token.TrimStart(new[] {'-'});
             var parsed = new List<Option>();
@@ -416,11 +415,11 @@ namespace DocoptNet
                     {
                         if (left == "")
                         {
-                            if (tokens.Current() == null || tokens.Current() == "--")
+                            if (tokens.Current() is null or "--")
                             {
                                 throw tokens.CreateException(shortName + " requires argument");
                             }
-                            value = tokens.Move();
+                            value = tokens.Move() ?? Value.None;
                         }
                         else
                         {

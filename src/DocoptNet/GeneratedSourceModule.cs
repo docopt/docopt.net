@@ -12,7 +12,7 @@ namespace DocoptNet
             ParseArgv(string doc, IEnumerable<string> args, List<Option> options,
                       bool optionsFirst, bool help, object? version)
         {
-            var tokens = new Tokens(args, typeof(DocoptInputErrorException));
+            var tokens = Tokens.From(args);
             var arguments = Docopt.ParseArgv(tokens, options, optionsFirst).AsReadOnly();
             if (help && arguments.Any(o => o is { Name: "-h" or "--help", Value: { IsTrue: true } }))
                 throw new DocoptExitException(doc);

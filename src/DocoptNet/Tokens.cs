@@ -1,3 +1,5 @@
+#nullable enable
+
 namespace DocoptNet
 {
     using System;
@@ -6,62 +8,52 @@ namespace DocoptNet
     using System.Linq;
     using System.Text.RegularExpressions;
 
-    partial class Tokens: IEnumerable<string>
+    partial class Tokens
     {
-        private readonly Type _errorType;
-        private readonly Queue<string> _tokens;
+        static Tokens New<TError>(IEnumerable<string> source, Func<string, TError> errorFactory)
+            where TError : DocoptBaseException =>
+            new ContextualTokens<TError>(source, errorFactory);
 
-        public Tokens(IEnumerable<string> source, Type errorType)
-        {
-            _errorType = errorType ?? typeof(DocoptInputErrorException);
-            _tokens = new Queue<string>(source);
-        }
-
-        public Type ErrorType
-        {
-            get { return _errorType; }
-        }
-
-        public bool ThrowsInputError
-        {
-            get { return ErrorType == typeof (DocoptInputErrorException); }
-        }
+        public static Tokens From(IEnumerable<string> source) =>
+            New(source, msg => new DocoptInputErrorException(msg));
 
         public static Tokens FromPattern(string pattern)
         {
             var spacedOut = Regex.Replace(pattern, @"([\[\]\(\)\|]|\.\.\.)", @" $1 ");
             var source = Regex.Split(spacedOut, @"\s+|(\S*<.*?>)").Where(x => !string.IsNullOrEmpty(x));
-            return new Tokens(source, typeof(DocoptLanguageErrorException));
+            return New(source, msg => new DocoptLanguageErrorException(msg));
         }
+    }
 
-        public IEnumerator<string> GetEnumerator()
-        {
-            return _tokens.GetEnumerator();
-        }
+    abstract partial class Tokens : IEnumerable<string>
+    {
+        readonly Queue<string> _tokens;
 
-        IEnumerator IEnumerable.GetEnumerator()
-        {
-            return GetEnumerator();
-        }
+        protected Tokens(IEnumerable<string> source) => _tokens = new Queue<string>(source);
 
-        public string Move()
-        {
-            return _tokens.Count > 0 ? _tokens.Dequeue() : null;
-        }
+        public abstract Type ErrorType { get; }
+        public abstract Exception CreateException(string message);
 
-        public string Current()
-        {
-            return _tokens.Count > 0 ? _tokens.Peek() : null;
-        }
+        public bool ThrowsInputError => ErrorType == typeof(DocoptInputErrorException);
 
-        public Exception CreateException(string message)
-        {
-            return Activator.CreateInstance(_errorType, new object[] {message}) as Exception;
-        }
+        public IEnumerator<string> GetEnumerator() => _tokens.GetEnumerator();
+        IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 
-        public override string ToString()
+        public string? Move()    => _tokens.Count > 0 ? _tokens.Dequeue() : null;
+        public string? Current() => _tokens.Count > 0 ? _tokens.Peek() : null;
+
+        public override string ToString() => $"current={Current()},count={_tokens.Count}";
+
+        sealed class ContextualTokens<TError> : Tokens where TError : Exception
         {
-            return $"current={Current()},count={_tokens.Count}";
+            readonly Func<string, TError> _errorFactory;
+
+            public ContextualTokens(IEnumerable<string> source, Func<string, TError> errorFactory) :
+                base(source) =>
+                _errorFactory = errorFactory;
+
+            public override Type ErrorType => typeof(TError);
+            public override Exception CreateException(string message) => _errorFactory(message);
         }
     }
 }
