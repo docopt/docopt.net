@@ -54,7 +54,7 @@ namespace DocoptNet.CodeGeneration
 
             context.AnalyzerConfigOptions.GlobalOptions.TryGetValue("build_property.RootNamespace", out var ns);
 
-            var templates =
+            var docopts =
                 from at in context.AdditionalFiles
                 select context.AnalyzerConfigOptions.GetOptions(at) is {} options
                     && options.TryGetValue(Metadata.SourceItemType, out var type)
@@ -71,20 +71,20 @@ namespace DocoptNet.CodeGeneration
 
                        }
                      : null
-                into t
-                where t is not null
-                select t;
+                into e
+                where e is not null
+                select e;
 
             var added = false;
 
-            foreach (var t in templates)
+            foreach (var docopt in docopts)
             {
                 try
                 {
-                    if (Generate(ns, t.Name, t.Text) is { Length: > 0 } source)
+                    if (Generate(ns, docopt.Name, docopt.Text) is { Length: > 0 } source)
                     {
                         added = true;
-                        context.AddSource(t.Name + ".cs", source);
+                        context.AddSource(docopt.Name + ".cs", source);
                     }
                 }
                 catch (DocoptLanguageErrorException e)
