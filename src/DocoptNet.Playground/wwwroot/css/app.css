@@ -68,7 +68,21 @@ html, body {
 
 #stats {
     background-color: bisque;
-    padding: 0.2em;
+    padding: 0.2em 1em;
+    display: flex;
+}
+
+#stats > * {
+    display: block;
+    flex: 1;
+}
+
+#optionsFirst {
+    text-align: right;
+}
+
+#about {
+    text-align: center;
 }
 
 #argv-pane {

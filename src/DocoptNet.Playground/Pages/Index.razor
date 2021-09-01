@@ -6,16 +6,17 @@
 @inject IJSRuntime JSRuntime
 
 <div id="stats">
-    @if (_ms is { } ms)
-    {
-        <span title="Peformance">&#x231A; @ms.TotalSeconds.ToString("0.0000") secs</span>
-    }
-    else
-    {
-        <a class="@(_dirty ? "hidden" : null)"
-           target="about-docoptnet"
-           href="https://github.com/docopt/docopt.net">&#x1F6C8; What is this?</a>
-    }
+    <span id="perf" title="Peformance">
+        @if (_ms is { } ms)
+        {
+            <text>&#x231A; @ms.TotalSeconds.ToString("0.0000") secs</text>
+        }
+    </span>
+    <a id="about" target="about-docoptnet"
+       href="https://github.com/docopt/docopt.net">&#x270B; What is this?</a>
+    <span id="optionsFirst" title="Require options to appear before commands and positional arguments?">
+        <input type="checkbox" @bind=@OptionsFirst> Options first?
+    </span>
 </div>
 
 <div id="argv-pane">
@@ -75,7 +76,8 @@
 
 @functions
 {
-	bool _dirty;
+	bool _optionsFirst;
+	bool _lastOptionsFirst;
 	string _commandLine;
 	string _lastCommandLine;
     string _input;
@@ -88,6 +90,12 @@
     ElementReference _inputTextArea;
 
     record Node(string Name, ValueKind ValueKind, int Count, Value Value);
+
+    bool OptionsFirst
+    {
+        get => _optionsFirst;
+        set { _optionsFirst = value; Docoptify(); }
+    }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
@@ -120,10 +128,14 @@ Options:
 
     void Docoptify()
     {
-		if (_lastInput == _input && _lastCommandLine == _commandLine) {
+        if (_lastOptionsFirst == OptionsFirst
+            && _lastInput == _input
+            && _lastCommandLine == _commandLine)
+        {
             return;
         }
 
+        _lastOptionsFirst = _optionsFirst;
         _lastInput = _input;
 		_lastCommandLine = _commandLine;
         _error = false;
@@ -133,8 +145,6 @@ Options:
             _output = string.Empty;
             return;
         }
-
-        _dirty = true;
 
         var sw = Stopwatch.StartNew();
 
@@ -168,7 +178,7 @@ Options:
                                      (name, _, _, _, value) => new Node(name, value.Kind, 0, Value.None))
                            .GroupBy(e => e.Name, e => e, (_, g) => new Node(g.First().Name, g.First().ValueKind, g.Count(), Value.None))
                            .ToList();
-            _args = docopt.Apply(_input, argv.AsEnumerable(), help: false, version: null, optionsFirst: false, exit: false).ToValueDictionary();
+            _args = docopt.Apply(_input, argv.AsEnumerable(), help: false, version: null, optionsFirst: _optionsFirst, exit: false).ToValueDictionary();
             _nodes = _nodes.Select(n => new Node(n.Name, n.ValueKind, n.Count, _args.TryGetValue(n.Name, out var v) ? v : Value.None)).ToList();
 			_output = string.Empty;
             _output = sb.ToString();
