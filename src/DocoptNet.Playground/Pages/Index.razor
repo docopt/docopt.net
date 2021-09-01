@@ -148,7 +148,7 @@ Options:
 
         var sw = Stopwatch.StartNew();
 
-        void AppendTree(StringBuilder output, Pattern pattern, int level = 0)
+        static void AppendTree(StringBuilder output, Pattern pattern, int level = 0)
         {
             output.Append(' ', level * 2);
             switch (pattern)
