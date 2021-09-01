@@ -7,6 +7,7 @@ namespace DocoptNet
     using System.Collections.Generic;
     using System.Diagnostics;
     using System.Linq;
+    using System.Text;
 
     /// <summary>
     /// A list of strings modeled after "cons" lists and that supports value equality
@@ -87,6 +88,22 @@ namespace DocoptNet
         }
 
         IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
+
+        public override string ToString()
+        {
+            if (IsEmpty)
+                return "[]";
+
+            var sb = new StringBuilder().Append('[');
+            foreach (var item in this)
+            {
+                if (sb.Length > 1)
+                    sb.Append(", ");
+                const string quote = "\"";
+                sb.Append('"').Append(item.Replace(quote, quote + quote)).Append('"');
+            }
+            return sb.Append(']').ToString();
+        }
 
         void ICollection.CopyTo(Array array, int index)
         {
