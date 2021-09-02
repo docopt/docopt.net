@@ -125,30 +125,36 @@ namespace DocoptNet
                 if (children.FirstOrDefault(c => c is BranchPattern) is { } branch)
                 {
                     children.Remove(branch);
-                    if (branch is Either either)
+                    switch (branch)
                     {
-                        foreach (var c in either.Children)
+                        case Either either:
                         {
-                            var l = new List<Pattern> {c};
+                            foreach (var c in either.Children)
+                            {
+                                var l = new List<Pattern> {c};
+                                l.AddRange(children);
+                                groups.Add(l);
+                            }
+                            break;
+                        }
+                        case OneOrMore oneOrMore:
+                        {
+                            var l = new List<Pattern>();
+                            l.AddRange(oneOrMore.Children);
+                            l.AddRange(oneOrMore.Children); // add twice
                             l.AddRange(children);
                             groups.Add(l);
+                            break;
                         }
-                    }
-                    else if (branch is OneOrMore oneOrMore)
-                    {
-                        var l = new List<Pattern>();
-                        l.AddRange(oneOrMore.Children);
-                        l.AddRange(oneOrMore.Children); // add twice
-                        l.AddRange(children);
-                        groups.Add(l);
-                    }
-                    else
-                    {
-                        var l = new List<Pattern>();
-                        if (branch.HasChildren)
-                            l.AddRange(branch.Children);
-                        l.AddRange(children);
-                        groups.Add(l);
+                        default:
+                        {
+                            var l = new List<Pattern>();
+                            if (branch.HasChildren)
+                                l.AddRange(branch.Children);
+                            l.AddRange(children);
+                            groups.Add(l);
+                            break;
+                        }
                     }
                 }
                 else
