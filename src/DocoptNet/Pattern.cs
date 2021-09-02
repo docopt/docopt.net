@@ -111,8 +111,8 @@ namespace DocoptNet
         /// </summary>
         public static Either Transform(Pattern pattern)
         {
-            var result = new List<IList<Pattern>>();
-            var groups = new List<IList<Pattern>> {new List<Pattern> {pattern}};
+            var result = new List<List<Pattern>>();
+            var groups = new List<List<Pattern>> { new() { pattern } };
             while (groups.Count > 0)
             {
                 var children = groups[0];
@@ -126,7 +126,7 @@ namespace DocoptNet
                         {
                             foreach (var c in either.Children)
                             {
-                                var l = new List<Pattern> {c};
+                                var l = new List<Pattern> { c };
                                 l.AddRange(children);
                                 groups.Add(l);
                             }
