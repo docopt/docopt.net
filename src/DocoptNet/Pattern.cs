@@ -43,11 +43,6 @@ namespace DocoptNet
             return ToString().GetHashCode();
         }
 
-        public virtual bool HasChildren
-        {
-            get { return false; }
-        }
-
         public IList<Pattern> Children { get; set; }
 
         public Pattern Fix()
@@ -66,7 +61,7 @@ namespace DocoptNet
             for (var i = 0; i < Children.Count; i++)
             {
                 var child = Children[i];
-                if (!child.HasChildren)
+                if (child is LeafPattern)
                 {
                     Debug.Assert(listUniq.Contains(child));
                     Children[i] = listUniq.First(p => p.Equals(child));
@@ -149,8 +144,7 @@ namespace DocoptNet
                         default:
                         {
                             var l = new List<Pattern>();
-                            if (branch.HasChildren)
-                                l.AddRange(branch.Children);
+                            l.AddRange(branch.Children);
                             l.AddRange(children);
                             groups.Add(l);
                             break;

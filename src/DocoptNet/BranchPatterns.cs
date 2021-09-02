@@ -20,8 +20,6 @@ namespace DocoptNet
             get { return ToString(); }
         }
 
-        public override bool HasChildren { get { return true; } }
-
         public IEnumerable<Pattern> Flat<T>() where T: Pattern
         {
             return Flat(typeof (T));
