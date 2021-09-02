@@ -122,13 +122,8 @@ namespace DocoptNet
             {
                 var children = groups[0];
                 groups.RemoveAt(0);
-                var parents = new[]
-                    {
-                        typeof (Required), typeof (Optional), typeof (OptionsShortcut), typeof (Either), typeof (OneOrMore)
-                    };
-                if (parents.Any(t => children.Any(c => c.GetType() == t)))
+                if (children.FirstOrDefault(c => c is Required or Optional or OptionsShortcut or Either or OneOrMore) is { } child)
                 {
-                    var child = children.First(c => parents.Contains(c.GetType()));
                     children.Remove(child);
                     if (child is Either either)
                     {
