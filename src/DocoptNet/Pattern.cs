@@ -43,11 +43,6 @@ namespace DocoptNet
             return ToString()!.GetHashCode();
         }
 
-        public virtual bool HasChildren
-        {
-            get { return false; }
-        }
-
         public IList<Pattern> Children { get; set; }
 
         public Pattern Fix()
@@ -66,7 +61,7 @@ namespace DocoptNet
             for (var i = 0; i < Children.Count; i++)
             {
                 var child = Children[i];
-                if (!child.HasChildren)
+                if (child is LeafPattern)
                 {
                     Debug.Assert(listUniq.Contains(child));
                     Children[i] = listUniq.First(p => p.Equals(child));
@@ -116,44 +111,44 @@ namespace DocoptNet
         /// </summary>
         public static Either Transform(Pattern pattern)
         {
-            var result = new List<IList<Pattern>>();
-            var groups = new List<IList<Pattern>> {new List<Pattern> {pattern}};
+            var result = new List<List<Pattern>>();
+            var groups = new List<List<Pattern>> { new() { pattern } };
             while (groups.Count > 0)
             {
                 var children = groups[0];
                 groups.RemoveAt(0);
-                var parents = new[]
-                    {
-                        typeof (Required), typeof (Optional), typeof (OptionsShortcut), typeof (Either), typeof (OneOrMore)
-                    };
-                if (parents.Any(t => children.Any(c => c.GetType() == t)))
+                if (children.FirstOrDefault(c => c is BranchPattern) is { } branch)
                 {
-                    var child = children.First(c => parents.Contains(c.GetType()));
-                    children.Remove(child);
-                    if (child is Either either)
+                    children.Remove(branch);
+                    switch (branch)
                     {
-                        foreach (var c in either.Children)
+                        case Either either:
                         {
-                            var l = new List<Pattern> {c};
+                            foreach (var c in either.Children)
+                            {
+                                var l = new List<Pattern> { c };
+                                l.AddRange(children);
+                                groups.Add(l);
+                            }
+                            break;
+                        }
+                        case OneOrMore oneOrMore:
+                        {
+                            var l = new List<Pattern>();
+                            l.AddRange(oneOrMore.Children);
+                            l.AddRange(oneOrMore.Children); // add twice
                             l.AddRange(children);
                             groups.Add(l);
+                            break;
                         }
-                    }
-                    else if (child is OneOrMore oneOrMore)
-                    {
-                        var l = new List<Pattern>();
-                        l.AddRange(oneOrMore.Children);
-                        l.AddRange(oneOrMore.Children); // add twice
-                        l.AddRange(children);
-                        groups.Add(l);
-                    }
-                    else
-                    {
-                        var l = new List<Pattern>();
-                        if (child.HasChildren)
-                            l.AddRange(child.Children);
-                        l.AddRange(children);
-                        groups.Add(l);
+                        default:
+                        {
+                            var l = new List<Pattern>();
+                            l.AddRange(branch.Children);
+                            l.AddRange(children);
+                            groups.Add(l);
+                            break;
+                        }
                     }
                 }
                 else
