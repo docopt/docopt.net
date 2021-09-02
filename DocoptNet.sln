@@ -28,7 +28,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		Directory.Build.props = Directory.Build.props
 		global.json = global.json
 		LICENSE-MIT = LICENSE-MIT
-		README.rst = README.rst
+		README.md = README.md
 	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DocoptNet.Playground", "src\DocoptNet.Playground\DocoptNet.Playground.csproj", "{93595D4E-5AE9-4714-AC8B-1FB24D68A15C}"
