@@ -79,7 +79,5 @@ namespace DocoptNet
                 Integers = ints;
             }
         }
-
-        internal ValueObject? ToValueObject() => IsNone ? null : new ValueObject(Object);
     }
 }
