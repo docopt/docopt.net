@@ -122,10 +122,10 @@ namespace DocoptNet
             {
                 var children = groups[0];
                 groups.RemoveAt(0);
-                if (children.FirstOrDefault(c => c is Required or Optional or OptionsShortcut or Either or OneOrMore) is { } child)
+                if (children.FirstOrDefault(c => c is BranchPattern) is { } branch)
                 {
-                    children.Remove(child);
-                    if (child is Either either)
+                    children.Remove(branch);
+                    if (branch is Either either)
                     {
                         foreach (var c in either.Children)
                         {
@@ -134,7 +134,7 @@ namespace DocoptNet
                             groups.Add(l);
                         }
                     }
-                    else if (child is OneOrMore oneOrMore)
+                    else if (branch is OneOrMore oneOrMore)
                     {
                         var l = new List<Pattern>();
                         l.AddRange(oneOrMore.Children);
@@ -145,8 +145,8 @@ namespace DocoptNet
                     else
                     {
                         var l = new List<Pattern>();
-                        if (child.HasChildren)
-                            l.AddRange(child.Children);
+                        if (branch.HasChildren)
+                            l.AddRange(branch.Children);
                         l.AddRange(children);
                         groups.Add(l);
                     }
