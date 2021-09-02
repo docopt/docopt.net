@@ -8,9 +8,8 @@ namespace DocoptNet
 
     static class GeneratedSourceModule
     {
-        public static Leaves
-            ParseArgv(string doc, IEnumerable<string> args, List<Option> options,
-                      bool optionsFirst, bool help, object? version)
+        public static Leaves ParseArgv(string doc, IEnumerable<string> args, List<Option> options,
+                                       bool optionsFirst, bool help, object? version)
         {
             var tokens = Tokens.From(args);
             var arguments = Docopt.ParseArgv(tokens, options, optionsFirst).AsReadOnly();
