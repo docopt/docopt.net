@@ -189,7 +189,6 @@ public partial class " + nameof(Program) + @"Arguments { }
 
 namespace DocoptNet.Generated
 {
-    public partial struct Value {}
     public partial class StringList {}
 }
 ";

@@ -54,12 +54,6 @@ public partial class Program
 
     public string Json { get; }
 }
-
-namespace DocoptNet.Generated
-{
-    public partial struct Value {}
-    public partial class StringList {}
-}
 ";
             Assembly assembly;
 
