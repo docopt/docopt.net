@@ -29,7 +29,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Compile Include="..\DocoptNet\*.cs" Link="DocoptNet\%(Filename)" />
+    <Compile Include="..\DocoptNet\*.cs" Link="DocoptNet\%(Filename)%(Extension)" />
   </ItemGroup>
 
   <ItemGroup>
