@@ -1,4 +1,4 @@
-#if DOCNETOPT_PUBLIC
+#if DOCOPTNET_PUBLIC
 
 namespace DocoptNet
 {
