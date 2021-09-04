@@ -6,8 +6,11 @@
     <SignAssembly>true</SignAssembly>
     <PublicSign Condition=" '$(OS)' != 'Windows_NT' ">true</PublicSign>
     <IsPackable>false</IsPackable>
-    <DefineConstants Condition="'$(TargetFramework)' == 'net5.0'">$(DefineConstants);SOURCE_GENERATION</DefineConstants>
   </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="CodeGeneration\*.cs" Condition="'$(TargetFramework)' != 'net5.0'" />
+  </ItemGroup>
 
   <ItemGroup>
     <None Include="..\LanguageAgnosticTests\testcases.docopt" Link="testcases.docopt">

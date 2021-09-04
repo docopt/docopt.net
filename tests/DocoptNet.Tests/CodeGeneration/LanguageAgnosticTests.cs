@@ -1,5 +1,4 @@
 #nullable enable
-#if SOURCE_GENERATION
 
 namespace DocoptNet.Tests.CodeGeneration
 {
@@ -108,5 +107,3 @@ public partial class Program
         }
     }
 }
-
-#endif

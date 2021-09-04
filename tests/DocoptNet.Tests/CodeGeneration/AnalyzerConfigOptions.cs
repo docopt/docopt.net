@@ -1,4 +1,3 @@
-#if SOURCE_GENERATION
 #nullable enable
 
 namespace DocoptNet.Tests.CodeGeneration
@@ -23,4 +22,3 @@ namespace DocoptNet.Tests.CodeGeneration
             _options.TryGetValue(key, out value);
     }
 }
-#endif

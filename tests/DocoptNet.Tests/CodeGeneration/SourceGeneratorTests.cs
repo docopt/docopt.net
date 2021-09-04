@@ -37,8 +37,6 @@ Naval Fate.
     }
 }
 
-#if SOURCE_GENERATION
-
 namespace DocoptNet.Tests.CodeGeneration
 {
     using System;
@@ -244,5 +242,3 @@ namespace DocoptNet.Generated
         }
     }
 }
-
-#endif

@@ -1,4 +1,3 @@
-#if SOURCE_GENERATION
 #nullable enable
 
 namespace DocoptNet.Tests.CodeGeneration
@@ -28,5 +27,3 @@ namespace DocoptNet.Tests.CodeGeneration
         public override RsAnalyzerConfigOptions GlobalOptions => AnalyzerConfigOptions.Empty;
     }
 }
-
-#endif
