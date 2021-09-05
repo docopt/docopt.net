@@ -32,7 +32,7 @@ Options:
   calculator_example.py <function> <value> [( , <value> )]...
   calculator_example.py (-h | --help)";
 
-        public static ProgramArguments Apply(IEnumerable<string> args, bool help = true, object? version = null, bool optionsFirst = false, bool exit = false)
+        public static ProgramArguments Apply(IEnumerable<string> args, bool help = true, object? version = null, bool optionsFirst = false)
         {
             var options = new List<Option>
             {

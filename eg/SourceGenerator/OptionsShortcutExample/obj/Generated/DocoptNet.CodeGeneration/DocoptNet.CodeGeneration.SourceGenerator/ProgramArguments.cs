@@ -28,7 +28,7 @@ Options:
         public const string Usage = @"Usage:
   OptionsShortcutExample [options] <port>";
 
-        public static ProgramArguments Apply(IEnumerable<string> args, bool help = true, object? version = null, bool optionsFirst = false, bool exit = false)
+        public static ProgramArguments Apply(IEnumerable<string> args, bool help = true, object? version = null, bool optionsFirst = false)
         {
             var options = new List<Option>
             {

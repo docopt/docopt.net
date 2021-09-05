@@ -51,7 +51,7 @@ Options:
   OptionsExample (--doctest | --testsuite=DIR)
   OptionsExample --version";
 
-        public static ProgramArguments Apply(IEnumerable<string> args, bool help = true, object? version = null, bool optionsFirst = false, bool exit = false)
+        public static ProgramArguments Apply(IEnumerable<string> args, bool help = true, object? version = null, bool optionsFirst = false)
         {
             var options = new List<Option>
             {

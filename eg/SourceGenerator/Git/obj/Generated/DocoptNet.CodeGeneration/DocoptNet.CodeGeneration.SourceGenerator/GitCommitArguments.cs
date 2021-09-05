@@ -58,7 +58,7 @@ Commit contents options
 
         public const string Usage = "usage: git commit [options] [--] [<filepattern>...]";
 
-        public static GitCommitArguments Apply(IEnumerable<string> args, bool help = true, object? version = null, bool optionsFirst = false, bool exit = false)
+        public static GitCommitArguments Apply(IEnumerable<string> args, bool help = true, object? version = null, bool optionsFirst = false)
         {
             var options = new List<Option>
             {

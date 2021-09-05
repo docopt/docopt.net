@@ -29,7 +29,7 @@ Try: CountedExample -vvvvvvvvvv
        CountedExample (--path=<path>)...
        CountedExample <file> <file>";
 
-        public static ProgramArguments Apply(IEnumerable<string> args, bool help = true, object? version = null, bool optionsFirst = false, bool exit = false)
+        public static ProgramArguments Apply(IEnumerable<string> args, bool help = true, object? version = null, bool optionsFirst = false)
         {
             var options = new List<Option>
             {

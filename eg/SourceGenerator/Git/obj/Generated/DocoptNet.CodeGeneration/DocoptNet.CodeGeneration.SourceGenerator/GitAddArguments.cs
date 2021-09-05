@@ -31,7 +31,7 @@ namespace Git
 
         public const string Usage = "usage: git add [options] [--] [<filepattern>...]";
 
-        public static GitAddArguments Apply(IEnumerable<string> args, bool help = true, object? version = null, bool optionsFirst = false, bool exit = false)
+        public static GitAddArguments Apply(IEnumerable<string> args, bool help = true, object? version = null, bool optionsFirst = false)
         {
             var options = new List<Option>
             {

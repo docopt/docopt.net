@@ -35,7 +35,7 @@ namespace Git
 
         public const string Usage = "usage: git push [options] [<repository> [<refspec>...]]";
 
-        public static GitPushArguments Apply(IEnumerable<string> args, bool help = true, object? version = null, bool optionsFirst = false, bool exit = false)
+        public static GitPushArguments Apply(IEnumerable<string> args, bool help = true, object? version = null, bool optionsFirst = false)
         {
             var options = new List<Option>
             {

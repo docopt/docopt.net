@@ -6,7 +6,7 @@ ProgramArguments arguments;
 
 try
 {
-    arguments = ProgramArguments.Apply(args, exit: true);
+    arguments = ProgramArguments.Apply(args);
 }
 catch (DocoptExitException e)
 {

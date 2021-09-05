@@ -23,7 +23,7 @@ catch (Exception e)
 
 static int Run(string[] args)
 {
-    var arguments = GitArguments.Apply(args, version: "git version 1.7.4.4", optionsFirst: true, exit: true);
+    var arguments = GitArguments.Apply(args, version: "git version 1.7.4.4", optionsFirst: true);
 
     Console.WriteLine("global arguments:");
     foreach (var (name, value) in arguments)

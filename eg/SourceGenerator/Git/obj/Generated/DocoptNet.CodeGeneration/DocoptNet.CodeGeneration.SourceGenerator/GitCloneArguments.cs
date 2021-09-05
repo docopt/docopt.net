@@ -58,7 +58,7 @@ namespace Git
                           path to git-upload-pack on the remote
     --depth <depth>       create a shallow clone of that depth";
 
-        public static GitCloneArguments Apply(IEnumerable<string> args, bool help = true, object? version = null, bool optionsFirst = false, bool exit = false)
+        public static GitCloneArguments Apply(IEnumerable<string> args, bool help = true, object? version = null, bool optionsFirst = false)
         {
             var options = new List<Option>
             {

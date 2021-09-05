@@ -161,7 +161,7 @@ namespace DocoptNet.CodeGeneration
                     .Public.Const(usageConstName, usage)
 
                     .NewLine
-                    .Public.Static[name]["Arguments Apply(IEnumerable<string> args, bool help = true, object? version = null, bool optionsFirst = false, bool exit = false)"]
+                    .Public.Static[name]["Arguments Apply(IEnumerable<string> args, bool help = true, object? version = null, bool optionsFirst = false)"]
                     .NewLine.Block[code
                         .Var("options")[
                             code.New["List<Option>"].NewLine

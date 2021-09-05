@@ -40,7 +40,7 @@ See 'git help <command>' for more information on a specific command.
            [-c <name>=<value>] [--help]
            <command> [<args>...]";
 
-        public static GitArguments Apply(IEnumerable<string> args, bool help = true, object? version = null, bool optionsFirst = false, bool exit = false)
+        public static GitArguments Apply(IEnumerable<string> args, bool help = true, object? version = null, bool optionsFirst = false)
         {
             var options = new List<Option>
             {

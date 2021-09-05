@@ -33,7 +33,7 @@ Options:
         public const string Usage = @"Usage: ArgumentsExample [-vqrh] [FILE] ...
        ArgumentsExample (--left | --right) CORRECTION FILE";
 
-        public static ProgramArguments Apply(IEnumerable<string> args, bool help = true, object? version = null, bool optionsFirst = false, bool exit = false)
+        public static ProgramArguments Apply(IEnumerable<string> args, bool help = true, object? version = null, bool optionsFirst = false)
         {
             var options = new List<Option>
             {

@@ -40,7 +40,7 @@ namespace Git
        git remote set-url --add <name> <newurl>
        git remote set-url --delete <name> <url>";
 
-        public static GitRemoteArguments Apply(IEnumerable<string> args, bool help = true, object? version = null, bool optionsFirst = false, bool exit = false)
+        public static GitRemoteArguments Apply(IEnumerable<string> args, bool help = true, object? version = null, bool optionsFirst = false)
         {
             var options = new List<Option>
             {

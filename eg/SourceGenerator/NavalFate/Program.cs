@@ -6,7 +6,7 @@ ProgramArguments arguments;
 
 try
 {
-    arguments = ProgramArguments.Apply(args, version: "Naval Fate 2.0", exit: true);
+    arguments = ProgramArguments.Apply(args, version: "Naval Fate 2.0");
 }
 catch (DocoptExitException e)
 {
