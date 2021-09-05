@@ -170,7 +170,7 @@ namespace DocoptNet.Tests.CodeGeneration
                     {
                         argv,
                         options.Help, options.Version,
-                        options.OptionsFirst, options.Exit
+                        options.OptionsFirst
                     })!;
                 Assert.That(args, Is.Not.Null);
                 return selector(args.ToDictionary(e => e.Key, e => e.Value));
