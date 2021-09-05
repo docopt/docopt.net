@@ -195,7 +195,7 @@ namespace DocoptNet.Generated
                 select MetadataReference.CreateFromFile(asm.Location);
 
             var compilation =
-                CSharpCompilation.Create(FormattableString.Invariant($"test{Interlocked.Increment(ref _assemblyUniqueCounter)}.dll"),
+                CSharpCompilation.Create(FormattableString.Invariant($"test{Interlocked.Increment(ref _assemblyUniqueCounter)}"),
                                          new[] { CSharpSyntaxTree.ParseText(source) },
                                          references,
                                          new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary));
