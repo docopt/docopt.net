@@ -61,7 +61,7 @@ Naval Fate.
         }
 
         [Test]
-        public void GenerateViaDriver()
+        public void Generate_via_driver()
         {
             var args = GeneratedProgram.Run(args => new NavalFateArgs(args), "ship", "new", "foo", "bar");
 
