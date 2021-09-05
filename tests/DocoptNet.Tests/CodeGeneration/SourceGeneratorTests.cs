@@ -2,12 +2,23 @@
 
 namespace DocoptNet.Tests.CodeGeneration
 {
+    using System;
+    using System.Collections;
+    using System.Collections.Generic;
+    using System.IO;
+    using System.Linq;
+    using System.Reflection;
+    using System.Runtime.Loader;
+    using System.Threading;
     using DocoptNet.CodeGeneration;
+    using Microsoft.CodeAnalysis;
+    using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.Text;
     using NUnit.Framework;
+    using RsAnalyzerConfigOptions = Microsoft.CodeAnalysis.Diagnostics.AnalyzerConfigOptions;
 
     [TestFixture]
-    public partial class SourceGeneratorTests
+    public class SourceGeneratorTests
     {
         const string NavalFateUsage = @"
 Naval Fate.
@@ -34,28 +45,7 @@ Naval Fate.
             var source = SourceGenerator.Generate("NavalFate", "Program", SourceText.From(NavalFateUsage)).ToString();
             Assert.That(source, Is.Not.Empty);
         }
-    }
-}
 
-namespace DocoptNet.Tests.CodeGeneration
-{
-    using System;
-    using System.Collections;
-    using System.Collections.Generic;
-    using System.IO;
-    using System.Linq;
-    using System.Reflection;
-    using System.Runtime.Loader;
-    using System.Threading;
-    using DocoptNet.CodeGeneration;
-    using Microsoft.CodeAnalysis;
-    using Microsoft.CodeAnalysis.CSharp;
-    using NUnit.Framework;
-    using RsAnalyzerConfigOptions = Microsoft.CodeAnalysis.Diagnostics.AnalyzerConfigOptions;
-
-    [TestFixture]
-    public partial class SourceGeneratorTests
-    {
         Program? _generatedProgram;
 
         Program GeneratedProgram
