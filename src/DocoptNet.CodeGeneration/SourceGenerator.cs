@@ -58,7 +58,7 @@ namespace DocoptNet.CodeGeneration
                 from at in context.AdditionalFiles
                 select context.AnalyzerConfigOptions.GetOptions(at) is {} options
                     && options.TryGetValue(Metadata.SourceItemType, out var type)
-                    && "Docopt".Equals(type, StringComparison.OrdinalIgnoreCase)
+                    && "docopt".Equals(type, StringComparison.OrdinalIgnoreCase)
                     && at.GetText() is {} text
                      ? new
                        {

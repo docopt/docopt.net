@@ -4,7 +4,7 @@
     <ItemGroup>
       <AdditionalFiles Include="@(None)"
                        Condition="$([System.Text.RegularExpressions.Regex]::IsMatch('%(Filename)%(Extension)', 'docopt\.txt$'))"
-                       SourceItemType="Docopt"
+                       SourceItemType="docopt"
                        KeepMetadata="Name" />
     </ItemGroup>
   </Target>
