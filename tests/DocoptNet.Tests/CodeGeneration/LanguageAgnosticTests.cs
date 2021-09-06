@@ -100,8 +100,8 @@ public partial class Program
             }
             else
             {
-                var expected1 = JsonConvert.DeserializeObject(expected).ToString();
-                var actual1 = JsonConvert.DeserializeObject(actual).ToString();
+                var expected1 = JsonConvert.DeserializeObject(expected)!.ToString();
+                var actual1 = JsonConvert.DeserializeObject(actual)!.ToString();
                 Assert.AreEqual(expected1, actual1);
             }
         }
