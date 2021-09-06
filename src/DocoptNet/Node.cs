@@ -2,7 +2,7 @@ namespace DocoptNet
 {
     using System;
 
-    #if DOCNETOPT_PUBLIC
+    #if DOCOPTNET_PUBLIC
     public
     #endif
          enum ValueType { Bool, List, String, }
