@@ -97,24 +97,24 @@ namespace DocoptNet.Tests
         public void CopyTo_throws_for_null_array()
         {
             ICollection list = StringList.Empty;
-            var e = Assert.Throws<ArgumentNullException>(() => list.CopyTo(null!, 0));
-            Assert.That(e.ParamName, Is.EqualTo("array"));
+            void Act() => list.CopyTo(null!, 0);
+            Assert.That(Act, Throws.ArgumentNullException.With.ParamName("array"));
         }
 
         [Test]
         public void CopyTo_throws_for_multi_dimensional_array()
         {
             ICollection list = StringList.Empty;
-            var e = Assert.Throws<ArgumentException>(() => list.CopyTo(new string[0 , 0], 0));
-            Assert.That(e.ParamName, Is.EqualTo("array"));
+            void Act() => list.CopyTo(new string[0 , 0], 0);
+            Assert.That(Act, Throws.ArgumentException.With.ParamName("array"));
         }
 
         [Test]
         public void CopyTo_throws_for_negative_index()
         {
             ICollection list = StringList.Empty;
-            var e = Assert.Throws<ArgumentOutOfRangeException>(() => list.CopyTo(Array.Empty<string>(), -1));
-            Assert.That(e.ParamName, Is.EqualTo("index"));
+            void Act() => list.CopyTo(Array.Empty<string>(), -1);
+            Assert.That(Act, Throws.TypeOf<ArgumentOutOfRangeException>().With.ParamName("index"));
         }
 
         [TestCase(1, 0)]
@@ -126,8 +126,8 @@ namespace DocoptNet.Tests
         {
             ICollection list = StringList.TopBottom("foo", "bar", "baz");
             var array = new string[length];
-            var e = Assert.Throws<ArgumentOutOfRangeException>(() => list.CopyTo(array, index));
-            Assert.That(e.ParamName, Is.EqualTo("index"));
+            void Act() => list.CopyTo(array, index);
+            Assert.That(Act, Throws.TypeOf<ArgumentOutOfRangeException>().With.ParamName("index"));
         }
 
         [Test]
