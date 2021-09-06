@@ -68,7 +68,6 @@ namespace DocoptNet.CodeGeneration
                                 ? name
                                 : Path.GetFileName(at.Path).Partition(".").Item1,
                            Text = text,
-
                        }
                      : null
                 into e
