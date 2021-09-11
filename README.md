@@ -115,8 +115,7 @@ public IDictionary<string, ValueObject> Apply(string doc, ICollection<string> ar
   ";
   ```
 
-- `argv` is an optional argument vector; Alternatively you can supply  
-  a command line string `cmdLine`.
+- `argv` is an optional argument.
 
 - `help`, by default `true`, specifies whether the parser should automatically
   print the help message (supplied as `doc`) and terminate, in case `-h` or
