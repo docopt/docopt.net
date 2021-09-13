@@ -1,0 +1,19 @@
+<Project>
+
+  <Target Name="_InjectDocoptAdditionalFiles" BeforeTargets="PrepareForBuild;CompileDesignTime;GenerateMSBuildEditorConfigFileShouldRun">
+    <ItemGroup>
+      <AdditionalFiles Include="@(None)"
+                       Condition="$([System.Text.RegularExpressions.Regex]::IsMatch('%(Filename)%(Extension)', 'docopt\.txt$'))"
+                       SourceItemType="docopt"
+                       KeepMetadata="Name" />
+    </ItemGroup>
+  </Target>
+
+  <ItemGroup>
+    <CompilerVisibleProperty Include="RootNamespace" />
+    <CompilerVisibleProperty Include="DebugDocoptNet" />
+    <CompilerVisibleItemMetadata Include="AdditionalFiles" MetadataName="SourceItemType" />
+    <CompilerVisibleItemMetadata Include="AdditionalFiles" MetadataName="Name" />
+  </ItemGroup>
+
+</Project>

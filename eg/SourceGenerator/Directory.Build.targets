@@ -1,0 +1,7 @@
+<Project>
+
+  <PropertyGroup>
+    <CompilerGeneratedFilesOutputPath>$(BaseIntermediateOutputPath)Generated</CompilerGeneratedFilesOutputPath>
+  </PropertyGroup>
+
+</Project>

@@ -1,0 +1,23 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net5.0</TargetFramework>
+    <EmitCompilerGeneratedFiles>true</EmitCompilerGeneratedFiles>
+    <CompilerGeneratedFilesOutputPath>$(BaseIntermediateOutputPath)Generated</CompilerGeneratedFilesOutputPath>
+    <DebugDocoptNet>false</DebugDocoptNet>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <!-- FIXME Re-enable after addressing CS0102 errors -->
+    <None Remove="GitBranch.docopt.txt" />
+    <None Remove="GitCheckout.docopt.txt" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\src\DocoptNet.CodeGeneration\DocoptNet.CodeGeneration.csproj" ReferenceOutputAssembly="false" OutputItemType="Analyzer" />
+  </ItemGroup>
+
+  <Import Project="..\..\..\src\DocoptNet.CodeGeneration\DocoptNet.CodeGeneration.targets" />
+
+</Project>

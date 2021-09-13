@@ -51,7 +51,7 @@ namespace DocoptNet.Tests
         /// <seealso cref="TestContext.WorkDirectory"/>.
         /// </remarks>
 
-        static IEnumerable<TestCaseData> Docopt(string path)
+        public static IEnumerable<TestCaseData> Docopt(string path)
         {
             // quick and dirty "*.docopt" to test cases conversion
 

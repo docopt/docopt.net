@@ -40,7 +40,7 @@ namespace DocoptNet
 // override object.GetHashCode
         public override int GetHashCode()
         {
-            return ToString().GetHashCode();
+            return ToString()!.GetHashCode();
         }
 
         public IList<Pattern> Children { get; set; }

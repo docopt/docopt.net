@@ -42,5 +42,16 @@ namespace DocoptNet.Tests
             var actual = GenerateCodeHelper.ConvertToPascalCase(input);
             Assert.AreEqual(expected, actual);
         }
+
+        [TestCase("foo-bar", "FooBar")]
+        [TestCase("foo bar", "FooBar")]
+        [TestCase("foo+bar", "FooPlusBar")]
+        [TestCase("foo/bar", "FooSlashBar")]
+        [TestCase("-", "Minus")]
+        public void ConvertDashesToCamelCase(string input, string expected)
+        {
+            var actual = GenerateCodeHelper.ConvertToPascalCase(input);
+            Assert.That(actual, Is.EqualTo(expected));
+        }
     }
 }

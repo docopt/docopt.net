@@ -1,0 +1,21 @@
+usage: git [--version] [--exec-path=<path>] [--html-path]
+           [-p|--paginate|--no-pager] [--no-replace-objects]
+           [--bare] [--git-dir=<path>] [--work-tree=<path>]
+           [-c <name>=<value>] [--help]
+           <command> [<args>...]
+
+options:
+   -c <name=value>
+   -h, --help
+   -p, --paginate
+
+The most commonly used git commands are:
+   add        Add file contents to the index
+   branch     List, create, or delete branches
+   checkout   Checkout a branch or paths to the working tree
+   clone      Clone a repository into a new directory
+   commit     Record changes to the repository
+   push       Update remote refs along with associated objects
+   remote     Manage set of tracked repositories
+
+See 'git help <command>' for more information on a specific command.
