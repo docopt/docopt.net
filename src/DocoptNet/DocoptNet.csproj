@@ -18,7 +18,6 @@
     <SignAssembly>true</SignAssembly>
     <PublicSign Condition=" '$(OS)' != 'Windows_NT' ">true</PublicSign>
     <IsPackable>true</IsPackable>
-    <PackageId>DocoptNet</PackageId>
     <Copyright>Copyright (c) 2013 Dinh Doan Van Bien, dinh@doanvanbien.com</Copyright>
     <NetStandardImplicitPackageVersion>2.0.3</NetStandardImplicitPackageVersion>
     <GenerateAssemblyVersionAttribute>false</GenerateAssemblyVersionAttribute>
