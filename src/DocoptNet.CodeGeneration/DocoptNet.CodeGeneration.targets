@@ -12,6 +12,7 @@
   <ItemGroup>
     <CompilerVisibleProperty Include="RootNamespace" />
     <CompilerVisibleProperty Include="DebugDocoptNet" />
+    <CompilerVisibleProperty Include="DocoptNetNamespace" />
     <CompilerVisibleItemMetadata Include="AdditionalFiles" MetadataName="SourceItemType" />
     <CompilerVisibleItemMetadata Include="AdditionalFiles" MetadataName="Name" />
   </ItemGroup>

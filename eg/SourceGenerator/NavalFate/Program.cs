@@ -1,5 +1,5 @@
 using System;
-using DocoptNet.Generated;
+using DocoptNet.Embedded;
 using NavalFate;
 
 ProgramArguments arguments;

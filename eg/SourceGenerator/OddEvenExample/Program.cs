@@ -1,5 +1,5 @@
 using System;
-using DocoptNet.Generated;
+using DocoptNet;
 using OddEvenExample;
 
 ProgramArguments arguments;

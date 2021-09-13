@@ -42,7 +42,7 @@ Naval Fate.
         [Test]
         public void Generate()
         {
-            var source = SourceGenerator.Generate("NavalFate", "Program", SourceText.From(NavalFateUsage)).ToString();
+            var source = SourceGenerator.Generate("NavalFate", null, "Program", SourceText.From(NavalFateUsage)).ToString();
             Assert.That(source, Is.Not.Empty);
         }
 
@@ -171,11 +171,11 @@ Naval Fate.
         {
             const string main = @"
 using System.Collections.Generic;
-using DocoptNet.Generated;
+using DocoptNet;
 
 public partial class " + nameof(Program) + @"Arguments { }
 
-namespace DocoptNet.Generated
+namespace DocoptNet
 {
     public partial class StringList {}
 }

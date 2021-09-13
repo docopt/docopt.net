@@ -142,11 +142,11 @@ namespace DocoptNet.CodeGeneration
         public CSharpSourceBuilder Using(string ns) =>
             this["using "][ns].EndStatement;
 
-        public CSharpSourceBuilder Using(string alias, string typeName) =>
-            this["using "][alias].Equal[typeName].EndStatement;
+        public IStatementFlow UsingAlias(string alias) =>
+            this["using "][alias].Equal;
 
-        public CSharpSourceBuilder UsingStatic(string typeName) =>
-            this["using "].Static[typeName].EndStatement;
+        public IStatementFlow UsingStatic =>
+            this["using "].Static;
 
         public CSharpSourceBuilder Namespace(string name) =>
             this["namespace "][name].NewLine.BlockStart;
