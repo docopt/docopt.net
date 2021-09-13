@@ -719,6 +719,11 @@ form is returned in the key.
 
 The source generator respects the nullable context of the project.
 
+## Diagnostic Identifier
+
+All diagnostics produced by the generator use the identifier format `DCPT####` where `####` is a 4-digit number (left-padded with zeros) starting
+with 1, e.g. `DCPT0001`.
+
 
   [docopt]: http://docopt.org/
   [docopt.net]: https://www.nuget.org/packages/docopt.net/
