@@ -32,7 +32,7 @@ namespace DocoptNet.CodeGeneration
     public sealed class SourceGenerator : ISourceGenerator
     {
         static readonly DiagnosticDescriptor SyntaxError =
-            new(id: "OPT0001",
+            new(id: "DCPT0001",
                 title: "Syntax error",
                 messageFormat: "Syntax error: {0}",
                 category: "Docopt",

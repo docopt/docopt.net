@@ -5,4 +5,4 @@
 
 Rule ID | Category | Severity | Notes
 --------|----------|----------|-------
-OPT0001 | Docopt | Error | SyntaxError
+DCPT0001 | Docopt | Error | SyntaxError
