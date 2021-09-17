@@ -6,19 +6,25 @@ namespace DocoptNet.Tests.CodeGeneration
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.Text;
 
-    sealed class AdditionalTextString : AdditionalText
+    class AdditionalTextSource : AdditionalText
     {
         readonly SourceText _text;
 
-        public AdditionalTextString(string path, string text)
+        public AdditionalTextSource(string path, SourceText text)
         {
             Path = path;
-            _text = SourceText.From(text);
+            _text = text;
         }
 
         public override SourceText? GetText(CancellationToken cancellationToken = default) =>
             _text;
 
         public override string Path { get; }
+    }
+
+    sealed class AdditionalTextString : AdditionalTextSource
+    {
+        public AdditionalTextString(string path, string text) :
+            base(path, SourceText.From(text)) { }
     }
 }
