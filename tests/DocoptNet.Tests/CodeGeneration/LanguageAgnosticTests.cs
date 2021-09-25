@@ -58,7 +58,8 @@ public partial class Program
 
             try
             {
-                assembly = SourceGeneratorTests.GenerateProgram(doc, main);
+                assembly = SourceGeneratorTests.GenerateProgram(("Program.docopt.txt", SourceText.From(doc)),
+                                                                ("Main.cs", SourceText.From(main)));
             }
             catch (Exception e)
             {

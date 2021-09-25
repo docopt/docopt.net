@@ -10,6 +10,8 @@
 
   <ItemGroup>
     <Compile Remove="CodeGeneration\*.cs" Condition="'$(TargetFramework)' != 'net5.0'" />
+    <Compile Remove="CodeGeneration\SourceGeneratorTests\**\*.cs" />
+    <None Include="CodeGeneration\SourceGeneratorTests\**\*.cs" />
   </ItemGroup>
 
   <ItemGroup>
@@ -20,6 +22,7 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="3.10.0" />
+    <PackageReference Include="morelinq" Version="3.3.2" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
     <PackageReference Include="nunit" Version="3.13.2" />
     <PackageReference Include="NUnit3TestAdapter" Version="4.0.0" />
