@@ -98,6 +98,13 @@ try
     }
     else if (args["inspect"].IsTrue)
     {
+        using var testDiffFilePath = EnumerateTestDiffFiles().GetEnumerator();
+        if (!testDiffFilePath.MoveNext())
+        {
+            Console.Error.WriteLine("No test differences to inspect.");
+            return 0;
+        }
+
         var branchName = await GetBranchNameFromHead();
         var tempBranchName = $"sgss/{branchName}";
 
@@ -116,8 +123,11 @@ try
         _ = await git.WithArguments("read-tree", tree).WithWorkingDirectory(tempWorkTreePath).ExecuteAsync();
         _ = await git.WithArguments("checkout", "--", ".").WithWorkingDirectory(tempWorkTreePath).ExecuteAsync();
 
-        foreach (var path in EnumerateTestDiffFiles())
-            ApplyTestDiff(workTreePath, tempWorkTreePath, File.ReadLines(path), Console.Out);
+        do
+        {
+            ApplyTestDiff(workTreePath, tempWorkTreePath, File.ReadLines(testDiffFilePath.Current), Console.Out);
+        }
+        while (testDiffFilePath.MoveNext());
 
         var isInteractive = args["-i"].IsTrue;
         var shouldShowGui = args["--no-gui"].IsFalse;
