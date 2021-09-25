@@ -91,6 +91,9 @@ Naval Fate.
             var testPath = Path.Combine(nameof(SourceGeneratorTests), callerName!);
             var actualSourcesPath = Path.Combine(TestContext.CurrentContext.WorkDirectory, testPath);
 
+            // Re-create the directory holding the actual results, deleting anything
+            // leftover from a previous run.
+
             try
             {
                 Directory.Delete(actualSourcesPath, recursive: true);
@@ -101,6 +104,10 @@ Naval Fate.
             }
 
             Directory.CreateDirectory(actualSourcesPath);
+
+            // If there were diagnostics emitted then write a file with a
+            // JSON array where each element is a JSON object representing
+            // one diagnostic record.
 
             if (grr.Diagnostics is { Length: > 0 } diagnostics)
             {
@@ -130,6 +137,9 @@ Naval Fate.
                                   diagnosticsJson.TrimEnd() + Environment.NewLine);
             }
 
+            // Write the generated source, but skip any sources that are from the
+            // the core project and unchanged.
+
             foreach (var gsr in from e in grr.GeneratedSources
                                 where !_projectFileHashByPath.TryGetValue(Path.GetFileName(e.HintName), out var hash)
                                    || !e.SourceText.GetChecksum().SequenceEqual(hash)
@@ -138,6 +148,9 @@ Naval Fate.
                 using var sw = File.CreateText(Path.Combine(actualSourcesPath, gsr.HintName));
                 gsr.SourceText.Write(sw);
             }
+
+            // Compare the inventory of actual and expected files. Where a file exists
+            // in both, compare content to be equal too.
 
             var expectedSourcesPath = Path.GetFullPath(Path.Combine(TestContext.CurrentContext.TestDirectory, "..", "..", "..", "CodeGeneration", testPath));
 
@@ -164,6 +177,8 @@ Naval Fate.
                                                  ? new MatchingFile(ef, af)
                                                  : new MismatchingFile(ef, af))
                              .ToImmutableArray();
+
+            // Provide a summary of the differences.
 
             var deltaLines =
                 ImmutableArray.CreateRange(
