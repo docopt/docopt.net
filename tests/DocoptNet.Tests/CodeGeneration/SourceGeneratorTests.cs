@@ -144,7 +144,7 @@ Naval Fate.
             IEnumerable<string> EnumerateFiles(string dirPath) =>
                 from fp in Directory.EnumerateFiles(dirPath)
                 where Path.GetFileName(fp) is { } fn
-                   && fn[0] != '.' // ignore as files starting with a dot (conventionally hidden)
+                   && fn[0] != '.' // ignore files starting with a dot (conventionally hidden)
                    && (fn.EndsWith(".cs", StringComparison.OrdinalIgnoreCase)
                        || fn.EndsWith(".json", StringComparison.OrdinalIgnoreCase))
                 select Path.GetRelativePath(SolutionDirPath, fp);
