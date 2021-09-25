@@ -199,7 +199,7 @@ static void ApplyTestDiff(string sourceDirPath, string targetDirPath, IEnumerabl
                 break;
             case 'M':
                 writer?.WriteLine($"{diff.Status} {diff.Target}");
-                File.Copy(diff.Source, diff.Target);
+                File.Copy(diff.Source, diff.Target, overwrite: true);
                 break;
             case '?':
                 writer?.WriteLine($"{diff.Status} {diff.Target}");
