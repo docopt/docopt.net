@@ -178,7 +178,15 @@ Naval Fate.
                                                  : new MismatchingFile(ef, af))
                              .ToImmutableArray();
 
-            // Provide a summary of the differences.
+            // If everything was a match then consider it a pass!
+
+            if (results.All(r => r is MatchingFile))
+            {
+                Assert.Pass();
+                return;
+            }
+
+            // Otherwise fail, providing a summary of the differences.
 
             var deltaLines =
                 ImmutableArray.CreateRange(
@@ -205,11 +213,6 @@ Naval Fate.
                     default: throw new SwitchExpressionException(r);
                 }
             }
-
-            var pass = results.All(r => r is MatchingFile);
-
-            if (pass)
-                return;
 
             var resultFilePath = Path.Combine(actualSourcesPath, ".testdiff");
             File.WriteAllLines(resultFilePath, deltaLines);
