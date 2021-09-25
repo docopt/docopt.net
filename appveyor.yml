@@ -2,7 +2,7 @@ version: 1.1.{build}
 image: Visual Studio 2019
 configuration: Release
 before_build:
-- git config -l --show-origin
+- git config core.autocrlf true
 - dotnet --info
 build_script:
 - cmd: dotnet build --configuration %CONFIGURATION%
