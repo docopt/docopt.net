@@ -30,8 +30,6 @@ using Newtonsoft.Json;
 
 public partial class Program
 {
-    readonly IDictionary<string, Value> _args;
-
     public Program(IList<string> argv)
     {
         var arguments = ProgramArguments.Apply(argv, help: true, version: null, optionsFirst: false);

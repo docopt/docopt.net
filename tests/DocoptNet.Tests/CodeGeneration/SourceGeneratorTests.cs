@@ -398,7 +398,8 @@ namespace DocoptNet
         {
             var references =
                 from asm in AppDomain.CurrentDomain.GetAssemblies()
-                where !asm.IsDynamic && !string.IsNullOrWhiteSpace(asm.Location)
+                where asm is { IsDynamic: false, Location: { Length: > 0 } }
+                   && asm.GetName().Name != "DocoptNet"
                 select MetadataReference.CreateFromFile(asm.Location);
 
             var trees = new List<SyntaxTree>();
@@ -417,7 +418,8 @@ namespace DocoptNet
             var compilation =
                 CSharpCompilation.Create(FormattableString.Invariant($"test{Interlocked.Increment(ref _assemblyUniqueCounter)}"),
                                          trees, references,
-                                         new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary));
+                                         new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary,
+                                                                      generalDiagnosticOption: ReportDiagnostic.Error));
 
             ISourceGenerator generator = new SourceGenerator();
 
