@@ -25,7 +25,7 @@ namespace DocoptNet.Tests.CodeGeneration
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using DocoptNet.Generated;
+using DocoptNet;
 using Newtonsoft.Json;
 
 public partial class Program
@@ -69,7 +69,7 @@ public partial class Program
                     && Regex.Match(e.Message, @"\(([1-9][0-9]*),([1-9][0-9]*)\):\s*error\b") is { Success: true, Groups: {} groups }
                     ? (ParseInt(groups[1].Value), ParseInt(groups[2].Value))
                     : default;
-                var sourceText = SourceGenerator.Generate(null, "Program", SourceText.From(doc));
+                var sourceText = SourceGenerator.Generate(null, null, "Program", SourceText.From(doc));
                 foreach (var line in sourceText.Lines)
                 {
                     var lineNumber = line.LineNumber + 1; // convert zero-base to one-based line number

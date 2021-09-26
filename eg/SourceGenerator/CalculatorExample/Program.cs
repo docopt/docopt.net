@@ -1,5 +1,5 @@
 using System;
-using DocoptNet.Generated;
+using DocoptNet;
 using CalculatorExample;
 
 ProgramArguments arguments;

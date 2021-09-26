@@ -45,19 +45,23 @@ Naval Fate.
 ";
 
         [Test]
-        public void Generate()
-        {
-            var source = SourceGenerator.Generate("NavalFate", "Program", SourceText.From(NavalFateUsage)).ToString();
-            Assert.That(source, Is.Not.Empty);
-        }
-
-        [Test]
-        public void Generate_via_driver()
+        public void Generate_with_usage_in_external_file()
         {
             AssertMatchesSnapshot(new[]
             {
                 ("Program.docopt.txt", SourceText.From(NavalFateUsage))
             });
+        }
+
+        [Test]
+        public void Generate_with_custom_embedding_namespace()
+        {
+            AssertMatchesSnapshot(
+                docoptNetNamespace: "DocoptNet.Generated",
+                new[]
+                {
+                    ("Program.docopt.txt", SourceText.From(NavalFateUsage))
+                });
         }
 
         readonly Dictionary<string, ImmutableArray<byte>> _projectFileHashByPath = new();
@@ -80,9 +84,14 @@ Naval Fate.
         }
 
         void AssertMatchesSnapshot((string Path, SourceText Text)[] sources,
+                                   [CallerMemberName]string? callerName = null) =>
+            AssertMatchesSnapshot(docoptNetNamespace: null, sources, callerName);
+
+        void AssertMatchesSnapshot(string? docoptNetNamespace,
+                                   (string Path, SourceText Text)[] sources,
                                    [CallerMemberName]string? callerName = null)
         {
-            var (driver, compilation) = PrepareForGeneration(sources);
+            var (driver, compilation) = PrepareForGeneration(docoptNetNamespace, sources);
 
             var grr = driver.RunGenerators(compilation).GetRunResult().Results.Single();
 
@@ -358,11 +367,11 @@ dotnet script {Path.Combine("tests", "DocoptNet.Tests", "sgss.csx")} inspect -i"
         {
             const string main = @"
 using System.Collections.Generic;
-using DocoptNet.Generated;
+using DocoptNet;
 
 public partial class " + ProgramArgumentsClassName + @" { }
 
-namespace DocoptNet.Generated
+namespace DocoptNet
 {
     public partial class StringList {}
 }
@@ -380,7 +389,12 @@ namespace DocoptNet.Generated
             new AnalyzerConfigOptions(KeyValuePair.Create("build_metadata.AdditionalFiles.SourceItemType", "Docopt"));
 
         internal static (CSharpGeneratorDriver, CSharpCompilation)
-            PrepareForGeneration(params (string Path, SourceText Text)[] sources)
+            PrepareForGeneration(params (string Path, SourceText Text)[] sources) =>
+            PrepareForGeneration(docoptNetNamespace: null, sources);
+
+        internal static (CSharpGeneratorDriver, CSharpCompilation)
+            PrepareForGeneration(string? docoptNetNamespace,
+                                 params (string Path, SourceText Text)[] sources)
         {
             var references =
                 from asm in AppDomain.CurrentDomain.GetAssemblies()
@@ -407,10 +421,15 @@ namespace DocoptNet.Generated
 
             ISourceGenerator generator = new SourceGenerator();
 
+            var globalOptions = Enumerable.Empty<KeyValuePair<string, string>>();
+            if (docoptNetNamespace is { } someDocoptNetNamespace)
+                globalOptions = globalOptions.Append(KeyValuePair.Create("build_property.DocoptNetNamespace", someDocoptNetNamespace));
+
             var optionsProvider =
                 new AnalyzerConfigOptionsProvider(
-                    from at in additionalTexts
-                    select KeyValuePair.Create(at, DocoptSourceItemTypeConfigOption));
+                    new AnalyzerConfigOptions(globalOptions),
+                    additionalTexts.Select(at => KeyValuePair.Create(at, DocoptSourceItemTypeConfigOption))
+                                   .ToImmutableDictionary());
 
             var driver = CSharpGeneratorDriver.Create(new[] { generator },
                                                       additionalTexts,
@@ -419,9 +438,13 @@ namespace DocoptNet.Generated
             return (driver, compilation);
         }
 
-        internal static Assembly GenerateProgram(params (string Path, SourceText Text)[] sources)
+        internal static Assembly GenerateProgram(params (string Path, SourceText Text)[] sources) =>
+            GenerateProgram(docoptNetNamespace: null, sources);
+
+        internal static Assembly GenerateProgram(string? docoptNetNamespace,
+                                                 params (string Path, SourceText Text)[] sources)
         {
-            var (driver, compilation) = PrepareForGeneration(sources);
+            var (driver, compilation) = PrepareForGeneration(docoptNetNamespace, sources);
 
             driver.RunGeneratorsAndUpdateCompilation(compilation,
                                                      out var outputCompilation,

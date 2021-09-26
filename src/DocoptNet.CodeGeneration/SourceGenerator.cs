@@ -52,7 +52,8 @@ namespace DocoptNet.CodeGeneration
         {
             context.LaunchDebuggerIfFlagged(nameof(DocoptNet));
 
-            context.AnalyzerConfigOptions.GlobalOptions.TryGetValue("build_property.RootNamespace", out var ns);
+            context.AnalyzerConfigOptions.GlobalOptions.TryGetValue("build_property.RootNamespace", out var rootNamespace);
+            context.AnalyzerConfigOptions.GlobalOptions.TryGetValue("build_property.DocoptNetNamespace", out var embeddingNamespace);
 
             var docopts =
                 from at in context.AdditionalFiles
@@ -80,7 +81,7 @@ namespace DocoptNet.CodeGeneration
             {
                 try
                 {
-                    if (Generate(ns, docopt.Name, docopt.Text) is { Length: > 0 } source)
+                    if (Generate(rootNamespace, embeddingNamespace, docopt.Name, docopt.Text) is { Length: > 0 } source)
                     {
                         added = true;
                         context.AddSource(docopt.Name + "Arguments.cs", source);
@@ -102,9 +103,16 @@ namespace DocoptNet.CodeGeneration
                                          select (rn, rn.Substring(resourceNamespace.Length)))
                 {
                     using var stream = assembly.GetManifestResourceStream(rn)!;
-                    using var reader = new StreamReader(stream);
-                    var source = Regex.Replace(reader.ReadToEnd(), @"(?<=\bnamespace\s+)DocoptNet(?:\.Generated)?\b", "DocoptNet.Generated");
-                    context.AddSource(fn, SourceText.From(source, Utf8BomlessEncoding));
+                    if (embeddingNamespace is { Length: > 0 } and not nameof(DocoptNet))
+                    {
+                        using var reader = new StreamReader(stream);
+                        var source = Regex.Replace(reader.ReadToEnd(), @"(?<=\bnamespace\s+)DocoptNet(?:\.Generated)?\b", embeddingNamespace);
+                        context.AddSource(fn, SourceText.From(source, Utf8BomlessEncoding));
+                    }
+                    else
+                    {
+                        context.AddSource(fn, SourceText.From(stream, canBeEmbedded: true));
+                    }
                 }
             }
         }
@@ -114,21 +122,27 @@ namespace DocoptNet.CodeGeneration
 
         static readonly string[] Vars = "abcdefghijklmnopqrstuvwxyz".Select(ch => ch.ToString()).ToArray();
 
-        public static SourceText Generate(string? ns, string name, SourceText text) =>
-            Generate(ns, name, text, null);
+        public static SourceText Generate(string? ns, string? embeddingNamespace, string name, SourceText text) =>
+            Generate(ns, embeddingNamespace, name, text, null);
 
-        public static SourceText Generate(string? ns, string name, SourceText text, Encoding? outputEncoding)
+        public static SourceText Generate(string? ns, string? embeddingNamespace, string name, SourceText text, Encoding? outputEncoding)
         {
             if (text.Length == 0)
                 return EmptySourceText;
 
             var helpText = text.ToString();
             var code = new CSharpSourceBuilder();
-            Generate(code, ns is { Length: 0 } ? null : ns, name, helpText);
+            Generate(code,
+                     ns is { Length: 0 } ? null : ns,
+                     embeddingNamespace is { Length: > 0 } ? embeddingNamespace : nameof(DocoptNet),
+                     name, helpText);
             return new StringBuilderSourceText(code.StringBuilder, outputEncoding ?? text.Encoding ?? Utf8BomlessEncoding);
         }
 
-        static void Generate(CSharpSourceBuilder code, string? ns, string name, string helpText)
+        static void Generate(CSharpSourceBuilder code,
+                             string? ns,
+                             string embeddingNamespace,
+                             string name, string helpText)
         {
             var (pattern, options, usage) = Docopt.ParsePattern(helpText);
 
@@ -146,9 +160,9 @@ namespace DocoptNet.CodeGeneration
                 .Using("System.Collections")
                 .Using("System.Collections.Generic")
                 .Using("System.Linq")
-                .Using("DocoptNet.Generated")
-                .Using("Leaves", "DocoptNet.Generated.ReadOnlyList<DocoptNet.Generated.LeafPattern>")
-                .UsingStatic("DocoptNet.Generated.GeneratedSourceModule")
+                .Using(embeddingNamespace)
+                .UsingAlias("Leaves")[code[embeddingNamespace][".ReadOnlyList<"][embeddingNamespace][".LeafPattern>"]]
+                .UsingStatic[code[embeddingNamespace][".GeneratedSourceModule"]]
 
                 .NewLine
                 [ns is not null ? code.Namespace(ns) : code.Blank()]

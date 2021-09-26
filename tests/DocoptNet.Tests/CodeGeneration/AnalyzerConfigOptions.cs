@@ -5,6 +5,7 @@ namespace DocoptNet.Tests.CodeGeneration
     using System.Collections.Generic;
     using System.Collections.Immutable;
     using System.Diagnostics.CodeAnalysis;
+    using System.Linq;
 
     sealed class AnalyzerConfigOptions : Microsoft.CodeAnalysis.Diagnostics.AnalyzerConfigOptions
     {
@@ -13,6 +14,9 @@ namespace DocoptNet.Tests.CodeGeneration
         readonly ImmutableDictionary<string, string> _options;
 
         public AnalyzerConfigOptions(params KeyValuePair<string, string>[] options) :
+            this(options.AsEnumerable()) {}
+
+        public AnalyzerConfigOptions(IEnumerable<KeyValuePair<string, string>> options) :
             this(ImmutableDictionary.CreateRange(options)) {}
 
         public AnalyzerConfigOptions(ImmutableDictionary<string, string> options) =>
