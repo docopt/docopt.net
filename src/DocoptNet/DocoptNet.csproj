@@ -20,8 +20,6 @@
     <IsPackable>true</IsPackable>
     <Copyright>Copyright (c) 2013 Dinh Doan Van Bien, dinh@doanvanbien.com</Copyright>
     <NetStandardImplicitPackageVersion>2.0.3</NetStandardImplicitPackageVersion>
-    <GenerateAssemblyVersionAttribute>false</GenerateAssemblyVersionAttribute>
-    <GenerateAssemblyFileVersionAttribute>false</GenerateAssemblyFileVersionAttribute>
     <PackageId>docopt.net</PackageId>
     <PackageLicenseUrl>https://github.com/docopt/docopt.net/blob/master/LICENSE-MIT</PackageLicenseUrl>
     <PackageProjectUrl>https://github.com/docopt/docopt.net</PackageProjectUrl>
