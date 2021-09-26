@@ -2,9 +2,10 @@ namespace DocoptNet.Tests
 {
     using System;
     using System.Collections.Generic;
+    using System.IO;
     using System.Linq;
 
-    static class Extensions
+    static partial class Extensions
     {
         public static MatchResult Match(this Pattern pattern, params LeafPattern[] left)
         {
@@ -32,6 +33,56 @@ namespace DocoptNet.Tests
                         ?.ToValueDictionary();
         }
     }
+
+#if NETCOREAPP3_1_OR_GREATER
+
+    [Flags]
+    enum StreamContentComparisonFlags
+    {
+        None = 0,
+        SkipZeroPositionCheck = 1,
+        SkipLengthCheck = 2,
+    }
+
+    static partial class Extensions
+    {
+        public static bool ContentEquals(this Stream first, Stream second,
+                                         StreamContentComparisonFlags flags = StreamContentComparisonFlags.None)
+        {
+            if (0 == (flags & StreamContentComparisonFlags.SkipZeroPositionCheck))
+            {
+                if (first.Position != 0)
+                    throw new ArgumentException(null, nameof(first));
+
+                if (second.Position != 0)
+                    throw new ArgumentException(null, nameof(second));
+            }
+
+            if (0 == (flags & StreamContentComparisonFlags.SkipLengthCheck) && first.Length != second.Length)
+                return false;
+
+            // Credit & inspiration: https://stackoverflow.com/a/1359947/6682
+
+            const int bufferSize = sizeof(long);
+            Span<byte> buffer1 = stackalloc byte[bufferSize];
+            Span<byte> buffer2 = stackalloc byte[bufferSize];
+
+            var iterations = (int)Math.Ceiling((double)first.Length / bufferSize);
+
+            for (var i = 0; i < iterations; i++)
+            {
+                first.Read(buffer1);
+                second.Read(buffer2);
+
+                if (BitConverter.ToInt64(buffer1) != BitConverter.ToInt64(buffer2))
+                    return false;
+            }
+
+            return true;
+        }
+    }
+
+#endif
 
     sealed class Args
     {

@@ -12,7 +12,7 @@ namespace DocoptNet.Tests.CodeGeneration
     {
         readonly ImmutableDictionary<AdditionalText, RsAnalyzerConfigOptions> _additionalTextOptions;
 
-        public AnalyzerConfigOptionsProvider(params KeyValuePair<AdditionalText, RsAnalyzerConfigOptions>[] options) :
+        public AnalyzerConfigOptionsProvider(IEnumerable<KeyValuePair<AdditionalText, RsAnalyzerConfigOptions>> options) :
             this(ImmutableDictionary.CreateRange(options)) {}
 
         public AnalyzerConfigOptionsProvider(ImmutableDictionary<AdditionalText, RsAnalyzerConfigOptions> optionsByAdditionalText) =>
