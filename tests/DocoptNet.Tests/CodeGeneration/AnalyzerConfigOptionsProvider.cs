@@ -2,7 +2,6 @@
 
 namespace DocoptNet.Tests.CodeGeneration
 {
-    using System.Collections.Generic;
     using System.Collections.Immutable;
     using Microsoft.CodeAnalysis;
     using RsAnalyzerConfigOptions = Microsoft.CodeAnalysis.Diagnostics.AnalyzerConfigOptions;
@@ -12,11 +11,12 @@ namespace DocoptNet.Tests.CodeGeneration
     {
         readonly ImmutableDictionary<AdditionalText, RsAnalyzerConfigOptions> _additionalTextOptions;
 
-        public AnalyzerConfigOptionsProvider(IEnumerable<KeyValuePair<AdditionalText, RsAnalyzerConfigOptions>> options) :
-            this(ImmutableDictionary.CreateRange(options)) {}
-
-        public AnalyzerConfigOptionsProvider(ImmutableDictionary<AdditionalText, RsAnalyzerConfigOptions> optionsByAdditionalText) =>
+        public AnalyzerConfigOptionsProvider(RsAnalyzerConfigOptions globalOptions,
+                                             ImmutableDictionary<AdditionalText, RsAnalyzerConfigOptions> optionsByAdditionalText)
+        {
+            GlobalOptions = globalOptions;
             _additionalTextOptions = optionsByAdditionalText;
+        }
 
         public override AnalyzerConfigOptions GetOptions(SyntaxTree tree) =>
             AnalyzerConfigOptions.Empty;
@@ -24,6 +24,6 @@ namespace DocoptNet.Tests.CodeGeneration
         public override RsAnalyzerConfigOptions GetOptions(AdditionalText textFile) =>
             _additionalTextOptions.TryGetValue(textFile, out var options) ? options : AnalyzerConfigOptions.Empty;
 
-        public override RsAnalyzerConfigOptions GlobalOptions => AnalyzerConfigOptions.Empty;
+        public override RsAnalyzerConfigOptions GlobalOptions { get; }
     }
 }
