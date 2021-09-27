@@ -65,6 +65,22 @@ Naval Fate.
                 });
         }
 
+        [Test]
+        public void Generate_with_inline_usage()
+        {
+            AssertMatchesSnapshot(new[]
+            {
+                ("Program.cs", SourceText.From($@"
+                    using DocoptNet;
+
+                    [DocoptArguments]
+                    partial class Arguments
+                    {{
+                        public const string Help = @""{NavalFateUsage}"";
+                    }}"))
+            });
+        }
+
         readonly Dictionary<string, ImmutableArray<byte>> _projectFileHashByPath = new();
         DirectoryInfo? _solutionDir;
 
