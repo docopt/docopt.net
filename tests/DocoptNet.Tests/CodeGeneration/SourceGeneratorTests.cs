@@ -14,6 +14,7 @@ namespace DocoptNet.Tests.CodeGeneration
     using System.Text.Encodings.Web;
     using System.Text.Json;
     using System.Threading;
+    using Basic.Reference.Assemblies;
     using DocoptNet.CodeGeneration;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
@@ -396,12 +397,6 @@ namespace DocoptNet
             PrepareForGeneration(string? docoptNetNamespace,
                                  params (string Path, SourceText Text)[] sources)
         {
-            var references =
-                from asm in AppDomain.CurrentDomain.GetAssemblies()
-                where asm is { IsDynamic: false, Location: { Length: > 0 } }
-                   && asm.GetName().Name != "DocoptNet"
-                select MetadataReference.CreateFromFile(asm.Location);
-
             var trees = new List<SyntaxTree>();
             var additionalTexts = new List<AdditionalText>();
 
@@ -417,9 +412,11 @@ namespace DocoptNet
 
             var compilation =
                 CSharpCompilation.Create(FormattableString.Invariant($"test{Interlocked.Increment(ref _assemblyUniqueCounter)}"),
-                                         trees, references,
+                                         trees, references: null,
                                          new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary,
-                                                                      generalDiagnosticOption: ReportDiagnostic.Error));
+                                                                      generalDiagnosticOption: ReportDiagnostic.Error))
+                                 .WithReferenceAssemblies(ReferenceAssemblyKind.Net50)
+                                 .AddReferences(MetadataReference.CreateFromFile(Path.Combine(TestContext.CurrentContext.TestDirectory, "Newtonsoft.Json.dll")));
 
             ISourceGenerator generator = new SourceGenerator();
 
