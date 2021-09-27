@@ -94,9 +94,15 @@ Naval Fate.
         {
             var (driver, compilation) = PrepareForGeneration(docoptNetNamespace, sources);
 
-            var grr = driver.RunGenerators(compilation).GetRunResult().Results.Single();
+            var grr = driver.RunGeneratorsAndUpdateCompilation(compilation, out var outputCompilation, out _)
+                            .GetRunResult().Results.Single();
 
             Assert.That(grr.Exception, Is.Null);
+
+            var diagnostics = outputCompilation.GetDiagnostics();
+
+            Assert.False(diagnostics.Any(d => d.Severity == DiagnosticSeverity.Error),
+                         "Failed: " + diagnostics.FirstOrDefault()?.GetMessage());
 
             var testPath = Path.Combine(nameof(SourceGeneratorTests), callerName!);
             var actualSourcesPath = Path.Combine(TestContext.CurrentContext.WorkDirectory, testPath);
@@ -119,10 +125,10 @@ Naval Fate.
             // JSON array where each element is a JSON object representing
             // one diagnostic record.
 
-            if (grr.Diagnostics is { Length: > 0 } diagnostics)
+            if (grr.Diagnostics is { Length: > 0 } generatorDiagnostics)
             {
                 var ds =
-                    from d in diagnostics
+                    from d in generatorDiagnostics
                     let ls = d.Location.GetLineSpan()
                     select new
                     {
