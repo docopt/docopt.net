@@ -55,7 +55,7 @@ Naval Fate.
         }
 
         [Test]
-        public void Generate_with_custom_embedding_namespace()
+        public void Generate_with_embedding_namespace()
         {
             AssertMatchesSnapshot(
                 docoptNetNamespace: "DocoptNet.Generated",
@@ -71,14 +71,28 @@ Naval Fate.
             AssertMatchesSnapshot(new[]
             {
                 ("Program.cs", SourceText.From($@"
-                    using DocoptNet;
-
-                    [DocoptArguments]
+                    [DocoptNet.DocoptArguments]
                     partial class Arguments
                     {{
                         public const string Help = @""{NavalFateUsage}"";
                     }}"))
             });
+        }
+
+        [Test]
+        public void Generate_with_inline_usage_and_embedding_namespace()
+        {
+            AssertMatchesSnapshot(
+                docoptNetNamespace: "DocoptNet.Generated",
+                new[]
+                {
+                    ("Program.cs", SourceText.From($@"
+                        [DocoptNet.DocoptArguments]
+                        partial class Arguments
+                        {{
+                            public const string Help = @""{NavalFateUsage}"";
+                        }}"))
+                });
         }
 
         readonly Dictionary<string, ImmutableArray<byte>> _projectFileHashByPath = new();
