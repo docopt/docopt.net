@@ -112,6 +112,17 @@ Naval Fate.
                 using var stream = file.OpenRead();
                 _projectFileHashByPath.Add(file.Name, SourceText.From(stream).GetChecksum());
             }
+
+            var actualSourcesPath = Path.Combine(TestContext.CurrentContext.WorkDirectory, nameof(SourceGeneratorTests));
+
+            try
+            {
+                Directory.Delete(actualSourcesPath, recursive: true);
+            }
+            catch (DirectoryNotFoundException)
+            {
+                // ignore
+            }
         }
 
         void AssertMatchesSnapshot((string Path, SourceText Text)[] sources,
@@ -136,18 +147,6 @@ Naval Fate.
 
             var testPath = Path.Combine(nameof(SourceGeneratorTests), callerName!);
             var actualSourcesPath = Path.Combine(TestContext.CurrentContext.WorkDirectory, testPath);
-
-            // Re-create the directory holding the actual results, deleting anything
-            // leftover from a previous run.
-
-            try
-            {
-                Directory.Delete(actualSourcesPath, recursive: true);
-            }
-            catch (DirectoryNotFoundException)
-            {
-                // ignore
-            }
 
             Directory.CreateDirectory(actualSourcesPath);
 
