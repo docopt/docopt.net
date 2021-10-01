@@ -138,6 +138,20 @@ Naval Fate.
                 });
         }
 
+        [Test]
+        public void Generate_with_inline_usage_missing_help_const()
+        {
+            AssertMatchesSnapshot(new[]
+            {
+                ("Program.cs", SourceText.From(@"
+                    [DocoptNet.DocoptArguments]
+                    partial class Arguments1 { }
+
+                    [DocoptNet.DocoptArguments(HelpConstName = ""HELP"")]
+                    partial class Arguments2 { public const string Help = @""Usage: program""; }"))
+            });
+        }
+
         readonly Dictionary<string, ImmutableArray<byte>> _projectFileHashByPath = new();
         DirectoryInfo? _solutionDir;
 
