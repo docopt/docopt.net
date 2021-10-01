@@ -80,6 +80,49 @@ Naval Fate.
         }
 
         [Test]
+        public void Generate_with_multiple_inline_usages()
+        {
+            const string help = "Usage: my_program (run [--fast] | jump [--high])";
+
+            AssertMatchesSnapshot(new[]
+            {
+                ("Program.cs", SourceText.From(@"
+                    using System;
+                    using DocoptNet;
+                    using ArgumentsAttribute = DocoptNet.DocoptArgumentsAttribute;
+
+                    [AttributeUsage(AttributeTargets.All)]
+                    sealed class AnotherAttribute : Attribute { }
+
+                    [DocoptNet.DocoptArguments]
+                    partial class Arguments1 { public const string Help = @""" + help + @"""; }
+
+                    [DocoptNet.DocoptArgumentsAttribute]
+                    partial class Arguments2 { public const string Help = @""" + help + @"""; }
+
+                    [DocoptArguments]
+                    partial class Arguments3 { public const string Help = @""" + help + @"""; }
+
+                    [Arguments]
+                    partial class Arguments4 { public const string Help = @""" + help + @"""; }
+
+                    [Arguments]
+                    partial class Arguments5 { public const string Help = @""" + help + @"""; }
+
+                    [Another, Arguments]
+                    partial class Arguments6 { public const string Help = @""" + help + @"""; }
+
+                    [Another][Arguments]
+                    partial class Arguments7 { public const string Help = @""" + help + @"""; }
+
+                    partial class Arguments8 { public const string Help = @""" + help + @"""; }
+
+                    [Arguments]
+                    partial class Arguments8 { }"))
+            });
+        }
+
+        [Test]
         public void Generate_with_inline_usage_and_embedding_namespace()
         {
             AssertMatchesSnapshot(
