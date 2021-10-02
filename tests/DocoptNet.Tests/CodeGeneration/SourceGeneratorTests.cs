@@ -164,7 +164,8 @@ Naval Fate.
                                                           "..", "..", "..", "..", ".."));
 
             var projectSourcesDir = new DirectoryInfo(Path.Combine(SolutionDirPath, "src", "DocoptNet"));
-            foreach (var file in projectSourcesDir.EnumerateFiles("*.cs"))
+            var generatorSourcesDir = new DirectoryInfo(Path.Combine(SolutionDirPath, "src", "DocoptNet.CodeGeneration"));
+            foreach (var file in projectSourcesDir.EnumerateFiles("*.cs").Concat(generatorSourcesDir.EnumerateFiles("*Attribute.cs")))
             {
                 using var stream = file.OpenRead();
                 _projectFileHashByPath.Add(file.Name, SourceText.From(stream).GetChecksum());
