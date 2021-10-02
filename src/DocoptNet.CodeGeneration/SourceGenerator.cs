@@ -65,12 +65,35 @@ namespace DocoptNet.CodeGeneration
 
         sealed class SyntaxReceiver : ISyntaxContextReceiver
         {
+            ModelSymbols? _modelSymbols;
+
             public List<(ClassDeclarationSyntax Class, AttributeData Attributes)> ClassAttributes { get; } = new();
+
+            sealed class ModelSymbols
+            {
+                public ModelSymbols(SemanticModel model, INamedTypeSymbol attributeType)
+                {
+                    Model = model;
+                    AttributeType = attributeType;
+                }
+
+                public SemanticModel Model { get; }
+                public INamedTypeSymbol AttributeType { get; }
+            }
+
+            ModelSymbols GetModelSymbols(SemanticModel semanticModel)
+            {
+                if (_modelSymbols is { Model: { } model } someModelSymbols && ReferenceEquals(semanticModel, model))
+                    return someModelSymbols;
+
+                const string attributeName = nameof(DocoptNet) + "." + nameof(DocoptArgumentsAttribute);
+                var attributeTypeSymbol = semanticModel.Compilation.GetTypeByMetadataName(attributeName);
+                return _modelSymbols = new ModelSymbols(semanticModel, attributeTypeSymbol ?? throw new NullReferenceException());
+            }
 
             public void OnVisitSyntaxNode(GeneratorSyntaxContext context)
             {
-                const string attributeName = nameof(DocoptNet) + "." + nameof(DocoptArgumentsAttribute);
-                var attributeTypeSymbol = context.SemanticModel.Compilation.GetTypeByMetadataName(attributeName);
+                var attributeTypeSymbol = GetModelSymbols(context.SemanticModel).AttributeType;
                 if (context.Node is AttributeSyntax attribute
                     && SymbolEqualityComparer.Default.Equals(attributeTypeSymbol, context.SemanticModel.GetTypeInfo(attribute).Type)
                     && attribute.FirstAncestorOrSelf((ClassDeclarationSyntax _) => true) is { } cds
