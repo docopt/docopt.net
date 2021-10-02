@@ -18,5 +18,15 @@
     "message": "Arguments2 is missing the help constant",
     "line": 5,
     "char": 34
+  },
+  {
+    "id": "DCPT0002",
+    "severity": "Error",
+    "warningLevel": 0,
+    "category": "Docopt",
+    "title": "Missing member",
+    "message": "Arguments3 is missing the help constant",
+    "line": 8,
+    "char": 34
   }
 ]

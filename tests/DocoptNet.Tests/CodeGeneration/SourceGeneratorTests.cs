@@ -148,7 +148,10 @@ Naval Fate.
                     partial class Arguments1 { }
 
                     [DocoptNet.DocoptArguments(HelpConstName = ""HELP"")]
-                    partial class Arguments2 { public const string Help = @""Usage: program""; }"))
+                    partial class Arguments2 { public const string Help = @""Usage: program""; }
+
+                    [DocoptNet.DocoptArguments]
+                    partial class Arguments3 { public string Help => @""Usage: program""; }"))
             });
         }
 
