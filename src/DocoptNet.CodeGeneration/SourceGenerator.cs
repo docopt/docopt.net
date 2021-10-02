@@ -47,7 +47,7 @@ namespace DocoptNet.CodeGeneration
         static readonly DiagnosticDescriptor MissingHelpConstError =
             new(id: "DCPT0002",
                 title: "Missing member",
-                messageFormat: "{0} is missing the help constant",
+                messageFormat: "'{0}' is missing the help string constant named '{1}'",
                 category: "Docopt",
                 DiagnosticSeverity.Error,
                 isEnabledByDefault: true);
@@ -144,7 +144,7 @@ namespace DocoptNet.CodeGeneration
                 if (help is { } someHelp)
                     docoptTypes.Add((namespaceName, className, SourceText.From(someHelp), GenerationOptions.SkipHelpConst));
                 else
-                    context.ReportDiagnostic(Diagnostic.Create(MissingHelpConstError, symbol.Locations.First(), symbol));
+                    context.ReportDiagnostic(Diagnostic.Create(MissingHelpConstError, symbol.Locations.First(), symbol, attribute.HelpConstName));
             }
 
             var globalOptions = context.AnalyzerConfigOptions.GlobalOptions;
