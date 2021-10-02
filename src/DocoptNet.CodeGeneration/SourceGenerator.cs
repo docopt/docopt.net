@@ -69,29 +69,16 @@ namespace DocoptNet.CodeGeneration
 
             public void OnVisitSyntaxNode(GeneratorSyntaxContext context)
             {
-                if (TryGetClassWithAttributeData(context.Node, context.SemanticModel, out var cds, out var attributeData))
-                    ClassAttributes.Add((cds, attributeData));
-            }
-
-            static bool TryGetClassWithAttributeData(SyntaxNode node, SemanticModel model,
-                                                     [NotNullWhen(true)]out ClassDeclarationSyntax? classDeclarationSyntax,
-                                                     [NotNullWhen(true)]out AttributeData? attributeData)
-            {
                 const string attributeName = nameof(DocoptNet) + "." + nameof(DocoptArgumentsAttribute);
-                var attributeTypeSymbol = model.Compilation.GetTypeByMetadataName(attributeName);
-                if (node is AttributeSyntax attribute
-                    && SymbolEqualityComparer.Default.Equals(attributeTypeSymbol, model.GetTypeInfo(attribute).Type)
+                var attributeTypeSymbol = context.SemanticModel.Compilation.GetTypeByMetadataName(attributeName);
+                if (context.Node is AttributeSyntax attribute
+                    && SymbolEqualityComparer.Default.Equals(attributeTypeSymbol, context.SemanticModel.GetTypeInfo(attribute).Type)
                     && attribute.FirstAncestorOrSelf((ClassDeclarationSyntax _) => true) is { } cds
-                    && model.GetDeclaredSymbol(cds)?.GetAttributes() is { } attributes)
+                    && context.SemanticModel.GetDeclaredSymbol(cds)?.GetAttributes() is { } attributes)
                 {
-                    classDeclarationSyntax = cds;
-                    attributeData = attributes.First(a => SymbolEqualityComparer.Default.Equals(a.AttributeClass, attributeTypeSymbol));
-                    return true;
+                    var attributeData = attributes.First(a => SymbolEqualityComparer.Default.Equals(a.AttributeClass, attributeTypeSymbol));
+                    ClassAttributes.Add((cds, attributeData));
                 }
-
-                classDeclarationSyntax = null;
-                attributeData = null;
-                return false;
             }
         }
 
