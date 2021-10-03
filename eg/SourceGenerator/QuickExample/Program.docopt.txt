@@ -1,4 +1,0 @@
-Usage:
-  QuickExample tcp <host> <port> [--timeout=<seconds>]
-  QuickExample serial <port> [--baud=9600] [--timeout=<seconds>]
-  QuickExample -h | --help | --version

@@ -1,12 +1,11 @@
 using System;
 using DocoptNet;
-using QuickExample;
 
-ProgramArguments arguments;
+Arguments arguments;
 
 try
 {
-    arguments = ProgramArguments.Apply(args, version: "1.0.0rc2");
+    arguments = Arguments.Apply(args, version: "1.0.0rc2");
 }
 catch (DocoptExitException e)
 {
@@ -35,3 +34,13 @@ Console.WriteLine($@"{{
 }}");
 
 return 0;
+
+[DocoptArguments]
+partial class Arguments
+{
+    public const string Help = @"Usage:
+  QuickExample tcp <host> <port> [--timeout=<seconds>]
+  QuickExample serial <port> [--baud=9600] [--timeout=<seconds>]
+  QuickExample -h | --help | --version
+";
+}

@@ -1,12 +1,11 @@
 using System;
 using DocoptNet;
-using CountedExample;
 
-ProgramArguments arguments;
+Arguments arguments;
 
 try
 {
-    arguments = ProgramArguments.Apply(args);
+    arguments = Arguments.Apply(args);
 }
 catch (DocoptExitException e)
 {
@@ -31,3 +30,19 @@ Console.WriteLine($@"{{
 }}");
 
 return 0;
+
+[DocoptArguments]
+partial class Arguments
+{
+    public const string Help = @"Usage: CountedExample --help
+       CountedExample -v...
+       CountedExample go [go]
+       CountedExample (--path=<path>)...
+       CountedExample <file> <file>
+
+Try: CountedExample -vvvvvvvvvv
+     CountedExample go go
+     CountedExample --path ./here --path ./there
+     CountedExample this.txt that.txt
+";
+}
