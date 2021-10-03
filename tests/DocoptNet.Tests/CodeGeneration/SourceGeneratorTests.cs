@@ -80,6 +80,22 @@ Naval Fate.
         }
 
         [Test]
+        public void Generate_with_inline_usage_and_embedding_namespace()
+        {
+            AssertMatchesSnapshot(
+                docoptNetNamespace: "DocoptNet.Generated",
+                new[]
+                {
+                    ("Program.cs", SourceText.From($@"
+                        [DocoptNet.DocoptArguments]
+                        partial class Arguments
+                        {{
+                            public const string Help = @""{NavalFateUsage}"";
+                        }}"))
+                });
+        }
+
+        [Test]
         public void Generate_with_multiple_inline_usages()
         {
             const string help = "Usage: my_program (run [--fast] | jump [--high])";
@@ -120,22 +136,6 @@ Naval Fate.
                     [Arguments]
                     partial class Arguments8 { }"))
             });
-        }
-
-        [Test]
-        public void Generate_with_inline_usage_and_embedding_namespace()
-        {
-            AssertMatchesSnapshot(
-                docoptNetNamespace: "DocoptNet.Generated",
-                new[]
-                {
-                    ("Program.cs", SourceText.From($@"
-                        [DocoptNet.DocoptArguments]
-                        partial class Arguments
-                        {{
-                            public const string Help = @""{NavalFateUsage}"";
-                        }}"))
-                });
         }
 
         [Test]
