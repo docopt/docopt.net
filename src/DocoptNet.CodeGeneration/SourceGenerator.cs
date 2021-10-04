@@ -192,7 +192,6 @@ namespace DocoptNet.CodeGeneration
 
             if (added)
             {
-                var assembly = GetType().Assembly;
                 foreach (var (fn, source) in GetEmbeddedCSharpSources(embeddingNamespace, fn => !DoesFileNameEndIn(fn, "Attribute")))
                     context.AddSource(fn, source);
             }
