@@ -392,7 +392,7 @@ namespace DocoptNet.Generated
                 var shortName = "-" + left[0];
                 left = left.Substring(1);
                 var similar = options.Where(o => o.ShortName == shortName).ToList();
-                Option option = null;
+                Option option;
                 if (similar.Count > 1)
                 {
                     throw tokens.CreateException($"{shortName} is specified ambiguously {similar.Count} times");
@@ -456,7 +456,7 @@ namespace DocoptNet.Generated
                 // Might be simply specified ambiguously 2+ times?
                 throw tokens.CreateException($"{longName} is not a unique prefix: {string.Join(", ", similar.Select(o => o.LongName))}?");
             }
-            Option option = null;
+            Option option;
             if (similar.Count < 1)
             {
                 var argCount = eq ? 1 : 0;
