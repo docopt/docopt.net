@@ -252,7 +252,7 @@ namespace DocoptNet
         internal static string FormalUsage(string exitUsage)
         {
             var (_, _, section) = exitUsage.Partition(":"); // drop "usage:"
-            var pu = section.Split(new char[0], StringSplitOptions.RemoveEmptyEntries);
+            var pu = section.Split((char[])null, StringSplitOptions.RemoveEmptyEntries);
             var join = new StringBuilder();
             join.Append("( ");
             for (var i = 1; i < pu.Length; i++)

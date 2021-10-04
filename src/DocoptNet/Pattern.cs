@@ -92,7 +92,7 @@ namespace DocoptNet
                         }
                         else if (!e.Value.IsStringList)
                         {
-                            e.Value = StringList.BottomTop(e.Value.ToString().Split(new char[0], StringSplitOptions.RemoveEmptyEntries));
+                            e.Value = StringList.BottomTop(e.Value.ToString().Split((char[])null, StringSplitOptions.RemoveEmptyEntries));
                         }
                     }
                     if (e is Command || e is Option { ArgCount: 0 })
