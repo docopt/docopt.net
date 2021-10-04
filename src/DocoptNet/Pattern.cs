@@ -84,7 +84,7 @@ namespace DocoptNet
 
                 foreach (var e in l.OfType<LeafPattern>())
                 {
-                    if (e is Argument || e is Option { ArgCount: > 0 })
+                    if (e is Argument or Option { ArgCount: > 0 })
                     {
                         if (e.Value.IsNone)
                         {
@@ -95,7 +95,7 @@ namespace DocoptNet
                             e.Value = StringList.BottomTop(e.Value.ToString().Split(new char[0], StringSplitOptions.RemoveEmptyEntries));
                         }
                     }
-                    if (e is Command || e is Option { ArgCount: 0 })
+                    if (e is Command or Option { ArgCount: 0 })
                     {
                         e.Value = 0;
                     }
