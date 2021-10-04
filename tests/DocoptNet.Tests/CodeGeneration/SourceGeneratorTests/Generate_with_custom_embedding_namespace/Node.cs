@@ -28,8 +28,8 @@ namespace DocoptNet.Generated
         {
             if (name == null) throw new ArgumentNullException(nameof(name));
 
-            this.Name = name;
-            this.ValueType = valueType;
+            Name = name;
+            ValueType = valueType;
         }
 
         public ValueType ValueType { get; private set; }
@@ -42,7 +42,7 @@ namespace DocoptNet.Generated
 
         public override int GetHashCode()
         {
-            return this.Name.GetHashCode() ^ this.ValueType.GetHashCode();
+            return Name.GetHashCode() ^ ValueType.GetHashCode();
         }
 
         public bool Equals(Node other)
@@ -57,8 +57,8 @@ namespace DocoptNet.Generated
                 return true;
             }
 
-            return other.Name == this.Name
-                && other.ValueType == this.ValueType;
+            return other.Name == Name
+                && other.ValueType == ValueType;
         }
 
         public override bool Equals(object obj)
@@ -73,12 +73,12 @@ namespace DocoptNet.Generated
                 return true;
             }
 
-            if (obj.GetType() != this.GetType())
+            if (obj.GetType() != GetType())
             {
                 return false;
             }
 
-            return this.Equals((Node)obj);
+            return Equals((Node)obj);
         }
     }
 

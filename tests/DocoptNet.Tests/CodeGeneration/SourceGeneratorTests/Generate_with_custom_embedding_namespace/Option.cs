@@ -31,7 +31,7 @@ namespace DocoptNet.Generated
 
         public override Node ToNode()
         {
-            return new OptionNode(this.Name.TrimStart('-'), this.ArgCount == 0 ? ValueType.Bool : ValueType.String);
+            return new OptionNode(Name.TrimStart('-'), ArgCount == 0 ? ValueType.Bool : ValueType.String);
         }
 
         public override string GenerateCode()
