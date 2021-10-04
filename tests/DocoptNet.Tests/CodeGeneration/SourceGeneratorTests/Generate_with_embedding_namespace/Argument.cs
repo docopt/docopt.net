@@ -30,7 +30,7 @@ namespace DocoptNet.Generated
 
         public override Node ToNode()
         {
-            return new ArgumentNode(this.Name, Value.IsStringList ? ValueType.List : ValueType.String);
+            return new ArgumentNode(Name, Value.IsStringList ? ValueType.List : ValueType.String);
         }
 
         public override string GenerateCode()

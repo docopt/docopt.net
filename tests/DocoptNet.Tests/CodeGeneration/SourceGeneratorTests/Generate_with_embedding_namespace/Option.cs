@@ -31,7 +31,7 @@ namespace DocoptNet.Generated
 
         public override Node ToNode()
         {
-            return new OptionNode(this.Name.TrimStart('-'), this.ArgCount == 0 ? ValueType.Bool : ValueType.String);
+            return new OptionNode(Name.TrimStart('-'), ArgCount == 0 ? ValueType.Bool : ValueType.String);
         }
 
         public override string GenerateCode()
@@ -54,6 +54,8 @@ namespace DocoptNet.Generated
 
         private const string DESC_SEPARATOR = "  ";
 
+        static readonly char[] OptionDelimiters = { ' ', '\t', ',', '=' };
+
         public static Option Parse(string optionDescription)
         {
             if (optionDescription == null) throw new ArgumentNullException(nameof(optionDescription));
@@ -63,7 +65,7 @@ namespace DocoptNet.Generated
             var argCount = 0;
             var value = Value.False;
             var (options, _, description) = optionDescription.Trim().Partition(DESC_SEPARATOR);
-            foreach (var s in options.Split(" \t,=".ToCharArray(), StringSplitOptions.RemoveEmptyEntries))
+            foreach (var s in options.Split(OptionDelimiters, StringSplitOptions.RemoveEmptyEntries))
             {
                 if (s.StartsWith("--"))
                     longName = s;

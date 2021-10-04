@@ -6,7 +6,7 @@ namespace DocoptNet
         {
         }
 
-        public override Node ToNode() { return new CommandNode(this.Name); }
+        public override Node ToNode() { return new CommandNode(Name); }
 
         public override string GenerateCode()
         {
