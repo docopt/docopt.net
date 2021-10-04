@@ -96,6 +96,20 @@ Naval Fate.
         }
 
         [Test]
+        public void Generate_with_inline_usage_with_custom_const_name()
+        {
+            AssertMatchesSnapshot(new[]
+            {
+                ("Program.cs", SourceText.From($@"
+                    [DocoptNet.DocoptArguments(HelpConstName = nameof(HelpText))]
+                    partial class Arguments
+                    {{
+                        public const string HelpText = @""{NavalFateUsage}"";
+                    }}"))
+            });
+        }
+
+        [Test]
         public void Generate_with_multiple_inline_usages()
         {
             const string help = "Usage: my_program (run [--fast] | jump [--high])";

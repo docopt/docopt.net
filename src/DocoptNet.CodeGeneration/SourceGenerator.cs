@@ -114,6 +114,8 @@ namespace DocoptNet.CodeGeneration
         static readonly SymbolDisplayFormat FullyQualifiedFormatWithoutGlobalNamespace =
             SymbolDisplayFormat.FullyQualifiedFormat.WithGlobalNamespaceStyle(SymbolDisplayGlobalNamespaceStyle.Omitted);
 
+        const string DefaultHelpConstName = "Help";
+
         public void Execute(GeneratorExecutionContext context)
         {
             context.LaunchDebuggerIfFlagged(nameof(DocoptNet));
@@ -122,7 +124,8 @@ namespace DocoptNet.CodeGeneration
 
             SemanticModel? model = null;
 
-            var docoptTypes = new List<(string? Namespace, string Name, SourceText Help, GenerationOptions Options)>();
+            var docoptTypes = new List<(string? Namespace, string Name, DocoptArgumentsAttribute? ArgumentsAttribute,
+                                        SourceText Help, GenerationOptions Options)>();
 
             foreach (var (cds, attributeData) in syntaxReceiver.ClassAttributes)
             {
@@ -136,13 +139,13 @@ namespace DocoptNet.CodeGeneration
                     symbol.ContainingNamespace.ToDisplayString(FullyQualifiedFormatWithoutGlobalNamespace)
                     is { Length: > 0 } s ? s : null;
                 var attribute = DocoptArgumentsAttribute.From(attributeData);
-                attribute.HelpConstName ??= "Help";
+                attribute.HelpConstName ??= DefaultHelpConstName;
                 var help = symbol.GetMembers()
                                  .Choose(s => s is IFieldSymbol { IsConst: true, Name: var name, ConstantValue: string help }
                                            && name == attribute.HelpConstName ? Some(help) : default)
                                  .FirstOrDefault();
                 if (help is { } someHelp)
-                    docoptTypes.Add((namespaceName, className, SourceText.From(someHelp), GenerationOptions.SkipHelpConst));
+                    docoptTypes.Add((namespaceName, className, attribute, SourceText.From(someHelp), GenerationOptions.SkipHelpConst));
                 else
                     context.ReportDiagnostic(Diagnostic.Create(MissingHelpConstError, symbol.Locations.First(), symbol, attribute.HelpConstName));
             }
@@ -162,6 +165,7 @@ namespace DocoptNet.CodeGeneration
                                              && !string.IsNullOrWhiteSpace(name)
                                                  ? name
                                                  : Path.GetFileName(at.Path).Partition(".").Item1 + "Arguments",
+                                             (DocoptArgumentsAttribute?)null,
                                              text,
                                              GenerationOptions.None))
                                      : default)
@@ -169,11 +173,11 @@ namespace DocoptNet.CodeGeneration
 
             var added = false;
 
-            foreach (var (ns, name, help, options) in docoptSources.Concat(docoptTypes))
+            foreach (var (ns, name, attribute, help, options) in docoptSources.Concat(docoptTypes))
             {
                 try
                 {
-                    if (Generate(ns, embeddingNamespace, name, help, options) is { Length: > 0 } source)
+                    if (Generate(ns, embeddingNamespace, name, attribute?.HelpConstName, help, options) is { Length: > 0 } source)
                     {
                         added = true;
                         context.AddSource(name + ".cs", source);
@@ -237,18 +241,20 @@ namespace DocoptNet.CodeGeneration
             SkipHelpConst,
         }
 
-        public static SourceText Generate(string? ns, string? embeddingNamespace, string name, SourceText text) =>
-            Generate(ns, embeddingNamespace, name, text, GenerationOptions.None);
+        public static SourceText Generate(string? ns, string? embeddingNamespace, string name,
+                                          SourceText text) =>
+            Generate(ns, embeddingNamespace, name, null, text, GenerationOptions.None);
 
-        static SourceText Generate(string? ns, string? embeddingNamespace, string name, SourceText text,
-                                   GenerationOptions generationOptions) =>
-            Generate(ns, embeddingNamespace, name, text, null, generationOptions);
+        static SourceText Generate(string? ns, string? embeddingNamespace, string name, string? helpConstName,
+                                   SourceText text, GenerationOptions generationOptions) =>
+            Generate(ns, embeddingNamespace, name, helpConstName, text, null, generationOptions);
 
-        public static SourceText Generate(string? ns, string? embeddingNamespace, string name, SourceText text, Encoding? outputEncoding) =>
-            Generate(ns, embeddingNamespace, name, text, outputEncoding, GenerationOptions.None);
+        public static SourceText Generate(string? ns, string? embeddingNamespace, string name,
+                                          SourceText text, Encoding? outputEncoding) =>
+            Generate(ns, embeddingNamespace, name, null, text, outputEncoding, GenerationOptions.None);
 
-        static SourceText Generate(string? ns, string? embeddingNamespace, string name, SourceText text, Encoding? outputEncoding,
-                                   GenerationOptions options)
+        static SourceText Generate(string? ns, string? embeddingNamespace, string name, string? helpConstName,
+                                   SourceText text, Encoding? outputEncoding, GenerationOptions options)
         {
             if (text.Length == 0)
                 return EmptySourceText;
@@ -259,7 +265,7 @@ namespace DocoptNet.CodeGeneration
             Generate(code,
                      ns is { Length: 0 } ? null : ns,
                      embeddingNamespace is { Length: > 0 } ? embeddingNamespace : nameof(DocoptNet),
-                     name, helpText,
+                     name, helpConstName ?? DefaultHelpConstName, helpText,
                      options);
 
             return new StringBuilderSourceText(code.StringBuilder, outputEncoding ?? text.Encoding ?? Utf8BomlessEncoding);
@@ -268,7 +274,9 @@ namespace DocoptNet.CodeGeneration
         static void Generate(CSharpSourceBuilder code,
                              string? ns,
                              string embeddingNamespace,
-                             string name, string helpText,
+                             string name,
+                             string helpConstName,
+                             string helpText,
                              GenerationOptions generationOptions)
         {
             var (pattern, options, usage) = Docopt.ParsePattern(helpText);
@@ -278,7 +286,6 @@ namespace DocoptNet.CodeGeneration
                                .Select(g => (LeafPattern)g.First())
                                .ToList();
 
-            const string helpConstName = "Help";
             const string usageConstName = "Usage";
 
             code["#nullable enable annotations"].NewLine
