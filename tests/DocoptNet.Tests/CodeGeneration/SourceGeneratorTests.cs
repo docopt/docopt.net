@@ -55,7 +55,7 @@ Naval Fate.
         }
 
         [Test]
-        public void Generate_with_custom_embedding_namespace()
+        public void Generate_with_embedding_namespace()
         {
             AssertMatchesSnapshot(
                 docoptNetNamespace: "DocoptNet.Generated",
@@ -63,6 +63,110 @@ Naval Fate.
                 {
                     ("Program.docopt.txt", SourceText.From(NavalFateUsage))
                 });
+        }
+
+        [Test]
+        public void Generate_with_inline_usage()
+        {
+            AssertMatchesSnapshot(new[]
+            {
+                ("Program.cs", SourceText.From($@"
+                    [DocoptNet.DocoptArguments]
+                    partial class Arguments
+                    {{
+                        public const string Help = @""{NavalFateUsage}"";
+                    }}"))
+            });
+        }
+
+        [Test]
+        public void Generate_with_inline_usage_and_embedding_namespace()
+        {
+            AssertMatchesSnapshot(
+                docoptNetNamespace: "DocoptNet.Generated",
+                new[]
+                {
+                    ("Program.cs", SourceText.From($@"
+                        [DocoptNet.DocoptArguments]
+                        partial class Arguments
+                        {{
+                            public const string Help = @""{NavalFateUsage}"";
+                        }}"))
+                });
+        }
+
+        [Test]
+        public void Generate_with_inline_usage_with_custom_const_name()
+        {
+            AssertMatchesSnapshot(new[]
+            {
+                ("Program.cs", SourceText.From($@"
+                    [DocoptNet.DocoptArguments(HelpConstName = nameof(HelpText))]
+                    partial class Arguments
+                    {{
+                        public const string HelpText = @""{NavalFateUsage}"";
+                    }}"))
+            });
+        }
+
+        [Test]
+        public void Generate_with_multiple_inline_usages()
+        {
+            const string help = "Usage: my_program (run [--fast] | jump [--high])";
+
+            AssertMatchesSnapshot(new[]
+            {
+                ("Program.cs", SourceText.From(@"
+                    using System;
+                    using DocoptNet;
+                    using ArgumentsAttribute = DocoptNet.DocoptArgumentsAttribute;
+
+                    [AttributeUsage(AttributeTargets.All)]
+                    sealed class AnotherAttribute : Attribute { }
+
+                    [DocoptNet.DocoptArguments]
+                    partial class Arguments1 { public const string Help = @""" + help + @"""; }
+
+                    [DocoptNet.DocoptArgumentsAttribute]
+                    partial class Arguments2 { public const string Help = @""" + help + @"""; }
+
+                    [DocoptArguments]
+                    partial class Arguments3 { public const string Help = @""" + help + @"""; }
+
+                    [Arguments]
+                    partial class Arguments4 { public const string Help = @""" + help + @"""; }
+
+                    [Arguments]
+                    partial class Arguments5 { public const string Help = @""" + help + @"""; }
+
+                    [Another, Arguments]
+                    partial class Arguments6 { public const string Help = @""" + help + @"""; }
+
+                    [Another][Arguments]
+                    partial class Arguments7 { public const string Help = @""" + help + @"""; }
+
+                    partial class Arguments8 { public const string Help = @""" + help + @"""; }
+
+                    [Arguments]
+                    partial class Arguments8 { }"))
+            });
+        }
+
+        [Test]
+        public void Generate_with_inline_usage_missing_help_const()
+        {
+            AssertMatchesSnapshot(new[]
+            {
+                ("Program.cs", SourceText.From(@"
+                    [DocoptNet.DocoptArguments]
+                    partial class Arguments1 { }
+
+                    [DocoptNet.DocoptArguments(HelpConstName = ""HELP"")]
+                    partial class Arguments2 { public const string Help = @""Usage: program""; }
+
+                    [DocoptNet.DocoptArguments]
+                    partial class Arguments3 { public string Help => @""Usage: program""; }"))
+            });
         }
 
         readonly Dictionary<string, ImmutableArray<byte>> _projectFileHashByPath = new();
@@ -77,10 +181,22 @@ Naval Fate.
                                                           "..", "..", "..", "..", ".."));
 
             var projectSourcesDir = new DirectoryInfo(Path.Combine(SolutionDirPath, "src", "DocoptNet"));
-            foreach (var file in projectSourcesDir.EnumerateFiles("*.cs"))
+            var attributesSourcesDir = new DirectoryInfo(Path.Combine(SolutionDirPath, "src", "DocoptNet.CodeGeneration"));
+            foreach (var file in projectSourcesDir.EnumerateFiles("*.cs").Concat(attributesSourcesDir.EnumerateFiles("*Attribute.cs")))
             {
                 using var stream = file.OpenRead();
                 _projectFileHashByPath.Add(file.Name, SourceText.From(stream).GetChecksum());
+            }
+
+            var actualSourcesPath = Path.Combine(TestContext.CurrentContext.WorkDirectory, nameof(SourceGeneratorTests));
+
+            try
+            {
+                Directory.Delete(actualSourcesPath, recursive: true);
+            }
+            catch (DirectoryNotFoundException)
+            {
+                // ignore
             }
         }
 
@@ -106,18 +222,6 @@ Naval Fate.
 
             var testPath = Path.Combine(nameof(SourceGeneratorTests), callerName!);
             var actualSourcesPath = Path.Combine(TestContext.CurrentContext.WorkDirectory, testPath);
-
-            // Re-create the directory holding the actual results, deleting anything
-            // leftover from a previous run.
-
-            try
-            {
-                Directory.Delete(actualSourcesPath, recursive: true);
-            }
-            catch (DirectoryNotFoundException)
-            {
-                // ignore
-            }
 
             Directory.CreateDirectory(actualSourcesPath);
 

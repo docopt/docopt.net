@@ -1,12 +1,11 @@
 using System;
 using DocoptNet;
-using OddEvenExample;
 
-ProgramArguments arguments;
+Arguments arguments;
 
 try
 {
-    arguments = ProgramArguments.Apply(args);
+    arguments = Arguments.Apply(args);
 }
 catch (DocoptExitException e)
 {
@@ -29,3 +28,16 @@ Console.WriteLine($@"{{
 }}");
 
 return 0;
+
+[DocoptArguments]
+partial class Arguments
+{
+    public const string Help = @"Usage: OddEvenExample [-h | --help] (ODD EVEN)...
+
+Example, try:
+  OddEvenExample 1 2 3 4
+
+Options:
+  -h, --help
+";
+}

@@ -6,3 +6,4 @@
 Rule ID | Category | Severity | Notes
 --------|----------|----------|-------
 DCPT0001 | Docopt | Error | SyntaxError
+DCPT0002 | Docopt | Error | SourceGenerator
