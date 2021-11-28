@@ -43,29 +43,6 @@
     <DefineConstants>$(DefineConstants);RUNTIME_SERIALIZATION</DefineConstants>
   </PropertyGroup>
 
-  <ItemGroup>
-    <Content Include="..\NuGet\Main.usage.txt">
-      <PackagePath>content\Main.usage.txt</PackagePath>
-      <Pack>true</Pack>
-    </Content>
-    <Content Include="..\T4DocoptNetHostApp\T4DocoptNet.tt">
-      <PackagePath>content\T4DocoptNet.tt</PackagePath>
-      <Pack>true</Pack>
-    </Content>
-    <Content Include="..\T4DocoptNetHostApp\T4DocoptNet.tt.hooks.t4">
-      <PackagePath>content\T4DocoptNet.tt.hooks.t4</PackagePath>
-      <Pack>true</Pack>
-    </Content>
-    <Content Include="..\T4DocoptNetHostApp\T4DocoptNet.tt.settings.xml">
-      <PackagePath>content\T4DocoptNet.tt.settings.xml</PackagePath>
-      <Pack>true</Pack>
-    </Content>
-    <Content Include="..\NuGet\install.ps1">
-      <PackagePath>tools\install.ps1</PackagePath>
-      <Pack>true</Pack>
-    </Content>
-  </ItemGroup>
-
   <ItemGroup Condition="'$(TargetFramework)' == 'netstandard1.5'">
     <PackageReference Include="System.Collections.NonGeneric">
       <Version>4.3.0</Version>

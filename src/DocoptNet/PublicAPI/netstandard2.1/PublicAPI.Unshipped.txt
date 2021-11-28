@@ -1,4 +1,5 @@
 *REMOVED*DocoptNet.Docopt.Apply(string doc, DocoptNet.Tokens tokens, bool help = true, object version = null, bool optionsFirst = false, bool exit = false) -> System.Collections.Generic.IDictionary<string, DocoptNet.ValueObject>
+*REMOVED*DocoptNet.Docopt.GetNodes(string doc) -> System.Collections.Generic.IEnumerable<DocoptNet.Node>
 *REMOVED*DocoptNet.Tokens
 *REMOVED*DocoptNet.Tokens.CreateException(string message) -> System.Exception
 *REMOVED*DocoptNet.Tokens.Current() -> string
