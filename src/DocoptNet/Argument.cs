@@ -27,22 +27,5 @@ namespace DocoptNet
             : this(name, value.ToString(CultureInfo.InvariantCulture))
         {
         }
-
-        public override Node ToNode()
-        {
-            return new ArgumentNode(Name, Value.IsStringList ? ValueType.List : ValueType.String);
-        }
-
-        public override string GenerateCode()
-        {
-            var s = Name.Replace("<", "").Replace(">", "").ToLowerInvariant();
-            s = "Arg" + GenerateCodeHelper.ConvertToPascalCase(s);
-
-            if (Value.IsStringList)
-            {
-                return $"public ArrayList {s} {{ get {{ return _args[\"{Name}\"].AsList; }} }}";
-            }
-            return string.Format("public string {0} {{ get {{ return null == _args[\"{1}\"] ? null : _args[\"{1}\"].ToString(); }} }}", s, Name);
-        }
     }
 }

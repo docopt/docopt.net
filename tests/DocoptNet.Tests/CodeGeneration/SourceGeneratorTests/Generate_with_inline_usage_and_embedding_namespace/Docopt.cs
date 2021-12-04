@@ -136,25 +136,6 @@ namespace DocoptNet.Generated
                 };
         }
 
-        public string GenerateCode(string doc)
-        {
-            var res = GetFlatPatterns(doc);
-            res = res
-                .GroupBy(pattern => pattern.Name)
-                .Select(group => group.First());
-            var sb = new StringBuilder();
-            foreach (var p in res)
-            {
-                sb.AppendLine(p.GenerateCode());
-            }
-            return sb.ToString();
-        }
-
-        public IEnumerable<Node> GetNodes(string doc) =>
-            GetNodes(doc, (name, _) => (Node)new CommandNode(name),
-                          (name, value) => new ArgumentNode(name, value is { IsStringList: true } ? ValueType.List : ValueType.String),
-                          (name, _, _, argCount, _) => new OptionNode(name.TrimStart('-'), argCount == 0 ? ValueType.Bool : ValueType.String));
-
         internal IEnumerable<T> GetNodes<T>(string doc,
                                             Func<string, Value, T> commandSelector,
                                             Func<string, Value, T> argumentSelector,
