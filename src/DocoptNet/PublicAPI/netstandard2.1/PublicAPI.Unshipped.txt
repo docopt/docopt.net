@@ -1,5 +1,17 @@
+*REMOVED*DocoptNet.ArgumentNode
+*REMOVED*DocoptNet.ArgumentNode.ArgumentNode(string name, DocoptNet.ValueType valueType) -> void
+*REMOVED*DocoptNet.CommandNode
+*REMOVED*DocoptNet.CommandNode.CommandNode(string name) -> void
 *REMOVED*DocoptNet.Docopt.Apply(string doc, DocoptNet.Tokens tokens, bool help = true, object version = null, bool optionsFirst = false, bool exit = false) -> System.Collections.Generic.IDictionary<string, DocoptNet.ValueObject>
+*REMOVED*DocoptNet.Docopt.GenerateCode(string doc) -> string
 *REMOVED*DocoptNet.Docopt.GetNodes(string doc) -> System.Collections.Generic.IEnumerable<DocoptNet.Node>
+*REMOVED*DocoptNet.Node
+*REMOVED*DocoptNet.Node.Equals(DocoptNet.Node other) -> bool
+*REMOVED*DocoptNet.Node.Name.get -> string
+*REMOVED*DocoptNet.Node.Node(string name, DocoptNet.ValueType valueType) -> void
+*REMOVED*DocoptNet.Node.ValueType.get -> DocoptNet.ValueType
+*REMOVED*DocoptNet.OptionNode
+*REMOVED*DocoptNet.OptionNode.OptionNode(string name, DocoptNet.ValueType valueType) -> void
 *REMOVED*DocoptNet.Tokens
 *REMOVED*DocoptNet.Tokens.CreateException(string message) -> System.Exception
 *REMOVED*DocoptNet.Tokens.Current() -> string
@@ -8,5 +20,12 @@
 *REMOVED*DocoptNet.Tokens.Move() -> string
 *REMOVED*DocoptNet.Tokens.ThrowsInputError.get -> bool
 *REMOVED*DocoptNet.Tokens.Tokens(System.Collections.Generic.IEnumerable<string> source, System.Type errorType) -> void
+*REMOVED*DocoptNet.ValueType
+*REMOVED*DocoptNet.ValueType.Bool = 0 -> DocoptNet.ValueType
+*REMOVED*DocoptNet.ValueType.List = 1 -> DocoptNet.ValueType
+*REMOVED*DocoptNet.ValueType.String = 2 -> DocoptNet.ValueType
+*REMOVED*override DocoptNet.Node.Equals(object obj) -> bool
+*REMOVED*override DocoptNet.Node.GetHashCode() -> int
+*REMOVED*override DocoptNet.Node.ToString() -> string
 *REMOVED*override DocoptNet.Tokens.ToString() -> string
 *REMOVED*static DocoptNet.Tokens.FromPattern(string pattern) -> DocoptNet.Tokens

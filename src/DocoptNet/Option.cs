@@ -29,24 +29,6 @@ namespace DocoptNet
             get { return LongName ?? ShortName; }
         }
 
-        public override Node ToNode()
-        {
-            return new OptionNode(Name.TrimStart('-'), ArgCount == 0 ? ValueType.Bool : ValueType.String);
-        }
-
-        public override string GenerateCode()
-        {
-            var s = Name.ToLowerInvariant();
-            s = "Opt" + GenerateCodeHelper.ConvertToPascalCase(s);
-
-            if (ArgCount == 0)
-            {
-                return $"public bool {s} {{ get {{ return _args[\"{Name}\"].IsTrue; }} }}";
-            }
-            var defaultValue = Value.IsNone ? "null" : $"\"{Value}\"";
-            return string.Format("public string {0} {{ get {{ return null == _args[\"{1}\"] ? {2} : _args[\"{1}\"].ToString(); }} }}", s, Name, defaultValue);
-        }
-
         public override string ToString()
         {
             return $"Option({ShortName},{LongName},{ArgCount},{Value})";

@@ -9,16 +9,6 @@ namespace DocoptNet
     {
         public abstract string Name { get; }
 
-        public virtual string GenerateCode()
-        {
-            return "// No code for " + Name;
-        }
-
-        public virtual Node ToNode()
-        {
-            return null;
-        }
-
         // override object.Equals
         public override bool Equals(object obj)
         {

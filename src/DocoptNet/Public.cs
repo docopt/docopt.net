@@ -8,10 +8,6 @@ namespace DocoptNet
     public partial class DocoptExitException { }
     public partial class DocoptInputErrorException { }
     public partial class DocoptLanguageErrorException { }
-    public partial class ArgumentNode { }
-    public partial class OptionNode { }
-    public partial class CommandNode { }
-    public partial class Node { }
     public partial class ValueObject { }
 }
 
