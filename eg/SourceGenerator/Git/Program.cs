@@ -44,8 +44,8 @@ static int Run(string[] args)
     // - error CS0102: The type 'GitBranchArguments' already contains a definition for 'OptD'
     // - error CS0102: The type 'GitBranchArguments' already contains a definition for 'OptM'
     // - error CS0102: The type 'GitCheckoutArguments' already contains a definition for 'OptB'
-    // "branch"     => Apply(args => GitBranchArguments.Apply(args)),
-    // "checkout"   => Apply(args => GitCheckoutArguments.Apply(args)),
+        "branch"    => Apply(args => GitBranchArguments.Apply(args)),
+        "checkout"  => Apply(args => GitCheckoutArguments.Apply(args)),
         "clone"     => Apply(args => GitCloneArguments.Apply(args)),
         "commit"    => Apply(args => GitCommitArguments.Apply(args)),
         "push"      => Apply(args => GitPushArguments.Apply(args)),

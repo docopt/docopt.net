@@ -436,6 +436,7 @@ namespace DocoptNet.CodeGeneration
                 {
                     Command  { Name: var name } => $"Cmd{GenerateCodeHelper.ConvertToPascalCase(name.ToLowerInvariant())}",
                     Argument { Name: var name } => $"Arg{GenerateCodeHelper.ConvertToPascalCase(name.Replace("<", "").Replace(">", "").ToLowerInvariant())}",
+                    Option   { LongName: null, ShortName: var name } when char.IsUpper(name[1]) => $"OptUpper{name[1]}",
                     Option   { Name: var name } => $"Opt{GenerateCodeHelper.ConvertToPascalCase(name.ToLowerInvariant())}",
                     var p => throw new NotSupportedException($"Unsupported pattern: {p}")
                 };

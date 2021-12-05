@@ -6,12 +6,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <!-- FIXME Re-enable after addressing CS0102 errors -->
-    <None Remove="GitBranch.docopt.txt" />
-    <None Remove="GitCheckout.docopt.txt" />
-  </ItemGroup>
-
-  <ItemGroup>
     <ProjectReference Include="..\..\..\src\DocoptNet.CodeGeneration\DocoptNet.CodeGeneration.csproj" ReferenceOutputAssembly="false" OutputItemType="Analyzer" />
   </ItemGroup>
 
