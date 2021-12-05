@@ -1,0 +1,20 @@
+name: Publish Documentation
+on:
+  push:
+    branches:
+      - doc/main
+  pull_request:
+    branches:
+      - doc/main
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-python@v2
+        with:
+          python-version: 3.x
+      - run: |
+          pip install mkdocs-material
+          pip install mdx_truly_sane_lists
+      - run: mkdocs gh-deploy --force
