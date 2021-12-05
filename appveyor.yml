@@ -1,5 +1,9 @@
 version: 1.1.{build}
 image: Visual Studio 2019
+skip_commits:
+  files:
+    - '*.md'
+    - '*.txt'
 configuration: Release
 init:
 - git config --global core.autocrlf true
