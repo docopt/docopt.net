@@ -1,6 +1,11 @@
 name: publish-docs 
 on:
-  workflow_dispatch:
+  push:
+    branches:
+      - doc/main
+  pull_request:
+    branches:
+      - doc/main
 jobs:
   deploy:
     runs-on: ubuntu-latest
