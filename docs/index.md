@@ -6,6 +6,10 @@ hide:
 
 # `docopt.net` is a .NET port of docopt
 
+[![NuGet Package](https://buildstats.info/nuget/docopt.net)][nupkg]
+
+  [nupkg]: https://www.nuget.org/packages/docopt.net/
+
 Isn't it awesome how [CommandLineParser] and [PowerArgs] generate help messages
 based on your code?!
 
