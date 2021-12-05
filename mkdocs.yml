@@ -1,0 +1,66 @@
+site_name: docopt.net
+theme: 
+  name: material
+  palette:
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
+      primary: blue
+      toggle:
+        icon: material/toggle-switch-off-outline
+        name: Switch to dark mode
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      primary: blue
+      toggle:
+        icon: material/toggle-switch
+        name: Switch to light mode
+  icon:
+    repo: fontawesome/brands/github
+  features:
+    - navigation.tabs
+    - navigation.tabs.sticky
+    - navigation.sections
+    - navigation.top
+    - navigation.tracking
+    - search.suggest
+    - search.highlight
+
+repo_url: https://github.com/docopt/docopt.net
+edit_uri: edit/doc/docs/
+
+markdown_extensions:
+  - pymdownx.highlight
+  - pymdownx.inlinehilite
+  - pymdownx.superfences:
+      custom_fences:
+        - name: mermaid
+          class: mermaid
+          format: !!python/name:pymdownx.superfences.fence_div_format
+  - abbr
+  - pymdownx.snippets
+  - meta
+  - toc
+  - mdx_truly_sane_lists
+
+plugins:
+  - search
+
+extra_css:
+  - https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.css
+extra_javascript:
+  - https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js
+
+nav:
+  - index.md
+  - 'Contributing':
+    - documentation.md
+  - About:
+    - 'License': license.md
+
+extra:
+  version:
+    provider: mike
+  social:
+    - icon: fontawesome/brands/github
+      link: https://github.com/docopt/docopt.net
+      name: docopt.net on GitHub
