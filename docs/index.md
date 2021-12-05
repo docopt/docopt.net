@@ -362,7 +362,7 @@ publish the following members:
 Note that if you name the usage file `Foo.usage.txt`, the generated class will
 be called `FooArgs`.
 
-## Sample `Main.usage.txt`
+### Sample `Main.usage.txt`
 
 > Test.
 >
