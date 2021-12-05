@@ -82,11 +82,11 @@ help message has all necessary information in it to make a parser*.
 
 Use dotnet
 
-    dotnet add package Docopt.net
+    dotnet add package docopt.net
 
 Use nuget
 
-    nuget install Docopt.net
+    nuget install docopt.net
 
 Under Visual Studio
 
