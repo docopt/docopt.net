@@ -339,22 +339,3 @@ The rules are as follows:
 
       # will be './here ./there', because it is not repeatable
       --not-repeatable=<arg>      [default: ./here ./there]
-
-## Changelog
-
-**docopt.net** follows [semantic versioning](http://semver.org). The first
-release with stable API will be 1.0.0 (soon). Until then, you are encouraged to
-specify explicitly the version in your dependency tools, e.g.:
-
-    nuget install docopt.net -Version 0.6.1.11
-
-- 0.6.1.11 Bug fix.
-- 0.6.1.8 Added support for .NET Core RC2.
-- 0.6.1.6 Double creation of property bug fix. `T4DocoptNet.tt` assembly path
-  fix.
-- 0.6.1.5 Added strongly typed arguments through T4 macro. `ValueObject`
-  interface cleanup. `exit: true` parameter behavior fix.
-- 0.6.1.4 Clarified exit parameter behaviour.
-- 0.6.1.3 Added exit parameter.
-- 0.6.1.2 Fixed docopt capitalisation.
-- 0.6.1.1 Initial port. All reference language agnostic tests pass.
