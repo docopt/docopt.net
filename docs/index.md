@@ -348,6 +348,11 @@ The rules are as follows:
 
 ## Strongly typed arguments with T4 Macro
 
+!!! warning "Deprecated"
+
+    This feature has been deprecated and will be removed starting with version
+    0.7.
+
 Include the `T4DocoptNet.tt*` files in your main project to enable the strongly
 type arguments code generation. Then add a file called Main.usage.txt to your
 project. Store the usage document in this file instead of creating a string
