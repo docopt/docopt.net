@@ -4,6 +4,7 @@ skip_commits:
   files:
     - '*.md'
     - '*.txt'
+    - '.git*'
 configuration: Release
 init:
 - git config --global core.autocrlf true
