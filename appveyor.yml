@@ -16,5 +16,5 @@ build_script:
 test_script:
 - cmd: dotnet test
 artifacts:
-- path: '**\docopt.net*.nupkg'
+- path: 'dist\*.nupkg'
   name: Nuget
