@@ -7,11 +7,8 @@
     TODO Remove the suppression of the following warnings after addressing them:
     - error NU5125: The 'licenseUrl' element will be deprecated.
       Consider using the 'license' element instead.
-    - error NU5048: The 'PackageIconUrl'/'iconUrl' element is deprecated.
-      Consider using the 'PackageIcon'/'icon' element instead.
-      Learn more at https://aka.ms/deprecateIconUrl
     -->
-    <NoWarn>$(NoWarn);NU5125;NU5048</NoWarn>
+    <NoWarn>$(NoWarn);NU5125</NoWarn>
     <AssemblyName>DocoptNet</AssemblyName>
     <Version>0.7.0</Version>
     <AssemblyOriginatorKeyFile>DocoptNet.snk</AssemblyOriginatorKeyFile>
@@ -23,7 +20,7 @@
     <PackageId>docopt.net</PackageId>
     <PackageLicenseUrl>https://github.com/docopt/docopt.net/blob/master/LICENSE-MIT</PackageLicenseUrl>
     <PackageProjectUrl>https://github.com/docopt/docopt.net</PackageProjectUrl>
-    <PackageIconUrl>https://secure.gravatar.com/avatar/e82bc289285e348387313a00cfd84979?s=400&amp;d=https://a248.e.akamai.net/assets.github.com%2Fimages%2Fgravatars%2Fgravatar-user-420.png</PackageIconUrl>
+    <PackageIcon>PackageIcon.png</PackageIcon>
     <PackageOutputPath>..\..\dist</PackageOutputPath>
     <IncludeSymbols>true</IncludeSymbols>
     <SymbolPackageFormat>snupkg</SymbolPackageFormat>
@@ -68,6 +65,10 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
     <PackageReference Include="System.ValueTuple" Version="4.5.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="PackageIcon.png" Pack="true" PackagePath="\" />
   </ItemGroup>
 
   <ItemGroup>
