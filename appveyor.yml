@@ -1,5 +1,7 @@
 version: 1.1.{build}
-image: Visual Studio 2019
+image:
+  - Visual Studio 2019
+  - Ubuntu1604
 skip_commits:
   files:
     - '*.md'
@@ -7,15 +9,14 @@ skip_commits:
     - '.git*'
 configuration: Release
 init:
-- git config --global core.autocrlf true
+- cmd: git config --global core.autocrlf true
 before_build:
 - dotnet --info
 build_script:
-- cmd: dotnet build --configuration %CONFIGURATION%
-- cmd: IF NOT EXIST dist MKDIR dist
+- ps: dotnet build --configuration $env:CONFIGURATION
 - cmd: dotnet pack --configuration %CONFIGURATION%
 test_script:
-- cmd: dotnet test
+- ps: dotnet test
 artifacts:
 - path: 'dist\*.nupkg'
   name: NuGet
