@@ -14,7 +14,7 @@ before_build:
 - dotnet --info
 build_script:
 - ps: dotnet build --configuration $env:CONFIGURATION
-- ps: if ($isWindows) { dotnet pack --configuration $env:CONFIGURATION }
+- cmd: dotnet pack --configuration %CONFIGURATION%
 test_script:
 - ps: dotnet test
 artifacts:
