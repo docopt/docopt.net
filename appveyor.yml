@@ -1,5 +1,7 @@
 version: 1.1.{build}
-image: Visual Studio 2019
+image:
+  - Visual Studio 2019
+  - Ubuntu1604
 skip_commits:
   files:
     - '*.md'
@@ -11,11 +13,11 @@ init:
 before_build:
 - dotnet --info
 build_script:
-- cmd: dotnet build --configuration %CONFIGURATION%
-- cmd: IF NOT EXIST dist MKDIR dist
-- cmd: dotnet pack --configuration %CONFIGURATION%
+- ps: dotnet build --configuration $CONFIGURATION
+- ps: if (!(Test-Path -PathType Container dist)) { New-Item -ItemType Directory temp }
+- ps: if ($isWindows) { dotnet pack --configuration $CONFIGURATION }
 test_script:
-- cmd: dotnet test
+- ps: dotnet test
 artifacts:
 - path: 'dist\*.nupkg'
   name: NuGet
