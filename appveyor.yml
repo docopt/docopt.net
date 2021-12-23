@@ -13,9 +13,9 @@ init:
 before_build:
 - dotnet --info
 build_script:
-- ps: dotnet build --configuration $CONFIGURATION
+- ps: dotnet build --configuration $env:CONFIGURATION
 - ps: if (!(Test-Path -PathType Container dist)) { New-Item -ItemType Directory temp }
-- ps: if ($isWindows) { dotnet pack --configuration $CONFIGURATION }
+- ps: if ($isWindows) { dotnet pack --configuration $env:CONFIGURATION }
 test_script:
 - ps: dotnet test
 artifacts:
