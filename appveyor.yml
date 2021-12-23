@@ -13,8 +13,12 @@ init:
 before_build:
 - dotnet --info
 build_script:
-- ps: dotnet build --configuration $env:CONFIGURATION
-- cmd: dotnet pack --configuration %CONFIGURATION%
+- ps: |
+    dotnet build --configuration $env:CONFIGURATION
+    if ($isWindows) {
+      $versionSuffix = ([datetimeoffset]$env:APPVEYOR_REPO_COMMIT_TIMESTAMP).ToUniversalTime().ToString('yyyyMMdd''t''HHmm')
+      dotnet pack --configuration $env:CONFIGURATION --version-suffix $versionSuffix
+    }
 test_script:
 - ps: dotnet test
 artifacts:
