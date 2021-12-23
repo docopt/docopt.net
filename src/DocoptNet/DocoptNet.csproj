@@ -10,7 +10,7 @@
     -->
     <NoWarn>$(NoWarn);NU5125</NoWarn>
     <AssemblyName>DocoptNet</AssemblyName>
-    <Version>0.7.0</Version>
+    <VersionPrefix>0.7.0</VersionPrefix>
     <AssemblyOriginatorKeyFile>DocoptNet.snk</AssemblyOriginatorKeyFile>
     <SignAssembly>true</SignAssembly>
     <PublicSign Condition=" '$(OS)' != 'Windows_NT' ">true</PublicSign>
