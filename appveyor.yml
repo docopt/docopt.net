@@ -19,7 +19,7 @@ build_script:
     if ($isWindows) {
       $versionSuffix = ([datetimeoffset]$env:APPVEYOR_REPO_COMMIT_TIMESTAMP).ToUniversalTime().ToString('yyyyMMdd''t''HHmm')
       dotnet pack --configuration $env:CONFIGURATION --version-suffix $versionSuffix
-      dotnet sourcelink test (Get-ChildItem -File -Filter docopt.net.*.nupkg dist)
+      Get-ChildItem -File -Filter docopt.net.*.nupkg dist | % { dotnet sourcelink test $_ }
     }
 test_script:
 - ps: dotnet test
