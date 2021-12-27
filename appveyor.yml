@@ -30,13 +30,13 @@ build_script:
         $releaseNotes += "See: ${url}/releases/tag/${env:APPVEYOR_REPO_TAG_NAME}" + $nl + $nl
       }
       $releaseNotes += "Commit @ $(git rev-parse HEAD)" + $nl
-      dotnet pack --configuration $env:CONFIGURATION --version-suffix $versionSuffix "-p:PackageReleaseNotes=$releaseNotes"
+      dotnet pack --no-build --configuration $env:CONFIGURATION --version-suffix $versionSuffix "-p:PackageReleaseNotes=$releaseNotes"
       Get-ChildItem -File -Filter docopt.net.*.nupkg dist |
         Select-Object -ExpandProperty FullName |
         % { dotnet sourcelink test $_; if ($LASTEXITCODE) { throw; } }
     }
 test_script:
-- ps: dotnet test
+- ps: dotnet test --no-build
 artifacts:
 - path: 'dist\*.nupkg'
   name: NuGet
