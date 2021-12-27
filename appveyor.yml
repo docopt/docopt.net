@@ -14,12 +14,14 @@ before_build:
 - dotnet --info
 - dotnet tool restore
 build_script:
-- pwsh: |
+- ps: |
     dotnet build --configuration $env:CONFIGURATION
     if ($isWindows) {
       $versionSuffix = ([datetimeoffset]$env:APPVEYOR_REPO_COMMIT_TIMESTAMP).ToUniversalTime().ToString('yyyyMMdd''t''HHmm')
       dotnet pack --configuration $env:CONFIGURATION --version-suffix $versionSuffix
-      Get-ChildItem -File -Filter docopt.net.*.nupkg dist | % { dotnet sourcelink test $_; if ($LASTEXITCODE) { throw; } }
+      Get-ChildItem -File -Filter docopt.net.*.nupkg dist |
+        Select-Object -ExpandProperty FullName |
+        % { dotnet sourcelink test $_; if ($LASTEXITCODE) { throw; } }
     }
 test_script:
 - ps: dotnet test
