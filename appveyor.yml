@@ -12,17 +12,19 @@ init:
 - cmd: git config --global core.autocrlf true
 before_build:
 - dotnet --info
+- dotnet tool restore
 build_script:
 - ps: |
     dotnet build --configuration $env:CONFIGURATION
     if ($isWindows) {
       $versionSuffix = ([datetimeoffset]$env:APPVEYOR_REPO_COMMIT_TIMESTAMP).ToUniversalTime().ToString('yyyyMMdd''t''HHmm')
       dotnet pack --configuration $env:CONFIGURATION --version-suffix $versionSuffix
+      Get-ChildItem -File -Filter docopt.net.*.nupkg dist |
+        Select-Object -ExpandProperty FullName |
+        % { dotnet sourcelink test $_; if ($LASTEXITCODE) { throw; } }
     }
 test_script:
 - ps: dotnet test
 artifacts:
 - path: 'dist\*.nupkg'
   name: NuGet
-- path: 'dist\*.snupkg'
-  name: NuGet (symbols)
