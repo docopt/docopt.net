@@ -12,8 +12,10 @@ init:
 - cmd: git config --global core.autocrlf true
 install:
 - ps: |
-    Invoke-WebRequest -UseBasicParsing get.scoop.sh | Invoke-Expression
-    scoop install gh
+    if ($isWindows) {
+      Invoke-WebRequest -UseBasicParsing get.scoop.sh | Invoke-Expression
+      scoop install gh
+    }
 before_build:
 - dotnet --info
 - dotnet tool restore
