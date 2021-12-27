@@ -10,6 +10,12 @@ skip_commits:
 configuration: Release
 init:
 - cmd: git config --global core.autocrlf true
+install:
+- ps: |
+    if ($isWindows) {
+      Invoke-WebRequest -UseBasicParsing get.scoop.sh | Invoke-Expression
+      scoop install gh
+    }
 before_build:
 - dotnet --info
 - dotnet tool restore
@@ -18,7 +24,13 @@ build_script:
     dotnet build --configuration $env:CONFIGURATION
     if ($isWindows) {
       $versionSuffix = ([datetimeoffset]$env:APPVEYOR_REPO_COMMIT_TIMESTAMP).ToUniversalTime().ToString('yyyyMMdd''t''HHmm')
-      dotnet pack --configuration $env:CONFIGURATION --version-suffix $versionSuffix
+      $nl = "`r`n"
+      if ($env:APPVEYOR_REPO_TAG_NAME -clike 'v*') {
+        $url = gh repo view --json url --jq .url
+        $releaseNotes += "See: ${url}/releases/tag/${env:APPVEYOR_REPO_TAG_NAME}" + $nl + $nl
+      }
+      $releaseNotes += "Commit @ $(git rev-parse HEAD)" + $nl
+      dotnet pack --configuration $env:CONFIGURATION --version-suffix $versionSuffix "-p:PackageReleaseNotes=$releaseNotes"
       Get-ChildItem -File -Filter docopt.net.*.nupkg dist |
         Select-Object -ExpandProperty FullName |
         % { dotnet sourcelink test $_; if ($LASTEXITCODE) { throw; } }
