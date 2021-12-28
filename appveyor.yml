@@ -29,6 +29,7 @@ build_script:
       # if the tag starts with "v", as in "v1.0.0", assume it's a release
       if ($tag -clike 'v*') {
         $url = gh repo view --json url --jq .url
+        if ($LASTEXITCODE) { throw; }
         $releaseNotes += "See: ${url}/releases/tag/$tag" + $nl + $nl
         # if tag ends in "-" followed by dot-separated identifiers...
         if ($tag -match '(?<=-)[a-zA-Z0-9-]+(\.[a-zA-Z0-9-]+)*$') {
@@ -43,6 +44,7 @@ build_script:
         $packArgs += @('--version-suffix', $versionSuffix)
       }
       dotnet pack --no-build --configuration $env:CONFIGURATION @packArgs "-p:PackageReleaseNotes=$releaseNotes"
+      if ($LASTEXITCODE) { throw; }
       Get-ChildItem -File -Filter docopt.net.*.nupkg dist |
         Select-Object -ExpandProperty FullName |
         % { dotnet sourcelink test $_; if ($LASTEXITCODE) { throw; } }
