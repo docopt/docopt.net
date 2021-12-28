@@ -18,13 +18,14 @@ build_script:
     dotnet build --configuration $env:CONFIGURATION
     if ($isWindows) {
       $versionSuffix = ([datetimeoffset]$env:APPVEYOR_REPO_COMMIT_TIMESTAMP).ToUniversalTime().ToString('yyyyMMdd''t''HHmm')
-      $nl = "`r`n"
+      $releaseNotesFile = [System.IO.Path]::GetTempFileName()
       $tag = $env:APPVEYOR_REPO_TAG_NAME
       # if the tag starts with "v", as in "v1.0.0", assume it's a release
       if ($tag -clike 'v*') {
         $url = (git remote get-url (git remote)) -replace '\.git$', ''
         if ($LASTEXITCODE) { throw; }
-        $releaseNotes += "See: ${url}/releases/tag/$tag" + $nl + $nl
+        Add-Content $releaseNotesFile -Encoding UTF8 "See: ${url}/releases/tag/$tag"
+        Add-Content $releaseNotesFile -Encoding UTF8 ''
         # if tag ends in "-" followed by dot-separated identifiers...
         if ($tag -match '(?<=-)[a-zA-Z0-9-]+(\.[a-zA-Z0-9-]+)*$') {
           $versionSuffix = $matches[0] # ...then use as suffix for pre-release
@@ -32,12 +33,12 @@ build_script:
           $versionSuffix = $null       # ... else use no suffix for a release
         }
       }
-      $releaseNotes += "Commit @ $(git rev-parse HEAD)" + $nl
+      Add-Content $releaseNotesFile -Encoding UTF8 "Commit @ $(git rev-parse HEAD)"
       $packArgs = @()
       if ($versionSuffix) {
         $packArgs += @('--version-suffix', $versionSuffix)
       }
-      dotnet pack --no-build --configuration $env:CONFIGURATION @packArgs "-p:PackageReleaseNotes=$releaseNotes"
+      dotnet pack --no-build --configuration $env:CONFIGURATION @packArgs "-p:PackageReleaseNotesFile=$releaseNotesFile"
       if ($LASTEXITCODE) { throw; }
       Get-ChildItem -File -Filter docopt.net.*.nupkg dist |
         Select-Object -ExpandProperty FullName |
