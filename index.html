@@ -1,0 +1,1184 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+      <link rel="icon" href="assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.2.3, mkdocs-material-8.1.3">
+    
+    
+      
+        <title>Home - docopt.net</title>
+      
+    
+    
+      <link rel="stylesheet" href="assets/stylesheets/main.edf004c2.min.css">
+      
+        
+        <link rel="stylesheet" href="assets/stylesheets/palette.e6a45f82.min.css">
+        
+      
+    
+    
+    
+      
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,400i,700%7CRoboto+Mono&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.css">
+    
+    <script>__md_scope=new URL(".",location),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="blue" data-md-color-accent="">
+  
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&"object"==typeof palette.color)for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)</script>
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#docoptnet-is-a-net-port-of-docopt" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+      <div data-md-component="outdated" hidden>
+        <aside class="md-banner md-banner--warning">
+          
+        </aside>
+      </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--lifted" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="." title="docopt.net" class="md-header__button md-logo" aria-label="docopt.net" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54z"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            docopt.net
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Home
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      <form class="md-header__option" data-md-component="palette">
+        
+          
+          
+          <input class="md-option" data-md-color-media="(prefers-color-scheme: light)" data-md-color-scheme="default" data-md-color-primary="blue" data-md-color-accent=""  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_1">
+          
+            <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_2" hidden>
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M17 6H7c-3.31 0-6 2.69-6 6s2.69 6 6 6h10c3.31 0 6-2.69 6-6s-2.69-6-6-6zm0 10H7c-2.21 0-4-1.79-4-4s1.79-4 4-4h10c2.21 0 4 1.79 4 4s-1.79 4-4 4zM7 9c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/></svg>
+            </label>
+          
+        
+          
+          
+          <input class="md-option" data-md-color-media="(prefers-color-scheme: dark)" data-md-color-scheme="slate" data-md-color-primary="blue" data-md-color-accent=""  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_2">
+          
+            <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_1" hidden>
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M17 7H7a5 5 0 0 0-5 5 5 5 0 0 0 5 5h10a5 5 0 0 0 5-5 5 5 0 0 0-5-5m0 8a3 3 0 0 1-3-3 3 3 0 0 1 3-3 3 3 0 0 1 3 3 3 3 0 0 1-3 3z"/></svg>
+            </label>
+          
+        
+      </form>
+    
+    
+    
+      <label class="md-header__button md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5z"/></svg>
+      </label>
+      <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5z"/></svg>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" aria-label="Clear" tabindex="-1">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/docopt/docopt.net/" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+    
+      
+<nav class="md-tabs" aria-label="Tabs" data-md-component="tabs">
+  <div class="md-tabs__inner md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+    
+  
+
+
+  <li class="md-tabs__item">
+    <a href="." class="md-tabs__link md-tabs__link--active">
+      Home
+    </a>
+  </li>
+
+      
+        
+  
+  
+
+
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="documentation/" class="md-tabs__link">
+        Contributing
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+
+
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="license/" class="md-tabs__link">
+        About
+      </a>
+    </li>
+  
+
+      
+    </ul>
+  </div>
+</nav>
+    
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+                
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" hidden>
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="." title="docopt.net" class="md-nav__button md-logo" aria-label="docopt.net" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54z"/></svg>
+
+    </a>
+    docopt.net
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/docopt/docopt.net/" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+      
+
+  
+  
+    
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" data-md-toggle="toc" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          Home
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="." class="md-nav__link md-nav__link--active">
+        Home
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#differences-from-reference-python-implementation" class="md-nav__link">
+    Differences from reference python implementation
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#installation" class="md-nav__link">
+    Installation
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#api" class="md-nav__link">
+    API
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#help-message-format" class="md-nav__link">
+    Help message format
+  </a>
+  
+    <nav class="md-nav" aria-label="Help message format">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#usage-pattern-format" class="md-nav__link">
+    Usage pattern format
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#option-descriptions-format" class="md-nav__link">
+    Option descriptions format
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#strongly-typed-arguments-with-t4-macro" class="md-nav__link">
+    Strongly typed arguments with T4 Macro
+  </a>
+  
+    <nav class="md-nav" aria-label="Strongly typed arguments with T4 Macro">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#sample-mainusagetxt" class="md-nav__link">
+    Sample Main.usage.txt
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#resulting-t4docopnetcs" class="md-nav__link">
+    Resulting T4DocopNet.cs
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#using-the-generated-code" class="md-nav__link">
+    Using the generated code
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#getting-rid-of-the-t4-macro" class="md-nav__link">
+    Getting rid of the T4 macro
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#changelog" class="md-nav__link">
+    Changelog
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_2" type="checkbox" id="__nav_2" >
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_2">
+          Contributing
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Contributing" data-md-level="1">
+        <label class="md-nav__title" for="__nav_2">
+          <span class="md-nav__icon md-icon"></span>
+          Contributing
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="documentation/" class="md-nav__link">
+        Documentation
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_3" type="checkbox" id="__nav_3" >
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_3">
+          About
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="About" data-md-level="1">
+        <label class="md-nav__title" for="__nav_3">
+          <span class="md-nav__icon md-icon"></span>
+          About
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="license/" class="md-nav__link">
+        License
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+                
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#differences-from-reference-python-implementation" class="md-nav__link">
+    Differences from reference python implementation
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#installation" class="md-nav__link">
+    Installation
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#api" class="md-nav__link">
+    API
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#help-message-format" class="md-nav__link">
+    Help message format
+  </a>
+  
+    <nav class="md-nav" aria-label="Help message format">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#usage-pattern-format" class="md-nav__link">
+    Usage pattern format
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#option-descriptions-format" class="md-nav__link">
+    Option descriptions format
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#strongly-typed-arguments-with-t4-macro" class="md-nav__link">
+    Strongly typed arguments with T4 Macro
+  </a>
+  
+    <nav class="md-nav" aria-label="Strongly typed arguments with T4 Macro">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#sample-mainusagetxt" class="md-nav__link">
+    Sample Main.usage.txt
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#resulting-t4docopnetcs" class="md-nav__link">
+    Resulting T4DocopNet.cs
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#using-the-generated-code" class="md-nav__link">
+    Using the generated code
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#getting-rid-of-the-t4-macro" class="md-nav__link">
+    Getting rid of the T4 macro
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#changelog" class="md-nav__link">
+    Changelog
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          <div class="md-content" data-md-component="content">
+            <article class="md-content__inner md-typeset">
+              
+                
+<a href="https://github.com/docopt/docopt.net/edit/doc/main/docs/index.md" title="Edit this page" class="md-content__button md-icon">
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20.71 7.04c.39-.39.39-1.04 0-1.41l-2.34-2.34c-.37-.39-1.02-.39-1.41 0l-1.84 1.83 3.75 3.75M3 17.25V21h3.75L17.81 9.93l-3.75-3.75L3 17.25z"/></svg>
+</a>
+
+
+<h1 id="docoptnet-is-a-net-port-of-docopt"><code>docopt.net</code> is a .NET port of docopt</h1>
+<p><a href="https://www.nuget.org/packages/docopt.net/"><img alt="NuGet Package" src="https://buildstats.info/nuget/docopt.net" /></a></p>
+<p>Isn't it awesome how <a href="https://nuget.org/packages/CommandLineParser/">CommandLineParser</a> and <a href="https://nuget.org/packages/PowerArgs/">PowerArgs</a> generate help messages
+based on your code?!</p>
+<p><em>Hell no!</em> You know what's awesome? It's when the option parser <em>is</em> generated
+based on the beautiful help message that you write yourself! This way you don't
+need to write this stupid repeatable parser-code, and instead can write only the
+help message--<em>the way you want it</em>.</p>
+<p><strong>docopt.net</strong> helps you create most beautiful command-line interfaces <em>easily</em>:</p>
+<div class="highlight"><pre><span></span><code><span class="k">using</span> <span class="nn">System</span><span class="p">;</span>
+<span class="k">using</span> <span class="nn">DocoptNet</span><span class="p">;</span>
+
+<span class="k">namespace</span> <span class="nn">NavalFate</span>
+<span class="p">{</span>
+    <span class="k">internal</span> <span class="k">class</span> <span class="nc">Program</span>
+    <span class="p">{</span>
+        <span class="k">private</span> <span class="k">const</span> <span class="kt">string</span> <span class="n">usage</span> <span class="p">=</span> <span class="s">@&quot;Naval Fate.</span>
+
+<span class="s">    Usage:</span>
+<span class="s">      naval_fate.exe ship new &lt;name&gt;...</span>
+<span class="s">      naval_fate.exe ship &lt;name&gt; move &lt;x&gt; &lt;y&gt; [--speed=&lt;kn&gt;]</span>
+<span class="s">      naval_fate.exe ship shoot &lt;x&gt; &lt;y&gt;</span>
+<span class="s">      naval_fate.exe mine (set|remove) &lt;x&gt; &lt;y&gt; [--moored | --drifting]</span>
+<span class="s">      naval_fate.exe (-h | --help)</span>
+<span class="s">      naval_fate.exe --version</span>
+
+<span class="s">    Options:</span>
+<span class="s">      -h --help     Show this screen.</span>
+<span class="s">      --version     Show version.</span>
+<span class="s">      --speed=&lt;kn&gt;  Speed in knots [default: 10].</span>
+<span class="s">      --moored      Moored (anchored) mine.</span>
+<span class="s">      --drifting    Drifting mine.</span>
+
+<span class="s">    &quot;</span><span class="p">;</span>
+
+        <span class="k">private</span> <span class="k">static</span> <span class="k">void</span> <span class="nf">Main</span><span class="p">(</span><span class="kt">string</span><span class="p">[]</span> <span class="n">args</span><span class="p">)</span>
+        <span class="p">{</span>
+            <span class="kt">var</span> <span class="n">arguments</span> <span class="p">=</span> <span class="k">new</span> <span class="n">Docopt</span><span class="p">().</span><span class="n">Apply</span><span class="p">(</span><span class="n">usage</span><span class="p">,</span> <span class="n">args</span><span class="p">,</span> <span class="n">version</span><span class="p">:</span> <span class="s">&quot;Naval Fate 2.0&quot;</span><span class="p">,</span> <span class="n">exit</span><span class="p">:</span> <span class="k">true</span><span class="p">);</span>
+            <span class="k">foreach</span> <span class="p">(</span><span class="kt">var</span> <span class="n">argument</span> <span class="k">in</span> <span class="n">arguments</span><span class="p">)</span>
+            <span class="p">{</span>
+                <span class="n">Console</span><span class="p">.</span><span class="n">WriteLine</span><span class="p">(</span><span class="s">&quot;{0} = {1}&quot;</span><span class="p">,</span> <span class="n">argument</span><span class="p">.</span><span class="n">Key</span><span class="p">,</span> <span class="n">argument</span><span class="p">.</span><span class="n">Value</span><span class="p">);</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>
+<p>Beat that! The option parser is generated based on the docstring above that is
+passed to the <code>Docopt.Apply</code> method. <code>Docopt.Apply</code> parses the usage pattern
+(<code>"Usage: ..."</code>) and option descriptions (lines starting with dash <code>"-"</code>) and
+ensures that the program invocation matches the usage pattern; it parses
+options, arguments and commands based on that. The basic idea is that <em>a good
+help message has all necessary information in it to make a parser</em>.</p>
+<h2 id="differences-from-reference-python-implementation">Differences from reference python implementation</h2>
+<ul>
+<li>This port should be fully Docopt language compatible with the python reference
+  implementation.</li>
+</ul>
+<ul>
+<li>Because C# is statically typed, the return dictionary is of type
+  <code>IDictionary&lt;string, ValueObject&gt;</code> where <code>ValueObject</code> is a simple wrapper
+  class around entry values.</li>
+</ul>
+<h2 id="installation">Installation</h2>
+<p>Use dotnet</p>
+<div class="highlight"><pre><span></span><code>dotnet add package docopt.net
+</code></pre></div>
+<p>Use nuget</p>
+<div class="highlight"><pre><span></span><code>nuget install docopt.net
+</code></pre></div>
+<p>Under Visual Studio</p>
+<p>Just drop <code>DocoptNet.dll</code> file into your project; it is self-contained.</p>
+<h2 id="api">API</h2>
+<div class="highlight"><pre><span></span><code><span class="k">using</span> <span class="nn">DocoptNet</span><span class="p">;</span>
+</code></pre></div>
+<div class="highlight"><pre><span></span><code><span class="k">public</span> <span class="n">IDictionary</span><span class="p">&lt;</span><span class="kt">string</span><span class="p">,</span> <span class="n">ValueObject</span><span class="p">&gt;</span> <span class="n">Apply</span><span class="p">(</span><span class="kt">string</span> <span class="n">doc</span><span class="p">,</span> <span class="kt">string</span> <span class="n">cmdLine</span><span class="p">,</span> <span class="kt">bool</span> <span class="n">help</span> <span class="p">=</span> <span class="k">true</span><span class="p">,</span>
+  <span class="kt">object</span> <span class="n">version</span> <span class="p">=</span> <span class="k">null</span><span class="p">,</span> <span class="kt">bool</span> <span class="n">optionsFirst</span> <span class="p">=</span> <span class="k">false</span><span class="p">,</span> <span class="kt">bool</span> <span class="n">exit</span> <span class="p">=</span> <span class="k">false</span><span class="p">);</span>
+
+<span class="k">public</span> <span class="n">IDictionary</span><span class="p">&lt;</span><span class="kt">string</span><span class="p">,</span> <span class="n">ValueObject</span><span class="p">&gt;</span> <span class="n">Apply</span><span class="p">(</span><span class="kt">string</span> <span class="n">doc</span><span class="p">,</span> <span class="n">ICollection</span><span class="p">&lt;</span><span class="kt">string</span><span class="p">&gt;</span> <span class="n">argv</span><span class="p">,</span> <span class="kt">bool</span> <span class="n">help</span> <span class="p">=</span> <span class="k">true</span><span class="p">,</span>
+  <span class="kt">object</span> <span class="n">version</span> <span class="p">=</span> <span class="k">null</span><span class="p">,</span> <span class="kt">bool</span> <span class="n">optionsFirst</span> <span class="p">=</span> <span class="k">false</span><span class="p">,</span> <span class="kt">bool</span> <span class="n">exit</span> <span class="p">=</span> <span class="k">false</span><span class="p">);</span>
+</code></pre></div>
+<p><code>Apply</code> takes 1 required and 5 optional arguments:</p>
+<ul>
+<li>
+<p><code>doc</code> is a string that contains a <strong>help message</strong> that will be parsed to
+  create the option parser. The simple rules of how to write such a help message
+  are given in next sections. Here is a quick example of such a string:</p>
+<div class="highlight"><pre><span></span><code><span class="k">const</span> <span class="kt">string</span> <span class="n">USAGE</span> <span class="p">=</span>
+<span class="s">@&quot;Usage: my_program [-hso FILE] [--quiet | --verbose] [INPUT ...]</span>
+
+<span class="s">-h --help    show this</span>
+<span class="s">-s --sorted  sorted output</span>
+<span class="s">-o FILE      specify output file [default: ./test.txt]</span>
+<span class="s">--quiet      print less text</span>
+<span class="s">--verbose    print more text</span>
+
+<span class="s">&quot;</span><span class="p">;</span>
+</code></pre></div>
+</li>
+</ul>
+<ul>
+<li><code>argv</code> is an optional argument.</li>
+</ul>
+<ul>
+<li>
+<p><code>help</code>, by default <code>true</code>, specifies whether the parser should automatically
+  print the help message (supplied as <code>doc</code>) and terminate, in case <code>-h</code> or
+  <code>--help</code> option is encountered (options should exist in usage pattern, more
+  on that below). If you want to handle <code>-h</code> or <code>--help</code> options manually (as
+  other options), set <code>help: false</code>.</p>
+<blockquote>
+<p>Note, you can override the print and exit behaviour by providing a custom
+handler for the <code>Docopt.PrintExit</code> event. e.g.</p>
+</blockquote>
+<div class="highlight"><pre><span></span><code><span class="kt">var</span> <span class="n">docopt</span> <span class="p">=</span> <span class="k">new</span> <span class="n">Docopt</span><span class="p">();</span>
+<span class="n">docopt</span><span class="p">.</span><span class="n">PrintExit</span> <span class="p">+=</span> <span class="n">MyCustomPrintExit</span><span class="p">;</span>
+</code></pre></div>
+</li>
+</ul>
+<ul>
+<li>
+<p><code>version</code>, by default <code>null</code>, is an optional argument that specifies the
+  version of your program. If supplied, then, (assuming <code>--version</code> option is
+  mentioned in usage pattern) when parser encounters the <code>--version</code> option,
+  it will print the supplied version and terminate. <code>version</code> could be any
+  printable object, but most likely a string, e.g. <code>"2.1.0rc1"</code>.</p>
+<blockquote>
+<p>Note, when <code>docopt.net</code> is set to automatically handle <code>-h</code>, <code>--help</code> and
+<code>--version</code> options, you still need to mention them in usage pattern for
+this to work. Also, for your users to know about them.</p>
+</blockquote>
+</li>
+</ul>
+<ul>
+<li><code>optionsFirst</code>, by default <code>false</code>. If set to <code>true</code> will disallow mixing
+  options and positional argument; i.e. after first positional argument, all
+  arguments will be interpreted as positional even if they look like options.
+  This can be used for strict compatibility with POSIX, or if you want to
+  dispatch your arguments to other programs.</li>
+</ul>
+<ul>
+<li><code>exit</code>, by default <code>false</code>. If set to <code>false</code> will raise exceptions based on
+  <code>DocoptBaseException</code> and will not print or exit. If set to <code>true</code> any
+  occurence of <code>DocoptBaseException</code> will be caught by <code>Docopt.Apply()</code>, the
+  error message or the usage will be printed, and the program will exit with
+  error code 0 if it's a <code>DocoptExitException</code>, 1 otherwise.</li>
+</ul>
+<p>The <strong>return</strong> value is a simple dictionary with options, arguments and commands
+as keys, spelled exactly like in your help message. Long versions of options are
+given priority. For example, if you invoke the top example as:</p>
+<div class="highlight"><pre><span></span><code>naval_fate ship Guardian move 100 150 --speed=15
+</code></pre></div>
+<p>the return dictionary will be:</p>
+<div class="highlight"><pre><span></span><code><span class="p">{</span>
+<span class="na">    [&quot;--drifting&quot;]</span> <span class="p">=</span> <span class="k">false</span><span class="p">,</span>    <span class="p">[</span><span class="s">&quot;mine&quot;</span><span class="p">]</span> <span class="p">=</span> <span class="k">false</span><span class="p">,</span>
+<span class="na">    [&quot;--help&quot;]</span> <span class="p">=</span> <span class="k">false</span><span class="p">,</span>        <span class="p">[</span><span class="s">&quot;move&quot;</span><span class="p">]</span> <span class="p">=</span> <span class="k">true</span><span class="p">,</span>
+<span class="na">    [&quot;--moored&quot;]</span> <span class="p">=</span> <span class="k">false</span><span class="p">,</span>      <span class="p">[</span><span class="s">&quot;new&quot;</span><span class="p">]</span> <span class="p">=</span> <span class="k">false</span><span class="p">,</span>
+<span class="na">    [&quot;--speed&quot;]</span> <span class="p">=</span> <span class="s">&quot;15&quot;</span><span class="p">,</span>        <span class="p">[</span><span class="s">&quot;remove&quot;</span><span class="p">]</span> <span class="p">=</span> <span class="k">false</span><span class="p">,</span>
+<span class="na">    [&quot;--version&quot;]</span> <span class="p">=</span> <span class="k">false</span><span class="p">,</span>     <span class="p">[</span><span class="s">&quot;set&quot;</span><span class="p">]</span> <span class="p">=</span> <span class="k">false</span><span class="p">,</span>
+<span class="na">    [&quot;&lt;name&gt;&quot;]</span> <span class="p">=</span> <span class="p">[</span><span class="s">&quot;Guardian&quot;</span><span class="p">],</span> <span class="p">[</span><span class="s">&quot;ship&quot;</span><span class="p">]</span> <span class="p">=</span> <span class="k">true</span><span class="p">,</span>
+<span class="na">    [&quot;&lt;x&gt;&quot;]</span> <span class="p">=</span> <span class="s">&quot;100&quot;</span><span class="p">,</span>           <span class="p">[</span><span class="s">&quot;shoot&quot;</span><span class="p">]</span> <span class="p">=</span> <span class="k">false</span><span class="p">,</span>
+<span class="na">    [&quot;&lt;y&gt;&quot;]</span> <span class="p">=</span> <span class="s">&quot;150&quot;</span>
+<span class="p">}</span>
+</code></pre></div>
+<h2 id="help-message-format">Help message format</h2>
+<p>Help message consists of 2 parts:</p>
+<ul>
+<li>Usage pattern, e.g.:<div class="highlight"><pre><span></span><code>Usage: my_program [-hso FILE] [--quiet | --verbose] [INPUT ...]
+</code></pre></div>
+</li>
+</ul>
+<ul>
+<li>Option descriptions, e.g.:<div class="highlight"><pre><span></span><code>-h --help    show this
+-s --sorted  sorted output
+-o FILE      specify output file [default: ./test.txt]
+--quiet      print less text
+--verbose    print more text
+</code></pre></div>
+</li>
+</ul>
+<p>Their format is described below; other text is ignored.</p>
+<h3 id="usage-pattern-format">Usage pattern format</h3>
+<p><strong>Usage pattern</strong> is a substring of <code>doc</code> that starts with <code>usage:</code> (case
+<em>insensitive</em>) and ends with a <em>visibly</em> empty line. Minimum example:</p>
+<div class="highlight"><pre><span></span><code><span class="k">const</span> <span class="kt">string</span> <span class="n">USAGE</span> <span class="p">=</span> <span class="s">&quot;Usage: my_program&quot;</span><span class="p">;</span>
+</code></pre></div>
+<p>The first word after <code>usage:</code> is interpreted as your program's name. You can
+specify your program's name several times to signify several exclusive patterns:</p>
+<div class="highlight"><pre><span></span><code><span class="k">const</span> <span class="kt">string</span> <span class="n">USAGE</span> <span class="p">=</span>
+<span class="s">@&quot;Usage: my_program FILE</span>
+<span class="s">         my_program COUNT FILE&quot;</span><span class="p">;</span>
+</code></pre></div>
+<p>Each pattern can consist of the following elements:</p>
+<ul>
+<li><strong>\&lt;arguments></strong>, <strong>ARGUMENTS</strong>. Arguments are specified as either upper-case
+  words, e.g. <code>my_program CONTENT-PATH</code> or words surrounded by angular brackets:
+  <code>my_program &lt;content-path&gt;</code>.</li>
+</ul>
+<ul>
+<li><strong>--options</strong>. Options are words started with dash (<code>-</code>), e.g. <code>--output</code>,
+  <code>-o</code>. You can "stack" several of one-letter options, e.g. <code>-oiv</code> which will be
+  the same as <code>-o -i -v</code>. The options can have arguments, e.g. <code>--input=FILE</code> or
+  <code>-i FILE</code> or even <code>-iFILE</code>. However it is important that you specify option
+  descriptions if you want your option to have an argument, a default value, or
+  specify synonymous short/long versions of the option (see next section on
+  option descriptions).</li>
+</ul>
+<ul>
+<li><strong>commands</strong> are words that do <em>not</em> follow the described above conventions of
+  <code>--options</code> or <code>&lt;arguments&gt;</code> or <code>ARGUMENTS</code>, plus two special commands: dash
+  "<code>-</code>" and double dash "<code>--</code>" (see below).</li>
+</ul>
+<p>Use the following constructs to specify patterns:</p>
+<ul>
+<li><strong>[ ]</strong> (brackets) <strong>optional</strong> elements. e.g.: <code>my_program [-hvqo FILE]</code></li>
+</ul>
+<ul>
+<li><strong>( )</strong> (parens) <strong>required</strong> elements. All elements that are <em>not</em> put in
+  <strong>[ ]</strong> are also required, e.g.: <code>my_program --path=&lt;path&gt; &lt;file&gt;...</code> is the
+  same as <code>my_program (--path=&lt;path&gt; &lt;file&gt;...)</code>. (Note, "required options"
+  might be not a good idea for your users).</li>
+</ul>
+<ul>
+<li><strong>|</strong> (pipe) <strong>mutually exclusive</strong> elements. Group them using <strong>( )</strong> if one
+  of the mutually exclusive elements is required: <code>my_program (--clockwise |
+  --counter-clockwise) TIME</code>. Group them using <strong>[ ]</strong> if none of the
+  mutually-exclusive elements are required: <code>my_program [--left | --right]</code>.</li>
+</ul>
+<ul>
+<li><strong>...</strong> (ellipsis) <strong>one or more</strong> elements. To specify that arbitrary number
+  of repeating elements could be accepted, use ellipsis (<code>...</code>), e.g.
+  <code>my_program FILE ...</code> means one or more <code>FILE</code>-s are accepted. If you want to
+  accept zero or more elements, use brackets, e.g.: <code>my_program [FILE ...]</code>.
+  Ellipsis works as a unary operator on the expression to the left.</li>
+</ul>
+<ul>
+<li><strong>[options]</strong> (case sensitive) shortcut for any options. You can use it if you
+  want to specify that the usage pattern could be provided with any options
+  defined below in the option-descriptions and do not want to enumerate them all
+  in usage-pattern.</li>
+</ul>
+<ul>
+<li>"<code>[--]</code>". Double dash "<code>--</code>" is used by convention to separate positional
+  arguments that can be mistaken for options. In order to support this
+  convention add "<code>[--]</code>" to your usage patterns.</li>
+</ul>
+<ul>
+<li>"<code>[-]</code>". Single dash "<code>-</code>" is used by convention to signify that <code>stdin</code> is
+  used instead of a file. To support this add "<code>[-]</code>" to your usage patterns.
+  "<code>-</code>" acts as a normal command.</li>
+</ul>
+<p>If your pattern allows to match argument-less option (a flag) several times:</p>
+<div class="highlight"><pre><span></span><code>Usage: my_program [-v | -vv | -vvv]
+</code></pre></div>
+<p>then number of occurrences of the option will be counted; i.e. <code>args['-v']</code> will
+be <code>2</code> if program was invoked as <code>my_program -vv</code>. Same works for commands.</p>
+<p>If your usage patterns allows to match same-named option with argument or
+positional argument several times, the matched arguments will be collected into
+a list:</p>
+<div class="highlight"><pre><span></span><code>Usage: my_program &lt;file&gt; &lt;file&gt; --path=&lt;path&gt;...
+</code></pre></div>
+<p>Therefore invoked with <code>my_program file1 file2 --path=./here --path=./there</code> the
+returned dict will contain <code>args['&lt;file&gt;'] == ['file1', 'file2']</code> and
+<code>args['--path'] == ['./here', './there']</code>.</p>
+<h3 id="option-descriptions-format">Option descriptions format</h3>
+<p><strong>Option descriptions</strong> consist of a list of options that you put below your
+usage patterns.</p>
+<p>It is necessary to list option descriptions in order to specify:</p>
+<ul>
+<li>synonymous short and long options,</li>
+<li>if an option has an argument,</li>
+<li>if option's argument has a default value.</li>
+</ul>
+<p>The rules are as follows:</p>
+<ul>
+<li>Every line in <code>doc</code> that starts with <code>-</code> or <code>--</code> (not counting spaces) is
+  treated as an option description, e.g.:<div class="highlight"><pre><span></span><code>Options:
+  --verbose   # GOOD
+  -o FILE     # GOOD
+Other: --bad  # BAD, line does not start with dash &quot;-&quot;
+</code></pre></div>
+</li>
+</ul>
+<ul>
+<li>To specify that option has an argument, put a word describing that argument
+  after space (or equals "<code>=</code>" sign) as shown below. Follow either
+  \&lt;angular-brackets> or UPPER-CASE convention for options' arguments. You can
+  use comma if you want to separate options. In the example below, both lines
+  are valid, however you are recommended to stick to a single style.:<div class="highlight"><pre><span></span><code>-o FILE --output=FILE       # without comma, with &quot;=&quot; sign
+-i &lt;file&gt;, --input &lt;file&gt;   # with comma, without &quot;=&quot; sing
+</code></pre></div>
+</li>
+</ul>
+<ul>
+<li>Use two spaces to separate options with their informal description:<div class="highlight"><pre><span></span><code>--verbose More text.   # BAD, will be treated as if verbose option had
+                        # an argument &quot;More&quot;, so use 2 spaces instead
+-q        Quit.        # GOOD
+-o FILE   Output file. # GOOD
+--stdout  Use stdout.  # GOOD, 2 spaces
+</code></pre></div>
+</li>
+</ul>
+<ul>
+<li>If you want to set a default value for an option with an argument, put it into
+  the option-description, in form <code>[default: &lt;my-default-value&gt;]</code>:<div class="highlight"><pre><span></span><code>--coefficient=K  The K coefficient [default: 2.95]
+--output=FILE    Output file [default: test.txt]
+--directory=DIR  Some directory [default: ./]
+</code></pre></div>
+</li>
+</ul>
+<ul>
+<li>If the option is not repeatable, the value inside <code>[default: ...]</code> will be
+  interpreted as string. If it <em>is</em> repeatable, it will be splited into a list
+  on whitespace:<div class="highlight"><pre><span></span><code>Usage: my_program [--repeatable=&lt;arg&gt; --repeatable=&lt;arg&gt;]
+                      [--another-repeatable=&lt;arg&gt;]...
+                      [--not-repeatable=&lt;arg&gt;]
+
+# will be [&#39;./here&#39;, &#39;./there&#39;]
+--repeatable=&lt;arg&gt;          [default: ./here ./there]
+
+# will be [&#39;./here&#39;]
+--another-repeatable=&lt;arg&gt;  [default: ./here]
+
+# will be &#39;./here ./there&#39;, because it is not repeatable
+--not-repeatable=&lt;arg&gt;      [default: ./here ./there]
+</code></pre></div>
+</li>
+</ul>
+<h2 id="strongly-typed-arguments-with-t4-macro">Strongly typed arguments with T4 Macro</h2>
+<div class="admonition warning">
+<p class="admonition-title">Deprecated</p>
+<p>This feature has been deprecated and will be removed starting with version
+0.7.</p>
+</div>
+<p>Include the <code>T4DocoptNet.tt*</code> files in your main project to enable the strongly
+type arguments code generation. Then add a file called Main.usage.txt to your
+project. Store the usage document in this file instead of creating a string
+constant in your program. When the <code>T4DocoptNet.tt</code> macro is applied, a class
+called <code>MainArgs</code> in a file called <code>T4DocoptNet.cs</code> will be generated. It will
+publish the following members:</p>
+<blockquote>
+<ul>
+<li><code>USAGE</code> public string constant that returns the usage document.</li>
+<li>A set of properties that correspond to the commands, arguments, switches and
+  options defined in the usage document.</li>
+</ul>
+</blockquote>
+<p>Note that if you name the usage file <code>Foo.usage.txt</code>, the generated class will
+be called <code>FooArgs</code>.</p>
+<h3 id="sample-mainusagetxt">Sample <code>Main.usage.txt</code></h3>
+<blockquote>
+<p>Test.</p>
+<p>Usage: prog command ARG FILES... [-o --switch --long=ARG]</p>
+</blockquote>
+<h3 id="resulting-t4docopnetcs">Resulting <code>T4DocopNet.cs</code></h3>
+<p>The generated class publishes the different argument items as strongly typed
+properties. Its constructor accepts the same parameters than the <code>Docopt.Apply</code>
+method. The original usage text is published as a string constant e.g.
+<code>MainArgs.USAGE</code>.</p>
+<div class="highlight"><pre><span></span><code><span class="c1">// Generated class for Main.usage.txt</span>
+<span class="k">public</span> <span class="k">class</span> <span class="nc">MainArgs</span>
+<span class="p">{</span>
+  <span class="k">public</span> <span class="k">const</span> <span class="kt">string</span> <span class="n">USAGE</span> <span class="p">=</span> <span class="s">@&quot;Test.</span>
+
+<span class="s">Usage: prog command ARG FILES... [-o --switch --long=ARG]</span>
+<span class="s">&quot;</span><span class="p">;</span>
+  <span class="k">private</span> <span class="k">readonly</span> <span class="n">IDictionary</span><span class="p">&lt;</span><span class="kt">string</span><span class="p">,</span> <span class="n">ValueObject</span><span class="p">&gt;</span> <span class="n">_args</span><span class="p">;</span>
+  <span class="k">public</span> <span class="nf">MainArgs</span><span class="p">(</span><span class="n">ICollection</span><span class="p">&lt;</span><span class="kt">string</span><span class="p">&gt;</span> <span class="n">argv</span><span class="p">,</span> <span class="kt">bool</span> <span class="n">help</span> <span class="p">=</span> <span class="k">true</span><span class="p">,</span>
+                          <span class="kt">object</span> <span class="n">version</span> <span class="p">=</span> <span class="k">null</span><span class="p">,</span> <span class="kt">bool</span> <span class="n">optionsFirst</span> <span class="p">=</span> <span class="k">false</span><span class="p">,</span> <span class="kt">bool</span> <span class="n">exit</span> <span class="p">=</span> <span class="k">false</span><span class="p">)</span>
+  <span class="p">{</span>
+    <span class="n">_args</span> <span class="p">=</span> <span class="k">new</span> <span class="n">Docopt</span><span class="p">().</span><span class="n">Apply</span><span class="p">(</span><span class="n">USAGE</span><span class="p">,</span> <span class="n">argv</span><span class="p">,</span> <span class="n">help</span><span class="p">,</span> <span class="n">version</span><span class="p">,</span> <span class="n">optionsFirst</span><span class="p">,</span> <span class="n">exit</span><span class="p">);</span>
+  <span class="p">}</span>
+
+  <span class="k">public</span> <span class="n">IDictionary</span><span class="p">&lt;</span><span class="kt">string</span><span class="p">,</span> <span class="n">ValueObject</span><span class="p">&gt;</span> <span class="n">Args</span>
+  <span class="p">{</span>
+    <span class="k">get</span> <span class="p">{</span> <span class="k">return</span> <span class="n">_args</span><span class="p">;</span> <span class="p">}</span>
+  <span class="p">}</span>
+
+  <span class="k">public</span> <span class="kt">bool</span> <span class="n">CmdCommand</span> <span class="p">{</span> <span class="k">get</span> <span class="p">{</span> <span class="k">return</span> <span class="n">_args</span><span class="p">[</span><span class="s">&quot;command&quot;</span><span class="p">].</span><span class="n">IsTrue</span><span class="p">;</span> <span class="p">}</span> <span class="p">}</span>
+  <span class="k">public</span> <span class="kt">string</span> <span class="n">ArgArg</span> <span class="p">{</span> <span class="k">get</span> <span class="p">{</span> <span class="k">return</span> <span class="n">_args</span><span class="p">[</span><span class="s">&quot;ARG&quot;</span><span class="p">].</span><span class="n">ToString</span><span class="p">();</span> <span class="p">}</span> <span class="p">}</span>
+  <span class="k">public</span> <span class="kt">bool</span> <span class="n">OptO</span> <span class="p">{</span> <span class="k">get</span> <span class="p">{</span> <span class="k">return</span> <span class="n">_args</span><span class="p">[</span><span class="s">&quot;-o&quot;</span><span class="p">].</span><span class="n">IsTrue</span><span class="p">;</span> <span class="p">}</span> <span class="p">}</span>
+  <span class="k">public</span> <span class="kt">string</span> <span class="n">OptLong</span> <span class="p">{</span> <span class="k">get</span> <span class="p">{</span> <span class="k">return</span> <span class="n">_args</span><span class="p">[</span><span class="s">&quot;--long&quot;</span><span class="p">].</span><span class="n">ToString</span><span class="p">();</span> <span class="p">}</span> <span class="p">}</span>
+  <span class="k">public</span> <span class="kt">bool</span> <span class="n">OptSwitch</span> <span class="p">{</span> <span class="k">get</span> <span class="p">{</span> <span class="k">return</span> <span class="n">_args</span><span class="p">[</span><span class="s">&quot;--switch&quot;</span><span class="p">].</span><span class="n">IsTrue</span><span class="p">;</span> <span class="p">}</span> <span class="p">}</span>
+  <span class="k">public</span> <span class="n">ArrayList</span> <span class="n">ArgFiles</span> <span class="p">{</span> <span class="k">get</span> <span class="p">{</span> <span class="k">return</span> <span class="n">_args</span><span class="p">[</span><span class="s">&quot;FILES&quot;</span><span class="p">].</span><span class="n">AsList</span><span class="p">;</span> <span class="p">}</span> <span class="p">}</span>
+
+<span class="p">}</span>
+</code></pre></div>
+<h3 id="using-the-generated-code">Using the generated code</h3>
+<div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">Program</span>
+<span class="p">{</span>
+
+   <span class="k">static</span> <span class="k">void</span> <span class="nf">DoStuff</span><span class="p">(</span><span class="kt">string</span> <span class="n">arg</span><span class="p">,</span> <span class="kt">bool</span> <span class="n">flagO</span><span class="p">,</span> <span class="kt">string</span> <span class="n">longValue</span><span class="p">)</span>
+   <span class="p">{</span>
+   <span class="c1">// ...</span>
+   <span class="p">}</span>
+
+  <span class="k">static</span> <span class="k">void</span> <span class="nf">Main</span><span class="p">(</span><span class="kt">string</span><span class="p">[]</span> <span class="n">argv</span><span class="p">)</span>
+  <span class="p">{</span>
+    <span class="c1">// Automatically exit(1) if invalid arguments</span>
+    <span class="kt">var</span> <span class="n">args</span> <span class="p">=</span> <span class="k">new</span> <span class="n">MainArgs</span><span class="p">(</span><span class="n">argv</span><span class="p">,</span> <span class="n">exit</span><span class="p">:</span> <span class="k">true</span><span class="p">);</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">args</span><span class="p">.</span><span class="n">CmdCommand</span><span class="p">)</span>
+    <span class="p">{</span>
+      <span class="n">Console</span><span class="p">.</span><span class="n">WriteLine</span><span class="p">(</span><span class="s">&quot;First command&quot;</span><span class="p">);</span>
+      <span class="n">DoStuff</span><span class="p">(</span><span class="n">args</span><span class="p">.</span><span class="n">ArgArg</span><span class="p">,</span> <span class="n">args</span><span class="p">.</span><span class="n">OptO</span><span class="p">,</span> <span class="n">args</span><span class="p">.</span><span class="n">OptLong</span><span class="p">);</span>
+    <span class="p">}</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>
+<p>You can also access the <code>MainArgs.USAGE</code> string constant as follows:</p>
+<div class="highlight"><pre><span></span><code><span class="n">Console</span><span class="p">.</span><span class="n">WriteLine</span><span class="p">(</span><span class="s">&quot;Usage: &quot;</span> <span class="p">+</span> <span class="n">MainArgs</span><span class="p">.</span><span class="n">USAGE</span><span class="p">)</span>
+</code></pre></div>
+<h3 id="getting-rid-of-the-t4-macro">Getting rid of the T4 macro</h3>
+<p>If you don't want to use the strongly typed arguments, just delete the
+<code>T4DocoptNet.*</code> files from the project.</p>
+<h2 id="changelog">Changelog</h2>
+<p><strong>docopt.net</strong> follows <a href="http://semver.org">semantic versioning</a>. The first
+release with stable API will be 1.0.0 (soon). Until then, you are encouraged to
+specify explicitly the version in your dependency tools, e.g.:</p>
+<div class="highlight"><pre><span></span><code>nuget install docopt.net -Version 0.7.0
+</code></pre></div>
+<div class="admonition note">
+<p class="admonition-title">0.7.0 or later</p>
+<p>See <a href="https://github.com/docopt/docopt.net/releases">releases</a> for changelog and notes.</p>
+</div>
+<ul>
+<li>0.6.1.11 Bug fix.</li>
+<li>0.6.1.8 Added support for .NET Core RC2.</li>
+<li>0.6.1.6 Double creation of property bug fix. <code>T4DocoptNet.tt</code> assembly path
+  fix.</li>
+<li>0.6.1.5 Added strongly typed arguments through T4 macro. <code>ValueObject</code>
+  interface cleanup. <code>exit: true</code> parameter behavior fix.</li>
+<li>0.6.1.4 Clarified exit parameter behaviour.</li>
+<li>0.6.1.3 Added exit parameter.</li>
+<li>0.6.1.2 Fixed docopt capitalisation.</li>
+<li>0.6.1.1 Initial port. All reference language agnostic tests pass.</li>
+</ul>
+
+              
+            </article>
+          </div>
+        </div>
+        
+          <a href="#" class="md-top md-icon" data-md-component="top" data-md-state="hidden">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8v12z"/></svg>
+            Back to top
+          </a>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+    <nav class="md-footer__inner md-grid" aria-label="Footer">
+      
+      
+        
+        <a href="documentation/" class="md-footer__link md-footer__link--next" aria-label="Next: Documentation" rel="next">
+          <div class="md-footer__title">
+            <div class="md-ellipsis">
+              <span class="md-footer__direction">
+                Next
+              </span>
+              Documentation
+            </div>
+          </div>
+          <div class="md-footer__button md-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11H4z"/></svg>
+          </div>
+        </a>
+      
+    </nav>
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+        <div class="md-social">
+  
+    
+    
+    <a href="https://github.com/docopt/docopt.net" target="_blank" rel="noopener" title="docopt.net on GitHub" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/></svg>
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    <script id="__config" type="application/json">{"base": ".", "features": ["navigation.tabs", "navigation.tabs.sticky", "navigation.sections", "navigation.top", "navigation.tracking", "search.suggest", "search.highlight"], "translations": {"clipboard.copy": "Copy to clipboard", "clipboard.copied": "Copied to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.placeholder": "Type to start searching", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.term.missing": "Missing", "select.version.title": "Select version"}, "search": "assets/javascripts/workers/search.0bbba5b5.min.js", "version": {"provider": "mike"}}</script>
+    
+    
+      <script src="assets/javascripts/bundle.e1a181d9.min.js"></script>
+      
+        <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+      
+    
+  </body>
+</html>
