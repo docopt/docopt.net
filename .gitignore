@@ -31,3 +31,5 @@ packages/
 .vs/
 .paket/Paket.Restore.targets
 dist/
+tmp/
+temp/
