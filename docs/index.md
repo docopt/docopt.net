@@ -455,7 +455,11 @@ If you don't want to use the strongly typed arguments, just delete the
 release with stable API will be 1.0.0 (soon). Until then, you are encouraged to
 specify explicitly the version in your dependency tools, e.g.:
 
-    nuget install docopt.net -Version 0.6.1.11
+    nuget install docopt.net -Version 0.7.0
+
+!!! note "0.7.0 or later"
+
+     See [releases] for changelog and notes.
 
 - 0.6.1.11 Bug fix.
 - 0.6.1.8 Added support for .NET Core RC2.
@@ -467,3 +471,5 @@ specify explicitly the version in your dependency tools, e.g.:
 - 0.6.1.3 Added exit parameter.
 - 0.6.1.2 Fixed docopt capitalisation.
 - 0.6.1.1 Initial port. All reference language agnostic tests pass.
+
+[releases]: https://github.com/docopt/docopt.net/releases
