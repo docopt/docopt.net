@@ -5,12 +5,6 @@ VisualStudioVersion = 16.0.31112.23
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Examples", "Examples", "{AE631D61-6BE6-438F-A535-955BB9A0218F}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "NuGet", "NuGet", "{B5A8AA26-1434-40D0-87BB-C1B8ED01F8D1}"
-	ProjectSection(SolutionItems) = preProject
-		src\NuGet\install.ps1 = src\NuGet\install.ps1
-		src\NuGet\Main.usage.txt = src\NuGet\Main.usage.txt
-	EndProjectSection
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DocoptNet", "src\DocoptNet\DocoptNet.csproj", "{D87F19B8-A15F-4BC2-8E1C-47CC6038A0DF}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DocoptNet.Tests", "tests\DocoptNet.Tests\DocoptNet.Tests.csproj", "{80A9BB30-873C-47E9-8314-5E53AC66E8B7}"
