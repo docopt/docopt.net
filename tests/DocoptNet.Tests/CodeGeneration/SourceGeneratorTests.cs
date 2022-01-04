@@ -55,17 +55,6 @@ Naval Fate.
         }
 
         [Test]
-        public void Generate_with_embedding_namespace()
-        {
-            AssertMatchesSnapshot(
-                docoptNetNamespace: "DocoptNet.Generated",
-                new[]
-                {
-                    ("Program.docopt.txt", SourceText.From(NavalFateUsage))
-                });
-        }
-
-        [Test]
         public void Generate_with_inline_usage()
         {
             AssertMatchesSnapshot(new[]
@@ -77,22 +66,6 @@ Naval Fate.
                         public const string Help = @""{NavalFateUsage}"";
                     }}"))
             });
-        }
-
-        [Test]
-        public void Generate_with_inline_usage_and_embedding_namespace()
-        {
-            AssertMatchesSnapshot(
-                docoptNetNamespace: "DocoptNet.Generated",
-                new[]
-                {
-                    ("Program.cs", SourceText.From($@"
-                        [DocoptNet.DocoptArguments]
-                        partial class Arguments
-                        {{
-                            public const string Help = @""{NavalFateUsage}"";
-                        }}"))
-                });
         }
 
         [Test]
@@ -180,9 +153,8 @@ Naval Fate.
             _solutionDir = new DirectoryInfo(Path.Combine(TestContext.CurrentContext.TestDirectory,
                                                           "..", "..", "..", "..", ".."));
 
-            var projectSourcesDir = new DirectoryInfo(Path.Combine(SolutionDirPath, "src", "DocoptNet"));
             var attributesSourcesDir = new DirectoryInfo(Path.Combine(SolutionDirPath, "src", "DocoptNet.CodeGeneration"));
-            foreach (var file in projectSourcesDir.EnumerateFiles("*.cs").Concat(attributesSourcesDir.EnumerateFiles("*Attribute.cs")))
+            foreach (var file in attributesSourcesDir.EnumerateFiles("*Attribute.cs"))
             {
                 using var stream = file.OpenRead();
                 _projectFileHashByPath.Add(file.Name, SourceText.From(stream).GetChecksum());
@@ -201,14 +173,9 @@ Naval Fate.
         }
 
         void AssertMatchesSnapshot((string Path, SourceText Text)[] sources,
-                                   [CallerMemberName]string? callerName = null) =>
-            AssertMatchesSnapshot(docoptNetNamespace: null, sources, callerName);
-
-        void AssertMatchesSnapshot(string? docoptNetNamespace,
-                                   (string Path, SourceText Text)[] sources,
                                    [CallerMemberName]string? callerName = null)
         {
-            var (driver, compilation) = PrepareForGeneration(docoptNetNamespace, sources);
+            var (driver, compilation) = PrepareForGeneration(sources);
 
             var grr = driver.RunGeneratorsAndUpdateCompilation(compilation, out var outputCompilation, out _)
                             .GetRunResult().Results.Single();
@@ -481,11 +448,6 @@ using System.Collections.Generic;
 using DocoptNet;
 
 public partial class " + ProgramArgumentsClassName + @" { }
-
-namespace DocoptNet
-{
-    public partial class StringList {}
-}
 ";
 
             var assembly = GenerateProgram(("Main.cs", SourceText.From(main)),
@@ -500,12 +462,7 @@ namespace DocoptNet
             new AnalyzerConfigOptions(KeyValuePair.Create("build_metadata.AdditionalFiles.SourceItemType", "Docopt"));
 
         internal static (CSharpGeneratorDriver, CSharpCompilation)
-            PrepareForGeneration(params (string Path, SourceText Text)[] sources) =>
-            PrepareForGeneration(docoptNetNamespace: null, sources);
-
-        internal static (CSharpGeneratorDriver, CSharpCompilation)
-            PrepareForGeneration(string? docoptNetNamespace,
-                                 params (string Path, SourceText Text)[] sources)
+            PrepareForGeneration(params (string Path, SourceText Text)[] sources)
         {
             var trees = new List<SyntaxTree>();
             var additionalTexts = new List<AdditionalText>();
@@ -526,13 +483,12 @@ namespace DocoptNet
                                          new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary,
                                                                       generalDiagnosticOption: ReportDiagnostic.Error))
                                  .WithReferenceAssemblies(ReferenceAssemblyKind.Net50)
-                                 .AddReferences(MetadataReference.CreateFromFile(Path.Combine(TestContext.CurrentContext.TestDirectory, "Newtonsoft.Json.dll")));
+                                 .AddReferences(MetadataReference.CreateFromFile(Path.Combine(TestContext.CurrentContext.TestDirectory, "Newtonsoft.Json.dll")))
+                                 .AddReferences(MetadataReference.CreateFromFile(typeof(Docopt).Assembly.Location));
 
             ISourceGenerator generator = new SourceGenerator();
 
             var globalOptions = Enumerable.Empty<KeyValuePair<string, string>>();
-            if (docoptNetNamespace is { } someDocoptNetNamespace)
-                globalOptions = globalOptions.Append(KeyValuePair.Create("build_property.DocoptNetNamespace", someDocoptNetNamespace));
 
             var optionsProvider =
                 new AnalyzerConfigOptionsProvider(
@@ -547,13 +503,9 @@ namespace DocoptNet
             return (driver, compilation);
         }
 
-        internal static Assembly GenerateProgram(params (string Path, SourceText Text)[] sources) =>
-            GenerateProgram(docoptNetNamespace: null, sources);
-
-        internal static Assembly GenerateProgram(string? docoptNetNamespace,
-                                                 params (string Path, SourceText Text)[] sources)
+        internal static Assembly GenerateProgram(params (string Path, SourceText Text)[] sources)
         {
-            var (driver, compilation) = PrepareForGeneration(docoptNetNamespace, sources);
+            var (driver, compilation) = PrepareForGeneration(sources);
 
             driver.RunGeneratorsAndUpdateCompilation(compilation,
                                                      out var outputCompilation,

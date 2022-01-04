@@ -5,7 +5,7 @@ namespace DocoptNet
     using System.Diagnostics;
     using System.Linq;
 
-    abstract class Pattern
+    public abstract class Pattern
     {
         public abstract string Name { get; }
 

@@ -20,7 +20,7 @@ namespace DocoptNet
     /// read-write <seealso cref="IList{T}"/> is not changed.
     /// </remarks>
 
-    readonly struct ReadOnlyList<T> : IReadOnlyList<T>
+    public readonly struct ReadOnlyList<T> : IReadOnlyList<T>
     {
         static readonly T[] EmptyArray = new T[0];
 

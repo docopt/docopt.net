@@ -13,6 +13,12 @@
       "commands": [
         "sourcelink"
       ]
+    },
+    "powershell": {
+      "version": "7.1.5",
+      "commands": [
+        "pwsh"
+      ]
     }
   }
 }

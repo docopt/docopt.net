@@ -103,7 +103,7 @@ namespace DocoptNet
         }
 
         // TODO consider consolidating duplication with portions of Apply above
-        internal static (Pattern Pattern, ICollection<Option> Options, string ExitUsage)
+        public static (Pattern Pattern, ICollection<Option> Options, string ExitUsage)
             ParsePattern(string doc)
         {
             var usageSections = ParseSection("usage:", doc);
@@ -157,7 +157,7 @@ namespace DocoptNet
             return nodes.ToArray();
         }
 
-        internal static IEnumerable<Pattern> GetFlatPatterns(string doc)
+        public static IEnumerable<Pattern> GetFlatPatterns(string doc)
         {
             var usageSections = ParseSection("usage:", doc);
             if (usageSections.Length == 0)

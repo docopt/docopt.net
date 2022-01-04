@@ -7,7 +7,7 @@ namespace DocoptNet
     /// <summary>
     /// Leaf/terminal node of a pattern tree.
     /// </summary>
-    internal abstract class LeafPattern: Pattern
+    public abstract class LeafPattern: Pattern
     {
         private readonly string _name;
 

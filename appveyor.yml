@@ -34,12 +34,11 @@ build_script:
         }
       }
       Add-Content $releaseNotesFile -Encoding UTF8 "Commit @ $(git rev-parse HEAD)"
-      $packArgs = @()
+      $packArgs = @{}
       if ($versionSuffix) {
-        $packArgs += @('--version-suffix', $versionSuffix)
+        $packArgs['VersionSuffix'] = $versionSuffix
       }
-      dotnet pack --no-build --configuration $env:CONFIGURATION @packArgs "-p:PackageReleaseNotesFile=$releaseNotesFile"
-      if ($LASTEXITCODE) { throw; }
+      ./pack.ps1 -NoBuild -Configuration $env:CONFIGURATION @packArgs -PackageReleaseNotesFile $releaseNotesFile
       Get-ChildItem -File -Filter docopt.net.*.nupkg dist |
         Select-Object -ExpandProperty FullName |
         % { dotnet sourcelink test $_; if ($LASTEXITCODE) { throw; } }

@@ -3,7 +3,7 @@ namespace DocoptNet
     using System;
     using System.Text.RegularExpressions;
 
-    class Option : LeafPattern
+    public class Option : LeafPattern
     {
         public string ShortName { get; private set; }
         public string LongName { get; private set; }

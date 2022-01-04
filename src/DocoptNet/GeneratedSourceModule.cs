@@ -6,7 +6,7 @@ namespace DocoptNet
     using System.Linq;
     using Leaves = ReadOnlyList<LeafPattern>;
 
-    static class GeneratedSourceModule
+    public static class GeneratedSourceModule
     {
         public static Leaves ParseArgv(string doc, IEnumerable<string> args, List<Option> options,
                                        bool optionsFirst, bool help, object? version)

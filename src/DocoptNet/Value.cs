@@ -6,10 +6,10 @@ namespace DocoptNet
     using System.Diagnostics;
     using System.Diagnostics.CodeAnalysis;
 
-    enum ValueKind { None, Boolean, Integer, String, StringList }
+    public enum ValueKind { None, Boolean, Integer, String, StringList }
 
     [DebuggerDisplay("{" + nameof(DebugDisplay) + "(),nq}")]
-    readonly struct Value
+    public readonly struct Value
     {
         readonly int _int;     // stores: bool, int
         readonly object? _ref; // stores: string, StringList

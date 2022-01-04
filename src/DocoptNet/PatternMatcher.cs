@@ -7,7 +7,7 @@ namespace DocoptNet
     using System.Linq;
     using Leaves = ReadOnlyList<LeafPattern>;
 
-    delegate (int Index, LeafPattern Match) LeafPatternMatcher(Leaves left, string name);
+    public delegate (int Index, LeafPattern Match) LeafPatternMatcher(Leaves left, string name);
 
     static class LeafMatcherExtensions
     {
@@ -20,7 +20,7 @@ namespace DocoptNet
         }
     }
 
-    interface IBranchPatternMatcher
+    public interface IBranchPatternMatcher
     {
         int Index { get; }
         bool Next();
@@ -44,7 +44,7 @@ namespace DocoptNet
         }
     }
 
-    struct RequiredMatcher : IBranchPatternMatcher
+    public struct RequiredMatcher : IBranchPatternMatcher
     {
         readonly int _count;
         readonly Leaves _initLeft, _initCollected;
@@ -87,7 +87,7 @@ namespace DocoptNet
         public MatchResult Result => _result ?? new MatchResult(true, Left, Collected);
     }
 
-    struct EitherMatcher : IBranchPatternMatcher
+    public struct EitherMatcher : IBranchPatternMatcher
     {
         readonly int _count;
         int _i;
@@ -125,7 +125,7 @@ namespace DocoptNet
         public MatchResult Result => _match;
     }
 
-    struct OptionalMatcher : IBranchPatternMatcher
+    public struct OptionalMatcher : IBranchPatternMatcher
     {
         readonly int _count;
         int _i;
@@ -157,7 +157,7 @@ namespace DocoptNet
         public MatchResult Result => new(true, Left, Collected);
     }
 
-    struct OneOrMoreMatcher : IBranchPatternMatcher
+    public struct OneOrMoreMatcher : IBranchPatternMatcher
     {
         readonly Leaves _initLeft, _initCollected;
         int _times;
@@ -199,7 +199,7 @@ namespace DocoptNet
                         : new MatchResult(false, _initLeft, _initCollected);
     }
 
-    static class PatternMatcher
+    public static class PatternMatcher
     {
         public static MatchResult Match(this Pattern pattern, Leaves left)
         {
