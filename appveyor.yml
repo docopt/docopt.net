@@ -14,7 +14,7 @@ before_build:
 - dotnet --info
 - dotnet tool restore
 build_script:
-- ps: |
+- pwsh: |
     dotnet build --configuration $env:CONFIGURATION
     if ($isWindows) {
       $versionSuffix = ([datetimeoffset]$env:APPVEYOR_REPO_COMMIT_TIMESTAMP).ToUniversalTime().ToString('yyyyMMdd''t''HHmm')
