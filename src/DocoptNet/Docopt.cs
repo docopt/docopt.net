@@ -341,8 +341,9 @@ namespace DocoptNet
                         matching = "]";
                         result.Add(new Optional(ParseExpr(tokens, options).ToArray()));
                     }
-                    if (tokens.Move() != matching)
+                    if (tokens.Current() != matching)
                         throw tokens.CreateException("unmatched '" + token + "'");
+                    _ = tokens.Move();
                 }
                     break;
                 case "options":

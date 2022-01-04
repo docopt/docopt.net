@@ -39,7 +39,7 @@ namespace DocoptNet
         public IEnumerator<string> GetEnumerator() => _tokens.GetEnumerator();
         IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 
-        public string? Move()    => _tokens.Count > 0 ? _tokens.Dequeue() : null;
+        public string  Move()    => _tokens.Count > 0 ? _tokens.Dequeue() : throw new InvalidOperationException();
         public string? Current() => _tokens.Count > 0 ? _tokens.Peek() : null;
 
         public override string ToString() => $"current={Current()},count={_tokens.Count}";
