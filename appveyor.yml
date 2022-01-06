@@ -45,7 +45,12 @@ build_script:
     }
 test_script:
 - pwsh: dotnet test --no-build
-- pwsh: ./tests/Integration/run.ps1 -NoPack
+- pwsh: |
+    if ($isWindows) {
+      ./tests/Integration/run.ps1 -NoPack # already packed on Windows build
+    } else {
+      ./tests/Integration/run.ps1
+    }
 artifacts:
 - path: 'dist\*.nupkg'
   name: NuGet
