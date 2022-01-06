@@ -24,7 +24,7 @@ try
     }
     Remove-Item -Recurse -Force (Join-Path $props.RestorePackagesPath docopt.net) -ErrorAction SilentlyContinue
     if (!$noPack) {
-        dotnet pack -c Release
+        dotnet pack -c Release ../..
         if ($LASTEXITCODE) { throw }
     }
     Remove-Item bin, obj -Recurse -Force -ErrorAction SilentlyContinue
