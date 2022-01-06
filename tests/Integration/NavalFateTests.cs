@@ -1,13 +1,37 @@
+#nullable enable
+
 namespace DocoptNet.Tests.Integration
 {
     using System;
     using System.Diagnostics;
+    using Internals;
     using NUnit.Framework;
     using NUnit.Framework.Constraints;
-    using static NavalFateTests.FlagArgs;
+    using static NavalFateTestsBase.FlagArgs;
 
-    public class NavalFateTests
+    public interface INavalFateArguments
     {
+        public bool CmdShip { get; }
+        public bool CmdNew { get; }
+        public StringList ArgName { get; }
+        public bool CmdMove { get; }
+        public string? ArgX { get; }
+        public string? ArgY { get; }
+        public string OptSpeed { get; }
+        public bool CmdShoot { get; }
+        public bool CmdMine { get; }
+        public bool CmdSet { get; }
+        public bool CmdRemove { get; }
+        public bool OptMoored { get; }
+        public bool OptDrifting { get; }
+        public bool OptHelp { get; }
+        public bool OptVersion { get; }
+    }
+
+    public abstract class NavalFateTestsBase
+    {
+        protected abstract INavalFateArguments Apply(string commandLine, string? version = null);
+
         [Flags]
         public enum FlagArgs
         {
@@ -32,7 +56,7 @@ namespace DocoptNet.Tests.Integration
         [TestCase("mine set 123 456 --drifting", CmdMine | CmdSet | OptDrifting, new string[0], "123", "456", "10")]
         public void GoodUsage(string commandLine, FlagArgs flags, string[] names, string x, string y, string speed)
         {
-            var args = NavalFateArguments.Apply(commandLine.Split(' '));
+            var args = Apply(commandLine);
 
             IResolveConstraint IsFlag(FlagArgs flag) => flags.HasFlag(flag) ? Is.True : Is.False;
 
@@ -62,7 +86,7 @@ namespace DocoptNet.Tests.Integration
         [TestCase("mine set remove 123 456")]
         public void BadUsage(string commandLine)
         {
-            var ex = Assert.Throws<DocoptInputErrorException>(() => NavalFateArguments.Apply(commandLine.Split(' ')));
+            var ex = Assert.Throws<DocoptInputErrorException>(() => Apply(commandLine));
 
             Debug.Assert(ex is not null);
             Assert.That(ex.Message, Is.EqualTo(NavalFateArguments.Usage));
@@ -72,7 +96,7 @@ namespace DocoptNet.Tests.Integration
         [TestCase("--help")]
         public void Help(string commandLine)
         {
-            var ex = Assert.Throws<DocoptExitException>(() => NavalFateArguments.Apply(commandLine.Split(' ')));
+            var ex = Assert.Throws<DocoptExitException>(() => Apply(commandLine));
 
             Debug.Assert(ex is not null);
             Assert.That(ex.Message, Is.EqualTo(NavalFateArguments.Help));
@@ -83,11 +107,46 @@ namespace DocoptNet.Tests.Integration
         {
             const string version = "1.2.3";
 
-            var args = new[] { "--version" };
-            var ex = Assert.Throws<DocoptExitException>(() => NavalFateArguments.Apply(args, version: version));
+            var ex = Assert.Throws<DocoptExitException>(() => Apply("--version", version: version));
 
             Debug.Assert(ex is not null);
             Assert.That(ex.Message, Is.EqualTo(version));
         }
+    }
+
+    sealed partial class NavalFateArguments : INavalFateArguments { }
+
+    public class NavalFateTests : NavalFateTestsBase
+    {
+        protected override INavalFateArguments Apply(string commandLine, string? version = null) =>
+            NavalFateArguments.Apply(commandLine.Split(' '), version: version);
+    }
+
+    [DocoptArguments]
+    sealed partial class InlineNavalFate : INavalFateArguments
+    {
+        public const string Help = @"Naval Fate.
+
+    Usage:
+      naval_fate.exe ship new <name>...
+      naval_fate.exe ship <name> move <x> <y> [--speed=<kn>]
+      naval_fate.exe ship shoot <x> <y>
+      naval_fate.exe mine (set|remove) <x> <y> [--moored | --drifting]
+      naval_fate.exe (-h | --help)
+      naval_fate.exe --version
+
+    Options:
+      -h --help     Show this screen.
+      --version     Show version.
+      --speed=<kn>  Speed in knots [default: 10].
+      --moored      Moored (anchored) mine.
+      --drifting    Drifting mine.
+";
+    }
+
+    public class InlineNavalFateTests : NavalFateTestsBase
+    {
+        protected override INavalFateArguments Apply(string commandLine, string? version = null) =>
+            NavalFateArguments.Apply(commandLine.Split(' '), version: version);
     }
 }
