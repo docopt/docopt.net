@@ -45,8 +45,8 @@ build_script:
         % { dotnet sourcelink test $_; if ($LASTEXITCODE) { throw; } }
     }
 test_script:
-- pwsh: dotnet test --no-build
-- pwsh: |
+- ps: dotnet test --no-build
+- ps: |
     if ($isWindows) {
       ./tests/Integration/run.ps1 -NoPack # already packed on Windows build
     } else {
