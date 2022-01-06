@@ -23,6 +23,7 @@ namespace DocoptNet.Internals
     [EditorBrowsable(Never)] public partial struct OptionalMatcher { }
     [EditorBrowsable(Never)] public partial class OptionsShortcut { }
     [EditorBrowsable(Never)] public partial class Pattern { }
+    [EditorBrowsable(Never)] public partial class PatternMatcher { }
     [EditorBrowsable(Never)] public partial struct ReadOnlyList<T> { }
     [EditorBrowsable(Never)] public partial class Required { }
     [EditorBrowsable(Never)] public partial struct RequiredMatcher { }

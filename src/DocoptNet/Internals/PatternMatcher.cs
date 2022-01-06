@@ -204,7 +204,7 @@ namespace DocoptNet.Internals
                         : new MatchResult(false, _initLeft, _initCollected);
     }
 
-    public static class PatternMatcher
+    static partial class PatternMatcher
     {
         public static MatchResult Match(this Pattern pattern, Leaves left)
         {
