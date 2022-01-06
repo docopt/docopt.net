@@ -1,6 +1,6 @@
 version: 1.1.{build}
 image:
-  - Visual Studio 2019
+  - Visual Studio 2022
   - Ubuntu1604
 skip_commits:
   files:
@@ -10,6 +10,13 @@ skip_commits:
 configuration: Release
 init:
 - cmd: git config --global core.autocrlf true
+install:
+  - cmd: curl -OsSL https://dot.net/v1/dotnet-install.ps1
+  - ps: if ($isWindows) { ./dotnet-install.ps1 -JsonFile global.json }
+  - sh: curl -OsSL https://dot.net/v1/dotnet-install.sh
+  - sh: chmod +x dotnet-install.sh
+  - sh: ./dotnet-install.sh --jsonfile global.json
+  - sh: export PATH="$HOME/.dotnet:$PATH"
 before_build:
 - dotnet --info
 - dotnet tool restore
