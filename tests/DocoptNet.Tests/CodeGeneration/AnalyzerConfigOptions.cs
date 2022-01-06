@@ -22,7 +22,7 @@ namespace DocoptNet.Tests.CodeGeneration
         public AnalyzerConfigOptions(ImmutableDictionary<string, string> options) =>
             _options = options;
 
-        public override bool TryGetValue(string key, [global::System.Diagnostics.CodeAnalysis.NotNullWhen(true)] out string? value) =>
+        public override bool TryGetValue(string key, [NotNullWhen(true)] out string? value) =>
             _options.TryGetValue(key, out value);
     }
 }
