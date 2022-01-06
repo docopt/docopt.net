@@ -3,24 +3,15 @@
 namespace DocoptNet
 {
     using System;
+    using System.Runtime.CompilerServices;
+    using Microsoft.CodeAnalysis;
 
     [AttributeUsage(AttributeTargets.Class)]
     sealed partial class DocoptArgumentsAttribute : Attribute
     {
         public string? HelpConstName { get; set; }
-    }
-}
 
-#if DOCOPTNET_INTERNAL
-
-namespace DocoptNet
-{
-    using System.Runtime.CompilerServices;
-    using Microsoft.CodeAnalysis;
-
-    partial class DocoptArgumentsAttribute
-    {
-        public static DocoptArgumentsAttribute From(AttributeData data)
+        internal static DocoptArgumentsAttribute From(AttributeData data)
         {
             var attribute = new DocoptArgumentsAttribute();
             foreach (var arg in data.NamedArguments)
@@ -37,5 +28,3 @@ namespace DocoptNet
         }
     }
 }
-
-#endif // DOCOPTNET_INTERNAL

@@ -8,8 +8,12 @@
     <IsPackable>false</IsPackable>
   </PropertyGroup>
 
+  <ItemGroup Condition="'$(TargetFramework)' != 'net5.0'">
+    <Compile Remove="CodeGeneration\*.cs" />
+    <None Remove="CodeGeneration\*.cs" />
+  </ItemGroup>
+
   <ItemGroup>
-    <Compile Remove="CodeGeneration\*.cs" Condition="'$(TargetFramework)' != 'net5.0'" />
     <Compile Remove="CodeGeneration\SourceGeneratorTests\**\*.cs" />
     <None Include="CodeGeneration\SourceGeneratorTests\**\*.cs" />
   </ItemGroup>
@@ -32,7 +36,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\src\DocoptNet.CodeGeneration\DocoptNet.CodeGeneration.csproj" />
     <ProjectReference Include="..\..\src\DocoptNet\DocoptNet.csproj" />
   </ItemGroup>
 

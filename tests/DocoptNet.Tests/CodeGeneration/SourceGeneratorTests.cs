@@ -142,36 +142,6 @@ Naval Fate.
             });
         }
 
-        readonly Dictionary<string, ImmutableArray<byte>> _projectFileHashByPath = new();
-        DirectoryInfo? _solutionDir;
-
-        string SolutionDirPath => _solutionDir?.FullName ?? throw new NullReferenceException();
-
-        [OneTimeSetUp]
-        public void OneTimeSetUp()
-        {
-            _solutionDir = new DirectoryInfo(Path.Combine(TestContext.CurrentContext.TestDirectory,
-                                                          "..", "..", "..", "..", ".."));
-
-            var attributesSourcesDir = new DirectoryInfo(Path.Combine(SolutionDirPath, "src", "DocoptNet.CodeGeneration"));
-            foreach (var file in attributesSourcesDir.EnumerateFiles("*Attribute.cs"))
-            {
-                using var stream = file.OpenRead();
-                _projectFileHashByPath.Add(file.Name, SourceText.From(stream).GetChecksum());
-            }
-
-            var actualSourcesPath = Path.Combine(TestContext.CurrentContext.WorkDirectory, nameof(SourceGeneratorTests));
-
-            try
-            {
-                Directory.Delete(actualSourcesPath, recursive: true);
-            }
-            catch (DirectoryNotFoundException)
-            {
-                // ignore
-            }
-        }
-
         void AssertMatchesSnapshot((string Path, SourceText Text)[] sources,
                                    [CallerMemberName]string? callerName = null)
         {
@@ -227,10 +197,7 @@ Naval Fate.
             // Write the generated source, but skip any sources that are from the
             // the core project and unchanged.
 
-            foreach (var gsr in from e in grr.GeneratedSources
-                                where !_projectFileHashByPath.TryGetValue(Path.GetFileName(e.HintName), out var hash)
-                                   || !e.SourceText.GetChecksum().SequenceEqual(hash)
-                                select e)
+            foreach (var gsr in grr.GeneratedSources)
             {
                 using var sw = File.CreateText(Path.Combine(actualSourcesPath, gsr.HintName));
                 gsr.SourceText.Write(sw);
@@ -241,13 +208,15 @@ Naval Fate.
 
             var expectedSourcesPath = Path.GetFullPath(Path.Combine(TestContext.CurrentContext.TestDirectory, "..", "..", "..", "CodeGeneration", testPath));
 
+            var solutionDirPath = Path.GetFullPath(Path.Combine(TestContext.CurrentContext.TestDirectory, "..", "..", "..", "..", ".."));
+
             IEnumerable<string> EnumerateFiles(string dirPath) =>
                 from fp in Directory.EnumerateFiles(dirPath)
                 where Path.GetFileName(fp) is { } fn
                    && fn[0] != '.' // ignore files starting with a dot (conventionally hidden)
                    && (fn.EndsWith(".cs", StringComparison.OrdinalIgnoreCase)
                        || fn.EndsWith(".json", StringComparison.OrdinalIgnoreCase))
-                select Path.GetRelativePath(SolutionDirPath, fp);
+                select Path.GetRelativePath(solutionDirPath, fp);
 
             var actualFiles = EnumerateFiles(actualSourcesPath);
 
@@ -259,8 +228,8 @@ Naval Fate.
                 expectedFiles.FullJoin(actualFiles,
                                        Path.GetFileName,
                                        ef => (SnapshotComparisonResult)new ExtraFile(ef),
-                                       af => new NewFile(Path.GetRelativePath(SolutionDirPath, Path.Combine(expectedSourcesPath, Path.GetFileName(af))), af),
-                                       (ef, af) => AreFileContentEqual(Path.Combine(SolutionDirPath, ef), Path.Combine(SolutionDirPath, af))
+                                       af => new NewFile(Path.GetRelativePath(solutionDirPath, Path.Combine(expectedSourcesPath, Path.GetFileName(af))), af),
+                                       (ef, af) => AreFileContentEqual(Path.Combine(solutionDirPath, ef), Path.Combine(solutionDirPath, af))
                                                  ? new MatchingFile(ef, af)
                                                  : new MismatchingFile(ef, af))
                              .ToImmutableArray();
@@ -313,7 +282,7 @@ Naval Fate.
 
 For details, run:
 
-cd ""{SolutionDirPath}""
+cd ""{solutionDirPath}""
 dotnet tool restore
 dotnet script {Path.Combine("tests", "DocoptNet.Tests", "sgss.csx")} inspect -i");
         }

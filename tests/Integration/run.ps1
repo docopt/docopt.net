@@ -24,7 +24,7 @@ try
     }
     Remove-Item -Recurse -Force (Join-Path $props.RestorePackagesPath docopt.net) -ErrorAction SilentlyContinue
     if (!$noPack) {
-        dotnet pwsh -NoProfile -File ../../pack.ps1 -Configuration Release
+        dotnet pack -c Release ../..
         if ($LASTEXITCODE) { throw }
     }
     Remove-Item bin, obj -Recurse -Force -ErrorAction SilentlyContinue

@@ -4,6 +4,6 @@
     <CompilerGeneratedFilesOutputPath>$(BaseIntermediateOutputPath)Generated</CompilerGeneratedFilesOutputPath>
   </PropertyGroup>
 
-  <Import Project="..\..\src\DocoptNet.CodeGeneration\DocoptNet.CodeGeneration.targets" />
+  <Import Project="..\..\src\DocoptNet\CodeGeneration\docopt.net.targets" />
 
 </Project>
