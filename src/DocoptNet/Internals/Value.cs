@@ -1,15 +1,20 @@
 #nullable enable
 
-namespace DocoptNet
+namespace DocoptNet.Internals
 {
     using System;
+    using System.ComponentModel;
     using System.Diagnostics;
     using System.Diagnostics.CodeAnalysis;
 
-    public enum ValueKind { None, Boolean, Integer, String, StringList }
+    [EditorBrowsable(EditorBrowsableState.Never)]
+    #if DOCOPTNET_PUBLIC
+    public // ...
+    #endif
+    /* ... */ enum ValueKind { None, Boolean, Integer, String, StringList }
 
     [DebuggerDisplay("{" + nameof(DebugDisplay) + "(),nq}")]
-    public readonly struct Value
+    readonly partial struct Value
     {
         readonly int _int;     // stores: bool, int
         readonly object? _ref; // stores: string, StringList

@@ -5,6 +5,7 @@ namespace DocoptNet.Tests
     using System;
     using System.Collections;
     using System.Linq;
+    using Internals;
     using NUnit.Framework;
 
     [TestFixture]

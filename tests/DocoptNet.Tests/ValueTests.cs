@@ -4,6 +4,7 @@ namespace DocoptNet.Tests
 {
     using System;
     using System.Globalization;
+    using Internals;
     using NUnit.Framework;
 
     [TestFixture]
@@ -126,7 +127,7 @@ namespace DocoptNet.Tests
             [Test]
             public void StringList_cast_throws()
             {
-                Assert.Throws<InvalidCastException>(() => _ = (DocoptNet.StringList)Value);
+                Assert.Throws<InvalidCastException>(() => _ = (Internals.StringList)Value);
             }
         }
 
@@ -242,7 +243,7 @@ namespace DocoptNet.Tests
             [Test]
             public void StringList_cast_throws()
             {
-                Assert.Throws<InvalidCastException>(() => _ = (DocoptNet.StringList)Value);
+                Assert.Throws<InvalidCastException>(() => _ = (Internals.StringList)Value);
             }
         }
 
@@ -358,7 +359,7 @@ namespace DocoptNet.Tests
             [Test]
             public void StringList_cast_throws()
             {
-                Assert.Throws<InvalidCastException>(() => _ = (DocoptNet.StringList)Value);
+                Assert.Throws<InvalidCastException>(() => _ = (Internals.StringList)Value);
             }
         }
 
@@ -475,7 +476,7 @@ namespace DocoptNet.Tests
             [Test]
             public void StringList_cast_throws()
             {
-                Assert.Throws<InvalidCastException>(() => _ = (DocoptNet.StringList)Value);
+                Assert.Throws<InvalidCastException>(() => _ = (Internals.StringList)Value);
             }
         }
 
@@ -592,13 +593,13 @@ namespace DocoptNet.Tests
             [Test]
             public void StringList_cast_throws()
             {
-                Assert.Throws<InvalidCastException>(() => _ = (DocoptNet.StringList)Value);
+                Assert.Throws<InvalidCastException>(() => _ = (Internals.StringList)Value);
             }
         }
 
         public class StringList
         {
-            static readonly DocoptNet.StringList UnderlyingValue = DocoptNet.StringList.TopBottom("foo", "bar", "baz");
+            static readonly Internals.StringList UnderlyingValue = Internals.StringList.TopBottom("foo", "bar", "baz");
 
             static Value Value => UnderlyingValue;
 
@@ -709,7 +710,7 @@ namespace DocoptNet.Tests
             [Test]
             public void StringList_cast_returns_underlying_value()
             {
-                Assert.That((DocoptNet.StringList)Value, Is.SameAs(UnderlyingValue));
+                Assert.That((Internals.StringList)Value, Is.SameAs(UnderlyingValue));
             }
         }
     }

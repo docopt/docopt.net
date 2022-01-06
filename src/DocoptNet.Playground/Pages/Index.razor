@@ -3,6 +3,7 @@
 @using System.Linq;
 @using System.Text;
 @using DocoptNet;
+@using DocoptNet.Internals;
 @inject IJSRuntime JSRuntime
 
 <div id="stats">
@@ -166,19 +167,20 @@ Options:
         try
         {
             var sb = new StringBuilder();
-            var (pattern, _, _) = Docopt.ParsePattern(_input);
+            var (pattern, _, _) = Docopt.Internal.ParsePattern(_input);
             AppendTree(sb, pattern);
             _output = sb.ToString();
 
             var docopt = new Docopt();
             var argv = _commandLine.Split((char[])null, StringSplitOptions.RemoveEmptyEntries);
-            _nodes = docopt.GetNodes(_input,
+            _nodes = Docopt.Internal
+                           .GetNodes(_input,
                                      (name, value) => new Node(name, value.Kind, 0, Value.None),
                                      (name, value) => new Node(name, value.IsStringList ? ValueKind.StringList : ValueKind.String, 0, Value.None),
                                      (name, _, _, _, value) => new Node(name, value.Kind, 0, Value.None))
                            .GroupBy(e => e.Name, e => e, (_, g) => new Node(g.First().Name, g.First().ValueKind, g.Count(), Value.None))
                            .ToList();
-            _args = docopt.Apply(_input, argv.AsEnumerable(), help: false, version: null, optionsFirst: _optionsFirst, exit: false).ToValueDictionary();
+            _args = Docopt.Internal.Apply(docopt, _input, argv.AsEnumerable(), help: false, version: null, optionsFirst: _optionsFirst, exit: false);
             _nodes = _nodes.Select(n => new Node(n.Name, n.ValueKind, n.Count, _args.TryGetValue(n.Name, out var v) ? v : Value.None)).ToList();
             _ms = sw.Elapsed;
         }

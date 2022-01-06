@@ -1,4 +1,4 @@
-namespace DocoptNet
+namespace DocoptNet.Internals
 {
     using System;
     using System.Collections.Generic;
@@ -7,7 +7,7 @@ namespace DocoptNet
     /// <summary>
     /// Leaf/terminal node of a pattern tree.
     /// </summary>
-    public abstract class LeafPattern: Pattern
+    abstract partial class LeafPattern: Pattern
     {
         private readonly string _name;
 

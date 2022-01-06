@@ -1,13 +1,18 @@
 #nullable enable
 
-namespace DocoptNet
+namespace DocoptNet.Internals
 {
     using System;
     using System.Collections.Generic;
+    using System.ComponentModel;
     using System.Linq;
     using Leaves = ReadOnlyList<LeafPattern>;
 
-    public delegate (int Index, LeafPattern Match) LeafPatternMatcher(Leaves left, string name);
+    [EditorBrowsable(EditorBrowsableState.Never)]
+    #if DOCOPTNET_PUBLIC
+    public // ...
+    #endif
+    /* ... */ delegate (int Index, LeafPattern Match) LeafPatternMatcher(Leaves left, string name);
 
     static class LeafMatcherExtensions
     {
@@ -20,7 +25,7 @@ namespace DocoptNet
         }
     }
 
-    public interface IBranchPatternMatcher
+    partial interface IBranchPatternMatcher
     {
         int Index { get; }
         bool Next();
@@ -44,7 +49,7 @@ namespace DocoptNet
         }
     }
 
-    public struct RequiredMatcher : IBranchPatternMatcher
+    partial struct RequiredMatcher : IBranchPatternMatcher
     {
         readonly int _count;
         readonly Leaves _initLeft, _initCollected;
@@ -87,7 +92,7 @@ namespace DocoptNet
         public MatchResult Result => _result ?? new MatchResult(true, Left, Collected);
     }
 
-    public struct EitherMatcher : IBranchPatternMatcher
+    partial struct EitherMatcher : IBranchPatternMatcher
     {
         readonly int _count;
         int _i;
@@ -125,7 +130,7 @@ namespace DocoptNet
         public MatchResult Result => _match;
     }
 
-    public struct OptionalMatcher : IBranchPatternMatcher
+    partial struct OptionalMatcher : IBranchPatternMatcher
     {
         readonly int _count;
         int _i;
@@ -157,7 +162,7 @@ namespace DocoptNet
         public MatchResult Result => new(true, Left, Collected);
     }
 
-    public struct OneOrMoreMatcher : IBranchPatternMatcher
+    partial struct OneOrMoreMatcher : IBranchPatternMatcher
     {
         readonly Leaves _initLeft, _initCollected;
         int _times;

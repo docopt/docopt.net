@@ -1,6 +1,6 @@
-namespace DocoptNet
+namespace DocoptNet.Internals
 {
-    public readonly struct MatchResult
+    readonly partial struct MatchResult
     {
         public readonly bool Matched;
         public readonly ReadOnlyList<LeafPattern> Left;

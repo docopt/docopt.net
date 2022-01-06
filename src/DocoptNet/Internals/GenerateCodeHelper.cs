@@ -1,6 +1,6 @@
-namespace DocoptNet
+namespace DocoptNet.Internals
 {
-    public static class GenerateCodeHelper
+    static partial class GenerateCodeHelper
     {
         public static string ConvertToPascalCase(string s)
         {

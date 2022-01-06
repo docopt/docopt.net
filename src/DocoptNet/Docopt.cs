@@ -2,10 +2,12 @@ namespace DocoptNet
 {
     using System;
     using System.Collections.Generic;
+    using System.ComponentModel;
     using System.Diagnostics;
     using System.Linq;
     using System.Text;
     using System.Text.RegularExpressions;
+    using Internals;
 
     partial class Docopt
     {
@@ -22,9 +24,9 @@ namespace DocoptNet
             return Apply(doc, argv.AsEnumerable(), help, version, optionsFirst, exit)?.ToValueObjectDictionary();
         }
 
-        internal ApplicationResult Apply(string doc, IEnumerable<string> argv,
-                                         bool help = true, object version = null,
-                                         bool optionsFirst = false, bool exit = false) =>
+        ApplicationResult Apply(string doc, IEnumerable<string> argv,
+                                bool help = true, object version = null,
+                                bool optionsFirst = false, bool exit = false) =>
             Apply(doc, Tokens.From(argv), help, version, optionsFirst, exit);
 
         ApplicationResult Apply(string doc, Tokens tokens,
@@ -102,28 +104,6 @@ namespace DocoptNet
                     : throw new DocoptInputErrorException(_exitUsage);
         }
 
-        // TODO consider consolidating duplication with portions of Apply above
-        public static (Pattern Pattern, ICollection<Option> Options, string ExitUsage)
-            ParsePattern(string doc)
-        {
-            var usageSections = ParseSection("usage:", doc);
-            if (usageSections.Length == 0)
-                throw new DocoptLanguageErrorException("\"usage:\" (case-insensitive) not found.");
-            if (usageSections.Length > 1)
-                throw new DocoptLanguageErrorException("More that one \"usage:\" (case-insensitive).");
-            var exitUsage = usageSections[0];
-            var options = ParseDefaults(doc);
-            var pattern = ParsePattern(FormalUsage(exitUsage), options);
-            var patternOptions = pattern.Flat<Option>().Distinct().ToList();
-            // [default] syntax for argument is disabled
-            foreach (OptionsShortcut optionsShortcut in pattern.Flat(typeof (OptionsShortcut)))
-            {
-                var docOptions = ParseDefaults(doc);
-                optionsShortcut.Children = docOptions.Distinct().Except(patternOptions).ToList();
-            }
-            return (pattern.Fix(), options, exitUsage);
-        }
-
         private void SetDefaultPrintExitHandlerIfNecessary(bool exit)
         {
             if (exit && PrintExit == null)
@@ -136,46 +116,81 @@ namespace DocoptNet
                 };
         }
 
-        internal IEnumerable<T> GetNodes<T>(string doc,
-                                            Func<string, Value, T> commandSelector,
-                                            Func<string, Value, T> argumentSelector,
-                                            Func<string, string, string, int, Value, T> optionSelector)
-        {
-            var nodes =
-                from p in GetFlatPatterns(doc)
-                select p switch
-                {
-                    Command command   => (true, Value: commandSelector(command.Name, command.Value)),
-                    Argument argument => (true, Value: argumentSelector(argument.Name, argument.Value)),
-                    Option option     => (true, Value: optionSelector(option.Name, option.LongName, option.ShortName, option.ArgCount, option.Value)),
-                    _ => default,
-                }
-                into p
-                where p is (true, _)
-                select p.Value;
+        #pragma warning disable RS0016 // Add public types and members to the declared API
 
-            return nodes.ToArray();
-        }
-
-        public static IEnumerable<Pattern> GetFlatPatterns(string doc)
+        [EditorBrowsable(EditorBrowsableState.Never)]
+        public static class Internal
         {
-            var usageSections = ParseSection("usage:", doc);
-            if (usageSections.Length == 0)
-                throw new DocoptLanguageErrorException("\"usage:\" (case-insensitive) not found.");
-            if (usageSections.Length > 1)
-                throw new DocoptLanguageErrorException("More that one \"usage:\" (case-insensitive).");
-            var exitUsage = usageSections[0];
-            var options = ParseDefaults(doc);
-            var pattern = ParsePattern(FormalUsage(exitUsage), options);
-            var patternOptions = pattern.Flat<Option>().Distinct().ToList();
-            // [default] syntax for argument is disabled
-            foreach (OptionsShortcut optionsShortcut in pattern.Flat(typeof (OptionsShortcut)))
+            public static IDictionary<string, Value> Apply(Docopt docopt, string doc, IEnumerable<string> argv,
+                                                           bool help = true, object version = null,
+                                                           bool optionsFirst = false, bool exit = false) =>
+                docopt.Apply(doc, Tokens.From(argv), help, version, optionsFirst, exit)?.ToValueDictionary();
+
+            public static IEnumerable<T> GetNodes<T>(string doc,
+                                                     Func<string, Value, T> commandSelector,
+                                                     Func<string, Value, T> argumentSelector,
+                                                     Func<string, string, string, int, Value, T> optionSelector)
             {
-                var docOptions = ParseDefaults(doc);
-                optionsShortcut.Children = docOptions.Distinct().Except(patternOptions).ToList();
+                var nodes =
+                    from p in GetFlatPatterns(doc)
+                    select p switch
+                    {
+                        Command command   => (true, Value: commandSelector(command.Name, command.Value)),
+                        Argument argument => (true, Value: argumentSelector(argument.Name, argument.Value)),
+                        Option option     => (true, Value: optionSelector(option.Name, option.LongName, option.ShortName, option.ArgCount, option.Value)),
+                        _ => default,
+                    }
+                    into p
+                    where p is (true, _)
+                    select p.Value;
+
+                return nodes.ToArray();
             }
-            return pattern.Fix().Flat();
+
+            // TODO consider consolidating duplication with portions of Apply above
+            public static (Pattern Pattern, ICollection<Option> Options, string ExitUsage)
+                ParsePattern(string doc)
+            {
+                var usageSections = ParseSection("usage:", doc);
+                if (usageSections.Length == 0)
+                    throw new DocoptLanguageErrorException("\"usage:\" (case-insensitive) not found.");
+                if (usageSections.Length > 1)
+                    throw new DocoptLanguageErrorException("More that one \"usage:\" (case-insensitive).");
+                var exitUsage = usageSections[0];
+                var options = ParseDefaults(doc);
+                var pattern = Docopt.ParsePattern(FormalUsage(exitUsage), options);
+                var patternOptions = pattern.Flat<Option>().Distinct().ToList();
+                // [default] syntax for argument is disabled
+                foreach (OptionsShortcut optionsShortcut in pattern.Flat(typeof (OptionsShortcut)))
+                {
+                    var docOptions = ParseDefaults(doc);
+                    optionsShortcut.Children = docOptions.Distinct().Except(patternOptions).ToList();
+                }
+                return (pattern.Fix(), options, exitUsage);
+            }
+
+            public static IEnumerable<Pattern> GetFlatPatterns(string doc)
+            {
+                var usageSections = ParseSection("usage:", doc);
+                if (usageSections.Length == 0)
+                    throw new DocoptLanguageErrorException("\"usage:\" (case-insensitive) not found.");
+                if (usageSections.Length > 1)
+                    throw new DocoptLanguageErrorException("More that one \"usage:\" (case-insensitive).");
+                var exitUsage = usageSections[0];
+                var options = ParseDefaults(doc);
+                var pattern = Docopt.ParsePattern(FormalUsage(exitUsage), options);
+                var patternOptions = pattern.Flat<Option>().Distinct().ToList();
+                // [default] syntax for argument is disabled
+                foreach (OptionsShortcut optionsShortcut in pattern.Flat(typeof (OptionsShortcut)))
+                {
+                    var docOptions = ParseDefaults(doc);
+                    optionsShortcut.Children = docOptions.Distinct().Except(patternOptions).ToList();
+                }
+                return pattern.Fix().Flat();
+            }
         }
+
+        #pragma warning restore RS0016 // Add public types and members to the declared API
 
         protected void OnPrintExit(string doc, int errorCode = 0)
         {

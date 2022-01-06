@@ -4,6 +4,7 @@ namespace DocoptNet.Tests
     using System.Collections.Generic;
     using System.IO;
     using System.Linq;
+    using Internals;
 
     static partial class Extensions
     {
@@ -29,8 +30,7 @@ namespace DocoptNet.Tests
                                                        bool optionsFirst = false,
                                                        bool exit = false)
         {
-            return docopt.Apply(doc, argv.List.AsEnumerable(), help, version, optionsFirst, exit)
-                        ?.ToValueDictionary();
+            return Docopt.Internal.Apply(docopt, doc, argv.List.AsEnumerable(), help, version, optionsFirst, exit);
         }
     }
 

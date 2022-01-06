@@ -26,6 +26,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using DocoptNet;
+using DocoptNet.Internals;
 using Newtonsoft.Json;
 
 public partial class Program

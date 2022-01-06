@@ -1,6 +1,6 @@
 #nullable enable
 
-namespace DocoptNet
+namespace DocoptNet.Internals
 {
     using System;
     using System.Collections;
@@ -15,7 +15,7 @@ namespace DocoptNet
     /// </summary>
 
     [DebuggerDisplay("{" + nameof(DebugDisplay) + "(),nq}")]
-    public sealed partial class StringList : IEnumerable<string>, ICollection, IEquatable<StringList>
+    sealed partial class StringList : IEnumerable<string>, ICollection, IEquatable<StringList>
     {
         public static readonly StringList Empty = new(default!, null, 0);
 

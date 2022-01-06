@@ -1,9 +1,9 @@
-namespace DocoptNet
+namespace DocoptNet.Internals
 {
     using System;
     using System.Text.RegularExpressions;
 
-    public class Option : LeafPattern
+    partial class Option : LeafPattern
     {
         public string ShortName { get; private set; }
         public string LongName { get; private set; }

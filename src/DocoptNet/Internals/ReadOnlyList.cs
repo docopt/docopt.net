@@ -1,6 +1,6 @@
 #nullable enable
 
-namespace DocoptNet
+namespace DocoptNet.Internals
 {
     using System.Collections;
     using System.Collections.Generic;
@@ -20,7 +20,7 @@ namespace DocoptNet
     /// read-write <seealso cref="IList{T}"/> is not changed.
     /// </remarks>
 
-    public readonly struct ReadOnlyList<T> : IReadOnlyList<T>
+    readonly partial struct ReadOnlyList<T> : IReadOnlyList<T>
     {
         static readonly T[] EmptyArray = new T[0];
 

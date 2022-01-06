@@ -25,11 +25,12 @@ namespace DocoptNet.CodeGeneration
     using System.Linq;
     using System.Text;
     using System.Text.RegularExpressions;
+    using Internals;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
     using Microsoft.CodeAnalysis.Text;
     using MoreLinq;
-    using Argument = DocoptNet.Argument;
+    using Argument = Internals.Argument;
     using Unit = System.ValueTuple;
     using static OptionModule;
 
@@ -250,12 +251,12 @@ namespace DocoptNet.CodeGeneration
                              string helpText,
                              GenerationOptions generationOptions)
         {
-            var (pattern, options, usage) = Docopt.ParsePattern(helpText);
+            var (pattern, options, usage) = Docopt.Internal.ParsePattern(helpText);
 
-            var leaves = Docopt.GetFlatPatterns(helpText)
-                               .GroupBy(p => p.Name)
-                               .Select(g => (LeafPattern)g.First())
-                               .ToList();
+            var leaves = Docopt.Internal.GetFlatPatterns(helpText)
+                                        .GroupBy(p => p.Name)
+                                        .Select(g => (LeafPattern)g.First())
+                                        .ToList();
 
             const string usageConstName = "Usage";
 
@@ -266,8 +267,9 @@ namespace DocoptNet.CodeGeneration
                 .Using("System.Collections.Generic")
                 .Using("System.Linq")
                 .Using("DocoptNet")
-                .UsingAlias("Leaves")["DocoptNet.ReadOnlyList<DocoptNet.LeafPattern>"]
-                .UsingStatic["DocoptNet.GeneratedSourceModule"]
+                .Using("DocoptNet.Internals")
+                .UsingAlias("Leaves")["DocoptNet.Internals.ReadOnlyList<DocoptNet.Internals.LeafPattern>"]
+                .UsingStatic["DocoptNet.Internals.GeneratedSourceModule"]
 
                 .NewLine
                 [ns is not null ? code.Namespace(ns) : code.Blank()]

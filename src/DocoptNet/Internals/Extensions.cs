@@ -1,6 +1,6 @@
-namespace DocoptNet
+namespace DocoptNet.Internals
 {
-    public static class Extensions
+    static partial class Extensions
     {
         /// <summary>
         /// Split the <paramref name="input"/> at the first occurrence of <paramref name="separator"/>,

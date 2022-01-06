@@ -1,11 +1,11 @@
-namespace DocoptNet
+namespace DocoptNet.Internals
 {
     using System;
     using System.Collections.Generic;
     using System.Diagnostics;
     using System.Linq;
 
-    public abstract class Pattern
+    abstract partial class Pattern
     {
         public abstract string Name { get; }
 

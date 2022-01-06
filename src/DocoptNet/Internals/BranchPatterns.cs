@@ -1,4 +1,4 @@
-namespace DocoptNet
+namespace DocoptNet.Internals
 {
     using System;
     using System.Collections.Generic;
@@ -7,7 +7,7 @@ namespace DocoptNet
     /// <summary>
     ///     Branch/inner node of a pattern tree.
     /// </summary>
-    public abstract class BranchPattern : Pattern
+    abstract partial class BranchPattern : Pattern
     {
         protected BranchPattern(params Pattern[] children)
         {
@@ -41,29 +41,29 @@ namespace DocoptNet
         }
     }
 
-    public class Required : BranchPattern
+    partial class Required : BranchPattern
     {
         public Required(params Pattern[] patterns) : base(patterns) { }
     }
 
-    public class Optional : BranchPattern
+    partial class Optional : BranchPattern
     {
         public Optional(params Pattern[] patterns) : base(patterns) { }
     }
 
     // Marker/placeholder for [options] shortcut.
-    public class OptionsShortcut : Optional
+    partial class OptionsShortcut : Optional
     {
         // TODO consider single pattern
         public OptionsShortcut(params Pattern[] patterns) : base(patterns) { }
     }
 
-    public class Either : BranchPattern
+    partial class Either : BranchPattern
     {
         public Either(params Pattern[] patterns) : base(patterns) { }
     }
 
-    public class OneOrMore : BranchPattern
+    partial class OneOrMore : BranchPattern
     {
         // TODO consider single pattern
         public OneOrMore(params Pattern[] patterns) : base(patterns) { }

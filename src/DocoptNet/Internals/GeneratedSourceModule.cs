@@ -1,12 +1,12 @@
 #nullable enable
 
-namespace DocoptNet
+namespace DocoptNet.Internals
 {
     using System.Collections.Generic;
     using System.Linq;
     using Leaves = ReadOnlyList<LeafPattern>;
 
-    public static class GeneratedSourceModule
+    static partial class GeneratedSourceModule
     {
         public static Leaves ParseArgv(string doc, IEnumerable<string> args, List<Option> options,
                                        bool optionsFirst, bool help, object? version)

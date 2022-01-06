@@ -1,8 +1,8 @@
-namespace DocoptNet
+namespace DocoptNet.Internals
 {
     using System.Globalization;
 
-    public class Argument: LeafPattern
+    partial class Argument: LeafPattern
     {
         public Argument(string name) : base(name, Value.None)
         {
