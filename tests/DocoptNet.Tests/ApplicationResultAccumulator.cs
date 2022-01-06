@@ -3,6 +3,7 @@
 namespace DocoptNet.Tests
 {
     using System.Collections.Generic;
+    using Internals;
     using NUnit.Framework;
 
     [TestFixture]

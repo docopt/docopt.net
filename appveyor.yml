@@ -14,7 +14,7 @@ before_build:
 - dotnet --info
 - dotnet tool restore
 build_script:
-- ps: |
+- pwsh: |
     dotnet build --configuration $env:CONFIGURATION
     if ($isWindows) {
       $versionSuffix = ([datetimeoffset]$env:APPVEYOR_REPO_COMMIT_TIMESTAMP).ToUniversalTime().ToString('yyyyMMdd''t''HHmm')
@@ -34,18 +34,25 @@ build_script:
         }
       }
       Add-Content $releaseNotesFile -Encoding UTF8 "Commit @ $(git rev-parse HEAD)"
-      $packArgs = @()
+      $packArgs = @{}
       if ($versionSuffix) {
-        $packArgs += @('--version-suffix', $versionSuffix)
+        $packArgs['VersionSuffix'] = $versionSuffix
       }
-      dotnet pack --no-build --configuration $env:CONFIGURATION @packArgs "-p:PackageReleaseNotesFile=$releaseNotesFile"
-      if ($LASTEXITCODE) { throw; }
+      ./pack.ps1 -NoBuild -Configuration $env:CONFIGURATION @packArgs -PackageReleaseNotesFile $releaseNotesFile
       Get-ChildItem -File -Filter docopt.net.*.nupkg dist |
         Select-Object -ExpandProperty FullName |
         % { dotnet sourcelink test $_; if ($LASTEXITCODE) { throw; } }
     }
 test_script:
-- ps: dotnet test --no-build
+- pwsh: dotnet test --no-build
+- pwsh: |
+    if ($isWindows) {
+      ./tests/Integration/run.ps1 -NoPack # already packed on Windows build
+    } else {
+      ./tests/Integration/run.ps1
+    }
+after_test:
+  - sh: rm -rf dist/*.nupkg
 artifacts:
 - path: 'dist\*.nupkg'
   name: NuGet

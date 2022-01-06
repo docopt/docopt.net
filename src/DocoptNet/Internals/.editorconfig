@@ -1,0 +1,5 @@
+# http://editorconfig.org/
+
+[*.cs]
+# https://github.com/dotnet/roslyn-analyzers/blob/1595b90e6f3c387d684c04b3a570f87bce4e7580/src/PublicApiAnalyzers/PublicApiAnalyzers.Help.md
+dotnet_analyzer_diagnostic.category-ApiDesign.severity = none

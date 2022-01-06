@@ -4,8 +4,9 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using DocoptNet;
-using Leaves = DocoptNet.ReadOnlyList<DocoptNet.LeafPattern>;
-using static DocoptNet.GeneratedSourceModule;
+using DocoptNet.Internals;
+using Leaves = DocoptNet.Internals.ReadOnlyList<DocoptNet.Internals.LeafPattern>;
+using static DocoptNet.Internals.GeneratedSourceModule;
 
 partial class Arguments4 : IEnumerable<KeyValuePair<string, object?>>
 {

@@ -19,6 +19,7 @@
 
   <ItemGroup>
     <Compile Include="..\DocoptNet\*.cs" Link="DocoptNet\%(Filename)%(Extension)" />
+    <Compile Include="..\DocoptNet\Internals\*.cs" Link="DocoptNet\Internals\%(Filename)%(Extension)" />
   </ItemGroup>
 
 </Project>

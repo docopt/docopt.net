@@ -25,11 +25,12 @@ namespace DocoptNet.CodeGeneration
     using System.Linq;
     using System.Text;
     using System.Text.RegularExpressions;
+    using Internals;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
     using Microsoft.CodeAnalysis.Text;
     using MoreLinq;
-    using Argument = DocoptNet.Argument;
+    using Argument = Internals.Argument;
     using Unit = System.ValueTuple;
     using static OptionModule;
 
@@ -152,7 +153,6 @@ namespace DocoptNet.CodeGeneration
 
             var globalOptions = context.AnalyzerConfigOptions.GlobalOptions;
             globalOptions.TryGetValue("build_property.RootNamespace", out var rootNamespace);
-            globalOptions.TryGetValue("build_property.DocoptNetNamespace", out var embeddingNamespace);
 
             var docoptSources =
                 context.AdditionalFiles
@@ -171,17 +171,12 @@ namespace DocoptNet.CodeGeneration
                                      : default)
                        .ToImmutableArray();
 
-            var added = false;
-
             foreach (var (ns, name, attribute, help, options) in docoptSources.Concat(docoptTypes))
             {
                 try
                 {
-                    if (Generate(ns, embeddingNamespace, name, attribute?.HelpConstName, help, options) is { Length: > 0 } source)
-                    {
-                        added = true;
+                    if (Generate(ns, name, attribute?.HelpConstName, help, options) is { Length: > 0 } source)
                         context.AddSource(name + ".cs", source);
-                    }
                 }
                 catch (DocoptLanguageErrorException e)
                 {
@@ -189,24 +184,14 @@ namespace DocoptNet.CodeGeneration
                     context.ReportDiagnostic(Diagnostic.Create(SyntaxError, Location.None, args));
                 }
             }
-
-            if (added)
-            {
-                foreach (var (fn, source) in GetEmbeddedCSharpSources(embeddingNamespace, fn => !DoesFileNameEndIn(fn, "Attribute")))
-                    context.AddSource(fn, source);
-            }
         }
 
         static readonly SourceText EmptySourceText = SourceText.From(string.Empty);
         static readonly Encoding Utf8BomlessEncoding = new UTF8Encoding(encoderShouldEmitUTF8Identifier: false);
 
-        IEnumerable<(string, SourceText)> GetEmbeddedCSharpSources(Func<string, bool> predicate) =>
-            GetEmbeddedCSharpSources(null, predicate);
-
-        IEnumerable<(string, SourceText)> GetEmbeddedCSharpSources(string? embeddingNamespace,
-                                                                   Func<string, bool> predicate)
+        IEnumerable<(string, SourceText)> GetEmbeddedCSharpSources(Func<string, bool> predicate)
         {
-            const string resourceNamespace = nameof(DocoptNet) + ".CodeGeneration.Generated.";
+            const string resourceNamespace = nameof(DocoptNet) + "." + nameof(CodeGeneration);
             var assembly = GetType().Assembly;
             foreach (var (rn, fn) in from rn in assembly.GetManifestResourceNames()
                                      where rn.StartsWith(resourceNamespace) && rn.EndsWith(".cs")
@@ -215,16 +200,7 @@ namespace DocoptNet.CodeGeneration
                                      select e)
             {
                 using var stream = assembly.GetManifestResourceStream(rn)!;
-                if (embeddingNamespace is { Length: > 0 } and not nameof(DocoptNet))
-                {
-                    using var reader = new StreamReader(stream);
-                    var source = Regex.Replace(reader.ReadToEnd(), @"(?<=\bnamespace\s+)DocoptNet(?:\.Generated)?\b", embeddingNamespace);
-                    yield return (fn, SourceText.From(source, Utf8BomlessEncoding));
-                }
-                else
-                {
-                    yield return (fn, SourceText.From(stream, canBeEmbedded: true));
-                }
+                yield return (fn, SourceText.From(stream, canBeEmbedded: true));
             }
         }
 
@@ -240,19 +216,18 @@ namespace DocoptNet.CodeGeneration
             SkipHelpConst,
         }
 
-        public static SourceText Generate(string? ns, string? embeddingNamespace, string name,
-                                          SourceText text) =>
-            Generate(ns, embeddingNamespace, name, null, text, GenerationOptions.None);
+        public static SourceText Generate(string? ns, string name, SourceText text) =>
+            Generate(ns, name, null, text, GenerationOptions.None);
 
-        static SourceText Generate(string? ns, string? embeddingNamespace, string name, string? helpConstName,
+        static SourceText Generate(string? ns, string name, string? helpConstName,
                                    SourceText text, GenerationOptions generationOptions) =>
-            Generate(ns, embeddingNamespace, name, helpConstName, text, null, generationOptions);
+            Generate(ns, name, helpConstName, text, null, generationOptions);
 
-        public static SourceText Generate(string? ns, string? embeddingNamespace, string name,
+        public static SourceText Generate(string? ns, string name,
                                           SourceText text, Encoding? outputEncoding) =>
-            Generate(ns, embeddingNamespace, name, null, text, outputEncoding, GenerationOptions.None);
+            Generate(ns, name, null, text, outputEncoding, GenerationOptions.None);
 
-        static SourceText Generate(string? ns, string? embeddingNamespace, string name, string? helpConstName,
+        static SourceText Generate(string? ns, string name, string? helpConstName,
                                    SourceText text, Encoding? outputEncoding, GenerationOptions options)
         {
             if (text.Length == 0)
@@ -263,7 +238,6 @@ namespace DocoptNet.CodeGeneration
 
             Generate(code,
                      ns is { Length: 0 } ? null : ns,
-                     embeddingNamespace is { Length: > 0 } ? embeddingNamespace : nameof(DocoptNet),
                      name, helpConstName ?? DefaultHelpConstName, helpText,
                      options);
 
@@ -272,18 +246,17 @@ namespace DocoptNet.CodeGeneration
 
         static void Generate(CSharpSourceBuilder code,
                              string? ns,
-                             string embeddingNamespace,
                              string name,
                              string helpConstName,
                              string helpText,
                              GenerationOptions generationOptions)
         {
-            var (pattern, options, usage) = Docopt.ParsePattern(helpText);
+            var (pattern, options, usage) = Docopt.Internal.ParsePattern(helpText);
 
-            var leaves = Docopt.GetFlatPatterns(helpText)
-                               .GroupBy(p => p.Name)
-                               .Select(g => (LeafPattern)g.First())
-                               .ToList();
+            var leaves = Docopt.Internal.GetFlatPatterns(helpText)
+                                        .GroupBy(p => p.Name)
+                                        .Select(g => (LeafPattern)g.First())
+                                        .ToList();
 
             const string usageConstName = "Usage";
 
@@ -293,9 +266,10 @@ namespace DocoptNet.CodeGeneration
                 .Using("System.Collections")
                 .Using("System.Collections.Generic")
                 .Using("System.Linq")
-                .Using(embeddingNamespace)
-                .UsingAlias("Leaves")[code[embeddingNamespace][".ReadOnlyList<"][embeddingNamespace][".LeafPattern>"]]
-                .UsingStatic[code[embeddingNamespace][".GeneratedSourceModule"]]
+                .Using("DocoptNet")
+                .Using("DocoptNet.Internals")
+                .UsingAlias("Leaves")["DocoptNet.Internals.ReadOnlyList<DocoptNet.Internals.LeafPattern>"]
+                .UsingStatic["DocoptNet.Internals.GeneratedSourceModule"]
 
                 .NewLine
                 [ns is not null ? code.Namespace(ns) : code.Blank()]
