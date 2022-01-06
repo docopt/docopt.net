@@ -51,6 +51,8 @@ test_script:
     } else {
       ./tests/Integration/run.ps1
     }
+after_test:
+  - sh: rm -rf dist/*.nupkg
 artifacts:
 - path: 'dist\*.nupkg'
   name: NuGet
