@@ -27,7 +27,7 @@ try
         dotnet pwsh -NoProfile -File ../../pack.ps1 -Configuration Release
         if ($LASTEXITCODE) { throw }
     }
-    Remove-Item bin, obj -Recurse -Force
+    Remove-Item bin, obj -Recurse -Force -ErrorAction SilentlyContinue
     dotnet test -c $configuration
     if ($LASTEXITCODE) { throw }
 }
