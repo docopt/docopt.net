@@ -1,4 +1,4 @@
 @echo off
 pushd "%~dp0"
-dotnet pwsh -NoProfile -File pack.ps1 %*
+dotnet pwsh -NoProfile -File "%~n0.ps1" %*
 popd && exit /b %ERRORLEVEL%
