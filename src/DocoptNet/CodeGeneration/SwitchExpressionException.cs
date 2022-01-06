@@ -20,6 +20,9 @@
 //
 #endregion
 
+#nullable enable
+#if !NETSTANDARD2_1_OR_GREATER
+
 // Source: https://github.com/dotnet/runtime/blob/804a933e2b699e10391e7f8b4ccbbbfad41bfefc/src/libraries/System.Private.CoreLib/src/System/Runtime/CompilerServices/SwitchExpressionException.cs
 
 using System.Runtime.Serialization;
@@ -76,3 +79,5 @@ namespace System.Runtime.CompilerServices
         }
     }
 }
+
+#endif // NETSTANDARD2_0_OR_GREATER

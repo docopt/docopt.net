@@ -8,8 +8,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\..\src\DocoptNet.CodeGeneration\DocoptNet.CodeGeneration.csproj" ReferenceOutputAssembly="false" OutputItemType="Analyzer" />
-    <ProjectReference Include="..\..\..\src\DocoptNet\DocoptNet.csproj" />
+    <ProjectReference Include="..\..\..\src\DocoptNet\DocoptNet.csproj" OutputItemType="Analyzer" SetTargetFramework="TargetFramework=netstandard2.0" />
   </ItemGroup>
 
 </Project>
