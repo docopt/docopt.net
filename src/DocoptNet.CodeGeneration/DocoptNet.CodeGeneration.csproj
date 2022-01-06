@@ -27,7 +27,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\DocoptNet\DocoptNet.csproj" ReferenceOutputAssembly="true" />
+    <ProjectReference Include="..\DocoptNet\DocoptNet.csproj" />
   </ItemGroup>
 
   <ItemGroup>
