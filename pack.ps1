@@ -9,9 +9,13 @@ param (
 
 $ErrorActionPreference = 'Stop'
 
+Push-Location $PSScriptRoot
+
+$oldProgressPreference = $ProgressPreference
+$ProgressPreference = 'SilentlyContinue'
+
 try
 {
-    Push-Location $PSScriptRoot
     $packArgs = @()
     if ($noBuild) {
         $packArgs += '--no-build'
@@ -54,5 +58,6 @@ try
 finally
 {
     Remove-Item $tempDir -Recurse -Force
+    $ProgressPreference = $oldProgressPreference
     Pop-Location
 }
