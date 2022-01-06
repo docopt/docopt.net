@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.30114.105
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.32014.148
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DocoptNet.Tests.Integration", "DocoptNet.Tests.Integration.csproj", "{108C1D45-7F73-4B7E-BA13-72F9A0B39674}"
 EndProject
@@ -13,9 +13,6 @@ Global
 		Release|Any CPU = Release|Any CPU
 		Release|x64 = Release|x64
 		Release|x86 = Release|x86
-	EndGlobalSection
-	GlobalSection(SolutionProperties) = preSolution
-		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{108C1D45-7F73-4B7E-BA13-72F9A0B39674}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
@@ -30,5 +27,11 @@ Global
 		{108C1D45-7F73-4B7E-BA13-72F9A0B39674}.Release|x64.Build.0 = Release|Any CPU
 		{108C1D45-7F73-4B7E-BA13-72F9A0B39674}.Release|x86.ActiveCfg = Release|Any CPU
 		{108C1D45-7F73-4B7E-BA13-72F9A0B39674}.Release|x86.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {BA8CAA5A-2270-4A77-BC69-0ED53660F9E3}
 	EndGlobalSection
 EndGlobal
