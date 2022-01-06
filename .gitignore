@@ -31,3 +31,4 @@ packages/
 .vs/
 .paket/Paket.Restore.targets
 dist/
+.nuget/

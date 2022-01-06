@@ -44,7 +44,8 @@ build_script:
         % { dotnet sourcelink test $_; if ($LASTEXITCODE) { throw; } }
     }
 test_script:
-- ps: dotnet test --no-build
+- pwsh: dotnet test --no-build
+- pwsh: ./tests/Integration/run.ps1 -NoPack
 artifacts:
 - path: 'dist\*.nupkg'
   name: NuGet
