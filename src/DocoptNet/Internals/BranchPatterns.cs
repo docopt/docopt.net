@@ -41,18 +41,18 @@ namespace DocoptNet.Internals
         }
     }
 
-    partial class Required : BranchPattern
+    class Required : BranchPattern
     {
         public Required(params Pattern[] patterns) : base(patterns) { }
     }
 
-    partial class Optional : BranchPattern
+    class Optional : BranchPattern
     {
         public Optional(params Pattern[] patterns) : base(patterns) { }
     }
 
     // Marker/placeholder for [options] shortcut.
-    partial class OptionsShortcut : Optional
+    class OptionsShortcut : Optional
     {
         // TODO consider single pattern
         public OptionsShortcut(params Pattern[] patterns) : base(patterns) { }
@@ -63,7 +63,7 @@ namespace DocoptNet.Internals
         public Either(params Pattern[] patterns) : base(patterns) { }
     }
 
-    partial class OneOrMore : BranchPattern
+    class OneOrMore : BranchPattern
     {
         // TODO consider single pattern
         public OneOrMore(params Pattern[] patterns) : base(patterns) { }

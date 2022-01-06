@@ -116,10 +116,8 @@ namespace DocoptNet
                 };
         }
 
-        #pragma warning disable RS0016 // Add public types and members to the declared API
-
         [EditorBrowsable(EditorBrowsableState.Never)]
-        public static class Internal
+        internal static class Internal
         {
             public static IDictionary<string, Value> Apply(Docopt docopt, string doc, IEnumerable<string> argv,
                                                            bool help = true, object version = null,
@@ -189,8 +187,6 @@ namespace DocoptNet
                 return pattern.Fix().Flat();
             }
         }
-
-        #pragma warning restore RS0016 // Add public types and members to the declared API
 
         protected void OnPrintExit(string doc, int errorCode = 0)
         {

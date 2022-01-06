@@ -11,8 +11,15 @@
     <PackageReference Include="System.Net.Http.Json" Version="5.0.0" />
   </ItemGroup>
 
+  <!--
   <ItemGroup>
     <ProjectReference Include="..\DocoptNet\DocoptNet.csproj" />
+  </ItemGroup>
+  -->
+
+  <ItemGroup>
+    <Compile Include="..\DocoptNet\*.cs" Link="DocoptNet\%(Filename)%(Extension)" />
+    <Compile Include="..\DocoptNet\Internals\*.cs" Link="DocoptNet\Internals\%(Filename)%(Extension)" />
   </ItemGroup>
 
 </Project>

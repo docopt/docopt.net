@@ -25,7 +25,7 @@ namespace DocoptNet.Internals
         }
     }
 
-    partial interface IBranchPatternMatcher
+    interface IBranchPatternMatcher
     {
         int Index { get; }
         bool Next();
