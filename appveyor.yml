@@ -46,7 +46,7 @@ build_script:
     }
 test_script:
 - ps: dotnet test --no-build
-- ps: |
+- pwsh: |
     if ($isWindows) {
       ./tests/Integration/run.ps1 -NoPack # already packed on Windows build
     } else {
