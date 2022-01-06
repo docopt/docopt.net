@@ -1,4 +1,4 @@
-namespace DocoptNet.Internals
+namespace DocoptNet
 {
     static class Extensions
     {
