@@ -93,10 +93,10 @@ namespace DocoptNet
             }
 
             public bool IsHelpOptionSpecified =>
-                _arguments.Any(o => o is { Name: "-h" or "--help", Value: { IsTrue: true } });
+                _arguments.Any(o => o is { Name: "-h" or "--help", Value.IsTrue: true });
 
             public bool IsVersionOptionSpecified =>
-                _arguments.Any(o => o is { Name: "--version", Value: { IsTrue: true } });
+                _arguments.Any(o => o is { Name: "--version", Value.IsTrue: true });
 
             public ApplicationResult Apply() =>
                 _pattern.Fix().Match(_arguments) is (true, { Count: 0 }, var collected)

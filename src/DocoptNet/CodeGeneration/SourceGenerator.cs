@@ -309,9 +309,9 @@ namespace DocoptNet.CodeGeneration
                                                        code[' ']
                                                           .Assign(code["result."][InferPropertyName(leaf)])[
                                                                code['(']
-                                                                   [leaf switch { Option   { Value: { IsString: true } } => "string",
-                                                                                  Argument { Value: { IsNone: true } } or Option { ArgCount: not 0, Value: { Kind: not ValueKind.StringList } } => "string?",
-                                                                                  { Value: { Kind: var kind } } => MapType(kind) }]
+                                                                   [leaf switch { Option   { Value.IsString: true } => "string",
+                                                                                  Argument { Value.IsNone: true } or Option { ArgCount: not 0, Value.Kind: not ValueKind.StringList } => "string?",
+                                                                                  { Value.Kind: var kind } => MapType(kind) }]
                                                                    [")value"].SkipNextNewLine][' '])]
                              : code.Blank()
                         ]
@@ -341,9 +341,9 @@ namespace DocoptNet.CodeGeneration
                                   .Public[e.Leaf switch
                                    {
                                        Option { Value: { IsString: true } str } => code["string "][e.Name][" { get; private set; } = "].Literal((string)str).SkipNextNewLine.EndStatement,
-                                       Argument { Value: { IsNone: true } } or Option { ArgCount: not 0, Value: { Kind: not ValueKind.StringList } } => code["string? "][e.Name][" { get; private set; }"],
-                                       { Value: { Object: StringList list } } => code["StringList "][e.Name][" { get; private set; } = "][Value(code, list.Reverse())].SkipNextNewLine.EndStatement,
-                                       { Value: { Kind: var kind } } => code[MapType(kind)][' '][e.Name][" { get; private set; }"],
+                                       Argument { Value.IsNone: true } or Option { ArgCount: not 0, Value.Kind: not ValueKind.StringList } => code["string? "][e.Name][" { get; private set; }"],
+                                       { Value.Object: StringList list } => code["StringList "][e.Name][" { get; private set; } = "][Value(code, list.Reverse())].SkipNextNewLine.EndStatement,
+                                       { Value.Kind: var kind } => code[MapType(kind)][' '][e.Name][" { get; private set; }"],
                                    }]
                                   .NewLine)
                 ] // class

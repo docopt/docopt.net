@@ -13,9 +13,9 @@ namespace DocoptNet.Internals
         {
             var tokens = Tokens.From(args);
             var arguments = Docopt.ParseArgv(tokens, options, optionsFirst).AsReadOnly();
-            if (help && arguments.Any(o => o is { Name: "-h" or "--help", Value: { IsTrue: true } }))
+            if (help && arguments.Any(o => o is { Name: "-h" or "--help", Value.IsTrue: true }))
                 throw new DocoptExitException(doc);
-            if (version is not null && arguments.Any(o => o is { Name: "--version", Value: { IsTrue: true } }))
+            if (version is not null && arguments.Any(o => o is { Name: "--version", Value.IsTrue: true }))
                 throw new DocoptExitException(version.ToString());
             return arguments;
         }
