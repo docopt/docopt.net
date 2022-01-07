@@ -40,10 +40,6 @@ static int Run(string[] args)
     var commandArgs = arguments.ArgCommand switch
     {
         "add"       => Apply(args => GitAddArguments.Apply(args)),
-    // FIXME Next two command produce following errors:
-    // - error CS0102: The type 'GitBranchArguments' already contains a definition for 'OptD'
-    // - error CS0102: The type 'GitBranchArguments' already contains a definition for 'OptM'
-    // - error CS0102: The type 'GitCheckoutArguments' already contains a definition for 'OptB'
         "branch"    => Apply(args => GitBranchArguments.Apply(args)),
         "checkout"  => Apply(args => GitCheckoutArguments.Apply(args)),
         "clone"     => Apply(args => GitCloneArguments.Apply(args)),
