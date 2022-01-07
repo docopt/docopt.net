@@ -15,7 +15,7 @@ namespace DocoptNet.Tests
             const string TEST_STRING = "first second\tthird\nfourth \n\t\ffifth";
             var s1 = TEST_STRING.Split();
             Assert.AreEqual(8, s1.Length);
-            var s2 = TEST_STRING.Split(new char[0], StringSplitOptions.RemoveEmptyEntries);
+            var s2 = TEST_STRING.Split(Array.Empty<char>(), StringSplitOptions.RemoveEmptyEntries);
             Assert.AreEqual(5, s2.Length);
         }
     }

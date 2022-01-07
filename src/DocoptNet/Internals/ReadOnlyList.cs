@@ -2,6 +2,7 @@
 
 namespace DocoptNet.Internals
 {
+    using System;
     using System.Collections;
     using System.Collections.Generic;
     using System.Linq;
@@ -22,12 +23,10 @@ namespace DocoptNet.Internals
 
     readonly partial struct ReadOnlyList<T> : IReadOnlyList<T>
     {
-        static readonly T[] EmptyArray = new T[0];
-
         readonly IList<T> _list;
 
         public ReadOnlyList(IList<T> list) => _list = list;
-        IList<T> List => _list ?? EmptyArray;
+        IList<T> List => _list ?? Array.Empty<T>();
         public int Count => List.Count;
         public T this[int index] => List[index];
         public IEnumerator<T> GetEnumerator() => List.GetEnumerator();
