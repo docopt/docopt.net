@@ -6,7 +6,7 @@ using System.Linq;
 using DocoptNet;
 using DocoptNet.Internals;
 using Leaves = DocoptNet.Internals.ReadOnlyList<DocoptNet.Internals.LeafPattern>;
-using static DocoptNet.Internals.GeneratedSourceModule;
+using ParseFlags = DocoptNet.Docopt.ParseFlags;
 
 partial class ProgramArguments : IEnumerable<KeyValuePair<string, object?>>
 {
@@ -37,7 +37,7 @@ Naval Fate.
       naval_fate.exe (-h | --help)
       naval_fate.exe --version";
 
-    public static ProgramArguments Apply(IEnumerable<string> args, bool help = true, object? version = null, bool optionsFirst = false)
+    public static IParseResult<ProgramArguments> Parse(IEnumerable<string> args, ParseFlags flags = ParseFlags.None, string? version = null)
     {
         var options = new List<Option>
         {
@@ -47,36 +47,44 @@ Naval Fate.
             new Option(null, "--moored", 0, false),
             new Option(null, "--drifting", 0, false),
         };
-        var left = ParseArgv(Help, args, options, optionsFirst, help, version);
-        var required = new RequiredMatcher(1, left, new Leaves());
-        Match(ref required);
-        var collected = GetSuccessfulCollection(required, Usage);
-        var result = new ProgramArguments();
+        return GeneratedSourceModule.Parse(Help,Usage, args, options, flags, version, Parse);
 
-        foreach (var leaf in collected)
+        static IParseResult<ProgramArguments> Parse(Leaves left)
         {
-            var value = leaf.Value is { IsStringList: true } ? ((StringList)leaf.Value).Reverse() : leaf.Value;
-            switch (leaf.Name)
+            var required = new RequiredMatcher(1, left, new Leaves());
+            Match(ref required);
+            if (!required.Result || required.Left.Count > 0)
             {
-                case "ship": result.CmdShip = (bool)value; break;
-                case "new": result.CmdNew = (bool)value; break;
-                case "<name>": result.ArgName = (StringList)value; break;
-                case "move": result.CmdMove = (bool)value; break;
-                case "<x>": result.ArgX = (string?)value; break;
-                case "<y>": result.ArgY = (string?)value; break;
-                case "--speed": result.OptSpeed = (string)value; break;
-                case "shoot": result.CmdShoot = (bool)value; break;
-                case "mine": result.CmdMine = (bool)value; break;
-                case "set": result.CmdSet = (bool)value; break;
-                case "remove": result.CmdRemove = (bool)value; break;
-                case "--moored": result.OptMoored = (bool)value; break;
-                case "--drifting": result.OptDrifting = (bool)value; break;
-                case "--help": result.OptHelp = (bool)value; break;
-                case "--version": result.OptVersion = (bool)value; break;
+                return new ParseElseResult<ProgramArguments>(new InputErrorResult(string.Empty, Usage));
             }
-        }
+            var collected = required.Collected;
+            var result = new ProgramArguments();
 
-        return result;
+            foreach (var leaf in collected)
+            {
+                var value = leaf.Value is { IsStringList: true } ? ((StringList)leaf.Value).Reverse() : leaf.Value;
+                switch (leaf.Name)
+                {
+                    case "ship": result.CmdShip = (bool)value; break;
+                    case "new": result.CmdNew = (bool)value; break;
+                    case "<name>": result.ArgName = (StringList)value; break;
+                    case "move": result.CmdMove = (bool)value; break;
+                    case "<x>": result.ArgX = (string?)value; break;
+                    case "<y>": result.ArgY = (string?)value; break;
+                    case "--speed": result.OptSpeed = (string)value; break;
+                    case "shoot": result.CmdShoot = (bool)value; break;
+                    case "mine": result.CmdMine = (bool)value; break;
+                    case "set": result.CmdSet = (bool)value; break;
+                    case "remove": result.CmdRemove = (bool)value; break;
+                    case "--moored": result.OptMoored = (bool)value; break;
+                    case "--drifting": result.OptDrifting = (bool)value; break;
+                    case "--help": result.OptHelp = (bool)value; break;
+                    case "--version": result.OptVersion = (bool)value; break;
+                }
+            }
+
+            return new ArgumentsResult<ProgramArguments>(result);
+        }
 
         static void Match(ref RequiredMatcher required)
         {

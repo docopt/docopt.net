@@ -269,7 +269,7 @@ namespace DocoptNet.CodeGeneration
                 .Using("DocoptNet")
                 .Using("DocoptNet.Internals")
                 .UsingAlias("Leaves")["DocoptNet.Internals.ReadOnlyList<DocoptNet.Internals.LeafPattern>"]
-                .UsingStatic["DocoptNet.Internals.GeneratedSourceModule"]
+                .UsingAlias("ParseFlags")["DocoptNet.Docopt.ParseFlags"]
 
                 .NewLine
                 [ns is not null ? code.Namespace(ns) : code.Blank()]
@@ -283,7 +283,7 @@ namespace DocoptNet.CodeGeneration
                     .Public.Const(usageConstName, usage)
 
                     .NewLine
-                    .Public.Static[name][" Apply(IEnumerable<string> args, bool help = true, object? version = null, bool optionsFirst = false)"]
+                    .Public.Static["IParseResult<"][name]["> Parse(IEnumerable<string> args, ParseFlags flags = ParseFlags.None, string? version = null)"]
                     .NewLine.Block[code
                         .Var("options")[
                             code.New["List<Option>"].NewLine
@@ -293,31 +293,35 @@ namespace DocoptNet.CodeGeneration
                                                          [option.LongName is {} ln ? code.Literal(ln) : code.Null][", "]
                                                          .Literal(option.ArgCount)[", "]
                                                          [Value(code, option.Value)]["),"].NewLine).SkipNextNewLine]]
-                        .Var("left")["ParseArgv(" + helpConstName + ", args, options, optionsFirst, help, version)"]
-                        .Var("required")[code.New["RequiredMatcher(1, left, "].New["Leaves()"][')']]
-                        ["Match(ref required)"].EndStatement
-                        .Var("collected")["GetSuccessfulCollection(required, " + usageConstName + ")"]
-                        .Var("result")[code.New[name]["()"]]
-                        [leaves.Any()
-                             ? code.NewLine
-                                   .ForEach["var leaf in collected"][
-                                        code.Var("value")["leaf.Value is { IsStringList: true } ? ((StringList)leaf.Value).Reverse() : leaf.Value"]
-                                            .Switch["leaf.Name"]
-                                            .Cases(leaves, default(Unit),
-                                                   static (_, leaf, _) => CSharpSourceBuilder.SwitchCaseChoice.Choose(leaf.Name),
-                                                   static (code, _, leaf) =>
-                                                       code[' ']
-                                                          .Assign(code["result."][InferPropertyName(leaf)])[
-                                                               code['(']
-                                                                   [leaf switch { Option   { Value.IsString: true } => "string",
-                                                                                  Argument { Value.IsNone: true } or Option { ArgCount: not 0, Value.Kind: not ValueKind.StringList } => "string?",
-                                                                                  { Value.Kind: var kind } => MapType(kind) }]
-                                                                   [")value"].SkipNextNewLine][' '])]
-                             : code.Blank()
-                        ]
-
+                        .Return[code["GeneratedSourceModule.Parse("][helpConstName][","][usageConstName][", args, options, flags, version, Parse)"]]
                         .NewLine
-                        .Return["result"]
+                        ["static IParseResult<"][name]["> Parse(Leaves left)"].NewLine.Block[code
+                            .Var("required")[code.New["RequiredMatcher(1, left, "].New["Leaves()"][')']]
+                            ["Match(ref required)"].EndStatement
+                            .If["!required.Result || required.Left.Count > 0"][code
+                                .Return[code.New["ParseElseResult<"][name][">("][code.New["InputErrorResult(string.Empty, "][usageConstName][")"]][")"]]]
+                            .Var("collected")["required.Collected"]
+                            .Var("result")[code.New[name]["()"]]
+                            [leaves.Any()
+                                 ? code.NewLine
+                                       .ForEach["var leaf in collected"][
+                                            code.Var("value")["leaf.Value is { IsStringList: true } ? ((StringList)leaf.Value).Reverse() : leaf.Value"]
+                                                .Switch["leaf.Name"]
+                                                .Cases(leaves, default(Unit),
+                                                       static (_, leaf, _) => CSharpSourceBuilder.SwitchCaseChoice.Choose(leaf.Name),
+                                                       static (code, _, leaf) =>
+                                                           code[' ']
+                                                              .Assign(code["result."][InferPropertyName(leaf)])[
+                                                                   code['(']
+                                                                       [leaf switch { Option   { Value.IsString: true } => "string",
+                                                                                      Argument { Value.IsNone: true } or Option { ArgCount: not 0, Value.Kind: not ValueKind.StringList } => "string?",
+                                                                                      { Value.Kind: var kind } => MapType(kind) }]
+                                                                       [")value"].SkipNextNewLine][' '])]
+                                 : code.Blank()
+                            ]
+
+                            .NewLine
+                            .Return[code.New["ArgumentsResult<"][name][">(result)"]]]
 
                         .NewLine
                         ["static void Match(ref RequiredMatcher required)"].NewLine.Block[

@@ -1,0 +1,33 @@
+DocoptNet.ArgumentsResult
+DocoptNet.ArgumentsResult.ArgumentsResult() -> void
+DocoptNet.ArgumentsResult<T>
+DocoptNet.ArgumentsResult<T>.Arguments.get -> T
+DocoptNet.ArgumentsResult<T>.ArgumentsResult(T args) -> void
+DocoptNet.Docopt.Parse(string doc, System.Collections.Generic.ICollection<string> argv, DocoptNet.Docopt.ParseFlags flags, string version) -> DocoptNet.IParseResult<System.Collections.Generic.IDictionary<string, DocoptNet.ValueObject>>
+DocoptNet.Docopt.ParseFlags
+DocoptNet.Docopt.ParseFlags.DisableHelp = 2 -> DocoptNet.Docopt.ParseFlags
+DocoptNet.Docopt.ParseFlags.None = 0 -> DocoptNet.Docopt.ParseFlags
+DocoptNet.Docopt.ParseFlags.OptionsFirst = 1 -> DocoptNet.Docopt.ParseFlags
+DocoptNet.HelpResult
+DocoptNet.HelpResult.Help.get -> string
+DocoptNet.HelpResult.HelpResult(string help) -> void
+DocoptNet.InputErrorResult
+DocoptNet.InputErrorResult.Error.get -> string
+DocoptNet.InputErrorResult.InputErrorResult(string error, string usage) -> void
+DocoptNet.InputErrorResult.Usage.get -> string
+DocoptNet.IParseElseResult
+DocoptNet.IParseElseResult.Else.get -> DocoptNet.ParseElseResult
+DocoptNet.IParseResult
+DocoptNet.IParseResult<T>
+DocoptNet.ParseElseResult
+DocoptNet.ParseElseResult.ParseElseResult() -> void
+DocoptNet.ParseElseResult<T>
+DocoptNet.ParseElseResult<T>.Else.get -> DocoptNet.ParseElseResult
+DocoptNet.ParseElseResult<T>.ParseElseResult(DocoptNet.ParseElseResult else) -> void
+DocoptNet.VersionResult
+DocoptNet.VersionResult.Version.get -> string
+DocoptNet.VersionResult.VersionResult(string version) -> void
+override DocoptNet.ArgumentsResult<T>.ToString() -> string
+override DocoptNet.HelpResult.ToString() -> string
+override DocoptNet.InputErrorResult.ToString() -> string
+override DocoptNet.VersionResult.ToString() -> string

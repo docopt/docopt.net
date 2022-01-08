@@ -33,7 +33,12 @@ public partial class Program
 {
     public Program(IList<string> argv)
     {
-        var arguments = ProgramArguments.Apply(argv, help: true, version: null, optionsFirst: false);
+        var arguments = ProgramArguments.Parse(argv) switch
+        {
+            ArgumentsResult<ProgramArguments> { Arguments: var args } => args,
+            ParseElseResult<ProgramArguments> { Else: InputErrorResult } => throw new DocoptInputErrorException(),
+            _ => throw new(),
+        };
         var dict = new Dictionary<string, object>();
         foreach (var (name, value) in arguments)
         {

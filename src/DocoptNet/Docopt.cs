@@ -4,6 +4,7 @@ namespace DocoptNet
     using System.Collections.Generic;
     using System.ComponentModel;
     using System.Diagnostics;
+    using System.Diagnostics.CodeAnalysis;
     using System.Linq;
     using System.Text;
     using System.Text.RegularExpressions;
@@ -11,6 +12,32 @@ namespace DocoptNet
 
     partial class Docopt
     {
+        [Flags]
+        public enum ParseFlags
+        {
+            None         = 0,
+            OptionsFirst = 1 << 0,
+            DisableHelp  = 1 << 1,
+        }
+
+        public IParseResult<IDictionary<string, ValueObject>>
+            Parse(string doc, ICollection<string> argv, ParseFlags flags, string version)
+        {
+            var optionsFirst = (flags & ParseFlags.OptionsFirst) != ParseFlags.None;
+            var parsedResult = Parse(doc, Tokens.From(argv), optionsFirst);
+
+            var help = (flags & ParseFlags.DisableHelp) == ParseFlags.None;
+            if (help && parsedResult.IsHelpOptionSpecified)
+                return new ParseElseResult<IDictionary<string, ValueObject>>(new HelpResult(doc));
+
+            if (version is { } someVersion && parsedResult.IsVersionOptionSpecified)
+                return new ParseElseResult<IDictionary<string, ValueObject>>(new VersionResult(someVersion));
+
+            return parsedResult.TryApply(out var applicationResult)
+                 ? new ArgumentsResult<IDictionary<string, ValueObject>>(applicationResult.ToValueObjectDictionary())
+                 : new ParseElseResult<IDictionary<string, ValueObject>>(new InputErrorResult(string.Empty, parsedResult.ExitUsage));
+        }
+
         public event EventHandler<PrintExitEventArgs> PrintExit;
 
         public IDictionary<string, ValueObject> Apply(string doc)
@@ -83,14 +110,15 @@ namespace DocoptNet
         {
             readonly Required _pattern;
             readonly ReadOnlyList<LeafPattern> _arguments;
-            readonly string _exitUsage;
 
             public ParsedResult(Required pattern, ReadOnlyList<LeafPattern> arguments, string exitUsage)
             {
                 _pattern = pattern;
                 _arguments = arguments;
-                _exitUsage = exitUsage;
+                ExitUsage = exitUsage;
             }
+
+            public string ExitUsage { get; }
 
             public bool IsHelpOptionSpecified =>
                 _arguments.Any(o => o is { Name: "-h" or "--help", Value.IsTrue: true });
@@ -99,9 +127,23 @@ namespace DocoptNet
                 _arguments.Any(o => o is { Name: "--version", Value.IsTrue: true });
 
             public ApplicationResult Apply() =>
-                _pattern.Fix().Match(_arguments) is (true, { Count: 0 }, var collected)
-                    ? new ApplicationResult(_pattern.Flat().OfType<LeafPattern>().Concat(collected).ToReadOnlyList())
-                    : throw new DocoptInputErrorException(_exitUsage);
+                TryApply(out var result) ? result : throw new DocoptInputErrorException(ExitUsage);
+
+            public bool TryApply([NotNullWhen(true)] out ApplicationResult result)
+            {
+                if (_pattern.Fix().Match(_arguments) is (true, {Count: 0}, var collected))
+                {
+                    result = new ApplicationResult(_pattern.Flat().OfType<LeafPattern>()
+                                                           .Concat(collected)
+                                                           .ToReadOnlyList());
+                    return true;
+                }
+                else
+                {
+                    result = null;
+                    return false;
+                }
+            }
         }
 
         private void SetDefaultPrintExitHandlerIfNecessary(bool exit)

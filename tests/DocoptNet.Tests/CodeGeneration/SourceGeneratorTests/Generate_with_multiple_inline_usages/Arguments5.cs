@@ -6,38 +6,46 @@ using System.Linq;
 using DocoptNet;
 using DocoptNet.Internals;
 using Leaves = DocoptNet.Internals.ReadOnlyList<DocoptNet.Internals.LeafPattern>;
-using static DocoptNet.Internals.GeneratedSourceModule;
+using ParseFlags = DocoptNet.Docopt.ParseFlags;
 
 partial class Arguments5 : IEnumerable<KeyValuePair<string, object?>>
 {
     public const string Usage = "Usage: my_program (run [--fast] | jump [--high])";
 
-    public static Arguments5 Apply(IEnumerable<string> args, bool help = true, object? version = null, bool optionsFirst = false)
+    public static IParseResult<Arguments5> Parse(IEnumerable<string> args, ParseFlags flags = ParseFlags.None, string? version = null)
     {
         var options = new List<Option>
         {
             new Option(null, "--fast", 0, false),
             new Option(null, "--high", 0, false),
         };
-        var left = ParseArgv(Help, args, options, optionsFirst, help, version);
-        var required = new RequiredMatcher(1, left, new Leaves());
-        Match(ref required);
-        var collected = GetSuccessfulCollection(required, Usage);
-        var result = new Arguments5();
+        return GeneratedSourceModule.Parse(Help,Usage, args, options, flags, version, Parse);
 
-        foreach (var leaf in collected)
+        static IParseResult<Arguments5> Parse(Leaves left)
         {
-            var value = leaf.Value is { IsStringList: true } ? ((StringList)leaf.Value).Reverse() : leaf.Value;
-            switch (leaf.Name)
+            var required = new RequiredMatcher(1, left, new Leaves());
+            Match(ref required);
+            if (!required.Result || required.Left.Count > 0)
             {
-                case "run": result.CmdRun = (bool)value; break;
-                case "--fast": result.OptFast = (bool)value; break;
-                case "jump": result.CmdJump = (bool)value; break;
-                case "--high": result.OptHigh = (bool)value; break;
+                return new ParseElseResult<Arguments5>(new InputErrorResult(string.Empty, Usage));
             }
-        }
+            var collected = required.Collected;
+            var result = new Arguments5();
 
-        return result;
+            foreach (var leaf in collected)
+            {
+                var value = leaf.Value is { IsStringList: true } ? ((StringList)leaf.Value).Reverse() : leaf.Value;
+                switch (leaf.Name)
+                {
+                    case "run": result.CmdRun = (bool)value; break;
+                    case "--fast": result.OptFast = (bool)value; break;
+                    case "jump": result.CmdJump = (bool)value; break;
+                    case "--high": result.OptHigh = (bool)value; break;
+                }
+            }
+
+            return new ArgumentsResult<Arguments5>(result);
+        }
 
         static void Match(ref RequiredMatcher required)
         {

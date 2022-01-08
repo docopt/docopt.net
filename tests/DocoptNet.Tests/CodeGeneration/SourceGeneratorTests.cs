@@ -332,7 +332,7 @@ dotnet script {Path.Combine("tests", "DocoptNet.Tests", "sgss.csx")} inspect -i"
         }
 
         sealed record DocoptOptions(bool Help = true,
-                                    object? Version = null,
+                                    string? Version = null,
                                     bool OptionsFirst = false,
                                     bool Exit = false)
         {
@@ -392,18 +392,17 @@ dotnet script {Path.Combine("tests", "DocoptNet.Tests", "sgss.csx")} inspect -i"
 
             public T Run<T>(DocoptOptions options, Func<IDictionary, T> selector, params string[] argv)
             {
-                const string applyMethodName = "Apply";
-                var method = _type.GetMethod(applyMethodName, BindingFlags.Public | BindingFlags.Static);
+                const string parseMethodName = "Parse";
+                var method = _type.GetMethod(parseMethodName, BindingFlags.Public | BindingFlags.Static);
                 if (method == null)
-                    throw new MissingMethodException(_type.Name, applyMethodName);
-                var args = (IEnumerable<KeyValuePair<string, object?>>)
-                    method.Invoke(null, new[]
-                    {
-                        argv,
-                        options.Help, options.Version,
-                        options.OptionsFirst
-                    })!;
-                Assert.That(args, Is.Not.Null);
+                    throw new MissingMethodException(_type.Name, parseMethodName);
+                var flags = (options.OptionsFirst ? Docopt.ParseFlags.OptionsFirst : Docopt.ParseFlags.None)
+                          | (options.Help ? Docopt.ParseFlags.None : Docopt.ParseFlags.DisableHelp);
+                var result = (IParseResult)method.Invoke(null, new object?[] { argv, flags, options.Version })!;
+                Assert.That(result, Is.Not.Null);
+                var args = result is ArgumentsResult
+                         ? (IEnumerable<KeyValuePair<string, object?>>)((dynamic)result).Arguments
+                         : throw new();
                 return selector(args.ToDictionary(e => e.Key, e => e.Value));
             }
         }
