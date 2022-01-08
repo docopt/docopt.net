@@ -123,7 +123,7 @@ namespace DocoptNet.Tests.Integration
     }
 
     [DocoptArguments]
-    sealed partial class InlineNavalFate : INavalFateArguments
+    sealed partial class InlineNavalFateArguments : INavalFateArguments
     {
         public const string Help = @"Naval Fate.
 
