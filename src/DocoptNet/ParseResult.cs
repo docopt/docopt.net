@@ -1,6 +1,3 @@
-// FIXME remove the following disabling of warning RS0016
-#pragma warning disable RS0016 // Add public types and members to the declared API
-
 namespace DocoptNet
 {
     using System;
