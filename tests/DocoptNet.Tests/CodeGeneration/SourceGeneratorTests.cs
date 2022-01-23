@@ -400,9 +400,7 @@ dotnet script {Path.Combine("tests", "DocoptNet.Tests", "sgss.csx")} inspect -i"
                           | (options.Help ? Docopt.ParseFlags.None : Docopt.ParseFlags.DisableHelp);
                 var result = (IParseResult)method.Invoke(null, new object?[] { argv, flags, options.Version })!;
                 Assert.That(result, Is.Not.Null);
-                var args = result is ArgumentsResult
-                         ? (IEnumerable<KeyValuePair<string, object?>>)((dynamic)result).Arguments
-                         : throw new();
+                var args = result.Match(args => (IEnumerable<KeyValuePair<string, object?>>)args, _ => throw new());
                 return selector(args.ToDictionary(e => e.Key, e => e.Value));
             }
         }
