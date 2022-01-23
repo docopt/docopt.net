@@ -20,10 +20,10 @@ namespace DocoptNet
         }
 
         public IParseResult<T, IParseElseResult> Parse(IEnumerable<string> argv, Docopt.ParseFlags flags) =>
-            _handler(argv, flags & Docopt.ParseFlags.DisableHelp, null)
+            _handler(argv, flags & ~Docopt.ParseFlags.DisableHelp, _version)
                 .Match(args => (IParseResult<T, IParseElseResult>)new ArgumentsResult<T, IParseElseResult>(args),
                        @else => @else.Match(help => new ParseElseResult<T, IParseElseResult>(help),
-                                            _ => throw new NotSupportedException(),
+                                            version => new ParseElseResult<T, IParseElseResult>(version),
                                             error => new ParseElseResult<T, IParseElseResult>(error)));
 
         public ParserVersion<T> DisableHelp() => new(_version, _handler);
@@ -41,7 +41,7 @@ namespace DocoptNet
         }
 
         public IParseResult<T, IParseElseResult<VersionResult>> Parse(IEnumerable<string> argv, Docopt.ParseFlags flags) =>
-            _handler(argv, flags & Docopt.ParseFlags.DisableHelp, null)
+            _handler(argv, flags | Docopt.ParseFlags.DisableHelp, _version)
                 .Match(args => (IParseResult<T, IParseElseResult<VersionResult>>)new ArgumentsResult<T, IParseElseResult<VersionResult>>(args),
                        @else => @else.Match(_ => throw new NotSupportedException(),
                                             version => new ParseElseResult<T, IParseElseResult<VersionResult>>(version),
@@ -59,7 +59,7 @@ namespace DocoptNet
         public ParserHelp(ParseHandler<T> handler) => _handler = handler;
 
         public IParseResult<T, IParseElseResult<HelpResult>> Parse(IEnumerable<string> argv, Docopt.ParseFlags flags) =>
-            _handler(argv, flags & Docopt.ParseFlags.DisableHelp, null)
+            _handler(argv, flags & ~Docopt.ParseFlags.DisableHelp, null)
                 .Match(args => (IParseResult<T, IParseElseResult<HelpResult>>)new ArgumentsResult<T, IParseElseResult<HelpResult>>(args),
                        @else => @else.Match(help => new ParseElseResult<T, IParseElseResult<HelpResult>>(help),
                                             _ => throw new NotSupportedException(),
@@ -76,7 +76,7 @@ namespace DocoptNet
         public ParserError(ParseHandler<T> handler) => _handler = handler;
 
         public IParseResult<T, InputErrorResult> Parse(IEnumerable<string> argv, Docopt.ParseFlags flags) =>
-            _handler(argv, flags & Docopt.ParseFlags.DisableHelp, null)
+            _handler(argv, flags | Docopt.ParseFlags.DisableHelp, null)
                 .Match(args => (IParseResult<T, InputErrorResult>)new ArgumentsResult<T, InputErrorResult>(args),
                        @else => @else.Match(_ => throw new NotSupportedException(),
                                             _ => throw new NotSupportedException(),
