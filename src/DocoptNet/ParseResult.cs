@@ -116,11 +116,15 @@ namespace DocoptNet
 
         public T Arguments { get; }
 
-        public TResult Match<TResult>(Func<T, TResult> args, Func<TElse, TResult> @else) => args(Arguments);
-
         public override string ToString() => Arguments.ToString();
 
-        TResult IParseResult.Match<TResult>(Func<object, TResult> args, Func<object, TResult> @else) => args(Arguments);
+        TResult IParseResult<T, TElse>.Match<TResult>(Func<T, TResult> args,
+                                                      Func<TElse, TResult> @else) =>
+            args(Arguments);
+
+        TResult IParseResult.Match<TResult>(Func<object, TResult> args,
+                                            Func<object, TResult> @else) =>
+            args(Arguments);
     }
 
     public sealed partial class ArgumentsResult<T> : ArgumentsResult<T, IParseElseResult>, IParseResult<T>
@@ -134,9 +138,13 @@ namespace DocoptNet
 
         public TElse Else { get; }
 
-        public TResult Match<TResult>(Func<T, TResult> args, Func<TElse, TResult> @else) => @else(Else);
+        public TResult Match<TResult>(Func<T, TResult> args,
+                                      Func<TElse, TResult> @else) =>
+            @else(Else);
 
-        TResult IParseResult.Match<TResult>(Func<object, TResult> args, Func<object, TResult> @else) => @else(Else);
+        TResult IParseResult.Match<TResult>(Func<object, TResult> args,
+                                            Func<object, TResult> @else) =>
+            @else(Else);
     }
 
     public sealed partial class ParseElseResult<T> : IParseResult<T>
@@ -145,9 +153,13 @@ namespace DocoptNet
 
         public ParseElseResult(IParseElseResult @else) => Else = @else;
 
-        public TResult Match<TResult>(Func<T, TResult> args, Func<IParseElseResult, TResult> @else) => @else(Else);
+        TResult IParseResult<T, IParseElseResult>.Match<TResult>(Func<T, TResult> args,
+                                                                 Func<IParseElseResult, TResult> @else) =>
+            @else(Else);
 
-        TResult IParseResult.Match<TResult>(Func<object, TResult> args, Func<object, TResult> @else) => @else(Else);
+        TResult IParseResult.Match<TResult>(Func<object, TResult> args,
+                                            Func<object, TResult> @else) =>
+            @else(Else);
     }
 
     sealed partial class VersionResult : IParseElseResult, IParseElseResult<VersionResult>
@@ -158,12 +170,13 @@ namespace DocoptNet
 
         public override string ToString() => Version;
 
-        public T Match<T>(Func<HelpResult, T> help, Func<VersionResult, T> version,
-                          Func<InputErrorResult, T> error) =>
+        T IParseElseResult.Match<T>(Func<HelpResult, T> help,
+                                    Func<VersionResult, T> version,
+                                    Func<InputErrorResult, T> error) =>
             version(this);
 
-        public TResult Match<TResult>(Func<VersionResult, TResult> @else,
-                                      Func<InputErrorResult, TResult> error) =>
+        TResult IParseElseResult<VersionResult>.Match<TResult>(Func<VersionResult, TResult> @else,
+                                                               Func<InputErrorResult, TResult> error) =>
             @else(this);
     }
 
@@ -175,9 +188,13 @@ namespace DocoptNet
 
         public override string ToString() => Help;
 
-        public T Match<T>(Func<HelpResult, T> help, Func<VersionResult, T> version, Func<InputErrorResult, T> error) => help(this);
+        T IParseElseResult.Match<T>(Func<HelpResult, T> help,
+                                    Func<VersionResult, T> version,
+                                    Func<InputErrorResult, T> error) => help(this);
 
-        public TResult Match<TResult>(Func<HelpResult, TResult> @else, Func<InputErrorResult, TResult> error) => @else(this);
+        TResult IParseElseResult<HelpResult>.Match<TResult>(Func<HelpResult, TResult> @else,
+                                                            Func<InputErrorResult, TResult> error) =>
+            @else(this);
     }
 
     sealed partial class InputErrorResult : IParseElseResult, IParseElseResult<VersionResult>, IParseElseResult<HelpResult>
@@ -189,11 +206,18 @@ namespace DocoptNet
 
         public override string ToString() => Error + Environment.NewLine + Usage;
 
-        public T Match<T>(Func<HelpResult, T> help, Func<VersionResult, T> version, Func<InputErrorResult, T> error) => error(this);
+        T IParseElseResult.Match<T>(Func<HelpResult, T> help,
+                                    Func<VersionResult, T> version,
+                                    Func<InputErrorResult, T> error) =>
+            error(this);
 
-        public TResult Match<TResult>(Func<VersionResult, TResult> @else, Func<InputErrorResult, TResult> error) => error(this);
+        TResult IParseElseResult<VersionResult>.Match<TResult>(Func<VersionResult, TResult> @else,
+                                                               Func<InputErrorResult, TResult> error) =>
+            error(this);
 
-        public TResult Match<TResult>(Func<HelpResult, TResult> @else, Func<InputErrorResult, TResult> error) => error(this);
+        TResult IParseElseResult<HelpResult>.Match<TResult>(Func<HelpResult, TResult> @else,
+                                                            Func<InputErrorResult, TResult> error) =>
+            error(this);
     }
 }
 
