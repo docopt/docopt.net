@@ -6,19 +6,6 @@ namespace DocoptNet
     using System;
     using System.Collections.Generic;
 
-#if false
-#if DOCOPTNET_PUBLIC
-    public // ...
-#endif
-        /* ... */ enum ParseResultKind
-    {
-        InputError,
-        Arguments,
-        Help,
-        Version,
-    }
-#endif
-
     public partial interface IParser<out T, out TElse>
     {
         IParseResult<T, TElse> Parse(IEnumerable<string> argv, Docopt.ParseFlags flags);
