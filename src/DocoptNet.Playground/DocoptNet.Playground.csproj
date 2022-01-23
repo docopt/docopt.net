@@ -18,8 +18,12 @@
   -->
 
   <ItemGroup>
-    <Compile Include="..\DocoptNet\*.cs" Link="DocoptNet\%(Filename)%(Extension)" />
-    <Compile Include="..\DocoptNet\Internals\*.cs" Link="DocoptNet\Internals\%(Filename)%(Extension)" />
+    <Compile Include="..\DocoptNet\*.cs"
+             Exclude="..\DocoptNet\ParseResult.cs"
+             Link="DocoptNet\%(Filename)%(Extension)" />
+    <Compile Include="..\DocoptNet\Internals\*.cs"
+             Exclude="..\DocoptNet\Internals\GeneratedSourceModule.cs"
+             Link="DocoptNet\Internals\%(Filename)%(Extension)" />
   </ItemGroup>
 
 </Project>

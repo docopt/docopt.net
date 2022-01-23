@@ -20,24 +20,6 @@ namespace DocoptNet
             DisableHelp  = 1 << 1,
         }
 
-        public IParseResult<IDictionary<string, ValueObject>>
-            Parse(string doc, ICollection<string> argv, ParseFlags flags, string version)
-        {
-            var optionsFirst = (flags & ParseFlags.OptionsFirst) != ParseFlags.None;
-            var parsedResult = Parse(doc, Tokens.From(argv), optionsFirst);
-
-            var help = (flags & ParseFlags.DisableHelp) == ParseFlags.None;
-            if (help && parsedResult.IsHelpOptionSpecified)
-                return new ParseElseResult<IDictionary<string, ValueObject>>(new HelpResult(doc));
-
-            if (version is { } someVersion && parsedResult.IsVersionOptionSpecified)
-                return new ParseElseResult<IDictionary<string, ValueObject>>(new VersionResult(someVersion));
-
-            return parsedResult.TryApply(out var applicationResult)
-                 ? new ArgumentsResult<IDictionary<string, ValueObject>>(applicationResult.ToValueObjectDictionary())
-                 : new ParseElseResult<IDictionary<string, ValueObject>>(new InputErrorResult(string.Empty, parsedResult.ExitUsage));
-        }
-
         public event EventHandler<PrintExitEventArgs> PrintExit;
 
         public IDictionary<string, ValueObject> Apply(string doc)
