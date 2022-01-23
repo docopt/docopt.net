@@ -91,13 +91,11 @@ namespace DocoptNet
 
     public partial interface IParseResult
     {
-        public void Match(Action<object> args, Action<object> @else);
         public TResult Match<TResult>(Func<object, TResult> args, Func<object, TResult> @else);
     }
 
     public partial interface IParseResult<out T, out TElse> : IParseResult
     {
-        public void Match(Action<T> args, Action<TElse> @else);
         public TResult Match<TResult>(Func<T, TResult> args, Func<TElse, TResult> @else);
     }
 
@@ -107,13 +105,11 @@ namespace DocoptNet
 
     partial interface IParseElseResult
     {
-        void Match(Action<HelpResult> help, Action<VersionResult> version, Action<InputErrorResult> error);
         T Match<T>(Func<HelpResult, T> help, Func<VersionResult, T> version, Func<InputErrorResult, T> error);
     }
 
     public partial interface IParseElseResult<out T>
     {
-        void Match(Action<T> @else, Action<InputErrorResult> error);
         TResult Match<TResult>(Func<T, TResult> @else, Func<InputErrorResult, TResult> error);
     }
 
@@ -123,12 +119,10 @@ namespace DocoptNet
 
         public T Arguments { get; }
 
-        public void Match(Action<T> args, Action<TElse> @else) => args(Arguments);
         public TResult Match<TResult>(Func<T, TResult> args, Func<TElse, TResult> @else) => args(Arguments);
 
         public override string ToString() => Arguments.ToString();
 
-        void IParseResult.Match(Action<object> args, Action<object> @else) => args(Arguments);
         TResult IParseResult.Match<TResult>(Func<object, TResult> args, Func<object, TResult> @else) => args(Arguments);
     }
 
@@ -143,10 +137,8 @@ namespace DocoptNet
 
         public TElse Else { get; }
 
-        public void Match(Action<T> args, Action<TElse> @else) => @else(Else);
         public TResult Match<TResult>(Func<T, TResult> args, Func<TElse, TResult> @else) => @else(Else);
 
-        void IParseResult.Match(Action<object> args, Action<object> @else) => @else(Else);
         TResult IParseResult.Match<TResult>(Func<object, TResult> args, Func<object, TResult> @else) => @else(Else);
     }
 
@@ -156,10 +148,8 @@ namespace DocoptNet
 
         public ParseElseResult(IParseElseResult @else) => Else = @else;
 
-        public void Match(Action<T> args, Action<IParseElseResult> @else) => @else(Else);
         public TResult Match<TResult>(Func<T, TResult> args, Func<IParseElseResult, TResult> @else) => @else(Else);
 
-        void IParseResult.Match(Action<object> args, Action<object> @else) => @else(Else);
         TResult IParseResult.Match<TResult>(Func<object, TResult> args, Func<object, TResult> @else) => @else(Else);
     }
 
@@ -171,17 +161,9 @@ namespace DocoptNet
 
         public override string ToString() => Version;
 
-        public void Match(Action<HelpResult> help, Action<VersionResult> version,
-                          Action<InputErrorResult> error) =>
-            version(this);
-
         public T Match<T>(Func<HelpResult, T> help, Func<VersionResult, T> version,
                           Func<InputErrorResult, T> error) =>
             version(this);
-
-        public void Match(Action<VersionResult> @else,
-                          Action<InputErrorResult> error) =>
-            @else(this);
 
         public TResult Match<TResult>(Func<VersionResult, TResult> @else,
                                       Func<InputErrorResult, TResult> error) =>
@@ -196,10 +178,8 @@ namespace DocoptNet
 
         public override string ToString() => Help;
 
-        public void Match(Action<HelpResult> help, Action<VersionResult> version, Action<InputErrorResult> error) => help(this);
         public T Match<T>(Func<HelpResult, T> help, Func<VersionResult, T> version, Func<InputErrorResult, T> error) => help(this);
 
-        public void Match(Action<HelpResult> @else, Action<InputErrorResult> error) => @else(this);
         public TResult Match<TResult>(Func<HelpResult, TResult> @else, Func<InputErrorResult, TResult> error) => @else(this);
     }
 
@@ -212,13 +192,10 @@ namespace DocoptNet
 
         public override string ToString() => Error + Environment.NewLine + Usage;
 
-        public void Match(Action<HelpResult> help, Action<VersionResult> version, Action<InputErrorResult> error) => error(this);
         public T Match<T>(Func<HelpResult, T> help, Func<VersionResult, T> version, Func<InputErrorResult, T> error) => error(this);
 
-        public void Match(Action<VersionResult> @else, Action<InputErrorResult> error) => error(this);
         public TResult Match<TResult>(Func<VersionResult, TResult> @else, Func<InputErrorResult, TResult> error) => error(this);
 
-        public void Match(Action<HelpResult> @else, Action<InputErrorResult> error) => error(this);
         public TResult Match<TResult>(Func<HelpResult, TResult> @else, Func<InputErrorResult, TResult> error) => error(this);
     }
 }
