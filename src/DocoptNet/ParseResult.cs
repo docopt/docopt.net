@@ -13,7 +13,7 @@ namespace DocoptNet
 
     public sealed class Parser<T> : IParser<T, IParseElseResult>
     {
-        private readonly string _version;
+        readonly string _version;
         readonly ParseHandler<T> _handler;
 
         public Parser(string version, ParseHandler<T> handler)
@@ -34,7 +34,7 @@ namespace DocoptNet
 
     public sealed class ParserVersion<T> : IParser<T, IParseElseResult<VersionResult>>
     {
-        private readonly string _version;
+        readonly string _version;
         readonly ParseHandler<T> _handler;
 
         public ParserVersion(string version, ParseHandler<T> handler)
@@ -229,16 +229,16 @@ namespace DocoptNet
 
     partial class Docopt
     {
-        public ParserHelp<IDictionary<string, ValueObject>> Parse(string doc, Docopt.ParseFlags flags) =>
+        public ParserHelp<IDictionary<string, ValueObject>> Parse(string doc, ParseFlags flags) =>
             new((argv, flags, version) => Parse(doc, argv, flags, version));
 
         public IParseResult<IDictionary<string, ValueObject>, IParseElseResult>
-            Parse(string doc, IEnumerable<string> argv, Docopt.ParseFlags flags, string version)
+            Parse(string doc, IEnumerable<string> argv, ParseFlags flags, string version)
         {
-            var optionsFirst = (flags & Docopt.ParseFlags.OptionsFirst) != Docopt.ParseFlags.None;
+            var optionsFirst = (flags & ParseFlags.OptionsFirst) != ParseFlags.None;
             var parsedResult = Parse(doc, Tokens.From(argv), optionsFirst);
 
-            var help = (flags & Docopt.ParseFlags.DisableHelp) == Docopt.ParseFlags.None;
+            var help = (flags & ParseFlags.DisableHelp) == ParseFlags.None;
             if (help && parsedResult.IsHelpOptionSpecified)
                 return new ParseElseResult<IDictionary<string, ValueObject>, IParseElseResult>(new HelpResult(doc));
 
@@ -251,12 +251,12 @@ namespace DocoptNet
         }
 
         public IParseResult<IDictionary<string, ValueObject>, IParseElseResult<HelpResult>>
-            Parse(string doc, ICollection<string> argv, Docopt.ParseFlags flags)
+            Parse(string doc, ICollection<string> argv, ParseFlags flags)
         {
-            var optionsFirst = (flags & Docopt.ParseFlags.OptionsFirst) != Docopt.ParseFlags.None;
+            var optionsFirst = (flags & ParseFlags.OptionsFirst) != ParseFlags.None;
             var parsedResult = Parse(doc, Tokens.From(argv), optionsFirst);
 
-            var help = (flags & Docopt.ParseFlags.DisableHelp) == Docopt.ParseFlags.None;
+            var help = (flags & ParseFlags.DisableHelp) == ParseFlags.None;
             if (help && parsedResult.IsHelpOptionSpecified)
                 return new ParseElseResult<IDictionary<string, ValueObject>, IParseElseResult<HelpResult>>(new HelpResult(doc));
 
