@@ -80,7 +80,7 @@ namespace DocoptNet
                 .Match(args => (IParseResult<T, InputErrorResult>)new ArgumentsResult<T, InputErrorResult>(args),
                        @else => @else.Match(_ => throw new NotSupportedException(),
                                             _ => throw new NotSupportedException(),
-                                            error => new ParseElseResult<T, InputErrorResult>(error)));
+                                            error => new ParseErrorResult<T>(error)));
 
         public ParserVersion<T> WithVersion(string value) => new(value, _handler);
         public ParserHelp<T> EnableHelp() => new(_handler);
@@ -102,6 +102,7 @@ namespace DocoptNet
 
     partial interface IParseElseResult
     {
+        IParseElseResult Else { get; }
         T Match<T>(Func<HelpResult, T> help, Func<VersionResult, T> version, Func<InputErrorResult, T> error);
     }
 
@@ -110,7 +111,12 @@ namespace DocoptNet
         TResult Match<TResult>(Func<T, TResult> @else, Func<InputErrorResult, TResult> error);
     }
 
-    public partial class ArgumentsResult<T, TElse> : IParseResult<T, TElse>
+    public interface IArgumentsResult<out T>
+    {
+        public T Arguments { get; }
+    }
+
+    public partial class ArgumentsResult<T, TElse> : IArgumentsResult<T>, IParseResult<T, TElse>
     {
         public ArgumentsResult(T args) => Arguments = args;
 
@@ -132,7 +138,7 @@ namespace DocoptNet
         public ArgumentsResult(T args) : base(args) { }
     }
 
-    public sealed partial class ParseElseResult<T, TElse> : IParseResult<T, TElse>
+    public sealed partial class ParseElseResult<T, TElse> : IParseResult<T, TElse>, IParseElseResult<TElse>
     {
         public ParseElseResult(TElse @else) => Else = @else;
 
@@ -145,9 +151,31 @@ namespace DocoptNet
         TResult IParseResult.Match<TResult>(Func<object, TResult> args,
                                             Func<object, TResult> @else) =>
             @else(Else);
+
+        TResult IParseElseResult<TElse>.Match<TResult>(Func<TElse, TResult> @else,
+                                                       Func<InputErrorResult, TResult> error) =>
+            @else(Else);
     }
 
-    public sealed partial class ParseElseResult<T> : IParseResult<T>
+    public sealed partial class ParseErrorResult<T> : IParseResult<T, InputErrorResult>, IInputErrorResult
+    {
+        readonly InputErrorResult _error;
+
+        public ParseErrorResult(InputErrorResult error) => _error = error;
+
+        public string Error => _error.Error;
+        public string Usage => _error.Usage;
+
+        public TResult Match<TResult>(Func<T, TResult> args,
+                                      Func<InputErrorResult, TResult> @else) =>
+            @else(_error);
+
+        TResult IParseResult.Match<TResult>(Func<object, TResult> args,
+                                            Func<object, TResult> @else) =>
+            @else(_error);
+    }
+
+    public sealed partial class ParseElseResult<T> : IParseResult<T>, IParseElseResult
     {
         public IParseElseResult Else { get; }
 
@@ -160,6 +188,11 @@ namespace DocoptNet
         TResult IParseResult.Match<TResult>(Func<object, TResult> args,
                                             Func<object, TResult> @else) =>
             @else(Else);
+
+        public TResult Match<TResult>(Func<HelpResult, TResult> help,
+                                      Func<VersionResult, TResult> version,
+                                      Func<InputErrorResult, TResult> error) =>
+            Else.Match(help, version, error);
     }
 
     sealed partial class VersionResult : IParseElseResult, IParseElseResult<VersionResult>
@@ -169,6 +202,8 @@ namespace DocoptNet
         public string Version { get; }
 
         public override string ToString() => Version;
+
+        IParseElseResult IParseElseResult.Else => this;
 
         T IParseElseResult.Match<T>(Func<HelpResult, T> help,
                                     Func<VersionResult, T> version,
@@ -188,6 +223,8 @@ namespace DocoptNet
 
         public override string ToString() => Help;
 
+        IParseElseResult IParseElseResult.Else => this;
+
         T IParseElseResult.Match<T>(Func<HelpResult, T> help,
                                     Func<VersionResult, T> version,
                                     Func<InputErrorResult, T> error) => help(this);
@@ -197,7 +234,13 @@ namespace DocoptNet
             @else(this);
     }
 
-    sealed partial class InputErrorResult : IParseElseResult, IParseElseResult<VersionResult>, IParseElseResult<HelpResult>
+    public partial interface IInputErrorResult
+    {
+        public string Error { get; }
+        public string Usage { get; }
+    }
+
+    sealed partial class InputErrorResult : IParseElseResult, IParseElseResult<VersionResult>, IParseElseResult<HelpResult>, IInputErrorResult
     {
         public InputErrorResult(string error, string usage) => (Error, Usage) = (error, usage);
 
@@ -205,6 +248,8 @@ namespace DocoptNet
         public string Usage { get; }
 
         public override string ToString() => Error + Environment.NewLine + Usage;
+
+        IParseElseResult IParseElseResult.Else => this;
 
         T IParseElseResult.Match<T>(Func<HelpResult, T> help,
                                     Func<VersionResult, T> version,
@@ -227,10 +272,10 @@ namespace DocoptNet
 
     partial class Docopt
     {
-        public ParserHelp<IDictionary<string, ValueObject>> Parse(string doc, ParseFlags flags) =>
+        public static ParserHelp<IDictionary<string, ValueObject>> Parse(string doc, ParseFlags flags) =>
             new((argv, flags, version) => Parse(doc, argv, flags, version));
 
-        public IParseResult<IDictionary<string, ValueObject>, IParseElseResult>
+        public static IParseResult<IDictionary<string, ValueObject>, IParseElseResult>
             Parse(string doc, IEnumerable<string> argv, ParseFlags flags, string version)
         {
             var optionsFirst = (flags & ParseFlags.OptionsFirst) != ParseFlags.None;
@@ -248,7 +293,7 @@ namespace DocoptNet
                 : new ParseElseResult<IDictionary<string, ValueObject>, IParseElseResult>(new InputErrorResult(string.Empty, parsedResult.ExitUsage));
         }
 
-        public IParseResult<IDictionary<string, ValueObject>, IParseElseResult<HelpResult>>
+        public static IParseResult<IDictionary<string, ValueObject>, IParseElseResult<HelpResult>>
             Parse(string doc, ICollection<string> argv, ParseFlags flags)
         {
             var optionsFirst = (flags & ParseFlags.OptionsFirst) != ParseFlags.None;
