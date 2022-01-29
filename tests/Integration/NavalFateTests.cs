@@ -44,7 +44,7 @@ namespace DocoptNet.Tests.Integration
 
     public abstract class NavalFateTestsBase<T> where T : INavalFateArguments
     {
-        protected abstract IParseResult<T> Parse(string commandLine, string? version = null);
+        protected abstract IParser<T>.IResult Parse(string commandLine, string? version = null);
 
         [TestCase("ship new foo bar baz", CmdShip | CmdNew, new[] { "foo", "bar", "baz" }, null, null, "10")]
         [TestCase("ship foo move 123 456", CmdShip | CmdMove, new[] { "foo" }, "123", "456", "10")]
@@ -86,7 +86,7 @@ namespace DocoptNet.Tests.Integration
         [TestCase("mine set remove 123 456")]
         public void BadUsage(string commandLine)
         {
-            var result = (InputErrorResult)((ParseElseResult<T>)Parse(commandLine)).Else;
+            var result = (IInputErrorResult)Parse(commandLine);
 
             Assert.That(result.Usage, Is.EqualTo(NavalFateArguments.Usage));
         }
@@ -95,7 +95,7 @@ namespace DocoptNet.Tests.Integration
         [TestCase("--help")]
         public void Help(string commandLine)
         {
-            var result = (HelpResult)((ParseElseResult<T>)Parse(commandLine)).Else;
+            var result = (IHelpResult)Parse(commandLine);
 
             Assert.That(result.Help, Is.EqualTo(NavalFateArguments.Help));
         }
@@ -105,7 +105,7 @@ namespace DocoptNet.Tests.Integration
         {
             const string version = "1.2.3";
 
-            var result = (VersionResult)((ParseElseResult<T>)Parse("--version", version)).Else;
+            var result = (IVersionResult)Parse("--version", version);
 
             Assert.That(result.Version, Is.EqualTo(version));
         }
@@ -115,7 +115,7 @@ namespace DocoptNet.Tests.Integration
 
     public class NavalFateTests : NavalFateTestsBase<NavalFateArguments>
     {
-        protected override IParseResult<NavalFateArguments> Parse(string commandLine, string? version = null) =>
+        protected override IParser<NavalFateArguments>.IResult Parse(string commandLine, string? version = null) =>
             NavalFateArguments.Parse(commandLine.Split(' '), version: version);
     }
 
@@ -143,7 +143,7 @@ namespace DocoptNet.Tests.Integration
 
     public class InlineNavalFateTests : NavalFateTestsBase<InlineNavalFateArguments>
     {
-        protected override IParseResult<InlineNavalFateArguments> Parse(string commandLine, string? version = null) =>
+        protected override IParser<InlineNavalFateArguments>.IResult Parse(string commandLine, string? version = null) =>
             InlineNavalFateArguments.Parse(commandLine.Split(' '), version: version);
     }
 }
