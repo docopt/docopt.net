@@ -265,7 +265,6 @@ namespace DocoptNet
             error(this);
     }
 
-
     public delegate IParser<T>.IResult ParseHandler<out T>(string doc, IEnumerable<string> args, Docopt.ParseFlags flags, string version);
 
     public sealed partial class Parser<T> :
