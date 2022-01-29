@@ -315,37 +315,9 @@ namespace DocoptNet
     using System;
     using System.Collections.Generic;
 
-    public partial interface IParseResult2<out T>
-    {
-        TResult Match<TResult>(Func<T, TResult> args,
-                               Func<IHelpResult, TResult> help,
-                               Func<IVersionResult, TResult> version,
-                               Func<IInputErrorResult, TResult> error);
-    }
-
-    public partial interface IParseResult3<out T>
-    {
-        TResult Match<TResult>(Func<T, TResult> args,
-                               Func<IHelpResult, TResult> help,
-                               Func<IInputErrorResult, TResult> error);
-    }
-
-    public partial interface IParseResult4<out T>
-    {
-        TResult Match<TResult>(Func<T, TResult> args,
-                               Func<IVersionResult, TResult> version,
-                               Func<IInputErrorResult, TResult> error);
-    }
-
-    public partial interface IParseResult5<out T>
-    {
-        TResult Match<TResult>(Func<T, TResult> args,
-                               Func<IInputErrorResult, TResult> error);
-    }
-
     public partial class ArgumentsResult2<T> :
         IArgumentsResult<T>,
-        IParseResult2<T>, IParseResult3<T>, IParseResult4<T>, IParseResult5<T>
+        IParser2<T>.IResult, IParserWithHelpSupport<T>.IResult, IParserWithVersionSupport<T>.IResult, IBasicParser<T>.IResult
     {
         public ArgumentsResult2(T args) => Arguments = args;
 
@@ -353,24 +325,30 @@ namespace DocoptNet
 
         public override string ToString() => Arguments.ToString();
 
-        TResult IParseResult2<T>.Match<TResult>(Func<T, TResult> args,
+        TResult IParser2<T>.IResult.Match<TResult>(Func<T, TResult> args,
+                                                   Func<IHelpResult, TResult> help,
+                                                   Func<IVersionResult, TResult> version,
+                                                   Func<IInputErrorResult, TResult> error) =>
+            args(Arguments);
+
+        TResult IParser2<T>.IResult.Match<TResult>(Func<T, IParser2<T>.IResult, TResult> args,
+                                                   Func<IHelpResult, IParser2<T>.IResult, TResult> help,
+                                                   Func<IVersionResult, IParser2<T>.IResult, TResult> version,
+                                                   Func<IInputErrorResult, IParser2<T>.IResult, TResult> error) =>
+            args(Arguments, this);
+
+        TResult IParserWithHelpSupport<T>.IResult.Match<TResult>(Func<T, TResult> args,
                                                 Func<IHelpResult, TResult> help,
+                                                Func<IInputErrorResult, TResult> error) =>
+            args(Arguments);
+
+        TResult IParserWithVersionSupport<T>.IResult.Match<TResult>(Func<T, TResult> args,
                                                 Func<IVersionResult, TResult> version,
                                                 Func<IInputErrorResult, TResult> error) =>
             args(Arguments);
 
-        TResult IParseResult3<T>.Match<TResult>(Func<T, TResult> args,
-                                                Func<IHelpResult, TResult> help,
-                                                Func<IInputErrorResult, TResult> error) =>
-            args(Arguments);
-
-        TResult IParseResult4<T>.Match<TResult>(Func<T, TResult> args,
-                                                Func<IVersionResult, TResult> version,
-                                                Func<IInputErrorResult, TResult> error) =>
-            args(Arguments);
-
-        TResult IParseResult5<T>.Match<TResult>(Func<T, TResult> args,
-                                                Func<IInputErrorResult, TResult> error) =>
+        TResult IBasicParser<T>.IResult.Match<TResult>(Func<T, TResult> args,
+                                                       Func<IInputErrorResult, TResult> error) =>
             args(Arguments);
     }
 
@@ -381,21 +359,27 @@ namespace DocoptNet
 
     public sealed partial class ParseHelpResult<T> :
         IHelpResult,
-        IParseResult2<T>, IParseResult3<T>
+        IParser2<T>.IResult, IParserWithHelpSupport<T>.IResult
     {
         public ParseHelpResult(string help) => Help = help;
 
         public string Help { get; }
 
-        TResult IParseResult2<T>.Match<TResult>(Func<T, TResult> args,
+        TResult IParser2<T>.IResult.Match<TResult>(Func<T, TResult> args,
                                                 Func<IHelpResult, TResult> help,
                                                 Func<IVersionResult, TResult> version,
                                                 Func<IInputErrorResult, TResult> error) =>
             help(this);
 
-        TResult IParseResult3<T>.Match<TResult>(Func<T, TResult> args,
-                                                Func<IHelpResult, TResult> help,
-                                                Func<IInputErrorResult, TResult> error) =>
+        TResult IParser2<T>.IResult.Match<TResult>(Func<T, IParser2<T>.IResult, TResult> args,
+                                                   Func<IHelpResult, IParser2<T>.IResult, TResult> help,
+                                                   Func<IVersionResult, IParser2<T>.IResult, TResult> version,
+                                                   Func<IInputErrorResult, IParser2<T>.IResult, TResult> error) =>
+            help(this, this);
+
+        TResult IParserWithHelpSupport<T>.IResult.Match<TResult>(Func<T, TResult> args,
+                                                                 Func<IHelpResult, TResult> help,
+                                                                 Func<IInputErrorResult, TResult> error) =>
             help(this);
     }
 
@@ -406,20 +390,26 @@ namespace DocoptNet
 
     public sealed partial class ParseVersionResult<T> :
         IVersionResult,
-        IParseResult2<T>,
-        IParseResult4<T>
+        IParser2<T>.IResult,
+        IParserWithVersionSupport<T>.IResult
     {
         public ParseVersionResult(string version) => Version = version;
 
         public string Version { get; }
 
-        TResult IParseResult2<T>.Match<TResult>(Func<T, TResult> args,
+        TResult IParser2<T>.IResult.Match<TResult>(Func<T, TResult> args,
                                                 Func<IHelpResult, TResult> help,
                                                 Func<IVersionResult, TResult> version,
                                                 Func<IInputErrorResult, TResult> error) =>
             version(this);
 
-        TResult IParseResult4<T>.Match<TResult>(Func<T, TResult> args,
+        TResult IParser2<T>.IResult.Match<TResult>(Func<T, IParser2<T>.IResult, TResult> args,
+                                                   Func<IHelpResult, IParser2<T>.IResult, TResult> help,
+                                                   Func<IVersionResult, IParser2<T>.IResult, TResult> version,
+                                                   Func<IInputErrorResult, IParser2<T>.IResult, TResult> error) =>
+            version(this, this);
+
+        TResult IParserWithVersionSupport<T>.IResult.Match<TResult>(Func<T, TResult> args,
                                                 Func<IVersionResult, TResult> version,
                                                 Func<IInputErrorResult, TResult> error) =>
             version(this);
@@ -427,34 +417,40 @@ namespace DocoptNet
 
     public sealed partial class ParseInputErrorResult<T> :
         IInputErrorResult,
-        IParseResult2<T>,
-        IParseResult3<T>,
-        IParseResult4<T>,
-        IParseResult5<T>
+        IParser2<T>.IResult,
+        IParserWithHelpSupport<T>.IResult,
+        IParserWithVersionSupport<T>.IResult,
+        IBasicParser<T>.IResult
     {
         public ParseInputErrorResult(string error, string usage) => (Error, Usage) = (error, usage);
 
         public string Error { get; }
         public string Usage { get; }
 
-        TResult IParseResult2<T>.Match<TResult>(Func<T, TResult> args,
+        TResult IParser2<T>.IResult.Match<TResult>(Func<T, TResult> args,
                                                 Func<IHelpResult, TResult> help,
                                                 Func<IVersionResult, TResult> version,
                                                 Func<IInputErrorResult, TResult> error) =>
             error(this);
 
-        TResult IParseResult3<T>.Match<TResult>(Func<T, TResult> args,
-                                                Func<IHelpResult, TResult> help,
-                                                Func<IInputErrorResult, TResult> error) =>
+        TResult IParser2<T>.IResult.Match<TResult>(Func<T, IParser2<T>.IResult, TResult> args,
+                                                   Func<IHelpResult, IParser2<T>.IResult, TResult> help,
+                                                   Func<IVersionResult, IParser2<T>.IResult, TResult> version,
+                                                   Func<IInputErrorResult, IParser2<T>.IResult, TResult> error) =>
+            error(this, this);
+
+        TResult IParserWithHelpSupport<T>.IResult.Match<TResult>(Func<T, TResult> args,
+                                                                 Func<IHelpResult, TResult> help,
+                                                                 Func<IInputErrorResult, TResult> error) =>
             error(this);
 
-        TResult IParseResult4<T>.Match<TResult>(Func<T, TResult> args,
+        TResult IParserWithVersionSupport<T>.IResult.Match<TResult>(Func<T, TResult> args,
                                                 Func<IVersionResult, TResult> version,
                                                 Func<IInputErrorResult, TResult> error) =>
             error(this);
 
-        TResult IParseResult5<T>.Match<TResult>(Func<T, TResult> args,
-                                                Func<IInputErrorResult, TResult> error) =>
+        TResult IBasicParser<T>.IResult.Match<TResult>(Func<T, TResult> args,
+                                                       Func<IInputErrorResult, TResult> error) =>
             error(this);
     }
 
@@ -463,9 +459,21 @@ namespace DocoptNet
     /// </summary>
     public partial interface IParser2<out T>
     {
-        IParseResult2<T> Parse(IEnumerable<string> argv, Docopt.ParseFlags flags);
+        IResult Parse(IEnumerable<string> argv, Docopt.ParseFlags flags);
         IParserWithVersionSupport<T> DisableHelp();
         IParserWithHelpSupport<T> DisableVersion();
+
+        public partial interface IResult
+        {
+            TResult Match<TResult>(Func<T, TResult> args,
+                                   Func<IHelpResult, TResult> help,
+                                   Func<IVersionResult, TResult> version,
+                                   Func<IInputErrorResult, TResult> error);
+            TResult Match<TResult>(Func<T, IResult, TResult> args,
+                                   Func<IHelpResult, IResult, TResult> help,
+                                   Func<IVersionResult, IResult, TResult> version,
+                                   Func<IInputErrorResult, IResult, TResult> error);
+        }
     }
 
     /// <summary>
@@ -473,9 +481,16 @@ namespace DocoptNet
     /// </summary>
     public partial interface IParserWithHelpSupport<out T>
     {
-        IParseResult3<T> Parse(IEnumerable<string> argv, Docopt.ParseFlags flags);
+        IResult Parse(IEnumerable<string> argv, Docopt.ParseFlags flags);
         IParser2<T> WithVersion(string value);
         IBasicParser<T> DisableHelp();
+
+        public partial interface IResult
+        {
+            TResult Match<TResult>(Func<T, TResult> args,
+                                   Func<IHelpResult, TResult> help,
+                                   Func<IInputErrorResult, TResult> error);
+        }
     }
 
     /// <summary>
@@ -483,9 +498,16 @@ namespace DocoptNet
     /// </summary>
     public partial interface IParserWithVersionSupport<out T>
     {
-        IParseResult4<T> Parse(IEnumerable<string> argv, Docopt.ParseFlags flags);
+        IResult Parse(IEnumerable<string> argv, Docopt.ParseFlags flags);
         IParser2<T> EnableHelp();
         IBasicParser<T> DisableVersion();
+
+        public partial interface IResult
+        {
+            TResult Match<TResult>(Func<T, TResult> args,
+                                   Func<IVersionResult, TResult> version,
+                                   Func<IInputErrorResult, TResult> error);
+        }
     }
 
     /// <summary>
@@ -493,12 +515,18 @@ namespace DocoptNet
     /// </summary>
     public partial interface IBasicParser<out T>
     {
-        IParseResult5<T> Parse(IEnumerable<string> argv, Docopt.ParseFlags flags);
+        IResult Parse(IEnumerable<string> argv, Docopt.ParseFlags flags);
         IParserWithHelpSupport<T> EnableHelp();
         IParserWithVersionSupport<T> WithVersion(string value);
+
+        public partial interface IResult
+        {
+            TResult Match<TResult>(Func<T, TResult> args,
+                                   Func<IInputErrorResult, TResult> error);
+        }
     }
 
-    public delegate IParseResult2<T> ParseHandler2<out T>(string doc, IEnumerable<string> args, Docopt.ParseFlags flags, string version);
+    public delegate IParser2<T>.IResult ParseHandler2<out T>(string doc, IEnumerable<string> args, Docopt.ParseFlags flags, string version);
 
     sealed class Parser2<T> :
         IParser2<T>,
@@ -519,15 +547,15 @@ namespace DocoptNet
 
         string Version => _version ?? throw new InvalidOperationException();
 
-        IParseResult2<T> IParser2<T>.Parse(IEnumerable<string> argv, Docopt.ParseFlags flags) =>
+        IParser2<T>.IResult IParser2<T>.Parse(IEnumerable<string> argv, Docopt.ParseFlags flags) =>
             _handler(_doc, argv, flags & ~Docopt.ParseFlags.DisableHelp, Version);
 
-        IParseResult3<T> IParserWithHelpSupport<T>.Parse(IEnumerable<string> argv, Docopt.ParseFlags flags) =>
+        IParserWithHelpSupport<T>.IResult IParserWithHelpSupport<T>.Parse(IEnumerable<string> argv, Docopt.ParseFlags flags) =>
             _handler(_doc, argv, flags & ~Docopt.ParseFlags.DisableHelp, null)
-                .Match(x => (IParseResult3<T>)x,
-                       x => (IParseResult3<T>)x,
-                       _ => throw new NotSupportedException(),
-                       x => (IParseResult3<T>)x);
+                .Match((_, r) => (IParserWithHelpSupport<T>.IResult)r,
+                       (_, r) => (IParserWithHelpSupport<T>.IResult)r,
+                       (_, _) => throw new NotSupportedException(),
+                       (_, r) => (IParserWithHelpSupport<T>.IResult)r);
 
         IParser2<T> IParserWithHelpSupport<T>.WithVersion(string value) =>
             new Parser2<T>(_doc, value, _handler);
@@ -553,19 +581,19 @@ namespace DocoptNet
         IParser2<T> IParserWithVersionSupport<T>.EnableHelp() =>
             new Parser2<T>(_doc, _version, _handler);
 
-        IParseResult4<T> IParserWithVersionSupport<T>.Parse(IEnumerable<string> argv, Docopt.ParseFlags flags) =>
+        IParserWithVersionSupport<T>.IResult IParserWithVersionSupport<T>.Parse(IEnumerable<string> argv, Docopt.ParseFlags flags) =>
             _handler(_doc, argv, flags | Docopt.ParseFlags.DisableHelp, Version)
-                .Match(x => (IParseResult4<T>)x,
-                       _ => throw new NotSupportedException(),
-                       x => (IParseResult4<T>)x,
-                       x => (IParseResult4<T>)x);
+                .Match((_, r) => (IParserWithVersionSupport<T>.IResult)r,
+                       (_, _) => throw new NotSupportedException(),
+                       (_, r) => (IParserWithVersionSupport<T>.IResult)r,
+                       (_, r) => (IParserWithVersionSupport<T>.IResult)r);
 
-        IParseResult5<T> IBasicParser<T>.Parse(IEnumerable<string> argv, Docopt.ParseFlags flags) =>
+        IBasicParser<T>.IResult IBasicParser<T>.Parse(IEnumerable<string> argv, Docopt.ParseFlags flags) =>
             _handler(_doc, argv, flags | Docopt.ParseFlags.DisableHelp, null)
-                .Match(x => (IParseResult5<T>)x,
-                       _ => throw new NotSupportedException(),
-                       _ => throw new NotSupportedException(),
-                       x => (IParseResult5<T>)x);
+                .Match((_, r) => (IBasicParser<T>.IResult)r,
+                       (_, _) => throw new NotSupportedException(),
+                       (_, _) => throw new NotSupportedException(),
+                       (_, r) => (IBasicParser<T>.IResult)r);
     }
 
     partial class Docopt
@@ -573,7 +601,7 @@ namespace DocoptNet
         public static IParserWithHelpSupport<IDictionary<string, ValueObject>> Parser2(string doc) =>
             new Parser2<IDictionary<string, ValueObject>>(doc, null, Parse2);
 
-        public static IParseResult2<IDictionary<string, ValueObject>>
+        public static IParser2<IDictionary<string, ValueObject>>.IResult
             Parse2(string doc, IEnumerable<string> argv, ParseFlags flags, string version)
         {
             var optionsFirst = (flags & ParseFlags.OptionsFirst) != ParseFlags.None;
