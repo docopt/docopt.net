@@ -36,7 +36,7 @@ public partial class Program
         var arguments = ProgramArguments.Parse(argv) switch
         {
             ArgumentsResult<ProgramArguments> { Arguments: var args } => args,
-            ParseElseResult<ProgramArguments> { Else: InputErrorResult } => throw new DocoptInputErrorException(),
+            IInputErrorResult => throw new DocoptInputErrorException(),
             _ => throw new(),
         };
         var dict = new Dictionary<string, object>();

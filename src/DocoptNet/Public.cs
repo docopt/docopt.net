@@ -9,10 +9,6 @@ namespace DocoptNet
     public partial class DocoptInputErrorException { }
     public partial class DocoptLanguageErrorException { }
     public partial class ValueObject { }
-    public partial interface IParseElseResult { }
-    public partial class VersionResult { }
-    public partial class HelpResult { }
-    public partial class InputErrorResult { }
 }
 
 #endif

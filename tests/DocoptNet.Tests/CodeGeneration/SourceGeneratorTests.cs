@@ -20,6 +20,7 @@ namespace DocoptNet.Tests.CodeGeneration
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.Text;
     using NUnit.Framework;
+    using NUnit.Framework.Internal;
     using static MoreLinq.Extensions.FullJoinExtension;
     using RsAnalyzerConfigOptions = Microsoft.CodeAnalysis.Diagnostics.AnalyzerConfigOptions;
 
@@ -400,7 +401,8 @@ dotnet script {Path.Combine("tests", "DocoptNet.Tests", "sgss.csx")} inspect -i"
                           | (options.Help ? Docopt.ParseFlags.None : Docopt.ParseFlags.DisableHelp);
                 var result = (IParseResult)method.Invoke(null, new object?[] { argv, flags, options.Version })!;
                 Assert.That(result, Is.Not.Null);
-                var args = result.Match(args => (IEnumerable<KeyValuePair<string, object?>>)args, _ => throw new());
+                var args = result.Match(args => (IEnumerable<KeyValuePair<string, object?>>)args,
+                                        _ => throw new(), _ => throw new(), _ => throw new());
                 return selector(args.ToDictionary(e => e.Key, e => e.Value));
             }
         }

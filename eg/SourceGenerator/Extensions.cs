@@ -5,10 +5,10 @@ using DocoptNet;
 
 static partial class ParseResultExtensions
 {
-    public static int Run<T>(this IParseResult<T> result, Func<T, int> runner) =>
+    public static int Run<T>(this IParser<T>.IResult result, Func<T, int> runner) =>
         result.Run(null, null, 0, runner);
 
-    public static int Run<T>(this IParseResult<T> result,
+    public static int Run<T>(this IParser<T>.IResult result,
                              TextWriter stdout, TextWriter stderr, int errorExitCode,
                              Func<T, int> runner)
     {
@@ -19,13 +19,13 @@ static partial class ParseResultExtensions
         {
             case ArgumentsResult<T> r:
                 return runner(r.Arguments);
-            case ParseElseResult<T> { Else: HelpResult r }:
+            case IHelpResult r:
                 stdout.WriteLine(r.Help);
                 return 0;
-            case ParseElseResult<T> { Else: VersionResult r }:
+            case IVersionResult r:
                 stdout.WriteLine(r.Version);
                 return 0;
-            case ParseElseResult<T> { Else: InputErrorResult r }:
+            case IInputErrorResult r:
                 stderr.WriteLine(r.Usage);
                 return errorExitCode != 0 ? errorExitCode : 1;
             default:

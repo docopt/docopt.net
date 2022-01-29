@@ -18,7 +18,7 @@ partial class Arguments : IEnumerable<KeyValuePair<string, object?>>
       naval_fate.exe (-h | --help)
       naval_fate.exe --version";
 
-    public static IParseResult<Arguments> Parse(IEnumerable<string> args, ParseFlags flags = ParseFlags.None, string? version = null)
+    public static IParser<Arguments>.IResult Parse(IEnumerable<string> args, ParseFlags flags = ParseFlags.None, string? version = null)
     {
         var options = new List<Option>
         {
@@ -30,13 +30,13 @@ partial class Arguments : IEnumerable<KeyValuePair<string, object?>>
         };
         return GeneratedSourceModule.Parse(Help,Usage, args, options, flags, version, Parse);
 
-        static IParseResult<Arguments> Parse(Leaves left)
+        static IParser<Arguments>.IResult Parse(Leaves left)
         {
             var required = new RequiredMatcher(1, left, new Leaves());
             Match(ref required);
             if (!required.Result || required.Left.Count > 0)
             {
-                return new ParseElseResult<Arguments>(new InputErrorResult(string.Empty, Usage));
+                return new ParseInputErrorResult<Arguments>(string.Empty, Usage);
             }
             var collected = required.Collected;
             var result = new Arguments();

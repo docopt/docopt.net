@@ -12,7 +12,7 @@ partial class Arguments5 : IEnumerable<KeyValuePair<string, object?>>
 {
     public const string Usage = "Usage: my_program (run [--fast] | jump [--high])";
 
-    public static IParseResult<Arguments5> Parse(IEnumerable<string> args, ParseFlags flags = ParseFlags.None, string? version = null)
+    public static IParser<Arguments5>.IResult Parse(IEnumerable<string> args, ParseFlags flags = ParseFlags.None, string? version = null)
     {
         var options = new List<Option>
         {
@@ -21,13 +21,13 @@ partial class Arguments5 : IEnumerable<KeyValuePair<string, object?>>
         };
         return GeneratedSourceModule.Parse(Help,Usage, args, options, flags, version, Parse);
 
-        static IParseResult<Arguments5> Parse(Leaves left)
+        static IParser<Arguments5>.IResult Parse(Leaves left)
         {
             var required = new RequiredMatcher(1, left, new Leaves());
             Match(ref required);
             if (!required.Result || required.Left.Count > 0)
             {
-                return new ParseElseResult<Arguments5>(new InputErrorResult(string.Empty, Usage));
+                return new ParseInputErrorResult<Arguments5>(string.Empty, Usage);
             }
             var collected = required.Collected;
             var result = new Arguments5();

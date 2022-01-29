@@ -9,9 +9,9 @@ namespace DocoptNet.Internals
 
     static partial class GeneratedSourceModule
     {
-        public static IParseResult<T> Parse<T>(string doc, string usage, IEnumerable<string> args, List<Option> options,
-                                               Docopt.ParseFlags flags, string? version,
-                                               Func<Leaves, IParseResult<T>> resultSelector)
+        public static IParser<T>.IResult Parse<T>(string doc, string usage, IEnumerable<string> args, List<Option> options,
+                                                  Docopt.ParseFlags flags, string? version,
+                                                  Func<Leaves, IParser<T>.IResult> resultSelector)
         {
             var tokens = Tokens.From(args);
             Leaves arguments;
@@ -22,13 +22,13 @@ namespace DocoptNet.Internals
             }
             catch (DocoptInputErrorException e)
             {
-                return new ParseElseResult<T>(new InputErrorResult(e.Message, usage));
+                return new ParseInputErrorResult<T>(e.Message, usage);
             }
             var help = (flags & Docopt.ParseFlags.DisableHelp) == Docopt.ParseFlags.None;
             if (help && arguments.Any(o => o is { Name: "-h" or "--help", Value.IsTrue: true }))
-                return new ParseElseResult<T>(new HelpResult(doc));
+                return new ParseHelpResult<T>(doc);
             if (version is {} someVersion && arguments.Any(o => o is { Name: "--version", Value.IsTrue: true }))
-                return new ParseElseResult<T>(new VersionResult(someVersion));
+                return new ParseVersionResult<T>(someVersion);
             return resultSelector(arguments);
         }
 

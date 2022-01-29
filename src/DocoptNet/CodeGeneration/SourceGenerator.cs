@@ -283,7 +283,7 @@ namespace DocoptNet.CodeGeneration
                     .Public.Const(usageConstName, usage)
 
                     .NewLine
-                    .Public.Static["IParseResult<"][name]["> Parse(IEnumerable<string> args, ParseFlags flags = ParseFlags.None, string? version = null)"]
+                    .Public.Static["IParser<"][name][">.IResult Parse(IEnumerable<string> args, ParseFlags flags = ParseFlags.None, string? version = null)"]
                     .NewLine.Block[code
                         .Var("options")[
                             code.New["List<Option>"].NewLine
@@ -295,11 +295,11 @@ namespace DocoptNet.CodeGeneration
                                                          [Value(code, option.Value)]["),"].NewLine).SkipNextNewLine]]
                         .Return[code["GeneratedSourceModule.Parse("][helpConstName][","][usageConstName][", args, options, flags, version, Parse)"]]
                         .NewLine
-                        ["static IParseResult<"][name]["> Parse(Leaves left)"].NewLine.Block[code
+                        ["static IParser<"][name][">.IResult Parse(Leaves left)"].NewLine.Block[code
                             .Var("required")[code.New["RequiredMatcher(1, left, "].New["Leaves()"][')']]
                             ["Match(ref required)"].EndStatement
                             .If["!required.Result || required.Left.Count > 0"][code
-                                .Return[code.New["ParseElseResult<"][name][">("][code.New["InputErrorResult(string.Empty, "][usageConstName][")"]][")"]]]
+                                .Return[code.New["ParseInputErrorResult<"][name][">(string.Empty, "][usageConstName][")"]]]
                             .Var("collected")["required.Collected"]
                             .Var("result")[code.New[name]["()"]]
                             [leaves.Any()

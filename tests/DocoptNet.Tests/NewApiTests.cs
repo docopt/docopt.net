@@ -27,8 +27,8 @@ public class NewApiTests
 
     const string Version = "Naval Fate 2.0";
 
-    static IParser2<IDictionary<string, ValueObject>>.IResult Parse(string commandLine) =>
-        Docopt.Parse2(Help, Args.Parse(commandLine).List, Docopt.ParseFlags.None, Version);
+    static IParser<IDictionary<string, ValueObject>>.IResult Parse(string commandLine) =>
+        Docopt.Parse(Help, Args.Parse(commandLine).List, Docopt.ParseFlags.None, Version);
 
     [Test]
     public void Parse_Switch_Args()
@@ -142,8 +142,8 @@ public class NewApiTests
 
     public class Parser2
     {
-        static readonly IParser2<IDictionary<string, ValueObject>> Parser =
-            Docopt.Parser2(Help).WithVersion(Version);
+        static readonly IParser<IDictionary<string, ValueObject>> Parser =
+            Docopt.Parser(Help).WithVersion(Version);
 
         [Test]
         public void Match_Args()
@@ -198,7 +198,7 @@ public class NewApiTests
 
     public class ParserWithHelpSupport
     {
-        static readonly IParserWithHelpSupport<IDictionary<string, ValueObject>> Parser = Docopt.Parser2(Help);
+        static readonly IParserWithHelpSupport<IDictionary<string, ValueObject>> Parser = Docopt.Parser(Help);
 
         [Test]
         public void Match_Args()
@@ -239,7 +239,7 @@ public class NewApiTests
     public class ParserWithVersionSupport
     {
         static readonly IParserWithVersionSupport<IDictionary<string, ValueObject>> Parser =
-            Docopt.Parser2(Help).DisableHelp().WithVersion(Version);
+            Docopt.Parser(Help).DisableHelp().WithVersion(Version);
 
         [Test]
         public void Match_Args()
@@ -280,7 +280,7 @@ public class NewApiTests
     public class BasicParser
     {
         static readonly IBasicParser<IDictionary<string, ValueObject>> Parser =
-            Docopt.Parser2(Help).DisableHelp();
+            Docopt.Parser(Help).DisableHelp();
 
         [Test]
         public void Match_Args()

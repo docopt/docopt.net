@@ -30,7 +30,7 @@ static int Run(string[] args) =>
 
         Console.WriteLine("command args:");
 
-        int Run<T>(Func<IEnumerable<string>, IParseResult<T>> f)
+        int Run<T>(Func<IEnumerable<string>, IParser<T>.IResult> f)
             where T : IEnumerable<KeyValuePair<string, object?>>
         {
             var argv = new[] { args.ArgCommand! }.Concat(args.ArgArgs).ToArray();
