@@ -233,7 +233,7 @@ namespace DocoptNet
             error(this);
     }
 
-    delegate IParser<T>.IResult ParseHandler<out T>(string doc, IEnumerable<string> args, Docopt.ParseFlags flags, string version);
+    delegate IParser<T>.IResult ParseHandler<out T>(string doc, IEnumerable<string> argv, Docopt.ParseFlags flags, string version);
 
     sealed class Parser<T> :
         IParser<T>,
