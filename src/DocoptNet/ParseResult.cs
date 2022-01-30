@@ -1,3 +1,5 @@
+#nullable enable
+
 namespace DocoptNet
 {
     using System;
@@ -111,7 +113,7 @@ namespace DocoptNet
 
         public T Arguments { get; }
 
-        public override string ToString() => Arguments.ToString();
+        public override string ToString() => Arguments?.ToString() ?? string.Empty;
 
         TResult IParser<T>.IResult.Match<TResult>(Func<T, TResult> args,
                                                   Func<IHelpResult, TResult> help,
@@ -233,7 +235,7 @@ namespace DocoptNet
             error(this);
     }
 
-    delegate IParser<T>.IResult ParseHandler<out T>(string doc, IEnumerable<string> argv, Docopt.ParseFlags flags, string version);
+    delegate IParser<T>.IResult ParseHandler<out T>(string doc, IEnumerable<string> argv, Docopt.ParseFlags flags, string? version);
 
     sealed class Parser<T> :
         IParser<T>,
@@ -242,10 +244,10 @@ namespace DocoptNet
         IBasicParser<T>
     {
         readonly string _doc;
-        readonly string _version;
+        readonly string? _version;
         readonly ParseHandler<T> _handler;
 
-        public Parser(string doc, string version, ParseHandler<T> handler)
+        public Parser(string doc, string? version, ParseHandler<T> handler)
         {
             _doc = doc;
             _version = version;
@@ -309,7 +311,7 @@ namespace DocoptNet
             new Parser<IDictionary<string, ValueObject>>(doc, null, Parse);
 
         public static IParser<IDictionary<string, ValueObject>>.IResult
-            Parse(string doc, IEnumerable<string> argv, ParseFlags flags, string version)
+            Parse(string doc, IEnumerable<string> argv, ParseFlags flags, string? version)
         {
             var optionsFirst = (flags & ParseFlags.OptionsFirst) != ParseFlags.None;
             var parsedResult = Parse(doc, Tokens.From(argv), optionsFirst);
