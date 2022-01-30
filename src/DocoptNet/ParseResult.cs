@@ -24,14 +24,6 @@ namespace DocoptNet
         string Version { get; }
     }
 
-    public partial interface IParseResult
-    {
-        TResult Match<TResult>(Func<object, TResult> args,
-                               Func<IHelpResult, TResult> help,
-                               Func<IVersionResult, TResult> version,
-                               Func<IInputErrorResult, TResult> error);
-    }
-
     /// <summary>
     /// args + help + version + error
     /// </summary>
@@ -41,7 +33,7 @@ namespace DocoptNet
         IParserWithVersionSupport<T> DisableHelp();
         IParserWithHelpSupport<T> DisableVersion();
 
-        public partial interface IResult : IParseResult
+        public partial interface IResult
         {
             TResult Match<TResult>(Func<T, TResult> args,
                                    Func<IHelpResult, TResult> help,
@@ -121,12 +113,6 @@ namespace DocoptNet
 
         public override string ToString() => Arguments.ToString();
 
-        TResult IParseResult.Match<TResult>(Func<object, TResult> args,
-                                            Func<IHelpResult, TResult> help,
-                                            Func<IVersionResult, TResult> version,
-                                            Func<IInputErrorResult, TResult> error) =>
-            args(Arguments);
-
         TResult IParser<T>.IResult.Match<TResult>(Func<T, TResult> args,
                                                   Func<IHelpResult, TResult> help,
                                                   Func<IVersionResult, TResult> version,
@@ -163,12 +149,6 @@ namespace DocoptNet
 
         public string Help { get; }
 
-        TResult IParseResult.Match<TResult>(Func<object, TResult> args,
-                                            Func<IHelpResult, TResult> help,
-                                            Func<IVersionResult, TResult> version,
-                                            Func<IInputErrorResult, TResult> error) =>
-            help(this);
-
         TResult IParser<T>.IResult.Match<TResult>(Func<T, TResult> args,
                                                   Func<IHelpResult, TResult> help,
                                                   Func<IVersionResult, TResult> version,
@@ -195,12 +175,6 @@ namespace DocoptNet
         public ParseVersionResult(string version) => Version = version;
 
         public string Version { get; }
-
-        TResult IParseResult.Match<TResult>(Func<object, TResult> args,
-                                            Func<IHelpResult, TResult> help,
-                                            Func<IVersionResult, TResult> version,
-                                            Func<IInputErrorResult, TResult> error) =>
-            version(this);
 
         TResult IParser<T>.IResult.Match<TResult>(Func<T, TResult> args,
                                                   Func<IHelpResult, TResult> help,
@@ -231,12 +205,6 @@ namespace DocoptNet
 
         public string Error { get; }
         public string Usage { get; }
-
-        TResult IParseResult.Match<TResult>(Func<object, TResult> args,
-                                            Func<IHelpResult, TResult> help,
-                                            Func<IVersionResult, TResult> version,
-                                            Func<IInputErrorResult, TResult> error) =>
-            error(this);
 
         TResult IParser<T>.IResult.Match<TResult>(Func<T, TResult> args,
                                                   Func<IHelpResult, TResult> help,
