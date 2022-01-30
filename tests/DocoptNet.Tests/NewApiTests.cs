@@ -140,7 +140,7 @@ public class NewApiTests
         Assert.That(error.Usage, Is.Not.Empty);
     }
 
-    public class Parser2
+    public class ParserTests
     {
         static readonly IParser<IDictionary<string, ValueObject>> Parser =
             Docopt.Parser(Help).WithVersion(Version);
@@ -196,7 +196,7 @@ public class NewApiTests
         }
     }
 
-    public class ParserWithHelpSupport
+    public class ParserWithHelpSupportTests
     {
         static readonly IParserWithHelpSupport<IDictionary<string, ValueObject>> Parser = Docopt.Parser(Help);
 
@@ -236,7 +236,7 @@ public class NewApiTests
         }
     }
 
-    public class ParserWithVersionSupport
+    public class ParserWithVersionSupportTests
     {
         static readonly IParserWithVersionSupport<IDictionary<string, ValueObject>> Parser =
             Docopt.Parser(Help).DisableHelp().WithVersion(Version);
