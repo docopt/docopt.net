@@ -101,7 +101,7 @@ namespace DocoptNet
     using System;
     using System.Collections.Generic;
 
-    public partial class ArgumentsResult<T> :
+    sealed class ArgumentsResult<T> :
         IArgumentsResult<T>,
         IParser<T>.IResult, IParserWithHelpSupport<T>.IResult,
         IParserWithVersionSupport<T>.IResult,
@@ -140,7 +140,7 @@ namespace DocoptNet
             args(Arguments);
     }
 
-    public sealed partial class ParseHelpResult<T> :
+    sealed class ParseHelpResult<T> :
         IHelpResult,
         IParser<T>.IResult,
         IParserWithHelpSupport<T>.IResult
@@ -167,7 +167,7 @@ namespace DocoptNet
             help(this);
     }
 
-    public sealed partial class ParseVersionResult<T> :
+    sealed class ParseVersionResult<T> :
         IVersionResult,
         IParser<T>.IResult,
         IParserWithVersionSupport<T>.IResult
@@ -194,7 +194,7 @@ namespace DocoptNet
             version(this);
     }
 
-    public sealed partial class ParseInputErrorResult<T> :
+    sealed class ParseInputErrorResult<T> :
         IInputErrorResult,
         IParser<T>.IResult,
         IParserWithHelpSupport<T>.IResult,
@@ -233,9 +233,9 @@ namespace DocoptNet
             error(this);
     }
 
-    public delegate IParser<T>.IResult ParseHandler<out T>(string doc, IEnumerable<string> args, Docopt.ParseFlags flags, string version);
+    delegate IParser<T>.IResult ParseHandler<out T>(string doc, IEnumerable<string> args, Docopt.ParseFlags flags, string version);
 
-    public sealed partial class Parser<T> :
+    sealed class Parser<T> :
         IParser<T>,
         IParserWithHelpSupport<T>,
         IParserWithVersionSupport<T>,

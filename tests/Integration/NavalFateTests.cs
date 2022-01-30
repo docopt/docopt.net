@@ -56,7 +56,7 @@ namespace DocoptNet.Tests.Integration
         [TestCase("mine set 123 456 --drifting", CmdMine | CmdSet | OptDrifting, new string[0], "123", "456", "10")]
         public void GoodUsage(string commandLine, FlagArgs flags, string[] names, string x, string y, string speed)
         {
-            var args = ((ArgumentsResult<T>)Parse(commandLine)).Arguments;
+            var args = ((IArgumentsResult<T>)Parse(commandLine)).Arguments;
 
             IResolveConstraint IsFlag(FlagArgs flag) => flags.HasFlag(flag) ? Is.True : Is.False;
 

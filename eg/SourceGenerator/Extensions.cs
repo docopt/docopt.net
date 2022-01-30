@@ -17,7 +17,7 @@ static partial class ParseResultExtensions
 
         switch (result)
         {
-            case ArgumentsResult<T> r:
+            case IArgumentsResult<T> r:
                 return runner(r.Arguments);
             case IHelpResult r:
                 stdout.WriteLine(r.Help);

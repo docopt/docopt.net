@@ -37,6 +37,8 @@ Naval Fate.
       naval_fate.exe (-h | --help)
       naval_fate.exe --version";
 
+    public static readonly IParserWithHelpSupport<ProgramArguments> Parser = GeneratedSourceModule.CreateParser(Help, Parse);
+
     public static IParser<ProgramArguments>.IResult Parse(IEnumerable<string> args, ParseFlags flags = ParseFlags.None, string? version = null)
     {
         var options = new List<Option>
@@ -55,7 +57,7 @@ Naval Fate.
             Match(ref required);
             if (!required.Result || required.Left.Count > 0)
             {
-                return new ParseInputErrorResult<ProgramArguments>(string.Empty, Usage);
+                return GeneratedSourceModule.CreateInputErrorResult<ProgramArguments>(string.Empty, Usage);
             }
             var collected = required.Collected;
             var result = new ProgramArguments();
@@ -83,7 +85,7 @@ Naval Fate.
                 }
             }
 
-            return new ArgumentsResult<ProgramArguments>(result);
+            return GeneratedSourceModule.CreateArgumentsResult(result);
         }
 
         static void Match(ref RequiredMatcher required)

@@ -157,12 +157,13 @@ namespace DocoptNet.CodeGeneration
 
         public CSharpSourceBuilder Break   => this["break"].EndStatement;
 
-        public CSharpSourceBuilder Partial => this["partial "];
-        public CSharpSourceBuilder Static  => this["static "];
-        public CSharpSourceBuilder Class   => this["class "];
-        public CSharpSourceBuilder Public  => this["public "];
-        public CSharpSourceBuilder Yield   => this["yield "];
-        public CSharpSourceBuilder New     => this["new "];
+        public CSharpSourceBuilder Partial  => this["partial "];
+        public CSharpSourceBuilder Static   => this["static "];
+        public CSharpSourceBuilder ReadOnly => this["readonly "];
+        public CSharpSourceBuilder Class    => this["class "];
+        public CSharpSourceBuilder Public   => this["public "];
+        public CSharpSourceBuilder Yield    => this["yield "];
+        public CSharpSourceBuilder New      => this["new "];
 
         public IControlBlockFlow If      => this["if "].Control;
         public IControlBlockFlow While   => this["while "].Control;

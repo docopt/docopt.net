@@ -43,5 +43,14 @@ namespace DocoptNet.Internals
                 throw new DocoptExitException(version.ToString());
             return arguments;
         }
+
+        public static IParserWithHelpSupport<T> CreateParser<T>(string doc, Func<IEnumerable<string>, Docopt.ParseFlags, string, IParser<T>.IResult> parseFunction) =>
+            new Parser<T>(doc, null, (_, args, flags, version) => parseFunction(args, flags, version));
+
+        public static IParser<T>.IResult CreateArgumentsResult<T>(T args) =>
+            new ArgumentsResult<T>(args);
+
+        public static IParser<T>.IResult CreateInputErrorResult<T>(string error, string usage) =>
+            new ParseInputErrorResult<T>(error, usage);
     }
 }

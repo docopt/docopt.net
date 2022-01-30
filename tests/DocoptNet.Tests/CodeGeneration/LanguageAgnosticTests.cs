@@ -35,7 +35,7 @@ public partial class Program
     {
         var arguments = ProgramArguments.Parse(argv) switch
         {
-            ArgumentsResult<ProgramArguments> { Arguments: var args } => args,
+            IArgumentsResult<ProgramArguments> { Arguments: var args } => args,
             IInputErrorResult => throw new DocoptInputErrorException(),
             _ => throw new(),
         };

@@ -18,6 +18,8 @@ partial class Arguments : IEnumerable<KeyValuePair<string, object?>>
       naval_fate.exe (-h | --help)
       naval_fate.exe --version";
 
+    public static readonly IParserWithHelpSupport<Arguments> Parser = GeneratedSourceModule.CreateParser(HelpText, Parse);
+
     public static IParser<Arguments>.IResult Parse(IEnumerable<string> args, ParseFlags flags = ParseFlags.None, string? version = null)
     {
         var options = new List<Option>
@@ -36,7 +38,7 @@ partial class Arguments : IEnumerable<KeyValuePair<string, object?>>
             Match(ref required);
             if (!required.Result || required.Left.Count > 0)
             {
-                return new ParseInputErrorResult<Arguments>(string.Empty, Usage);
+                return GeneratedSourceModule.CreateInputErrorResult<Arguments>(string.Empty, Usage);
             }
             var collected = required.Collected;
             var result = new Arguments();
@@ -64,7 +66,7 @@ partial class Arguments : IEnumerable<KeyValuePair<string, object?>>
                 }
             }
 
-            return new ArgumentsResult<Arguments>(result);
+            return GeneratedSourceModule.CreateArgumentsResult(result);
         }
 
         static void Match(ref RequiredMatcher required)

@@ -283,6 +283,10 @@ namespace DocoptNet.CodeGeneration
                     .Public.Const(usageConstName, usage)
 
                     .NewLine
+                    .Public.Static.ReadOnly[@"IParserWithHelpSupport<"][name]["> "]
+                                           .Assign("Parser")[code["GeneratedSourceModule.CreateParser("][helpConstName][", Parse)"]]
+
+                    .NewLine
                     .Public.Static["IParser<"][name][">.IResult Parse(IEnumerable<string> args, ParseFlags flags = ParseFlags.None, string? version = null)"]
                     .NewLine.Block[code
                         .Var("options")[
@@ -299,7 +303,7 @@ namespace DocoptNet.CodeGeneration
                             .Var("required")[code.New["RequiredMatcher(1, left, "].New["Leaves()"][')']]
                             ["Match(ref required)"].EndStatement
                             .If["!required.Result || required.Left.Count > 0"][code
-                                .Return[code.New["ParseInputErrorResult<"][name][">(string.Empty, "][usageConstName][")"]]]
+                                .Return[code["GeneratedSourceModule.CreateInputErrorResult<"][name][">(string.Empty, "][usageConstName][")"]]]
                             .Var("collected")["required.Collected"]
                             .Var("result")[code.New[name]["()"]]
                             [leaves.Any()
@@ -321,7 +325,7 @@ namespace DocoptNet.CodeGeneration
                             ]
 
                             .NewLine
-                            .Return[code.New["ArgumentsResult<"][name][">(result)"]]]
+                            .Return["GeneratedSourceModule.CreateArgumentsResult(result)"]]
 
                         .NewLine
                         ["static void Match(ref RequiredMatcher required)"].NewLine.Block[

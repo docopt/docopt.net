@@ -12,6 +12,8 @@ partial class Arguments7 : IEnumerable<KeyValuePair<string, object?>>
 {
     public const string Usage = "Usage: my_program (run [--fast] | jump [--high])";
 
+    public static readonly IParserWithHelpSupport<Arguments7> Parser = GeneratedSourceModule.CreateParser(Help, Parse);
+
     public static IParser<Arguments7>.IResult Parse(IEnumerable<string> args, ParseFlags flags = ParseFlags.None, string? version = null)
     {
         var options = new List<Option>
@@ -27,7 +29,7 @@ partial class Arguments7 : IEnumerable<KeyValuePair<string, object?>>
             Match(ref required);
             if (!required.Result || required.Left.Count > 0)
             {
-                return new ParseInputErrorResult<Arguments7>(string.Empty, Usage);
+                return GeneratedSourceModule.CreateInputErrorResult<Arguments7>(string.Empty, Usage);
             }
             var collected = required.Collected;
             var result = new Arguments7();
@@ -44,7 +46,7 @@ partial class Arguments7 : IEnumerable<KeyValuePair<string, object?>>
                 }
             }
 
-            return new ArgumentsResult<Arguments7>(result);
+            return GeneratedSourceModule.CreateArgumentsResult(result);
         }
 
         static void Match(ref RequiredMatcher required)
