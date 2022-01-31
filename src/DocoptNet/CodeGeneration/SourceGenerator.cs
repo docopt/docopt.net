@@ -263,8 +263,6 @@ namespace DocoptNet.CodeGeneration
                 .NewLine
                 .Using("System.Collections")
                 .Using("System.Collections.Generic")
-                .Using("System.Linq")
-                .Using("DocoptNet")
                 .Using("DocoptNet.Internals")
                 .UsingAlias("Leaves")["DocoptNet.Internals.ReadOnlyList<DocoptNet.Internals.LeafPattern>"]
                 .UsingStatic["DocoptNet.Internals.GeneratedSourceModule"]
