@@ -4,7 +4,6 @@ namespace DocoptNet.Tests
     using System.Collections.Generic;
     using System.IO;
     using System.Linq;
-    using Internals;
 
     static partial class Extensions
     {

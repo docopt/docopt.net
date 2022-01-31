@@ -3,7 +3,6 @@
 namespace DocoptNet
 {
     using System.Collections.Generic;
-    using Internals;
 
     interface IApplicationResultAccumulator<T, out TResult>
     {

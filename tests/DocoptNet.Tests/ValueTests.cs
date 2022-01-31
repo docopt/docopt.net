@@ -4,7 +4,6 @@ namespace DocoptNet.Tests
 {
     using System;
     using System.Globalization;
-    using Internals;
     using NUnit.Framework;
 
     [TestFixture]
