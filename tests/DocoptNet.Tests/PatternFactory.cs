@@ -1,6 +1,5 @@
 namespace DocoptNet.Tests
 {
-    using Internals;
 
     static class PatternFactory
     {

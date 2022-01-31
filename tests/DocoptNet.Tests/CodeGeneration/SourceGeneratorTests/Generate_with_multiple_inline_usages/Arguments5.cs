@@ -2,7 +2,6 @@
 
 using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
 using DocoptNet;
 using DocoptNet.Internals;
 using Leaves = DocoptNet.Internals.ReadOnlyList<DocoptNet.Internals.LeafPattern>;

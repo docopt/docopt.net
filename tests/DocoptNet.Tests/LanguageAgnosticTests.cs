@@ -7,7 +7,6 @@ namespace DocoptNet.Tests
     using System.IO;
     using System.Linq;
     using System.Text.RegularExpressions;
-    using Internals;
     using Newtonsoft.Json;
     using NUnit.Framework;
 

@@ -25,12 +25,10 @@ namespace DocoptNet.CodeGeneration
     using System.Linq;
     using System.Text;
     using System.Text.RegularExpressions;
-    using Internals;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
     using Microsoft.CodeAnalysis.Text;
     using MoreLinq;
-    using Argument = Internals.Argument;
     using Unit = System.ValueTuple;
     using static OptionModule;
 
@@ -265,7 +263,6 @@ namespace DocoptNet.CodeGeneration
                 .NewLine
                 .Using("System.Collections")
                 .Using("System.Collections.Generic")
-                .Using("System.Linq")
                 .Using("DocoptNet")
                 .Using("DocoptNet.Internals")
                 .UsingAlias("Leaves")["DocoptNet.Internals.ReadOnlyList<DocoptNet.Internals.LeafPattern>"]
