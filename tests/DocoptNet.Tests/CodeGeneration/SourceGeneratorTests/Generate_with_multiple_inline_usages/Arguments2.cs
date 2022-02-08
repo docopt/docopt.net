@@ -15,9 +15,7 @@ partial class Arguments2 : IEnumerable<KeyValuePair<string, object?>>
 
     public static IParserWithHelpSupport<Arguments2> CreateParser() => Parser;
 
-    public static IParser<Arguments2> CreateParser(string version) => Parser.WithVersion(version);
-
-    public static IParser<Arguments2>.IResult Parse(IEnumerable<string> args, ParseFlags flags = ParseFlags.None, string? version = null)
+    static IParser<Arguments2>.IResult Parse(IEnumerable<string> args, ParseFlags flags = ParseFlags.None, string? version = null)
     {
         var options = new List<Option>
         {

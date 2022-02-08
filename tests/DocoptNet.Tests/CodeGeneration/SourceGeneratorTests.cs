@@ -393,13 +393,15 @@ dotnet script {Path.Combine("tests", "DocoptNet.Tests", "sgss.csx")} inspect -i"
 
             public T Run<T>(DocoptOptions options, Func<IDictionary, T> selector, params string[] argv)
             {
-                const string parseMethodName = "Parse";
-                var method = _type.GetMethod(parseMethodName, BindingFlags.Public | BindingFlags.Static);
+                const string parserFactoryMethodName = "CreateParser";
+                var method = _type.GetMethod(parserFactoryMethodName, BindingFlags.Public | BindingFlags.Static);
                 if (method == null)
-                    throw new MissingMethodException(_type.Name, parseMethodName);
-                var flags = (options.OptionsFirst ? Docopt.ParseFlags.OptionsFirst : Docopt.ParseFlags.None)
-                          | (options.Help ? Docopt.ParseFlags.None : Docopt.ParseFlags.DisableHelp);
-                var result = (IParser<object>.IResult)method.Invoke(null, new object?[] { argv, flags, options.Version })!;
+                    throw new MissingMethodException(_type.Name, parserFactoryMethodName);
+                var parser = (IParserWithHelpSupport<object>)method.Invoke(null, Array.Empty<object>())!;
+                var flags = options.OptionsFirst ? Docopt.ParseFlags.OptionsFirst : Docopt.ParseFlags.None;
+                var result = options.Help
+                           ? (IParser<object>.IResult)parser.Parse(argv, flags)
+                           : (IParser<object>.IResult)parser.DisableHelp().Parse(argv, flags);
                 Assert.That(result, Is.Not.Null);
                 var args = result.Match(args => (IEnumerable<KeyValuePair<string, object?>>)args,
                                         _ => throw new(), _ => throw new(), _ => throw new());
