@@ -181,6 +181,7 @@ namespace DocoptNet.CodeGeneration
             this["const string "].Assign(name)[Literal(value)];
 
         public IStatementFlow Return => this["return "];
+        public IStatementFlow Lambda => this[" => "];
         public IStatementFlow Var(string name) => this["var "].Assign(name);
         public IStatementFlow Assign(string name) => this[name].Equal;
         public IStatementFlow Assign(CSharpSourceBuilder code) { AssertSame(code); return Equal; }

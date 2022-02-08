@@ -1,8 +1,11 @@
 using System;
-using DocoptNet;
 using NavalFate;
 
-return ProgramArguments.Parse(args, version: "Naval Fate 2.0").Run(args =>
+return ProgramArguments.CreateParser()
+                       .WithVersion("Naval Fate 2.0")
+                       .Run(args, Main);
+
+static int Main(ProgramArguments args)
 {
     foreach (var (name, value) in args)
         Console.WriteLine($"{name} = {value}");
@@ -26,4 +29,4 @@ return ProgramArguments.Parse(args, version: "Naval Fate 2.0").Run(args =>
 }}");
 
     return 0;
-});
+}

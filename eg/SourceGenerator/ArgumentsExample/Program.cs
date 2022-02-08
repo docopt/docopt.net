@@ -1,8 +1,9 @@
 using System;
-using DocoptNet;
 using ArgumentsExample;
 
-return ProgramArguments.Parse(args).Run(args =>
+return ProgramArguments.CreateParser().Run(args, Main);
+
+static int Main(ProgramArguments args)
 {
     foreach (var (name, value) in args)
         Console.WriteLine($"{name} = {value}");
@@ -19,4 +20,4 @@ return ProgramArguments.Parse(args).Run(args =>
 }}");
 
     return 0;
-});
+}

@@ -1,7 +1,11 @@
 using System;
 using DocoptNet;
 
-return Arguments.Parse(args, version: "1.0.0rc2").Run(args =>
+return Arguments.CreateParser()
+                .WithVersion("1.0.0rc2")
+                .Run(args, Main);
+
+static int Main(Arguments args)
 {
     foreach (var (name, value) in args)
         Console.WriteLine($"{name} = {value}");
@@ -19,7 +23,7 @@ return Arguments.Parse(args, version: "1.0.0rc2").Run(args =>
 }}");
 
     return 0;
-});
+}
 
 [DocoptArguments]
 partial class Arguments

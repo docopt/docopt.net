@@ -22,7 +22,7 @@ catch (Exception e)
 }
 
 static int Run(string[] args) =>
-    GitArguments.Parse(args, Docopt.ParseFlags.OptionsFirst, "git version 1.7.4.4").Run(args =>
+    GitArguments.CreateParser().WithVersion("git version 1.7.4.4").Run(args, true, null, null, 1, args =>
     {
         Console.WriteLine("global args:");
         foreach (var (name, value) in args)
@@ -30,12 +30,12 @@ static int Run(string[] args) =>
 
         Console.WriteLine("command args:");
 
-        int Run<T>(Func<IEnumerable<string>, IParser<T>.IResult> f)
+        int Run<T>(IParserWithHelpSupport<T> parser)
             where T : IEnumerable<KeyValuePair<string, object?>>
         {
             var argv = new[] { args.ArgCommand! }.Concat(args.ArgArgs).ToArray();
 
-            return f(argv).Run(args =>
+            return parser.Run(argv, args =>
             {
                 foreach (var (name, value) in args)
                     Console.WriteLine($"{name} = {value}");
@@ -45,13 +45,13 @@ static int Run(string[] args) =>
 
         return args.ArgCommand switch
         {
-            "add"       => Run(args => GitAddArguments.Parse(args)),
-            "branch"    => Run(args => GitBranchArguments.Parse(args)),
-            "checkout"  => Run(args => GitCheckoutArguments.Parse(args)),
-            "clone"     => Run(args => GitCloneArguments.Parse(args)),
-            "commit"    => Run(args => GitCommitArguments.Parse(args)),
-            "push"      => Run(args => GitPushArguments.Parse(args)),
-            "remote"    => Run(args => GitRemoteArguments.Parse(args)),
+            "add"       => Run(GitAddArguments.CreateParser()),
+            "branch"    => Run(GitBranchArguments.CreateParser()),
+            "checkout"  => Run(GitCheckoutArguments.CreateParser()),
+            "clone"     => Run(GitCloneArguments.CreateParser()),
+            "commit"    => Run(GitCommitArguments.CreateParser()),
+            "push"      => Run(GitPushArguments.CreateParser()),
+            "remote"    => Run(GitRemoteArguments.CreateParser()),
             var command => throw new ApplicationException($"{command} is not a Git command. See 'git help'.")
         };
     });

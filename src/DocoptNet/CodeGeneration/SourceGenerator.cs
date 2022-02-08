@@ -280,11 +280,14 @@ namespace DocoptNet.CodeGeneration
                     .Public.Const(usageConstName, usage)
 
                     .NewLine
-                    .Public.Static.ReadOnly[@"IParserWithHelpSupport<"][name]["> "]
-                                           .Assign("Parser")[code["GeneratedSourceModule.CreateParser("][helpConstName][", Parse)"]]
+                    .Static.ReadOnly[@"IParserWithHelpSupport<"][name]["> "]
+                                    .Assign("Parser")[code["GeneratedSourceModule.CreateParser("][helpConstName][", Parse)"]]
 
                     .NewLine
-                    .Public.Static["IParser<"][name][">.IResult Parse(IEnumerable<string> args, ParseFlags flags = ParseFlags.None, string? version = null)"]
+                    .Public.Static[@"IParserWithHelpSupport<"][name]["> CreateParser()"].Lambda["Parser"]
+
+                    .NewLine
+                    .Static["IParser<"][name][">.IResult Parse(IEnumerable<string> args, ParseFlags flags = ParseFlags.None, string? version = null)"]
                     .NewLine.Block[code
                         .Var("options")[
                             code.New["List<Option>"].NewLine

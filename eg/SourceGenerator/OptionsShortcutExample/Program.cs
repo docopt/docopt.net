@@ -1,8 +1,11 @@
 using System;
-using DocoptNet;
 using OptionsShortcutExample;
 
-return ProgramArguments.Parse(args, version: "1.0.0rc2").Run(args =>
+return ProgramArguments.CreateParser()
+                       .WithVersion("1.0.0rc2")
+                       .Run(args, Main);
+
+static int Main(ProgramArguments args)
 {
     foreach (var (name, value) in args)
         Console.WriteLine($"{name} = {value}");
@@ -18,4 +21,4 @@ Console.WriteLine($@"{{
 }}");
 
     return 0;
-});
+}

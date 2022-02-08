@@ -11,7 +11,11 @@ partial class Arguments3 : IEnumerable<KeyValuePair<string, object?>>
 {
     public const string Usage = "Usage: my_program (run [--fast] | jump [--high])";
 
-    public static readonly IParserWithHelpSupport<Arguments3> Parser = GeneratedSourceModule.CreateParser(Help, Parse);
+    static readonly IParserWithHelpSupport<Arguments3> Parser = GeneratedSourceModule.CreateParser(Help, Parse);
+
+    public static IParserWithHelpSupport<Arguments3> CreateParser() => Parser;
+
+    public static IParser<Arguments3> CreateParser(string version) => Parser.WithVersion(version);
 
     public static IParser<Arguments3>.IResult Parse(IEnumerable<string> args, ParseFlags flags = ParseFlags.None, string? version = null)
     {
