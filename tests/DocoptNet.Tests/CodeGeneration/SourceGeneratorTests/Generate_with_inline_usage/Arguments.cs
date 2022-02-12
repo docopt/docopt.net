@@ -30,7 +30,8 @@ partial class Arguments : IEnumerable<KeyValuePair<string, object?>>
             new Option(null, "--moored", 0, false),
             new Option(null, "--drifting", 0, false),
         };
-        return GeneratedSourceModule.Parse(Help,Usage, args, options, flags, version, Parse);
+
+        return GeneratedSourceModule.Parse(Help, Usage, args, options, flags, version, Parse);
 
         static IParser<Arguments>.IResult Parse(Leaves left)
         {

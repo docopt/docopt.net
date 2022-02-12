@@ -21,7 +21,8 @@ partial class Arguments3 : IEnumerable<KeyValuePair<string, object?>>
             new Option(null, "--fast", 0, false),
             new Option(null, "--high", 0, false),
         };
-        return GeneratedSourceModule.Parse(Help,Usage, args, options, flags, version, Parse);
+
+        return GeneratedSourceModule.Parse(Help, Usage, args, options, flags, version, Parse);
 
         static IParser<Arguments3>.IResult Parse(Leaves left)
         {

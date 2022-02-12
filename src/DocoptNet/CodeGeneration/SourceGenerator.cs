@@ -296,7 +296,8 @@ namespace DocoptNet.CodeGeneration
                                                          [option.LongName is {} ln ? code.Literal(ln) : code.Null][", "]
                                                          .Literal(option.ArgCount)[", "]
                                                          [Value(code, option.Value)]["),"].NewLine).SkipNextNewLine]]
-                        .Return[code["GeneratedSourceModule.Parse("][helpConstName][","][usageConstName][", args, options, flags, version, Parse)"]]
+                        .NewLine
+                        .Return[code["GeneratedSourceModule.Parse("][helpConstName][", "][usageConstName][", args, options, flags, version, Parse)"]]
                         .NewLine
                         ["static IParser<"][name][">.IResult Parse(Leaves left)"].NewLine.Block[code
                             .Var("required")[code.New["RequiredMatcher(1, left, "].New["Leaves()"][')']]
