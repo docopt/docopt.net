@@ -22,7 +22,10 @@ catch (Exception e)
 }
 
 static int Run(string[] args) =>
-    GitArguments.CreateParser().WithVersion("git version 1.7.4.4").Run(args, true, null, null, 1, args =>
+    GitArguments.CreateParser()
+                .WithVersion("git version 1.7.4.4")
+                .WithOptions(ArgsParseOptions.Default.WithOptionsFirst(true))
+                .Run(args, null, null, 1, args =>
     {
         Console.WriteLine("global args:");
         foreach (var (name, value) in args)

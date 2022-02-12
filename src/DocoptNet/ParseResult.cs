@@ -31,7 +31,9 @@ namespace DocoptNet
     /// </summary>
     public partial interface IParser<out T>
     {
-        IResult Parse(IEnumerable<string> argv, Docopt.ParseFlags flags);
+        IResult Parse(IEnumerable<string> argv);
+        ArgsParseOptions Options { get; }
+        IParser<T> WithOptions(ArgsParseOptions value);
         IParserWithVersionSupport<T> DisableHelp();
         IParserWithHelpSupport<T> DisableVersion();
 
@@ -53,7 +55,9 @@ namespace DocoptNet
     /// </summary>
     public partial interface IParserWithHelpSupport<out T>
     {
-        IResult Parse(IEnumerable<string> argv, Docopt.ParseFlags flags);
+        IResult Parse(IEnumerable<string> argv);
+        ArgsParseOptions Options { get; }
+        IParserWithHelpSupport<T> WithOptions(ArgsParseOptions value);
         IParser<T> WithVersion(string value);
         IBasicParser<T> DisableHelp();
 
@@ -70,7 +74,7 @@ namespace DocoptNet
     /// </summary>
     public partial interface IParserWithVersionSupport<out T>
     {
-        IResult Parse(IEnumerable<string> argv, Docopt.ParseFlags flags);
+        IResult Parse(IEnumerable<string> argv);
         IParser<T> EnableHelp();
         IBasicParser<T> DisableVersion();
 
@@ -87,7 +91,9 @@ namespace DocoptNet
     /// </summary>
     public partial interface IBasicParser<out T>
     {
-        IResult Parse(IEnumerable<string> argv, Docopt.ParseFlags flags);
+        IResult Parse(IEnumerable<string> argv);
+        ArgsParseOptions Options { get; }
+        IBasicParser<T> WithOptions(ArgsParseOptions value);
         IParserWithHelpSupport<T> EnableHelp();
         IParserWithVersionSupport<T> WithVersion(string value);
 
@@ -235,7 +241,7 @@ namespace DocoptNet
             error(this);
     }
 
-    delegate IParser<T>.IResult ParseHandler<out T>(string doc, IEnumerable<string> argv, Docopt.ParseFlags flags, string? version);
+    delegate IParser<T>.IResult ParseHandler<out T>(string doc, IEnumerable<string> argv, ParseFlags flags, string? version);
 
     sealed class Parser<T> :
         IParser<T>,
@@ -246,83 +252,103 @@ namespace DocoptNet
         readonly string _doc;
         readonly string? _version;
         readonly ParseHandler<T> _handler;
+        readonly ArgsParseOptions _options;
 
-        public Parser(string doc, string? version, ParseHandler<T> handler)
+        public Parser(string doc, ArgsParseOptions options, string? version, ParseHandler<T> handler)
         {
             _doc = doc;
+            _options = options;
             _version = version;
             _handler = handler;
         }
 
         string Version => _version ?? throw new InvalidOperationException();
 
-        IParser<T>.IResult IParser<T>.Parse(IEnumerable<string> argv, Docopt.ParseFlags flags) =>
-            _handler(_doc, argv, flags & ~Docopt.ParseFlags.DisableHelp, Version);
+        ParseFlags ParseFlags => _options.OptionsFirst ? ParseFlags.OptionsFirst : ParseFlags.None;
 
-        IParserWithHelpSupport<T>.IResult IParserWithHelpSupport<T>.Parse(IEnumerable<string> argv, Docopt.ParseFlags flags) =>
-            _handler(_doc, argv, flags & ~Docopt.ParseFlags.DisableHelp, null)
+        IParser<T>.IResult IParser<T>.Parse(IEnumerable<string> argv) =>
+            _handler(_doc, argv, ParseFlags, Version);
+
+        IParserWithHelpSupport<T>.IResult IParserWithHelpSupport<T>.Parse(IEnumerable<string> argv) =>
+            _handler(_doc, argv, ParseFlags, null)
                 .Match((_, r) => (IParserWithHelpSupport<T>.IResult)r,
                        (_, r) => (IParserWithHelpSupport<T>.IResult)r,
                        (_, _) => throw new NotSupportedException(),
                        (_, r) => (IParserWithHelpSupport<T>.IResult)r);
 
         IParser<T> IParserWithHelpSupport<T>.WithVersion(string value) =>
-            new Parser<T>(_doc, value, _handler);
+            new Parser<T>(_doc, _options, value, _handler);
 
         IParserWithVersionSupport<T> IBasicParser<T>.WithVersion(string value) =>
-            new Parser<T>(_doc, value, _handler);
+            new Parser<T>(_doc, _options, value, _handler);
 
         IParserWithHelpSupport<T> IParser<T>.DisableVersion() =>
-            new Parser<T>(_doc, null, _handler);
+            new Parser<T>(_doc, _options, null, _handler);
 
         IBasicParser<T> IParserWithVersionSupport<T>.DisableVersion() =>
-            new Parser<T>(_doc, null, _handler);
+            new Parser<T>(_doc, _options, null, _handler);
 
         IParserWithVersionSupport<T> IParser<T>.DisableHelp() =>
-            new Parser<T>(_doc, _version, _handler);
+            new Parser<T>(_doc, _options, _version, _handler);
 
         IBasicParser<T> IParserWithHelpSupport<T>.DisableHelp() =>
-            new Parser<T>(_doc, null, _handler);
+            new Parser<T>(_doc, _options, null, _handler);
 
         IParserWithHelpSupport<T> IBasicParser<T>.EnableHelp() =>
-            new Parser<T>(_doc, null, _handler);
+            new Parser<T>(_doc, _options, null, _handler);
 
         IParser<T> IParserWithVersionSupport<T>.EnableHelp() =>
-            new Parser<T>(_doc, _version, _handler);
+            new Parser<T>(_doc, _options, _version, _handler);
 
-        IParserWithVersionSupport<T>.IResult IParserWithVersionSupport<T>.Parse(IEnumerable<string> argv, Docopt.ParseFlags flags) =>
-            _handler(_doc, argv, flags | Docopt.ParseFlags.DisableHelp, Version)
+        IParserWithVersionSupport<T>.IResult IParserWithVersionSupport<T>.Parse(IEnumerable<string> argv) =>
+            _handler(_doc, argv, ParseFlags | ParseFlags.DisableHelp, Version)
                 .Match((_, r) => (IParserWithVersionSupport<T>.IResult)r,
                        (_, _) => throw new NotSupportedException(),
                        (_, r) => (IParserWithVersionSupport<T>.IResult)r,
                        (_, r) => (IParserWithVersionSupport<T>.IResult)r);
 
-        IBasicParser<T>.IResult IBasicParser<T>.Parse(IEnumerable<string> argv, Docopt.ParseFlags flags) =>
-            _handler(_doc, argv, flags | Docopt.ParseFlags.DisableHelp, null)
+        IBasicParser<T>.IResult IBasicParser<T>.Parse(IEnumerable<string> argv) =>
+            _handler(_doc, argv, ParseFlags | ParseFlags.DisableHelp, null)
                 .Match((_, r) => (IBasicParser<T>.IResult)r,
                        (_, _) => throw new NotSupportedException(),
                        (_, _) => throw new NotSupportedException(),
                        (_, r) => (IBasicParser<T>.IResult)r);
+
+        ArgsParseOptions IParser<T>.Options => _options;
+
+        IParser<T> IParser<T>.WithOptions(ArgsParseOptions value) =>
+            new Parser<T>(_doc, value, _version, _handler);
+
+        ArgsParseOptions IParserWithHelpSupport<T>.Options => _options;
+
+        IParserWithHelpSupport<T> IParserWithHelpSupport<T>.WithOptions(ArgsParseOptions value) =>
+            new Parser<T>(_doc, value, _version, _handler);
+
+        ArgsParseOptions IBasicParser<T>.Options => _options;
+
+        IBasicParser<T> IBasicParser<T>.WithOptions(ArgsParseOptions value) =>
+            new Parser<T>(_doc, value, _version, _handler);
     }
 
     partial class Docopt
     {
         public static IParserWithHelpSupport<IDictionary<string, ValueObject>> Parser(string doc) =>
-            new Parser<IDictionary<string, ValueObject>>(doc, null, static (doc, argv, flags, version) =>
-            {
-                var optionsFirst = (flags & ParseFlags.OptionsFirst) != ParseFlags.None;
-                var parsedResult = Parse(doc, Tokens.From(argv), optionsFirst);
+            new Parser<IDictionary<string, ValueObject>>(doc, ArgsParseOptions.Default, null,
+                static (doc, argv, flags, version) =>
+                {
+                    var optionsFirst = (flags & ParseFlags.OptionsFirst) != ParseFlags.None;
+                    var parsedResult = Parse(doc, Tokens.From(argv), optionsFirst);
 
-                var help = (flags & ParseFlags.DisableHelp) == ParseFlags.None;
-                if (help && parsedResult.IsHelpOptionSpecified)
-                    return new ParseHelpResult<IDictionary<string, ValueObject>>(doc);
+                    var help = (flags & ParseFlags.DisableHelp) == ParseFlags.None;
+                    if (help && parsedResult.IsHelpOptionSpecified)
+                        return new ParseHelpResult<IDictionary<string, ValueObject>>(doc);
 
-                if (version is { } someVersion && parsedResult.IsVersionOptionSpecified)
-                    return new ParseVersionResult<IDictionary<string, ValueObject>>(someVersion);
+                    if (version is { } someVersion && parsedResult.IsVersionOptionSpecified)
+                        return new ParseVersionResult<IDictionary<string, ValueObject>>(someVersion);
 
-                return parsedResult.TryApply(out var applicationResult)
-                     ? new ArgumentsResult<IDictionary<string, ValueObject>>(applicationResult.ToValueObjectDictionary())
-                     : new ParseInputErrorResult<IDictionary<string, ValueObject>>("Input error.", parsedResult.ExitUsage);
-            });
+                    return parsedResult.TryApply(out var applicationResult)
+                         ? new ArgumentsResult<IDictionary<string, ValueObject>>(applicationResult.ToValueObjectDictionary())
+                         : new ParseInputErrorResult<IDictionary<string, ValueObject>>("Input error.", parsedResult.ExitUsage);
+                });
     }
 }

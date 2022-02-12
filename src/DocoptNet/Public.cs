@@ -9,6 +9,7 @@ namespace DocoptNet
     public partial class DocoptInputErrorException { }
     public partial class DocoptLanguageErrorException { }
     public partial class ValueObject { }
+    public partial class ArgsParseOptions { }
 }
 
 #endif

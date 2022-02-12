@@ -28,7 +28,7 @@ public class NewApiTests
     const string Version = "Naval Fate 2.0";
 
     static IParser<IDictionary<string, ValueObject>>.IResult Parse(string commandLine) =>
-        Docopt.Parser(Help).WithVersion(Version).Parse(Args.Parse(commandLine).List, Docopt.ParseFlags.None);
+        Docopt.Parser(Help).WithVersion(Version).Parse(Args.Parse(commandLine).List);
 
     [Test]
     public void Parse_Switch_Args()
@@ -148,7 +148,7 @@ public class NewApiTests
         [Test]
         public void Match_Args()
         {
-            var args = Parser.Parse(Args.Parse("ship new foo bar").List, Docopt.ParseFlags.None)
+            var args = Parser.Parse(Args.Parse("ship new foo bar").List)
                              .Match(args => args,
                                     _ => throw new NUnitException(),
                                     _ => throw new NUnitException(),
@@ -161,7 +161,7 @@ public class NewApiTests
         [Test]
         public void Match_Help()
         {
-            var result = Parser.Parse(Args.Parse("foobar --help").List, Docopt.ParseFlags.None);
+            var result = Parser.Parse(Args.Parse("foobar --help").List);
             var help =
                 result.Match(_ => throw new NUnitException(),
                              help => help,
@@ -173,7 +173,7 @@ public class NewApiTests
         [Test]
         public void Match_Version()
         {
-            var result = Parser.Parse(Args.Parse("foobar --version").List, Docopt.ParseFlags.None);
+            var result = Parser.Parse(Args.Parse("foobar --version").List);
             var version =
                 result.Match(_ => throw new NUnitException(),
                              _ => throw new NUnitException(),
@@ -185,7 +185,7 @@ public class NewApiTests
         [Test]
         public void Match_Error()
         {
-            var result = Parser.Parse(Args.Parse("foobar").List, Docopt.ParseFlags.None);
+            var result = Parser.Parse(Args.Parse("foobar").List);
             var error =
                 result.Match(_ => throw new NUnitException(),
                              _ => throw new NUnitException(),
@@ -203,7 +203,7 @@ public class NewApiTests
         [Test]
         public void Match_Args()
         {
-            var args = Parser.Parse(Args.Parse("ship new foo bar").List, Docopt.ParseFlags.None)
+            var args = Parser.Parse(Args.Parse("ship new foo bar").List)
                              .Match(args => args,
                                     _ => throw new NUnitException(),
                                     _ => throw new NUnitException());
@@ -215,7 +215,7 @@ public class NewApiTests
         [Test]
         public void Match_Help()
         {
-            var result = Parser.Parse(Args.Parse("foobar --help").List, Docopt.ParseFlags.None);
+            var result = Parser.Parse(Args.Parse("foobar --help").List);
             var help =
                 result.Match(_ => throw new NUnitException(),
                              help => help,
@@ -226,7 +226,7 @@ public class NewApiTests
         [Test]
         public void Match_Error()
         {
-            var result = Parser.Parse(Args.Parse("foobar").List, Docopt.ParseFlags.None);
+            var result = Parser.Parse(Args.Parse("foobar").List);
             var error =
                 result.Match(_ => throw new NUnitException(),
                              _ => throw new NUnitException(),
@@ -244,7 +244,7 @@ public class NewApiTests
         [Test]
         public void Match_Args()
         {
-            var args = Parser.Parse(Args.Parse("ship new foo bar").List, Docopt.ParseFlags.None)
+            var args = Parser.Parse(Args.Parse("ship new foo bar").List)
                              .Match(args => args,
                                     _ => throw new NUnitException(),
                                     _ => throw new NUnitException());
@@ -256,7 +256,7 @@ public class NewApiTests
         [Test]
         public void Match_Version()
         {
-            var result = Parser.Parse(Args.Parse("foobar --version").List, Docopt.ParseFlags.None);
+            var result = Parser.Parse(Args.Parse("foobar --version").List);
             var version =
                 result.Match(_ => throw new NUnitException(),
                              version => version,
@@ -267,7 +267,7 @@ public class NewApiTests
         [Test]
         public void Match_Error()
         {
-            var result = Parser.Parse(Args.Parse("foobar").List, Docopt.ParseFlags.None);
+            var result = Parser.Parse(Args.Parse("foobar").List);
             var error =
                 result.Match(_ => throw new NUnitException(),
                              _ => throw new NUnitException(),
@@ -285,7 +285,7 @@ public class NewApiTests
         [Test]
         public void Match_Args()
         {
-            var args = Parser.Parse(Args.Parse("ship new foo bar").List, Docopt.ParseFlags.None)
+            var args = Parser.Parse(Args.Parse("ship new foo bar").List)
                              .Match(args => args,
                                     _ => throw new NUnitException());
             Assert.True(args["ship"].IsTrue);
@@ -296,7 +296,7 @@ public class NewApiTests
         [Test]
         public void Match_Error()
         {
-            var result = Parser.Parse(Args.Parse("foobar").List, Docopt.ParseFlags.None);
+            var result = Parser.Parse(Args.Parse("foobar").List);
             var error =
                 result.Match(_ => throw new NUnitException(),
                              error => error);

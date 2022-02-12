@@ -398,10 +398,10 @@ dotnet script {Path.Combine("tests", "DocoptNet.Tests", "sgss.csx")} inspect -i"
                 if (method == null)
                     throw new MissingMethodException(_type.Name, parserFactoryMethodName);
                 var parser = (IParserWithHelpSupport<object>)method.Invoke(null, Array.Empty<object>())!;
-                var flags = options.OptionsFirst ? Docopt.ParseFlags.OptionsFirst : Docopt.ParseFlags.None;
+                var argsParseOptions = ArgsParseOptions.Default.WithOptionsFirst(options.OptionsFirst);
                 var result = options.Help
-                           ? (IParser<object>.IResult)parser.Parse(argv, flags)
-                           : (IParser<object>.IResult)parser.DisableHelp().Parse(argv, flags);
+                           ? (IParser<object>.IResult)parser.Parse(argv)
+                           : (IParser<object>.IResult)parser.DisableHelp().Parse(argv);
                 Assert.That(result, Is.Not.Null);
                 var args = result.Match(args => (IEnumerable<KeyValuePair<string, object?>>)args,
                                         _ => throw new(), _ => throw new(), _ => throw new());

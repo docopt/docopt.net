@@ -11,14 +11,6 @@ namespace DocoptNet
 
     partial class Docopt
     {
-        [Flags]
-        public enum ParseFlags
-        {
-            None         = 0,
-            OptionsFirst = 1 << 0,
-            DisableHelp  = 1 << 1,
-        }
-
         public event EventHandler<PrintExitEventArgs> PrintExit;
 
         public IDictionary<string, ValueObject> Apply(string doc)

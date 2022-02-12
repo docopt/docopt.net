@@ -5,7 +5,6 @@ using System.Collections.Generic;
 using DocoptNet;
 using DocoptNet.Internals;
 using Leaves = DocoptNet.Internals.ReadOnlyList<DocoptNet.Internals.LeafPattern>;
-using ParseFlags = DocoptNet.Docopt.ParseFlags;
 
 partial class Arguments3 : IEnumerable<KeyValuePair<string, object?>>
 {

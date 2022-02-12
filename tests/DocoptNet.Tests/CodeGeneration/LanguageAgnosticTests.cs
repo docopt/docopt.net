@@ -33,7 +33,7 @@ public partial class Program
 {
     public Program(IList<string> argv)
     {
-        var arguments = ProgramArguments.CreateParser().Parse(argv, Docopt.ParseFlags.None) switch
+        var arguments = ProgramArguments.CreateParser().Parse(argv) switch
         {
             IArgumentsResult<ProgramArguments> { Arguments: var args } => args,
             IInputErrorResult => throw new DocoptInputErrorException(),

@@ -7,16 +7,16 @@ using DocoptNet;
 static partial class ParseResultExtensions
 {
     public static int Run<T>(this IParserWithHelpSupport<T> parser, IEnumerable<string> args, Func<T, int> runner) =>
-        parser.Run(args, false, null, null, 0, runner);
+        parser.Run(args, null, null, 0, runner);
 
-    public static int Run<T>(this IParserWithHelpSupport<T> parser, IEnumerable<string> args, bool optionsFirst,
+    public static int Run<T>(this IParserWithHelpSupport<T> parser, IEnumerable<string> args,
                              TextWriter stdout, TextWriter stderr, int errorExitCode,
                              Func<T, int> runner)
     {
         stdout ??= Console.Out;
         stderr ??= Console.Error;
 
-        switch (parser.Parse(args, optionsFirst ? Docopt.ParseFlags.OptionsFirst : Docopt.ParseFlags.None))
+        switch (parser.Parse(args))
         {
             case IArgumentsResult<T> r:
                 return runner(r.Arguments);
@@ -32,16 +32,16 @@ static partial class ParseResultExtensions
     }
 
     public static int Run<T>(this IParser<T> parser, IEnumerable<string> args, Func<T, int> runner) =>
-        parser.Run(args, false, null, null, 0, runner);
+        parser.Run(args, null, null, 0, runner);
 
-    public static int Run<T>(this IParser<T> parser, IEnumerable<string> args, bool optionsFirst,
+    public static int Run<T>(this IParser<T> parser, IEnumerable<string> args,
                              TextWriter stdout, TextWriter stderr, int errorExitCode,
                              Func<T, int> runner)
     {
         stdout ??= Console.Out;
         stderr ??= Console.Error;
 
-        switch (parser.Parse(args, optionsFirst ? Docopt.ParseFlags.OptionsFirst : Docopt.ParseFlags.None))
+        switch (parser.Parse(args))
         {
             case IArgumentsResult<T> r:
                 return runner(r.Arguments);

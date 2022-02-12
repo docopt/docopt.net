@@ -266,7 +266,6 @@ namespace DocoptNet.CodeGeneration
                 .Using("DocoptNet")
                 .Using("DocoptNet.Internals")
                 .UsingAlias("Leaves")["DocoptNet.Internals.ReadOnlyList<DocoptNet.Internals.LeafPattern>"]
-                .UsingAlias("ParseFlags")["DocoptNet.Docopt.ParseFlags"]
 
                 .NewLine
                 [ns is not null ? code.Namespace(ns) : code.Blank()]
