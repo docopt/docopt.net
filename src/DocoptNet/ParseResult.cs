@@ -308,7 +308,7 @@ namespace DocoptNet
     partial class Docopt
     {
         public static IParserWithHelpSupport<IDictionary<string, ValueObject>> Parser(string doc) =>
-            new Parser<IDictionary<string, ValueObject>>(doc, null, (doc, argv, flags, version) =>
+            new Parser<IDictionary<string, ValueObject>>(doc, null, static (doc, argv, flags, version) =>
             {
                 var optionsFirst = (flags & ParseFlags.OptionsFirst) != ParseFlags.None;
                 var parsedResult = Parse(doc, Tokens.From(argv), optionsFirst);
