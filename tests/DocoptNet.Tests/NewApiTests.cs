@@ -28,7 +28,7 @@ public class NewApiTests
     const string Version = "Naval Fate 2.0";
 
     static IParser<IDictionary<string, ValueObject>>.IResult Parse(string commandLine) =>
-        Docopt.Parse(Help, Args.Parse(commandLine).List, Docopt.ParseFlags.None, Version);
+        Docopt.Parser(Help).WithVersion(Version).Parse(Args.Parse(commandLine).List, Docopt.ParseFlags.None);
 
     [Test]
     public void Parse_Switch_Args()
