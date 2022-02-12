@@ -321,8 +321,8 @@ namespace DocoptNet
                     return new ParseVersionResult<IDictionary<string, ValueObject>>(someVersion);
 
                 return parsedResult.TryApply(out var applicationResult)
-                    ? new ArgumentsResult<IDictionary<string, ValueObject>>(applicationResult.ToValueObjectDictionary())
-                    : new ParseInputErrorResult<IDictionary<string, ValueObject>>("Input error.", parsedResult.ExitUsage);
+                     ? new ArgumentsResult<IDictionary<string, ValueObject>>(applicationResult.ToValueObjectDictionary())
+                     : new ParseInputErrorResult<IDictionary<string, ValueObject>>("Input error.", parsedResult.ExitUsage);
             });
     }
 }
