@@ -254,6 +254,9 @@ namespace DocoptNet
         readonly ParseHandler<T> _handler;
         readonly ArgsParseOptions _options;
 
+        public Parser(string doc, ParseHandler<T> handler) :
+            this(doc, ArgsParseOptions.Default, null, handler) { }
+
         public Parser(string doc, ArgsParseOptions options, string? version, ParseHandler<T> handler)
         {
             _doc = doc;
@@ -333,22 +336,21 @@ namespace DocoptNet
     partial class Docopt
     {
         public static IParserWithHelpSupport<IDictionary<string, ValueObject>> Parser(string doc) =>
-            new Parser<IDictionary<string, ValueObject>>(doc, ArgsParseOptions.Default, null,
-                static (doc, argv, flags, version) =>
-                {
-                    var optionsFirst = (flags & ParseFlags.OptionsFirst) != ParseFlags.None;
-                    var parsedResult = Parse(doc, Tokens.From(argv), optionsFirst);
+            new Parser<IDictionary<string, ValueObject>>(doc, static (doc, argv, flags, version) =>
+            {
+                var optionsFirst = (flags & ParseFlags.OptionsFirst) != ParseFlags.None;
+                var parsedResult = Parse(doc, Tokens.From(argv), optionsFirst);
 
-                    var help = (flags & ParseFlags.DisableHelp) == ParseFlags.None;
-                    if (help && parsedResult.IsHelpOptionSpecified)
-                        return new ParseHelpResult<IDictionary<string, ValueObject>>(doc);
+                var help = (flags & ParseFlags.DisableHelp) == ParseFlags.None;
+                if (help && parsedResult.IsHelpOptionSpecified)
+                    return new ParseHelpResult<IDictionary<string, ValueObject>>(doc);
 
-                    if (version is { } someVersion && parsedResult.IsVersionOptionSpecified)
-                        return new ParseVersionResult<IDictionary<string, ValueObject>>(someVersion);
+                if (version is { } someVersion && parsedResult.IsVersionOptionSpecified)
+                    return new ParseVersionResult<IDictionary<string, ValueObject>>(someVersion);
 
-                    return parsedResult.TryApply(out var applicationResult)
-                         ? new ArgumentsResult<IDictionary<string, ValueObject>>(applicationResult.ToValueObjectDictionary())
-                         : new ParseInputErrorResult<IDictionary<string, ValueObject>>("Input error.", parsedResult.ExitUsage);
-                });
+                return parsedResult.TryApply(out var applicationResult)
+                     ? new ArgumentsResult<IDictionary<string, ValueObject>>(applicationResult.ToValueObjectDictionary())
+                     : new ParseInputErrorResult<IDictionary<string, ValueObject>>("Input error.", parsedResult.ExitUsage);
+            });
     }
 }
