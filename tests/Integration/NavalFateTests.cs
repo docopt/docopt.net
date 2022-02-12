@@ -48,7 +48,7 @@ namespace DocoptNet.Tests.Integration
         IParserWithHelpSupport<T> Parser { get; }
 
         private IParser<T>.IResult Parse(string commandLine) =>
-            (IParser<T>.IResult)Parser.Parse(commandLine.Split(' '), Docopt.ParseFlags.None);
+            (IParser<T>.IResult)Parser.Parse(commandLine.Split(' '));
 
         [TestCase("ship new foo bar baz", CmdShip | CmdNew, new[] { "foo", "bar", "baz" }, null, null, "10")]
         [TestCase("ship foo move 123 456", CmdShip | CmdMove, new[] { "foo" }, "123", "456", "10")]
@@ -110,7 +110,7 @@ namespace DocoptNet.Tests.Integration
             const string version = "1.2.3";
 
             var argv = new[] { "--version" };
-            var result = (IVersionResult)Parser.WithVersion(version).Parse(argv, Docopt.ParseFlags.None);
+            var result = (IVersionResult)Parser.WithVersion(version).Parse(argv);
 
             Assert.That(result.Version, Is.EqualTo(version));
         }
