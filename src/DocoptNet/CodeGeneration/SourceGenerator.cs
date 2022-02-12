@@ -286,7 +286,7 @@ namespace DocoptNet.CodeGeneration
                     .Public.Static[@"IParserWithHelpSupport<"][name]["> CreateParser()"].Lambda["Parser"]
 
                     .NewLine
-                    .Static["IParser<"][name][">.IResult Parse(IEnumerable<string> args, ParseFlags flags = ParseFlags.None, string? version = null)"]
+                    .Static["IParser<"][name][">.IResult Parse(IEnumerable<string> args, ParseFlags flags, string? version)"]
                     .NewLine.Block[code
                         .Var("options")[
                             code.New["List<Option>"].NewLine

@@ -20,7 +20,7 @@ partial class Arguments : IEnumerable<KeyValuePair<string, object?>>
 
     public static IParserWithHelpSupport<Arguments> CreateParser() => Parser;
 
-    static IParser<Arguments>.IResult Parse(IEnumerable<string> args, ParseFlags flags = ParseFlags.None, string? version = null)
+    static IParser<Arguments>.IResult Parse(IEnumerable<string> args, ParseFlags flags, string? version)
     {
         var options = new List<Option>
         {

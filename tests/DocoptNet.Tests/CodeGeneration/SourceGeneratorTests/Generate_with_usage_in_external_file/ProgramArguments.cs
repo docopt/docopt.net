@@ -39,7 +39,7 @@ Naval Fate.
 
     public static IParserWithHelpSupport<ProgramArguments> CreateParser() => Parser;
 
-    static IParser<ProgramArguments>.IResult Parse(IEnumerable<string> args, ParseFlags flags = ParseFlags.None, string? version = null)
+    static IParser<ProgramArguments>.IResult Parse(IEnumerable<string> args, ParseFlags flags, string? version)
     {
         var options = new List<Option>
         {
