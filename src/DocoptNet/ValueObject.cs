@@ -1,4 +1,4 @@
-#nullable disable
+#nullable enable
 
 namespace DocoptNet
 {
@@ -8,12 +8,12 @@ namespace DocoptNet
 
     partial class ValueObject // TODO : IEquatable<ValueObject>
     {
-        public object Value { get; }
+        public object? Value { get; }
 
-        internal ValueObject(object obj) =>
+        internal ValueObject(object? obj) =>
             Value = obj is ICollection collection ? new ArrayList(collection) : obj;
 
-        public bool IsNullOrEmpty => Value == null || Value.ToString().Length == 0;
+        public bool IsNullOrEmpty => Value switch { null => true, var value => string.IsNullOrEmpty(value.ToString()) };
         public bool IsFalse => Value as bool? == false;
         public bool IsTrue => Value as bool? == true;
         public bool IsList => Value is ArrayList;
@@ -21,15 +21,15 @@ namespace DocoptNet
         public bool IsInt => Value != null && (Value is int || int.TryParse(Value.ToString(), out _));
         public bool IsString => Value is string;
         public int AsInt => IsList ? 0 : Convert.ToInt32(Value);
-        public ArrayList AsList => IsList ? Value as ArrayList : new ArrayList { Value };
+        public ArrayList AsList => Value is ArrayList list ? list : new ArrayList { Value };
 
-        public override bool Equals(object obj)
+        public override bool Equals(object? obj)
         {
             return obj is ValueObject { Value: var v } other
                 && (Value == null && v == null
                     || Value != null && v != null
                     // TODO avoid string allocations during equality check
-                    && (IsList || other.IsList ? Value.ToString().Equals(v.ToString())
+                    && (IsList || other.IsList ? (Value.ToString() ?? string.Empty).Equals(v.ToString())
                                                : Value.Equals(v)));
         }
 
@@ -44,14 +44,14 @@ namespace DocoptNet
             return Format(IsList ? AsList : Value);
         }
 
-        internal static string Format(object value)
+        internal static string Format(object? value)
         {
             return value switch
             {
                 null => string.Empty,
                 string s => s,
                 IEnumerable items => $"[{string.Join(", ", items.Cast<object>())}]",
-                _ => value.ToString()
+                var v => v.ToString() ?? string.Empty
             };
         }
     }
