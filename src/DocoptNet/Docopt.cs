@@ -8,27 +8,31 @@ namespace DocoptNet
     using System.Diagnostics;
     using System.Diagnostics.CodeAnalysis;
     using System.Linq;
+    using System.Runtime.CompilerServices;
     using System.Text;
     using System.Text.RegularExpressions;
 
     partial class Docopt
     {
         public static IHelpFeaturingParser<IDictionary<string, Value>> CreateParser(string doc) =>
-            new Parser<IDictionary<string, Value>>(doc, static (doc, argv, flags, version) =>
+            CreateParser(doc, ar => ar.ToValueDictionary());
+
+        static IHelpFeaturingParser<T> CreateParser<T>(string doc, Func<ApplicationResult, T> resultSelector) =>
+            new Parser<T>(doc, (doc, argv, flags, version) =>
             {
                 var optionsFirst = (flags & ParseFlags.OptionsFirst) != ParseFlags.None;
                 var parsedResult = Parse(doc, Tokens.From(argv), optionsFirst);
 
                 var help = (flags & ParseFlags.DisableHelp) == ParseFlags.None;
                 if (help && parsedResult.IsHelpOptionSpecified)
-                    return new ParseHelpResult<IDictionary<string, Value>>(doc);
+                    return new ParseHelpResult<T>(doc);
 
                 if (version is { } someVersion && parsedResult.IsVersionOptionSpecified)
-                    return new ParseVersionResult<IDictionary<string, Value>>(someVersion);
+                    return new ParseVersionResult<T>(someVersion);
 
                 return parsedResult.TryApply(out var applicationResult)
-                     ? new ArgumentsResult<IDictionary<string, Value>>(applicationResult.ToValueDictionary())
-                     : new ParseInputErrorResult<IDictionary<string, Value>>("Input error.", parsedResult.ExitUsage);
+                     ? new ArgumentsResult<T>(resultSelector(applicationResult))
+                     : new ParseInputErrorResult<T>("Input error.", parsedResult.ExitUsage);
             });
 
         public event EventHandler<PrintExitEventArgs>? PrintExit;
@@ -46,25 +50,39 @@ namespace DocoptNet
 
         ApplicationResult? Apply(string doc, IEnumerable<string> argv,
                                  bool help = true, object? version = null,
-                                 bool optionsFirst = false, bool exit = false) =>
-            Apply(doc, Tokens.From(argv), help, version, optionsFirst, exit);
-
-        ApplicationResult? Apply(string doc, Tokens tokens,
-                                 bool help, object? version, bool optionsFirst, bool exit)
+                                 bool optionsFirst = false, bool exit = false)
         {
+            SetDefaultPrintExitHandlerIfNecessary(exit);
+
             try
             {
-                SetDefaultPrintExitHandlerIfNecessary(exit);
+                var parser = CreateParser(doc, ar => ar);
+                parser = parser.WithOptions(parser.Options.WithOptionsFirst(optionsFirst));
 
-                var parsedResult = Parse(doc, tokens, optionsFirst);
+                const string dummyVersion = "(version)";
 
-                if (help && parsedResult.IsHelpOptionSpecified)
-                    OnPrintExit(doc);
+                var result = (help, version) switch
+                {
+                    (true, null)      => (object)parser.Parse(argv),
+                    (true, not null)  => parser.WithVersion(dummyVersion).Parse(argv),
+                    (false, not null) => parser.DisableHelp().WithVersion(dummyVersion).Parse(argv),
+                    (false, null)     => parser.DisableHelp().Parse(argv)
+                };
 
-                if (version?.ToString() is { } someVersion && parsedResult.IsVersionOptionSpecified)
-                    OnPrintExit(someVersion);
-
-                return parsedResult.Apply();
+                switch (result)
+                {
+                    case IArgumentsResult<ApplicationResult> { Arguments: var args }:
+                        return args;
+                    case IHelpResult:
+                        OnPrintExit(doc);
+                        return null;
+                    case IVersionResult:
+                        OnPrintExit(version!.ToString()!);
+                        return null;
+                    case IInputErrorResult { Usage: var usage }:
+                        throw new DocoptInputErrorException(usage);
+                    default: throw new SwitchExpressionException(result);
+                }
             }
             catch (DocoptBaseException e)
             {
