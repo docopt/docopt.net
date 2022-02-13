@@ -5,7 +5,7 @@ using NUnit.Framework;
 using NUnit.Framework.Internal;
 
 [TestFixture]
-public class NewApiTests
+public class ParserApiTests
 {
     const string Help = @"Naval Fate.
 
