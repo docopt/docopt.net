@@ -159,19 +159,22 @@ namespace DocoptNet
                        (_, _) => throw new NotSupportedException(),
                        (_, r) => (IBaselineParser<T>.IResult)r);
 
+        Parser<T> WithOptions(ArgsParseOptions value) =>
+            value == _options ? this : new Parser<T>(_doc, value, _version, _handler);
+
         ArgsParseOptions IParser<T>.Options => _options;
 
         IParser<T> IParser<T>.WithOptions(ArgsParseOptions value) =>
-            new Parser<T>(_doc, value, _version, _handler);
+            WithOptions(value);
 
         ArgsParseOptions IHelpFeaturingParser<T>.Options => _options;
 
         IHelpFeaturingParser<T> IHelpFeaturingParser<T>.WithOptions(ArgsParseOptions value) =>
-            new Parser<T>(_doc, value, _version, _handler);
+            WithOptions(value);
 
         ArgsParseOptions IBaselineParser<T>.Options => _options;
 
         IBaselineParser<T> IBaselineParser<T>.WithOptions(ArgsParseOptions value) =>
-            new Parser<T>(_doc, value, _version, _handler);
+            WithOptions(value);
     }
 }
