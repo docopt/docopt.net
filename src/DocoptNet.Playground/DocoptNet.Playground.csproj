@@ -19,7 +19,7 @@
 
   <ItemGroup>
     <Compile Include="..\DocoptNet\*.cs"
-             Exclude="..\DocoptNet\ParseResult.cs"
+             Exclude="..\DocoptNet\ParseResult.cs;..\DocoptNet\Parser.cs"
              Link="DocoptNet\%(Filename)%(Extension)" />
     <Compile Include="..\DocoptNet\Internals\*.cs"
              Exclude="..\DocoptNet\Internals\GeneratedSourceModule.cs"
