@@ -16,9 +16,9 @@ partial class Arguments : IEnumerable<KeyValuePair<string, object?>>
       naval_fate.exe (-h | --help)
       naval_fate.exe --version";
 
-    static readonly IParserWithHelpSupport<Arguments> Parser = GeneratedSourceModule.CreateParser(HelpText, Parse);
+    static readonly IHelpFeaturingParser<Arguments> Parser = GeneratedSourceModule.CreateParser(HelpText, Parse);
 
-    public static IParserWithHelpSupport<Arguments> CreateParser() => Parser;
+    public static IHelpFeaturingParser<Arguments> CreateParser() => Parser;
 
     static IParser<Arguments>.IResult Parse(IEnumerable<string> args, ParseFlags flags, string? version)
     {

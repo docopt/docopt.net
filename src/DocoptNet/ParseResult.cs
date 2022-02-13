@@ -34,8 +34,8 @@ namespace DocoptNet
         IResult Parse(IEnumerable<string> argv);
         ArgsParseOptions Options { get; }
         IParser<T> WithOptions(ArgsParseOptions value);
-        IParserWithVersionSupport<T> DisableHelp();
-        IParserWithHelpSupport<T> DisableVersion();
+        IVersionFeaturingParser<T> DisableHelp();
+        IHelpFeaturingParser<T> DisableVersion();
 
         public partial interface IResult
         {
@@ -53,13 +53,13 @@ namespace DocoptNet
     /// <summary>
     /// args + help + error
     /// </summary>
-    public partial interface IParserWithHelpSupport<out T>
+    public partial interface IHelpFeaturingParser<out T>
     {
         IResult Parse(IEnumerable<string> argv);
         ArgsParseOptions Options { get; }
-        IParserWithHelpSupport<T> WithOptions(ArgsParseOptions value);
+        IHelpFeaturingParser<T> WithOptions(ArgsParseOptions value);
         IParser<T> WithVersion(string value);
-        IBasicParser<T> DisableHelp();
+        IBaselineParser<T> DisableHelp();
 
         public partial interface IResult
         {
@@ -72,11 +72,11 @@ namespace DocoptNet
     /// <summary>
     /// args + version + error
     /// </summary>
-    public partial interface IParserWithVersionSupport<out T>
+    public partial interface IVersionFeaturingParser<out T>
     {
         IResult Parse(IEnumerable<string> argv);
         IParser<T> EnableHelp();
-        IBasicParser<T> DisableVersion();
+        IBaselineParser<T> DisableVersion();
 
         public partial interface IResult
         {
@@ -89,13 +89,13 @@ namespace DocoptNet
     /// <summary>
     /// args + error
     /// </summary>
-    public partial interface IBasicParser<out T>
+    public partial interface IBaselineParser<out T>
     {
         IResult Parse(IEnumerable<string> argv);
         ArgsParseOptions Options { get; }
-        IBasicParser<T> WithOptions(ArgsParseOptions value);
-        IParserWithHelpSupport<T> EnableHelp();
-        IParserWithVersionSupport<T> WithVersion(string value);
+        IBaselineParser<T> WithOptions(ArgsParseOptions value);
+        IHelpFeaturingParser<T> EnableHelp();
+        IVersionFeaturingParser<T> WithVersion(string value);
 
         public partial interface IResult
         {
@@ -111,9 +111,9 @@ namespace DocoptNet
 
     sealed class ArgumentsResult<T> :
         IArgumentsResult<T>,
-        IParser<T>.IResult, IParserWithHelpSupport<T>.IResult,
-        IParserWithVersionSupport<T>.IResult,
-        IBasicParser<T>.IResult
+        IParser<T>.IResult, IHelpFeaturingParser<T>.IResult,
+        IVersionFeaturingParser<T>.IResult,
+        IBaselineParser<T>.IResult
     {
         public ArgumentsResult(T args) => Arguments = args;
 
@@ -133,25 +133,25 @@ namespace DocoptNet
                                                   Func<IInputErrorResult, IParser<T>.IResult, TResult> error) =>
             args(Arguments, this);
 
-        TResult IParserWithHelpSupport<T>.IResult.Match<TResult>(Func<T, TResult> args,
-                                                                 Func<IHelpResult, TResult> help,
-                                                                 Func<IInputErrorResult, TResult> error) =>
+        TResult IHelpFeaturingParser<T>.IResult.Match<TResult>(Func<T, TResult> args,
+                                                               Func<IHelpResult, TResult> help,
+                                                               Func<IInputErrorResult, TResult> error) =>
             args(Arguments);
 
-        TResult IParserWithVersionSupport<T>.IResult.Match<TResult>(Func<T, TResult> args,
-                                                                    Func<IVersionResult, TResult> version,
-                                                                    Func<IInputErrorResult, TResult> error) =>
+        TResult IVersionFeaturingParser<T>.IResult.Match<TResult>(Func<T, TResult> args,
+                                                                  Func<IVersionResult, TResult> version,
+                                                                  Func<IInputErrorResult, TResult> error) =>
             args(Arguments);
 
-        TResult IBasicParser<T>.IResult.Match<TResult>(Func<T, TResult> args,
-                                                       Func<IInputErrorResult, TResult> error) =>
+        TResult IBaselineParser<T>.IResult.Match<TResult>(Func<T, TResult> args,
+                                                          Func<IInputErrorResult, TResult> error) =>
             args(Arguments);
     }
 
     sealed class ParseHelpResult<T> :
         IHelpResult,
         IParser<T>.IResult,
-        IParserWithHelpSupport<T>.IResult
+        IHelpFeaturingParser<T>.IResult
     {
         public ParseHelpResult(string help) => Help = help;
 
@@ -169,16 +169,16 @@ namespace DocoptNet
                                                   Func<IInputErrorResult, IParser<T>.IResult, TResult> error) =>
             help(this, this);
 
-        TResult IParserWithHelpSupport<T>.IResult.Match<TResult>(Func<T, TResult> args,
-                                                                 Func<IHelpResult, TResult> help,
-                                                                 Func<IInputErrorResult, TResult> error) =>
+        TResult IHelpFeaturingParser<T>.IResult.Match<TResult>(Func<T, TResult> args,
+                                                               Func<IHelpResult, TResult> help,
+                                                               Func<IInputErrorResult, TResult> error) =>
             help(this);
     }
 
     sealed class ParseVersionResult<T> :
         IVersionResult,
         IParser<T>.IResult,
-        IParserWithVersionSupport<T>.IResult
+        IVersionFeaturingParser<T>.IResult
     {
         public ParseVersionResult(string version) => Version = version;
 
@@ -196,18 +196,18 @@ namespace DocoptNet
                                                   Func<IInputErrorResult, IParser<T>.IResult, TResult> error) =>
             version(this, this);
 
-        TResult IParserWithVersionSupport<T>.IResult.Match<TResult>(Func<T, TResult> args,
-                                                                    Func<IVersionResult, TResult> version,
-                                                                    Func<IInputErrorResult, TResult> error) =>
+        TResult IVersionFeaturingParser<T>.IResult.Match<TResult>(Func<T, TResult> args,
+                                                                  Func<IVersionResult, TResult> version,
+                                                                  Func<IInputErrorResult, TResult> error) =>
             version(this);
     }
 
     sealed class ParseInputErrorResult<T> :
         IInputErrorResult,
         IParser<T>.IResult,
-        IParserWithHelpSupport<T>.IResult,
-        IParserWithVersionSupport<T>.IResult,
-        IBasicParser<T>.IResult
+        IHelpFeaturingParser<T>.IResult,
+        IVersionFeaturingParser<T>.IResult,
+        IBaselineParser<T>.IResult
     {
         public ParseInputErrorResult(string error, string usage) => (Error, Usage) = (error, usage);
 
@@ -226,18 +226,18 @@ namespace DocoptNet
                                                   Func<IInputErrorResult, IParser<T>.IResult, TResult> error) =>
             error(this, this);
 
-        TResult IParserWithHelpSupport<T>.IResult.Match<TResult>(Func<T, TResult> args,
-                                                                 Func<IHelpResult, TResult> help,
-                                                                 Func<IInputErrorResult, TResult> error) =>
+        TResult IHelpFeaturingParser<T>.IResult.Match<TResult>(Func<T, TResult> args,
+                                                               Func<IHelpResult, TResult> help,
+                                                               Func<IInputErrorResult, TResult> error) =>
             error(this);
 
-        TResult IParserWithVersionSupport<T>.IResult.Match<TResult>(Func<T, TResult> args,
-                                                                    Func<IVersionResult, TResult> version,
-                                                                    Func<IInputErrorResult, TResult> error) =>
+        TResult IVersionFeaturingParser<T>.IResult.Match<TResult>(Func<T, TResult> args,
+                                                                  Func<IVersionResult, TResult> version,
+                                                                  Func<IInputErrorResult, TResult> error) =>
             error(this);
 
-        TResult IBasicParser<T>.IResult.Match<TResult>(Func<T, TResult> args,
-                                                       Func<IInputErrorResult, TResult> error) =>
+        TResult IBaselineParser<T>.IResult.Match<TResult>(Func<T, TResult> args,
+                                                          Func<IInputErrorResult, TResult> error) =>
             error(this);
     }
 
@@ -245,9 +245,9 @@ namespace DocoptNet
 
     sealed class Parser<T> :
         IParser<T>,
-        IParserWithHelpSupport<T>,
-        IParserWithVersionSupport<T>,
-        IBasicParser<T>
+        IHelpFeaturingParser<T>,
+        IVersionFeaturingParser<T>,
+        IBaselineParser<T>
     {
         readonly string _doc;
         readonly string? _version;
@@ -272,70 +272,70 @@ namespace DocoptNet
         IParser<T>.IResult IParser<T>.Parse(IEnumerable<string> argv) =>
             _handler(_doc, argv, ParseFlags, Version);
 
-        IParserWithHelpSupport<T>.IResult IParserWithHelpSupport<T>.Parse(IEnumerable<string> argv) =>
+        IHelpFeaturingParser<T>.IResult IHelpFeaturingParser<T>.Parse(IEnumerable<string> argv) =>
             _handler(_doc, argv, ParseFlags, null)
-                .Match((_, r) => (IParserWithHelpSupport<T>.IResult)r,
-                       (_, r) => (IParserWithHelpSupport<T>.IResult)r,
+                .Match((_, r) => (IHelpFeaturingParser<T>.IResult)r,
+                       (_, r) => (IHelpFeaturingParser<T>.IResult)r,
                        (_, _) => throw new NotSupportedException(),
-                       (_, r) => (IParserWithHelpSupport<T>.IResult)r);
+                       (_, r) => (IHelpFeaturingParser<T>.IResult)r);
 
-        IParser<T> IParserWithHelpSupport<T>.WithVersion(string value) =>
+        IParser<T> IHelpFeaturingParser<T>.WithVersion(string value) =>
             new Parser<T>(_doc, _options, value, _handler);
 
-        IParserWithVersionSupport<T> IBasicParser<T>.WithVersion(string value) =>
+        IVersionFeaturingParser<T> IBaselineParser<T>.WithVersion(string value) =>
             new Parser<T>(_doc, _options, value, _handler);
 
-        IParserWithHelpSupport<T> IParser<T>.DisableVersion() =>
+        IHelpFeaturingParser<T> IParser<T>.DisableVersion() =>
             new Parser<T>(_doc, _options, null, _handler);
 
-        IBasicParser<T> IParserWithVersionSupport<T>.DisableVersion() =>
+        IBaselineParser<T> IVersionFeaturingParser<T>.DisableVersion() =>
             new Parser<T>(_doc, _options, null, _handler);
 
-        IParserWithVersionSupport<T> IParser<T>.DisableHelp() =>
+        IVersionFeaturingParser<T> IParser<T>.DisableHelp() =>
             new Parser<T>(_doc, _options, _version, _handler);
 
-        IBasicParser<T> IParserWithHelpSupport<T>.DisableHelp() =>
+        IBaselineParser<T> IHelpFeaturingParser<T>.DisableHelp() =>
             new Parser<T>(_doc, _options, null, _handler);
 
-        IParserWithHelpSupport<T> IBasicParser<T>.EnableHelp() =>
+        IHelpFeaturingParser<T> IBaselineParser<T>.EnableHelp() =>
             new Parser<T>(_doc, _options, null, _handler);
 
-        IParser<T> IParserWithVersionSupport<T>.EnableHelp() =>
+        IParser<T> IVersionFeaturingParser<T>.EnableHelp() =>
             new Parser<T>(_doc, _options, _version, _handler);
 
-        IParserWithVersionSupport<T>.IResult IParserWithVersionSupport<T>.Parse(IEnumerable<string> argv) =>
+        IVersionFeaturingParser<T>.IResult IVersionFeaturingParser<T>.Parse(IEnumerable<string> argv) =>
             _handler(_doc, argv, ParseFlags | ParseFlags.DisableHelp, Version)
-                .Match((_, r) => (IParserWithVersionSupport<T>.IResult)r,
+                .Match((_, r) => (IVersionFeaturingParser<T>.IResult)r,
                        (_, _) => throw new NotSupportedException(),
-                       (_, r) => (IParserWithVersionSupport<T>.IResult)r,
-                       (_, r) => (IParserWithVersionSupport<T>.IResult)r);
+                       (_, r) => (IVersionFeaturingParser<T>.IResult)r,
+                       (_, r) => (IVersionFeaturingParser<T>.IResult)r);
 
-        IBasicParser<T>.IResult IBasicParser<T>.Parse(IEnumerable<string> argv) =>
+        IBaselineParser<T>.IResult IBaselineParser<T>.Parse(IEnumerable<string> argv) =>
             _handler(_doc, argv, ParseFlags | ParseFlags.DisableHelp, null)
-                .Match((_, r) => (IBasicParser<T>.IResult)r,
+                .Match((_, r) => (IBaselineParser<T>.IResult)r,
                        (_, _) => throw new NotSupportedException(),
                        (_, _) => throw new NotSupportedException(),
-                       (_, r) => (IBasicParser<T>.IResult)r);
+                       (_, r) => (IBaselineParser<T>.IResult)r);
 
         ArgsParseOptions IParser<T>.Options => _options;
 
         IParser<T> IParser<T>.WithOptions(ArgsParseOptions value) =>
             new Parser<T>(_doc, value, _version, _handler);
 
-        ArgsParseOptions IParserWithHelpSupport<T>.Options => _options;
+        ArgsParseOptions IHelpFeaturingParser<T>.Options => _options;
 
-        IParserWithHelpSupport<T> IParserWithHelpSupport<T>.WithOptions(ArgsParseOptions value) =>
+        IHelpFeaturingParser<T> IHelpFeaturingParser<T>.WithOptions(ArgsParseOptions value) =>
             new Parser<T>(_doc, value, _version, _handler);
 
-        ArgsParseOptions IBasicParser<T>.Options => _options;
+        ArgsParseOptions IBaselineParser<T>.Options => _options;
 
-        IBasicParser<T> IBasicParser<T>.WithOptions(ArgsParseOptions value) =>
+        IBaselineParser<T> IBaselineParser<T>.WithOptions(ArgsParseOptions value) =>
             new Parser<T>(_doc, value, _version, _handler);
     }
 
     partial class Docopt
     {
-        public static IParserWithHelpSupport<IDictionary<string, Value>> CreateParser(string doc) =>
+        public static IHelpFeaturingParser<IDictionary<string, Value>> CreateParser(string doc) =>
             new Parser<IDictionary<string, Value>>(doc, static (doc, argv, flags, version) =>
             {
                 var optionsFirst = (flags & ParseFlags.OptionsFirst) != ParseFlags.None;

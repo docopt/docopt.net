@@ -279,11 +279,11 @@ namespace DocoptNet.CodeGeneration
                     .Public.Const(usageConstName, usage)
 
                     .NewLine
-                    .Static.ReadOnly[@"IParserWithHelpSupport<"][name]["> "]
+                    .Static.ReadOnly[@"IHelpFeaturingParser<"][name]["> "]
                                     .Assign("Parser")[code["GeneratedSourceModule.CreateParser("][helpConstName][", Parse)"]]
 
                     .NewLine
-                    .Public.Static[@"IParserWithHelpSupport<"][name]["> CreateParser()"].Lambda["Parser"]
+                    .Public.Static[@"IHelpFeaturingParser<"][name]["> CreateParser()"].Lambda["Parser"]
 
                     .NewLine
                     .Static["IParser<"][name][">.IResult Parse(IEnumerable<string> args, ParseFlags flags, string? version)"]

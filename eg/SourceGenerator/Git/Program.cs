@@ -33,7 +33,7 @@ static int Run(string[] args) =>
 
         Console.WriteLine("command args:");
 
-        int Run<T>(IParserWithHelpSupport<T> parser)
+        int Run<T>(IHelpFeaturingParser<T> parser)
             where T : IEnumerable<KeyValuePair<string, object?>>
         {
             var argv = new[] { args.ArgCommand! }.Concat(args.ArgArgs).ToArray();

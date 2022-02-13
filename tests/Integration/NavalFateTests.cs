@@ -43,9 +43,9 @@ namespace DocoptNet.Tests.Integration
 
     public abstract class NavalFateTestsBase<T> where T : INavalFateArguments
     {
-        protected NavalFateTestsBase(IParserWithHelpSupport<T> parser) => Parser = parser;
+        protected NavalFateTestsBase(IHelpFeaturingParser<T> parser) => Parser = parser;
 
-        IParserWithHelpSupport<T> Parser { get; }
+        IHelpFeaturingParser<T> Parser { get; }
 
         private IParser<T>.IResult Parse(string commandLine) =>
             (IParser<T>.IResult)Parser.Parse(commandLine.Split(' '));

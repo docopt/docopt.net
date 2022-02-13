@@ -6,10 +6,10 @@ using DocoptNet;
 
 static partial class ParseResultExtensions
 {
-    public static int Run<T>(this IParserWithHelpSupport<T> parser, IEnumerable<string> args, Func<T, int> runner) =>
+    public static int Run<T>(this IHelpFeaturingParser<T> parser, IEnumerable<string> args, Func<T, int> runner) =>
         parser.Run(args, null, null, 0, runner);
 
-    public static int Run<T>(this IParserWithHelpSupport<T> parser, IEnumerable<string> args,
+    public static int Run<T>(this IHelpFeaturingParser<T> parser, IEnumerable<string> args,
                              TextWriter stdout, TextWriter stderr, int errorExitCode,
                              Func<T, int> runner)
     {

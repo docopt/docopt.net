@@ -44,7 +44,7 @@ namespace DocoptNet.Internals
             return arguments;
         }
 
-        public static IParserWithHelpSupport<T> CreateParser<T>(string doc, Func<IEnumerable<string>, ParseFlags, string?, IParser<T>.IResult> parseFunction) =>
+        public static IHelpFeaturingParser<T> CreateParser<T>(string doc, Func<IEnumerable<string>, ParseFlags, string?, IParser<T>.IResult> parseFunction) =>
             new Parser<T>(doc, ArgsParseOptions.Default, null, (_, args, flags, version) => parseFunction(args, flags, version));
 
         public static IParser<T>.IResult CreateArgumentsResult<T>(T args) =>

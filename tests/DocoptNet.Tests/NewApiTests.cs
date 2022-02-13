@@ -196,9 +196,9 @@ public class NewApiTests
         }
     }
 
-    public class ParserWithHelpSupportTests
+    public class HelpFeaturingParserTests
     {
-        static readonly IParserWithHelpSupport<IDictionary<string, Value>> Parser = Docopt.CreateParser(Help);
+        static readonly IHelpFeaturingParser<IDictionary<string, Value>> Parser = Docopt.CreateParser(Help);
 
         [Test]
         public void Match_Args()
@@ -236,9 +236,9 @@ public class NewApiTests
         }
     }
 
-    public class ParserWithVersionSupportTests
+    public class VersionFeaturingParserTests
     {
-        static readonly IParserWithVersionSupport<IDictionary<string, Value>> Parser =
+        static readonly IVersionFeaturingParser<IDictionary<string, Value>> Parser =
             Docopt.CreateParser(Help).DisableHelp().WithVersion(Version);
 
         [Test]
@@ -277,9 +277,9 @@ public class NewApiTests
         }
     }
 
-    public class BasicParser
+    public class BaselineParserTests
     {
-        static readonly IBasicParser<IDictionary<string, Value>> Parser =
+        static readonly IBaselineParser<IDictionary<string, Value>> Parser =
             Docopt.CreateParser(Help).DisableHelp();
 
         [Test]
