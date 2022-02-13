@@ -11,6 +11,24 @@ namespace DocoptNet
 
     partial class Docopt
     {
+        public static IHelpFeaturingParser<IDictionary<string, Value>> CreateParser(string doc) =>
+            new Parser<IDictionary<string, Value>>(doc, static (doc, argv, flags, version) =>
+            {
+                var optionsFirst = (flags & ParseFlags.OptionsFirst) != ParseFlags.None;
+                var parsedResult = Parse(doc, Tokens.From(argv), optionsFirst);
+
+                var help = (flags & ParseFlags.DisableHelp) == ParseFlags.None;
+                if (help && parsedResult.IsHelpOptionSpecified)
+                    return new ParseHelpResult<IDictionary<string, Value>>(doc);
+
+                if (version is { } someVersion && parsedResult.IsVersionOptionSpecified)
+                    return new ParseVersionResult<IDictionary<string, Value>>(someVersion);
+
+                return parsedResult.TryApply(out var applicationResult)
+                     ? new ArgumentsResult<IDictionary<string, Value>>(applicationResult.ToValueDictionary())
+                     : new ParseInputErrorResult<IDictionary<string, Value>>("Input error.", parsedResult.ExitUsage);
+            });
+
         public event EventHandler<PrintExitEventArgs> PrintExit;
 
         public IDictionary<string, ValueObject> Apply(string doc)
