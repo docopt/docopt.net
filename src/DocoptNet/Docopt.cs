@@ -137,9 +137,6 @@ namespace DocoptNet
             public bool IsVersionOptionSpecified =>
                 _arguments.Any(o => o is { Name: "--version", Value.IsTrue: true });
 
-            public ApplicationResult Apply() =>
-                TryApply(out var result) ? result : throw new DocoptInputErrorException(ExitUsage);
-
             public bool TryApply([NotNullWhen(true)] out ApplicationResult? result)
             {
                 if (_pattern.Fix().Match(_arguments) is (true, {Count: 0}, var collected))
