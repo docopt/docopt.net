@@ -8,7 +8,7 @@ namespace DocoptNet
     /// <summary>
     /// args + help + version + error
     /// </summary>
-    public partial interface IParser<out T>
+    partial interface IParser<out T>
     {
         IResult Parse(IEnumerable<string> argv);
         ArgsParseOptions Options { get; }
@@ -16,7 +16,7 @@ namespace DocoptNet
         IVersionFeaturingParser<T> DisableHelp();
         IHelpFeaturingParser<T> DisableVersion();
 
-        public partial interface IResult
+        interface IResult
         {
             TResult Match<TResult>(Func<T, TResult> args,
                                    Func<IHelpResult, TResult> help,
@@ -32,7 +32,7 @@ namespace DocoptNet
     /// <summary>
     /// args + help + error
     /// </summary>
-    public partial interface IHelpFeaturingParser<out T>
+    partial interface IHelpFeaturingParser<out T>
     {
         IResult Parse(IEnumerable<string> argv);
         ArgsParseOptions Options { get; }
@@ -40,7 +40,7 @@ namespace DocoptNet
         IParser<T> WithVersion(string value);
         IBaselineParser<T> DisableHelp();
 
-        public partial interface IResult
+        interface IResult
         {
             TResult Match<TResult>(Func<T, TResult> args,
                                    Func<IHelpResult, TResult> help,
@@ -51,13 +51,13 @@ namespace DocoptNet
     /// <summary>
     /// args + version + error
     /// </summary>
-    public partial interface IVersionFeaturingParser<out T>
+    partial interface IVersionFeaturingParser<out T>
     {
         IResult Parse(IEnumerable<string> argv);
         IParser<T> EnableHelp();
         IBaselineParser<T> DisableVersion();
 
-        public partial interface IResult
+        interface IResult
         {
             TResult Match<TResult>(Func<T, TResult> args,
                                    Func<IVersionResult, TResult> version,
@@ -68,7 +68,7 @@ namespace DocoptNet
     /// <summary>
     /// args + error
     /// </summary>
-    public partial interface IBaselineParser<out T>
+    partial interface IBaselineParser<out T>
     {
         IResult Parse(IEnumerable<string> argv);
         ArgsParseOptions Options { get; }
@@ -76,7 +76,7 @@ namespace DocoptNet
         IHelpFeaturingParser<T> EnableHelp();
         IVersionFeaturingParser<T> WithVersion(string value);
 
-        public partial interface IResult
+        interface IResult
         {
             TResult Match<TResult>(Func<T, TResult> args,
                                    Func<IInputErrorResult, TResult> error);

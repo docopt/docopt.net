@@ -5,23 +5,23 @@ namespace DocoptNet
     using System;
     using System.Collections.Generic;
 
-    public partial interface IArgumentsResult<out T>
+    partial interface IArgumentsResult<out T>
     {
         public T Arguments { get; }
     }
 
-    public partial interface IInputErrorResult
+    partial interface IInputErrorResult
     {
         public string Error { get; }
         public string Usage { get; }
     }
 
-    public partial interface IHelpResult
+    partial interface IHelpResult
     {
         string Help { get; }
     }
 
-    public partial interface IVersionResult
+    partial interface IVersionResult
     {
         string Version { get; }
     }
