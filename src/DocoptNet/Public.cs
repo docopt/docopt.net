@@ -10,6 +10,8 @@ namespace DocoptNet
     public partial class DocoptLanguageErrorException { }
     public partial class ValueObject { }
     public partial class ArgsParseOptions { }
+    public partial class StringList { }
+    public partial struct Value { }
 }
 
 #endif

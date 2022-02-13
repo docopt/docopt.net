@@ -1,6 +1,6 @@
 #nullable enable
 
-namespace DocoptNet.Internals
+namespace DocoptNet
 {
     using System;
     using System.Collections;

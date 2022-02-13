@@ -27,7 +27,7 @@ public class NewApiTests
 
     const string Version = "Naval Fate 2.0";
 
-    static IParser<IDictionary<string, ValueObject>>.IResult Parse(string commandLine) =>
+    static IParser<IDictionary<string, Value>>.IResult Parse(string commandLine) =>
         Docopt.CreateParser(Help).WithVersion(Version).Parse(Args.Parse(commandLine).List);
 
     [Test]
@@ -35,10 +35,10 @@ public class NewApiTests
     {
         switch (Parse("ship new foo bar"))
         {
-            case IArgumentsResult<IDictionary<string, ValueObject>> { Arguments: var args }:
+            case IArgumentsResult<IDictionary<string, Value>> { Arguments: var args }:
                 Assert.True(args["ship"].IsTrue);
                 Assert.True(args["new"].IsTrue);
-                Assert.That(args["<name>"].AsList, Is.EqualTo(new[] { "foo", "bar" }));
+                Assert.That((StringList)args["<name>"], Is.EqualTo(new[] { "foo", "bar" }));
                 break;
             case var result:
                 Assert.Fail("Unexpected result: {0}", result);
@@ -100,7 +100,7 @@ public class NewApiTests
                          _ => throw new NUnitException());
         Assert.True(args["ship"].IsTrue);
         Assert.True(args["new"].IsTrue);
-        Assert.That(args["<name>"].AsList, Is.EqualTo(new[] { "foo", "bar" }));
+        Assert.That((StringList)args["<name>"], Is.EqualTo(new[] { "foo", "bar" }));
     }
 
     [Test]
@@ -142,7 +142,7 @@ public class NewApiTests
 
     public class ParserTests
     {
-        static readonly IParser<IDictionary<string, ValueObject>> Parser =
+        static readonly IParser<IDictionary<string, Value>> Parser =
             Docopt.CreateParser(Help).WithVersion(Version);
 
         [Test]
@@ -155,7 +155,7 @@ public class NewApiTests
                                     _ => throw new NUnitException());
             Assert.True(args["ship"].IsTrue);
             Assert.True(args["new"].IsTrue);
-            Assert.That(args["<name>"].AsList, Is.EqualTo(new[] { "foo", "bar" }));
+            Assert.That((StringList)args["<name>"], Is.EqualTo(new[] { "foo", "bar" }));
         }
 
         [Test]
@@ -198,7 +198,7 @@ public class NewApiTests
 
     public class ParserWithHelpSupportTests
     {
-        static readonly IParserWithHelpSupport<IDictionary<string, ValueObject>> Parser = Docopt.CreateParser(Help);
+        static readonly IParserWithHelpSupport<IDictionary<string, Value>> Parser = Docopt.CreateParser(Help);
 
         [Test]
         public void Match_Args()
@@ -209,7 +209,7 @@ public class NewApiTests
                                     _ => throw new NUnitException());
             Assert.True(args["ship"].IsTrue);
             Assert.True(args["new"].IsTrue);
-            Assert.That(args["<name>"].AsList, Is.EqualTo(new[] { "foo", "bar" }));
+            Assert.That((StringList)args["<name>"], Is.EqualTo(new[] { "foo", "bar" }));
         }
 
         [Test]
@@ -238,7 +238,7 @@ public class NewApiTests
 
     public class ParserWithVersionSupportTests
     {
-        static readonly IParserWithVersionSupport<IDictionary<string, ValueObject>> Parser =
+        static readonly IParserWithVersionSupport<IDictionary<string, Value>> Parser =
             Docopt.CreateParser(Help).DisableHelp().WithVersion(Version);
 
         [Test]
@@ -250,7 +250,7 @@ public class NewApiTests
                                     _ => throw new NUnitException());
             Assert.True(args["ship"].IsTrue);
             Assert.True(args["new"].IsTrue);
-            Assert.That(args["<name>"].AsList, Is.EqualTo(new[] { "foo", "bar" }));
+            Assert.That((StringList)args["<name>"], Is.EqualTo(new[] { "foo", "bar" }));
         }
 
         [Test]
@@ -279,7 +279,7 @@ public class NewApiTests
 
     public class BasicParser
     {
-        static readonly IBasicParser<IDictionary<string, ValueObject>> Parser =
+        static readonly IBasicParser<IDictionary<string, Value>> Parser =
             Docopt.CreateParser(Help).DisableHelp();
 
         [Test]
@@ -290,7 +290,7 @@ public class NewApiTests
                                     _ => throw new NUnitException());
             Assert.True(args["ship"].IsTrue);
             Assert.True(args["new"].IsTrue);
-            Assert.That(args["<name>"].AsList, Is.EqualTo(new[] { "foo", "bar" }));
+            Assert.That((StringList)args["<name>"], Is.EqualTo(new[] { "foo", "bar" }));
         }
 
         [Test]

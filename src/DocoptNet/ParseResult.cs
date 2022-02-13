@@ -335,22 +335,22 @@ namespace DocoptNet
 
     partial class Docopt
     {
-        public static IParserWithHelpSupport<IDictionary<string, ValueObject>> CreateParser(string doc) =>
-            new Parser<IDictionary<string, ValueObject>>(doc, static (doc, argv, flags, version) =>
+        public static IParserWithHelpSupport<IDictionary<string, Value>> CreateParser(string doc) =>
+            new Parser<IDictionary<string, Value>>(doc, static (doc, argv, flags, version) =>
             {
                 var optionsFirst = (flags & ParseFlags.OptionsFirst) != ParseFlags.None;
                 var parsedResult = Parse(doc, Tokens.From(argv), optionsFirst);
 
                 var help = (flags & ParseFlags.DisableHelp) == ParseFlags.None;
                 if (help && parsedResult.IsHelpOptionSpecified)
-                    return new ParseHelpResult<IDictionary<string, ValueObject>>(doc);
+                    return new ParseHelpResult<IDictionary<string, Value>>(doc);
 
                 if (version is { } someVersion && parsedResult.IsVersionOptionSpecified)
-                    return new ParseVersionResult<IDictionary<string, ValueObject>>(someVersion);
+                    return new ParseVersionResult<IDictionary<string, Value>>(someVersion);
 
                 return parsedResult.TryApply(out var applicationResult)
-                     ? new ArgumentsResult<IDictionary<string, ValueObject>>(applicationResult.ToValueObjectDictionary())
-                     : new ParseInputErrorResult<IDictionary<string, ValueObject>>("Input error.", parsedResult.ExitUsage);
+                     ? new ArgumentsResult<IDictionary<string, Value>>(applicationResult.ToValueDictionary())
+                     : new ParseInputErrorResult<IDictionary<string, Value>>("Input error.", parsedResult.ExitUsage);
             });
     }
 }
