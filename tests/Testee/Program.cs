@@ -15,7 +15,7 @@ namespace Testee
         {
             try
             {
-                var arguments = new Docopt().Apply(doc, cmdLine);
+                var arguments = new Docopt().Apply(doc, cmdLine)!;
                 var dict = new Dictionary<string, object>();
                 foreach (var argument in arguments)
                 {

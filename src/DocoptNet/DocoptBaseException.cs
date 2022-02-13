@@ -1,3 +1,5 @@
+#nullable enable
+
 namespace DocoptNet
 {
     using System;
@@ -15,12 +17,12 @@ namespace DocoptNet
         {
         }
 
-        public DocoptBaseException(string message)
+        public DocoptBaseException(string? message)
             : base(message)
         {
         }
 
-        public DocoptBaseException(string message, Exception inner)
+        public DocoptBaseException(string? message, Exception? inner)
             : base(message, inner)
         {
         }

@@ -1,3 +1,5 @@
+#nullable enable
+
 namespace DocoptNet
 {
     using System;
@@ -14,10 +16,10 @@ namespace DocoptNet
         public DocoptLanguageErrorException()
         {
         }
-        public DocoptLanguageErrorException(string message) : base(message)
+        public DocoptLanguageErrorException(string? message) : base(message)
         {
         }
-        public DocoptLanguageErrorException(string message, Exception inner) : base(message, inner)
+        public DocoptLanguageErrorException(string? message, Exception inner) : base(message, inner)
         {
         }
     }
