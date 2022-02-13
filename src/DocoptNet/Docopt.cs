@@ -1,4 +1,4 @@
-#nullable enable annotations
+#nullable enable
 
 namespace DocoptNet
 {
@@ -61,8 +61,8 @@ namespace DocoptNet
                 if (help && parsedResult.IsHelpOptionSpecified)
                     OnPrintExit(doc);
 
-                if (version is not null && parsedResult.IsVersionOptionSpecified)
-                    OnPrintExit(version.ToString());
+                if (version?.ToString() is { } someVersion && parsedResult.IsVersionOptionSpecified)
+                    OnPrintExit(someVersion);
 
                 return parsedResult.Apply();
             }
