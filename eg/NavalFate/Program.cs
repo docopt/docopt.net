@@ -28,7 +28,7 @@ namespace NavalFate
         {
             try
             {
-                var arguments = new Docopt().Apply(usage, args, version: "Naval Fate 2.0", exit: true);
+                var arguments = new Docopt().Apply(usage, args, version: "Naval Fate 2.0", exit: true)!;
                 foreach (var argument in arguments)
                 {
                     Console.WriteLine("{0} = {1}", argument.Key, argument.Value);

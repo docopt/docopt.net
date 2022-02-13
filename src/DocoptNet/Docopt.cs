@@ -1,3 +1,5 @@
+#nullable enable annotations
+
 namespace DocoptNet
 {
     using System;
@@ -29,26 +31,26 @@ namespace DocoptNet
                      : new ParseInputErrorResult<IDictionary<string, Value>>("Input error.", parsedResult.ExitUsage);
             });
 
-        public event EventHandler<PrintExitEventArgs> PrintExit;
+        public event EventHandler<PrintExitEventArgs>? PrintExit;
 
-        public IDictionary<string, ValueObject> Apply(string doc)
+        public IDictionary<string, ValueObject>? Apply(string doc)
         {
             return Apply(doc, Array.Empty<string>());
         }
 
-        public IDictionary<string, ValueObject> Apply(string doc, ICollection<string> argv, bool help = true,
-            object version = null, bool optionsFirst = false, bool exit = false)
+        public IDictionary<string, ValueObject>? Apply(string doc, ICollection<string> argv, bool help = true,
+                                                       object? version = null, bool optionsFirst = false, bool exit = false)
         {
             return Apply(doc, argv.AsEnumerable(), help, version, optionsFirst, exit)?.ToValueObjectDictionary();
         }
 
-        ApplicationResult Apply(string doc, IEnumerable<string> argv,
-                                bool help = true, object version = null,
-                                bool optionsFirst = false, bool exit = false) =>
+        ApplicationResult? Apply(string doc, IEnumerable<string> argv,
+                                 bool help = true, object? version = null,
+                                 bool optionsFirst = false, bool exit = false) =>
             Apply(doc, Tokens.From(argv), help, version, optionsFirst, exit);
 
-        ApplicationResult Apply(string doc, Tokens tokens,
-                                bool help, object version, bool optionsFirst, bool exit)
+        ApplicationResult? Apply(string doc, Tokens tokens,
+                                 bool help, object? version, bool optionsFirst, bool exit)
         {
             try
             {
@@ -120,7 +122,7 @@ namespace DocoptNet
             public ApplicationResult Apply() =>
                 TryApply(out var result) ? result : throw new DocoptInputErrorException(ExitUsage);
 
-            public bool TryApply([NotNullWhen(true)] out ApplicationResult result)
+            public bool TryApply([NotNullWhen(true)] out ApplicationResult? result)
             {
                 if (_pattern.Fix().Match(_arguments) is (true, {Count: 0}, var collected))
                 {
@@ -152,9 +154,9 @@ namespace DocoptNet
         [EditorBrowsable(EditorBrowsableState.Never)]
         internal static class Internal
         {
-            public static IDictionary<string, Value> Apply(Docopt docopt, string doc, IEnumerable<string> argv,
-                                                           bool help = true, object version = null,
-                                                           bool optionsFirst = false, bool exit = false) =>
+            public static IDictionary<string, Value>? Apply(Docopt docopt, string doc, IEnumerable<string> argv,
+                                                            bool help = true, object? version = null,
+                                                            bool optionsFirst = false, bool exit = false) =>
                 docopt.Apply(doc, Tokens.From(argv), help, version, optionsFirst, exit)?.ToValueDictionary();
 
             public static IEnumerable<T> GetNodes<T>(string doc,
@@ -277,7 +279,7 @@ namespace DocoptNet
         internal static string FormalUsage(string exitUsage)
         {
             var (_, _, section) = exitUsage.Partition(":"); // drop "usage:"
-            var pu = section.Split((char[])null, StringSplitOptions.RemoveEmptyEntries);
+            var pu = section.Split((char[]?)null, StringSplitOptions.RemoveEmptyEntries);
             var join = new StringBuilder();
             join.Append("( ");
             for (var i = 1; i < pu.Length; i++)
