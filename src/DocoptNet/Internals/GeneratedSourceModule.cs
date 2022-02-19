@@ -27,7 +27,7 @@ namespace DocoptNet.Internals
             var help = (flags & ParseFlags.DisableHelp) == ParseFlags.None;
             if (help && arguments.Any(o => o is { Name: "-h" or "--help", Value.IsTrue: true }))
                 return new ParseHelpResult<T>(doc);
-            if (version is {} someVersion && arguments.Any(o => o is { Name: "--version", Value.IsTrue: true }))
+            if (version is { } someVersion && arguments.Any(o => o is { Name: "--version", Value.IsTrue: true }))
                 return new ParseVersionResult<T>(someVersion);
             return resultSelector(arguments);
         }
