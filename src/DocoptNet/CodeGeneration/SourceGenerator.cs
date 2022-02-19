@@ -36,7 +36,7 @@ namespace DocoptNet.CodeGeneration
     public sealed class SourceGenerator : ISourceGenerator
     {
         static readonly DiagnosticDescriptor SyntaxError =
-            new(id: "DCPT0001",
+            new DiagnosticDescriptor(id: "DCPT0001",
                 title: "Syntax error",
                 messageFormat: "Syntax error: {0}",
                 category: "Docopt",
@@ -44,7 +44,7 @@ namespace DocoptNet.CodeGeneration
                 isEnabledByDefault: true);
 
         static readonly DiagnosticDescriptor MissingHelpConstError =
-            new(id: "DCPT0002",
+            new DiagnosticDescriptor(id: "DCPT0002",
                 title: "Missing member",
                 messageFormat: "'{0}' is missing the help string constant named '{1}'",
                 category: "Docopt",
