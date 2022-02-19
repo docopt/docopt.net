@@ -10,7 +10,6 @@
     -->
     <!-- See further below why NU5129 is suppressed. -->
     <NoWarn>$(NoWarn);NU5125;NU5129</NoWarn>
-    <NoWarn Condition="'$(NetCoreSdkVersion)' == '6.0.200'">$(NoWarn);RS2002</NoWarn>
     <AssemblyName>DocoptNet</AssemblyName>
     <VersionPrefix>0.8.0</VersionPrefix>
     <AssemblyOriginatorKeyFile>DocoptNet.snk</AssemblyOriginatorKeyFile>
