@@ -184,16 +184,17 @@ public class ParserApiTests
             Assert.That(version.Version, Is.EqualTo(Version));
         }
 
-        [Test]
-        public void Match_Error()
+        [TestCase("foobar", "Invalid usage.")]
+        [TestCase("ship move 123 456 --speed", "--speed requires an argument")]
+        public void Match_Error(string commandLine, string expectedError)
         {
-            var result = Parser.Parse(Args.Parse("foobar").List);
+            var result = Parser.Parse(Args.Parse(commandLine).List);
             var error =
                 result.Match(_ => throw new NUnitException(),
                              _ => throw new NUnitException(),
                              _ => throw new NUnitException(),
                              error => error);
-            Assert.That(error.Error, Is.EqualTo("Invalid usage."));
+            Assert.That(error.Error, Is.EqualTo(expectedError));
             Assert.That(error.Usage, Is.Not.Empty);
         }
     }
@@ -225,15 +226,16 @@ public class ParserApiTests
             Assert.That(help.Help, Is.EqualTo(Help));
         }
 
-        [Test]
-        public void Match_Error()
+        [TestCase("foobar", "Invalid usage.")]
+        [TestCase("ship move 123 456 --speed", "--speed requires an argument")]
+        public void Match_Error(string commandLine, string expectedError)
         {
-            var result = Parser.Parse(Args.Parse("foobar").List);
+            var result = Parser.Parse(Args.Parse(commandLine).List);
             var error =
                 result.Match(_ => throw new NUnitException(),
                              _ => throw new NUnitException(),
                              error => error);
-            Assert.That(error.Error, Is.EqualTo("Invalid usage."));
+            Assert.That(error.Error, Is.EqualTo(expectedError));
             Assert.That(error.Usage, Is.Not.Empty);
         }
     }
@@ -266,15 +268,16 @@ public class ParserApiTests
             Assert.That(version.Version, Is.EqualTo(Version));
         }
 
-        [Test]
-        public void Match_Error()
+        [TestCase("foobar", "Invalid usage.")]
+        [TestCase("ship move 123 456 --speed", "--speed requires an argument")]
+        public void Match_Error(string commandLine, string expectedError)
         {
-            var result = Parser.Parse(Args.Parse("foobar").List);
+            var result = Parser.Parse(Args.Parse(commandLine).List);
             var error =
                 result.Match(_ => throw new NUnitException(),
                              _ => throw new NUnitException(),
                              error => error);
-            Assert.That(error.Error, Is.EqualTo("Invalid usage."));
+            Assert.That(error.Error, Is.EqualTo(expectedError));
             Assert.That(error.Usage, Is.Not.Empty);
         }
     }
@@ -295,14 +298,15 @@ public class ParserApiTests
             Assert.That((StringList)args["<name>"], Is.EqualTo(new[] { "foo", "bar" }));
         }
 
-        [Test]
-        public void Match_Error()
+        [TestCase("foobar", "Invalid usage.")]
+        [TestCase("ship move 123 456 --speed", "--speed requires an argument")]
+        public void Match_Error(string commandLine, string expectedError)
         {
-            var result = Parser.Parse(Args.Parse("foobar").List);
+            var result = Parser.Parse(Args.Parse(commandLine).List);
             var error =
                 result.Match(_ => throw new NUnitException(),
                              error => error);
-            Assert.That(error.Error, Is.EqualTo("Invalid usage."));
+            Assert.That(error.Error, Is.EqualTo(expectedError));
             Assert.That(error.Usage, Is.Not.Empty);
         }
     }
