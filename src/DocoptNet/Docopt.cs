@@ -19,26 +19,26 @@ namespace DocoptNet
         static IHelpFeaturingParser<T> CreateParser<T>(string doc, Func<ApplicationResult, T> resultSelector) =>
             new Parser<T>(doc, (doc, argv, flags, version) =>
             {
-                var optionsFirst = (flags & ParseFlags.OptionsFirst) != ParseFlags.None;
-                var tokens = Tokens.From(argv);
-
-                var usageSections = ParseSection("usage:", doc);
-                if (usageSections.Length == 0)
-                    throw new DocoptLanguageErrorException("\"usage:\" (case-insensitive) not found.");
-                if (usageSections.Length > 1)
-                    throw new DocoptLanguageErrorException("More that one \"usage:\" (case-insensitive).");
-                var exitUsage = usageSections[0];
+                var exitUsage = ParseSection("usage:", doc) switch
+                {
+                    { Length: 0 } => throw new DocoptLanguageErrorException("\"usage:\" (case-insensitive) not found."),
+                    { Length: > 1 } => throw new DocoptLanguageErrorException("More that one \"usage:\" (case-insensitive)."),
+                    var sections => sections[0]
+                };
                 var options = ParseDefaults(doc);
                 var pattern = ParsePattern(FormalUsage(exitUsage), options);
+
                 ReadOnlyList<LeafPattern> arguments;
                 try
                 {
-                    arguments = ParseArgv(tokens, options, optionsFirst).AsReadOnly();
+                    var optionsFirst = (flags & ParseFlags.OptionsFirst) != ParseFlags.None;
+                    arguments = ParseArgv(Tokens.From(argv), options, optionsFirst).AsReadOnly();
                 }
                 catch (DocoptInputErrorException e)
                 {
                     return new ParseInputErrorResult<T>(e.Message, exitUsage);
                 }
+
                 var patternOptions = pattern.Flat<Option>().Distinct().ToList();
                 // [default] syntax for argument is disabled
                 foreach (OptionsShortcut optionsShortcut in pattern.Flat(typeof (OptionsShortcut)))
