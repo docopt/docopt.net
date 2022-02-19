@@ -6,7 +6,6 @@ namespace DocoptNet
     using System.Collections.Generic;
     using System.ComponentModel;
     using System.Diagnostics;
-    using System.Diagnostics.CodeAnalysis;
     using System.Linq;
     using System.Runtime.CompilerServices;
     using System.Text;
@@ -48,18 +47,18 @@ namespace DocoptNet
                     optionsShortcut.Children = docOptions.Distinct().Except(patternOptions).ToList();
                 }
 
-                var parsedResult = new ParsedResult(pattern, arguments, exitUsage);
-
                 var help = (flags & ParseFlags.DisableHelp) == ParseFlags.None;
-                if (help && parsedResult.IsHelpOptionSpecified)
+                if (help && arguments.Any(o => o is { Name: "-h" or "--help", Value.IsTrue: true }))
                     return new ParseHelpResult<T>(doc);
 
-                if (version is { } someVersion && parsedResult.IsVersionOptionSpecified)
+                if (version is { } someVersion && arguments.Any(o => o is { Name: "--version", Value.IsTrue: true }))
                     return new ParseVersionResult<T>(someVersion);
 
-                return parsedResult.TryApply(out var applicationResult)
-                     ? new ArgumentsResult<T>(resultSelector(applicationResult))
-                     : new ParseInputErrorResult<T>("Input error.", parsedResult.ExitUsage);
+                return pattern.Fix().Match(arguments) is (true, { Count: 0 }, var collected)
+                     ? new ArgumentsResult<T>(resultSelector(new ApplicationResult(pattern.Flat().OfType<LeafPattern>()
+                                                                                          .Concat(collected)
+                                                                                          .ToReadOnlyList())))
+                     : new ParseInputErrorResult<T>("Input error.", exitUsage);
             });
 
         public event EventHandler<PrintExitEventArgs>? PrintExit;
@@ -119,43 +118,6 @@ namespace DocoptNet
                 OnPrintExit(e.Message, e.ErrorCode);
 
                 return null;
-            }
-        }
-
-        sealed class ParsedResult
-        {
-            readonly Required _pattern;
-            readonly ReadOnlyList<LeafPattern> _arguments;
-
-            public ParsedResult(Required pattern, ReadOnlyList<LeafPattern> arguments, string exitUsage)
-            {
-                _pattern = pattern;
-                _arguments = arguments;
-                ExitUsage = exitUsage;
-            }
-
-            public string ExitUsage { get; }
-
-            public bool IsHelpOptionSpecified =>
-                _arguments.Any(o => o is { Name: "-h" or "--help", Value.IsTrue: true });
-
-            public bool IsVersionOptionSpecified =>
-                _arguments.Any(o => o is { Name: "--version", Value.IsTrue: true });
-
-            public bool TryApply([NotNullWhen(true)] out ApplicationResult? result)
-            {
-                if (_pattern.Fix().Match(_arguments) is (true, {Count: 0}, var collected))
-                {
-                    result = new ApplicationResult(_pattern.Flat().OfType<LeafPattern>()
-                                                           .Concat(collected)
-                                                           .ToReadOnlyList());
-                    return true;
-                }
-                else
-                {
-                    result = null;
-                    return false;
-                }
             }
         }
 
