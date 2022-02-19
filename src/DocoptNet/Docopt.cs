@@ -27,12 +27,13 @@ namespace DocoptNet
                 };
                 var options = ParseDefaults(doc);
                 var pattern = ParsePattern(FormalUsage(exitUsage), options);
+                var tokens = Tokens.From(argv);
 
                 ReadOnlyList<LeafPattern> arguments;
                 try
                 {
                     var optionsFirst = (flags & ParseFlags.OptionsFirst) != ParseFlags.None;
-                    arguments = ParseArgv(Tokens.From(argv), options, optionsFirst).AsReadOnly();
+                    arguments = ParseArgv(tokens, options, optionsFirst).AsReadOnly();
                 }
                 catch (DocoptInputErrorException e)
                 {
