@@ -6,7 +6,12 @@ namespace DocoptNet
     using System.Collections.Generic;
 
     /// <summary>
-    /// args + help + version + error
+    /// A parser that produces either of the following results:
+    /// <see cref="IArgumentsResult{T}"/> when the arguments were successfully parsed,
+    /// <see cref="IHelpResult"/> when help was requested via <c>-h</c> or <c>--help</c>,
+    /// <see cref="IVersionResult"/> when version was requested via `--version`, or
+    /// <see cref="IInputErrorResult"/> when the supplied command-line arguments do not match the
+    /// usage.
     /// </summary>
     partial interface IParser<out T>
     {
@@ -30,7 +35,11 @@ namespace DocoptNet
     }
 
     /// <summary>
-    /// args + help + error
+    /// A parser that produces either of the following results:
+    /// <see cref="IArgumentsResult{T}"/> when the arguments were successfully parsed,
+    /// <see cref="IHelpResult"/> when help was requested via <c>-h</c> or <c>--help</c>,
+    /// <see cref="IInputErrorResult"/> when the supplied command-line arguments do not match the
+    /// usage.
     /// </summary>
     partial interface IHelpFeaturingParser<out T>
     {
@@ -49,7 +58,11 @@ namespace DocoptNet
     }
 
     /// <summary>
-    /// args + version + error
+    /// A parser that produces either of the following results:
+    /// <see cref="IArgumentsResult{T}"/> when the arguments were successfully parsed,
+    /// <see cref="IVersionResult"/> when version was requested via `--version`, or
+    /// <see cref="IInputErrorResult"/> when the supplied command-line arguments do not match the
+    /// usage.
     /// </summary>
     partial interface IVersionFeaturingParser<out T>
     {
@@ -66,7 +79,10 @@ namespace DocoptNet
     }
 
     /// <summary>
-    /// args + error
+    /// A parser that produces either of the following results:
+    /// <see cref="IArgumentsResult{T}"/> when the arguments were successfully parsed, or
+    /// <see cref="IInputErrorResult"/> when the supplied command-line arguments do not match the
+    /// usage.
     /// </summary>
     partial interface IBaselineParser<out T>
     {
