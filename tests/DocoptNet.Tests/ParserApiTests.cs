@@ -7,15 +7,17 @@ using NUnit.Framework.Internal;
 [TestFixture]
 public class ParserApiTests
 {
-    const string Help = @"Naval Fate.
-
-    Usage:
+    const string Usage = @"Usage:
       naval_fate.exe ship new <name>...
       naval_fate.exe ship <name> move <x> <y> [--speed=<kn>]
       naval_fate.exe ship shoot <x> <y>
       naval_fate.exe mine (set|remove) <x> <y> [--moored | --drifting]
       naval_fate.exe (-h | --help)
-      naval_fate.exe --version
+      naval_fate.exe --version";
+
+    const string Help = @"Naval Fate.
+
+    " + Usage + @"
 
     Options:
       -h --help     Show this screen.
@@ -82,7 +84,7 @@ public class ParserApiTests
         {
             case IInputErrorResult result:
                 Assert.That(result.Error, Is.EqualTo(expectedError));
-                Assert.That(result.Usage, Is.Not.Empty);
+                Assert.That(result.Usage, Is.EqualTo(Usage));
                 break;
             case var result:
                 Assert.Fail("Unexpected result: {0}", result);
@@ -139,7 +141,7 @@ public class ParserApiTests
                          _ => throw new NUnitException(),
                          error => error);
         Assert.That(error.Error, Is.EqualTo(expectedError));
-        Assert.That(error.Usage, Is.Not.Empty);
+        Assert.That(error.Usage, Is.EqualTo(Usage));
     }
 
     public class ParserTests
@@ -195,7 +197,7 @@ public class ParserApiTests
                              _ => throw new NUnitException(),
                              error => error);
             Assert.That(error.Error, Is.EqualTo(expectedError));
-            Assert.That(error.Usage, Is.Not.Empty);
+            Assert.That(error.Usage, Is.EqualTo(Usage));
         }
     }
 
@@ -236,7 +238,7 @@ public class ParserApiTests
                              _ => throw new NUnitException(),
                              error => error);
             Assert.That(error.Error, Is.EqualTo(expectedError));
-            Assert.That(error.Usage, Is.Not.Empty);
+            Assert.That(error.Usage, Is.EqualTo(Usage));
         }
     }
 
@@ -278,7 +280,7 @@ public class ParserApiTests
                              _ => throw new NUnitException(),
                              error => error);
             Assert.That(error.Error, Is.EqualTo(expectedError));
-            Assert.That(error.Usage, Is.Not.Empty);
+            Assert.That(error.Usage, Is.EqualTo(Usage));
         }
     }
 
@@ -307,7 +309,7 @@ public class ParserApiTests
                 result.Match(_ => throw new NUnitException(),
                              error => error);
             Assert.That(error.Error, Is.EqualTo(expectedError));
-            Assert.That(error.Usage, Is.Not.Empty);
+            Assert.That(error.Usage, Is.EqualTo(Usage));
         }
     }
 }
