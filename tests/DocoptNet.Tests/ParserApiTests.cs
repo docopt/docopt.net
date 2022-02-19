@@ -74,13 +74,14 @@ public class ParserApiTests
         }
     }
 
-    [Test]
-    public void Parse_Switch_Error()
+    [TestCase("foobar", "Input error.")]
+    [TestCase("ship move 123 456 --speed", "--speed requires an argument")]
+    public void Parse_Switch_Error(string commandLine, string expectedError)
     {
-        switch (Parse("foobar"))
+        switch (Parse(commandLine))
         {
             case IInputErrorResult result:
-                Assert.That(result.Error, Is.EqualTo("Input error."));
+                Assert.That(result.Error, Is.EqualTo(expectedError));
                 Assert.That(result.Usage, Is.Not.Empty);
                 break;
             case var result:
@@ -127,16 +128,17 @@ public class ParserApiTests
         Assert.That(version.Version, Is.EqualTo(Version));
     }
 
-    [Test]
-    public void Parse_Match_Error()
+    [TestCase("foobar", "Input error.")]
+    [TestCase("ship move 123 456 --speed", "--speed requires an argument")]
+    public void Parse_Match_Error(string commandLine, string expectedError)
     {
-        var result = Parse("foobar");
+        var result = Parse(commandLine);
         var error =
             result.Match(_ => throw new NUnitException(),
                          _ => throw new NUnitException(),
                          _ => throw new NUnitException(),
                          error => error);
-        Assert.That(error.Error, Is.EqualTo("Input error."));
+        Assert.That(error.Error, Is.EqualTo(expectedError));
         Assert.That(error.Usage, Is.Not.Empty);
     }
 

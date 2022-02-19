@@ -21,7 +21,34 @@ namespace DocoptNet
             new Parser<T>(doc, (doc, argv, flags, version) =>
             {
                 var optionsFirst = (flags & ParseFlags.OptionsFirst) != ParseFlags.None;
-                var parsedResult = Parse(doc, Tokens.From(argv), optionsFirst);
+                var tokens = Tokens.From(argv);
+
+                var usageSections = ParseSection("usage:", doc);
+                if (usageSections.Length == 0)
+                    throw new DocoptLanguageErrorException("\"usage:\" (case-insensitive) not found.");
+                if (usageSections.Length > 1)
+                    throw new DocoptLanguageErrorException("More that one \"usage:\" (case-insensitive).");
+                var exitUsage = usageSections[0];
+                var options = ParseDefaults(doc);
+                var pattern = ParsePattern(FormalUsage(exitUsage), options);
+                ReadOnlyList<LeafPattern> arguments;
+                try
+                {
+                    arguments = ParseArgv(tokens, options, optionsFirst).AsReadOnly();
+                }
+                catch (DocoptInputErrorException e)
+                {
+                    return new ParseInputErrorResult<T>(e.Message, exitUsage);
+                }
+                var patternOptions = pattern.Flat<Option>().Distinct().ToList();
+                // [default] syntax for argument is disabled
+                foreach (OptionsShortcut optionsShortcut in pattern.Flat(typeof (OptionsShortcut)))
+                {
+                    var docOptions = ParseDefaults(doc);
+                    optionsShortcut.Children = docOptions.Distinct().Except(patternOptions).ToList();
+                }
+
+                var parsedResult = new ParsedResult(pattern, arguments, exitUsage);
 
                 var help = (flags & ParseFlags.DisableHelp) == ParseFlags.None;
                 if (help && parsedResult.IsHelpOptionSpecified)
@@ -93,28 +120,6 @@ namespace DocoptNet
 
                 return null;
             }
-        }
-
-        static ParsedResult Parse(string doc, Tokens tokens, bool optionsFirst)
-        {
-            var usageSections = ParseSection("usage:", doc);
-            if (usageSections.Length == 0)
-                throw new DocoptLanguageErrorException("\"usage:\" (case-insensitive) not found.");
-            if (usageSections.Length > 1)
-                throw new DocoptLanguageErrorException("More that one \"usage:\" (case-insensitive).");
-            var exitUsage = usageSections[0];
-            var options = ParseDefaults(doc);
-            var pattern = ParsePattern(FormalUsage(exitUsage), options);
-            var arguments = ParseArgv(tokens, options, optionsFirst).AsReadOnly();
-            var patternOptions = pattern.Flat<Option>().Distinct().ToList();
-            // [default] syntax for argument is disabled
-            foreach (OptionsShortcut optionsShortcut in pattern.Flat(typeof (OptionsShortcut)))
-            {
-                var docOptions = ParseDefaults(doc);
-                optionsShortcut.Children = docOptions.Distinct().Except(patternOptions).ToList();
-            }
-
-            return new ParsedResult(pattern, arguments, exitUsage);
         }
 
         sealed class ParsedResult
