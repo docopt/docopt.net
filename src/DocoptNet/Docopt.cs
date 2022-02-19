@@ -59,7 +59,7 @@ namespace DocoptNet
                      ? new ArgumentsResult<T>(resultSelector(new ApplicationResult(pattern.Flat().OfType<LeafPattern>()
                                                                                           .Concat(collected)
                                                                                           .ToReadOnlyList())))
-                     : new ParseInputErrorResult<T>("Input error.", exitUsage);
+                     : new ParseInputErrorResult<T>("Invalid usage.", exitUsage);
             });
 
         public event EventHandler<PrintExitEventArgs>? PrintExit;

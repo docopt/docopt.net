@@ -74,7 +74,7 @@ public class ParserApiTests
         }
     }
 
-    [TestCase("foobar", "Input error.")]
+    [TestCase("foobar", "Invalid usage.")]
     [TestCase("ship move 123 456 --speed", "--speed requires an argument")]
     public void Parse_Switch_Error(string commandLine, string expectedError)
     {
@@ -128,7 +128,7 @@ public class ParserApiTests
         Assert.That(version.Version, Is.EqualTo(Version));
     }
 
-    [TestCase("foobar", "Input error.")]
+    [TestCase("foobar", "Invalid usage.")]
     [TestCase("ship move 123 456 --speed", "--speed requires an argument")]
     public void Parse_Match_Error(string commandLine, string expectedError)
     {
@@ -193,7 +193,7 @@ public class ParserApiTests
                              _ => throw new NUnitException(),
                              _ => throw new NUnitException(),
                              error => error);
-            Assert.That(error.Error, Is.EqualTo("Input error."));
+            Assert.That(error.Error, Is.EqualTo("Invalid usage."));
             Assert.That(error.Usage, Is.Not.Empty);
         }
     }
@@ -233,7 +233,7 @@ public class ParserApiTests
                 result.Match(_ => throw new NUnitException(),
                              _ => throw new NUnitException(),
                              error => error);
-            Assert.That(error.Error, Is.EqualTo("Input error."));
+            Assert.That(error.Error, Is.EqualTo("Invalid usage."));
             Assert.That(error.Usage, Is.Not.Empty);
         }
     }
@@ -274,7 +274,7 @@ public class ParserApiTests
                 result.Match(_ => throw new NUnitException(),
                              _ => throw new NUnitException(),
                              error => error);
-            Assert.That(error.Error, Is.EqualTo("Input error."));
+            Assert.That(error.Error, Is.EqualTo("Invalid usage."));
             Assert.That(error.Usage, Is.Not.Empty);
         }
     }
@@ -302,7 +302,7 @@ public class ParserApiTests
             var error =
                 result.Match(_ => throw new NUnitException(),
                              error => error);
-            Assert.That(error.Error, Is.EqualTo("Input error."));
+            Assert.That(error.Error, Is.EqualTo("Invalid usage."));
             Assert.That(error.Usage, Is.Not.Empty);
         }
     }
