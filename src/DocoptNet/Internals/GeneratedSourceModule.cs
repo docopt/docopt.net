@@ -32,18 +32,6 @@ namespace DocoptNet.Internals
             return resultSelector(arguments);
         }
 
-        public static Leaves ParseArgv(string doc, IEnumerable<string> args, List<Option> options,
-                                       bool optionsFirst, bool help, object? version)
-        {
-            var tokens = Tokens.From(args);
-            var arguments = Docopt.ParseArgv(tokens, options, optionsFirst).AsReadOnly();
-            if (help && arguments.Any(o => o is { Name: "-h" or "--help", Value.IsTrue: true }))
-                throw new DocoptExitException(doc);
-            if (version is not null && arguments.Any(o => o is { Name: "--version", Value.IsTrue: true }))
-                throw new DocoptExitException(version.ToString());
-            return arguments;
-        }
-
         public static IHelpFeaturingParser<T> CreateParser<T>(string doc, Func<IEnumerable<string>, ParseFlags, string?, IParser<T>.IResult> parseFunction) =>
             new Parser<T>(doc, ArgsParseOptions.Default, null, (_, args, flags, version) => parseFunction(args, flags, version));
 
