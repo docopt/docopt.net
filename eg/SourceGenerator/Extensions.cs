@@ -4,7 +4,7 @@ using System.IO;
 using System.Runtime.CompilerServices;
 using DocoptNet;
 
-static partial class ParseResultExtensions
+static class ParseResultExtensions
 {
     public static int Run<T>(this IHelpFeaturingParser<T> parser, IEnumerable<string> args, Func<T, int> runner) =>
         parser.Run(args, null, null, 0, runner);
