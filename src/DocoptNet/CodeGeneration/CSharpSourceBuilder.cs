@@ -162,7 +162,9 @@ namespace DocoptNet.CodeGeneration
         public CSharpSourceBuilder Class   => this["class "];
         public CSharpSourceBuilder Public  => this["public "];
         public CSharpSourceBuilder Yield   => this["yield "];
-        public CSharpSourceBuilder New     => this["new "];
+
+        public CSharpSourceBuilder New         => this["new "];
+        public CSharpSourceBuilder NewTargeted => this["new"];
 
         public IControlBlockFlow If      => this["if "].Control;
         public IControlBlockFlow While   => this["while "].Control;

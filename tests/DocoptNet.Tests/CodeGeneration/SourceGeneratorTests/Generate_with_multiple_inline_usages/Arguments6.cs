@@ -14,8 +14,8 @@ partial class Arguments6 : IEnumerable<KeyValuePair<string, object?>>
     {
         var options = new List<Option>
         {
-            new (null, "--fast", 0, false),
-            new (null, "--high", 0, false),
+            new(null, "--fast", 0, false),
+            new(null, "--high", 0, false),
         };
         var left = ParseArgv(Help, args, options, optionsFirst, help, version);
         var required = new RequiredMatcher(1, left, new Leaves());
