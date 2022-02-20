@@ -20,7 +20,6 @@ namespace DocoptNet.Tests.CodeGeneration
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.Text;
     using NUnit.Framework;
-    using NUnit.Framework.Internal;
     using static MoreLinq.Extensions.FullJoinExtension;
     using RsAnalyzerConfigOptions = Microsoft.CodeAnalysis.Diagnostics.AnalyzerConfigOptions;
 
