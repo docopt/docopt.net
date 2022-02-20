@@ -6,13 +6,13 @@ namespace DocoptNet
 
     partial interface IArgumentsResult<out T>
     {
-        public T Arguments { get; }
+        T Arguments { get; }
     }
 
     partial interface IInputErrorResult
     {
-        public string Error { get; }
-        public string Usage { get; }
+        string Error { get; }
+        string Usage { get; }
     }
 
     partial interface IHelpResult
