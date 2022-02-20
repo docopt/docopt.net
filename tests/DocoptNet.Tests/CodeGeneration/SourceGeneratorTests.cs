@@ -397,7 +397,7 @@ dotnet script {Path.Combine("tests", "DocoptNet.Tests", "sgss.csx")} inspect -i"
                 if (method == null)
                     throw new MissingMethodException(_type.Name, parserFactoryMethodName);
                 var parser = (IBaselineParser<object>)method.Invoke(null, Array.Empty<object>())!;
-                var argsParseOptions = ArgsParseOptions.Default.WithOptionsFirst(options.OptionsFirst);
+                parser = parser.WithOptions(parser.Options.WithOptionsFirst(options.OptionsFirst));
                 var result = options.Help
                            ? (IParser<object>.IResult)parser.EnableHelp().Parse(argv)
                            : (IParser<object>.IResult)parser.Parse(argv);
