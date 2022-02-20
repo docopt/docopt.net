@@ -20,11 +20,11 @@ partial class Arguments : IEnumerable<KeyValuePair<string, object?>>
     {
         var options = new List<Option>
         {
-            new Option("-h", "--help", 0, false),
-            new Option(null, "--version", 0, false),
-            new Option(null, "--speed", 1, "10"),
-            new Option(null, "--moored", 0, false),
-            new Option(null, "--drifting", 0, false),
+            new ("-h", "--help", 0, false),
+            new (null, "--version", 0, false),
+            new (null, "--speed", 1, "10"),
+            new (null, "--moored", 0, false),
+            new (null, "--drifting", 0, false),
         };
         var left = ParseArgv(Help, args, options, optionsFirst, help, version);
         var required = new RequiredMatcher(1, left, new Leaves());

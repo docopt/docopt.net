@@ -285,7 +285,7 @@ namespace DocoptNet.CodeGeneration
                             code.New["List<Option>"].NewLine
                                 .Block[code.Each(options,
                                                  static (code, option, _) =>
-                                                     code.New["Option("][option.ShortName is {} sn ? code.Literal(sn) : code.Null][", "]
+                                                     code.New["("][option.ShortName is {} sn ? code.Literal(sn) : code.Null][", "]
                                                          [option.LongName is {} ln ? code.Literal(ln) : code.Null][", "]
                                                          .Literal(option.ArgCount)[", "]
                                                          [Value(code, option.Value)]["),"].NewLine).SkipNextNewLine]]
