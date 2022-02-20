@@ -60,25 +60,18 @@ static partial class ParseResultExtensions
     }
 
     public static int Run<T>(this IBaselineParser<T> parser, IEnumerable<string> args, Func<T, int> runner) =>
-        parser.Run(args, null, null, 0, runner);
+        parser.Run(args, null, 0, runner);
 
     public static int Run<T>(this IBaselineParser<T> parser, IEnumerable<string> args,
-                             TextWriter stdout, TextWriter stderr, int errorExitCode,
+                             TextWriter stderr, int errorExitCode,
                              Func<T, int> runner)
     {
-        stdout ??= Console.Out;
         stderr ??= Console.Error;
 
         switch (parser.Parse(args))
         {
             case IArgumentsResult<T> r:
                 return runner(r.Arguments);
-            case IHelpResult r:
-                stdout.WriteLine(r.Help);
-                return 0;
-            case IVersionResult r:
-                stdout.WriteLine(r.Version);
-                return 0;
             case IInputErrorResult r:
                 stderr.WriteLine(r.Usage);
                 return errorExitCode != 0 ? errorExitCode : 1;
