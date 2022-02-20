@@ -3,7 +3,6 @@
 namespace DocoptNet.Tests.Integration
 {
     using System;
-    using Internals;
     using NUnit.Framework;
     using NUnit.Framework.Constraints;
     using static FlagArgs;
