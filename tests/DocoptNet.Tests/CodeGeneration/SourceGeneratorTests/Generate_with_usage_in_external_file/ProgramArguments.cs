@@ -35,7 +35,7 @@ Naval Fate.
       naval_fate.exe (-h | --help)
       naval_fate.exe --version";
 
-    static readonly IHelpFeaturingParser<ProgramArguments> Parser = GeneratedSourceModule.CreateParser(Help, Parse);
+    static readonly IHelpFeaturingParser<ProgramArguments> Parser = GeneratedSourceModule.CreateParser(Help, Parse).EnableHelp();
 
     public static IHelpFeaturingParser<ProgramArguments> CreateParser() => Parser;
 

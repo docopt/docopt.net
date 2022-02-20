@@ -256,6 +256,11 @@ namespace DocoptNet.CodeGeneration
                                         .Select(g => (LeafPattern)g.First())
                                         .ToList();
 
+            var (parserTypeName, parserConfigurationCode) =
+                leaves.OfType<Option>().Any(o => o is { Name: "-h" or "--help" })
+                    ? (nameof(IHelpFeaturingParser<object>), ".EnableHelp()")
+                    : (nameof(IBaselineParser<object>), string.Empty);
+
             const string usageConstName = "Usage";
 
             code["#nullable enable annotations"].NewLine
@@ -279,11 +284,11 @@ namespace DocoptNet.CodeGeneration
                     .Public.Const(usageConstName, usage)
 
                     .NewLine
-                    .Static.ReadOnly[@"IHelpFeaturingParser<"][name]["> "]
-                                    .Assign("Parser")[code["GeneratedSourceModule.CreateParser("][helpConstName][", Parse)"]]
+                    .Static.ReadOnly[parserTypeName]["<"][name]["> "]
+                                    .Assign("Parser")[code["GeneratedSourceModule.CreateParser("][helpConstName][", Parse)"][parserConfigurationCode]]
 
                     .NewLine
-                    .Public.Static[@"IHelpFeaturingParser<"][name]["> CreateParser()"].Lambda["Parser"]
+                    .Public.Static[parserTypeName]["<"][name]["> CreateParser()"].Lambda["Parser"]
 
                     .NewLine
                     .Static["IParser<"][name][">.IResult Parse(IEnumerable<string> args, ParseFlags flags, string? version)"]

@@ -10,9 +10,9 @@ partial class Arguments2 : IEnumerable<KeyValuePair<string, object?>>
 {
     public const string Usage = "Usage: my_program (run [--fast] | jump [--high])";
 
-    static readonly IHelpFeaturingParser<Arguments2> Parser = GeneratedSourceModule.CreateParser(Help, Parse);
+    static readonly IBaselineParser<Arguments2> Parser = GeneratedSourceModule.CreateParser(Help, Parse);
 
-    public static IHelpFeaturingParser<Arguments2> CreateParser() => Parser;
+    public static IBaselineParser<Arguments2> CreateParser() => Parser;
 
     static IParser<Arguments2>.IResult Parse(IEnumerable<string> args, ParseFlags flags, string? version)
     {
