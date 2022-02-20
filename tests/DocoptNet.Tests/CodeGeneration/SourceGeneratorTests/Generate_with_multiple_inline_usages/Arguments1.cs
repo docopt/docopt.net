@@ -18,8 +18,8 @@ partial class Arguments1 : IEnumerable<KeyValuePair<string, object?>>
     {
         var options = new List<Option>
         {
-            new Option(null, "--fast", 0, false),
-            new Option(null, "--high", 0, false),
+            new(null, "--fast", 0, false),
+            new(null, "--high", 0, false),
         };
 
         return GeneratedSourceModule.Parse(Help, Usage, args, options, flags, version, Parse);

@@ -43,11 +43,11 @@ Naval Fate.
     {
         var options = new List<Option>
         {
-            new Option("-h", "--help", 0, false),
-            new Option(null, "--version", 0, false),
-            new Option(null, "--speed", 1, "10"),
-            new Option(null, "--moored", 0, false),
-            new Option(null, "--drifting", 0, false),
+            new("-h", "--help", 0, false),
+            new(null, "--version", 0, false),
+            new(null, "--speed", 1, "10"),
+            new(null, "--moored", 0, false),
+            new(null, "--drifting", 0, false),
         };
 
         return GeneratedSourceModule.Parse(Help, Usage, args, options, flags, version, Parse);
