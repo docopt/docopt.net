@@ -1,3 +1,5 @@
+#nullable enable
+
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -10,7 +12,7 @@ static class ParseResultExtensions
         parser.Run(args, null, null, 0, runner);
 
     public static int Run<T>(this IHelpFeaturingParser<T> parser, IEnumerable<string> args,
-                             TextWriter stdout, TextWriter stderr, int errorExitCode,
+                             TextWriter? stdout, TextWriter? stderr, int errorExitCode,
                              Func<T, int> runner) =>
         Run(parser.Parse(args), stdout, stderr, errorExitCode, runner);
 
@@ -18,7 +20,7 @@ static class ParseResultExtensions
         parser.Run(args, null, null, 0, runner);
 
     public static int Run<T>(this IParser<T> parser, IEnumerable<string> args,
-                             TextWriter stdout, TextWriter stderr, int errorExitCode,
+                             TextWriter? stdout, TextWriter? stderr, int errorExitCode,
                              Func<T, int> runner) =>
         Run(parser.Parse(args), stdout, stderr, errorExitCode, runner);
 
@@ -26,12 +28,12 @@ static class ParseResultExtensions
         parser.Run(args, null, 0, runner);
 
     public static int Run<T>(this IBaselineParser<T> parser, IEnumerable<string> args,
-                             TextWriter stderr, int errorExitCode,
+                             TextWriter? stderr, int errorExitCode,
                              Func<T, int> runner) =>
         Run(parser.Parse(args), null, stderr, errorExitCode, runner);
 
     static int Run<T>(object result,
-                      TextWriter stdout, TextWriter stderr, int errorExitCode,
+                      TextWriter? stdout, TextWriter? stderr, int errorExitCode,
                       Func<T, int> runner)
     {
         stdout ??= Console.Out;
