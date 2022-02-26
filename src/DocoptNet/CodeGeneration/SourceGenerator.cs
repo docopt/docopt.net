@@ -323,7 +323,7 @@ namespace DocoptNet.CodeGeneration
                                                               .Assign(code["result."][InferPropertyName(leaf)])[
                                                                    code['(']
                                                                        [leaf switch { Option   { Value.IsString: true } => "string",
-                                                                                      Argument { Value.IsNone: true } or Option { ArgCount: not 0, Value.Kind: not ValueKind.StringList } => "string?",
+                                                                                      Argument { Value.IsNone: true } or Option { ArgCount: not 0, Value.Kind: not ArgValueKind.StringList } => "string?",
                                                                                       { Value.Kind: var kind } => MapType(kind) }]
                                                                        [")value"].SkipNextNewLine][' '])]
                                  : code.Blank()
@@ -354,7 +354,7 @@ namespace DocoptNet.CodeGeneration
                                   .Public[e.Leaf switch
                                    {
                                        Option { Value: { IsString: true } str } => code["string "][e.Name][" { get; private set; } = "].Literal((string)str).SkipNextNewLine.EndStatement,
-                                       Argument { Value.IsNone: true } or Option { ArgCount: not 0, Value.Kind: not ValueKind.StringList } => code["string? "][e.Name][" { get; private set; }"],
+                                       Argument { Value.IsNone: true } or Option { ArgCount: not 0, Value.Kind: not ArgValueKind.StringList } => code["string? "][e.Name][" { get; private set; }"],
                                        { Value.Object: StringList list } => code["StringList "][e.Name][" { get; private set; } = "][Value(code, list.Reverse())].SkipNextNewLine.EndStatement,
                                        { Value.Kind: var kind } => code[MapType(kind)][' '][e.Name][" { get; private set; }"],
                                    }]
@@ -410,7 +410,7 @@ namespace DocoptNet.CodeGeneration
                             Option   => nameof(PatternMatcher.MatchOption),
                             _ => throw new NotImplementedException()
                         };
-                        code[pmv][".Match(" + "PatternMatcher."][lfn][", "].Literal(name)[", ValueKind."][leaf.Value.Kind.ToString()][')'].EndStatement.Blank();
+                        code[pmv][".Match(" + "PatternMatcher."][lfn][", "].Literal(name)[", ArgValueKind."][leaf.Value.Kind.ToString()][')'].EndStatement.Blank();
                         break;
                     }
                 }
@@ -428,17 +428,17 @@ namespace DocoptNet.CodeGeneration
                     var p => throw new NotSupportedException($"Unsupported pattern: {p}")
                 };
 
-            static string MapType(ValueKind kind) =>
+            static string MapType(ArgValueKind kind) =>
                 kind switch
                 {
-                    ValueKind.Boolean    => "bool",
-                    ValueKind.Integer    => "int",
-                    ValueKind.String     => "string?",
-                    ValueKind.StringList => nameof(StringList),
+                    ArgValueKind.Boolean    => "bool",
+                    ArgValueKind.Integer    => "int",
+                    ArgValueKind.String     => "string?",
+                    ArgValueKind.StringList => nameof(StringList),
                     _ => throw new ArgumentOutOfRangeException(nameof(kind), kind, null)
                 };
 
-            static CSharpSourceBuilder Value(CSharpSourceBuilder code, Value value) =>
+            static CSharpSourceBuilder Value(CSharpSourceBuilder code, ArgValue value) =>
                 value.TryAsStringList(out var items) && items.Count > 0
                 ? code["StringList.TopBottom("].Each(items, static (code, item, i) => (i > 0 ? code[", "] : code.Blank()).Literal(item))[')']
                 : value.Object switch

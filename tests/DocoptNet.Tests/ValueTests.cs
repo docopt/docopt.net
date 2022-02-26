@@ -12,19 +12,19 @@ namespace DocoptNet.Tests
         [Test]
         public void Default_value_is_none()
         {
-            var value = default(Value);
-            Assert.That(value.Kind, Is.EqualTo(ValueKind.None));
+            var value = default(ArgValue);
+            Assert.That(value.Kind, Is.EqualTo(ArgValueKind.None));
         }
 
         [TestFixture]
         public class None
         {
-            static Value Value => Value.None;
+            static ArgValue Value => ArgValue.None;
 
             [Test]
             public void Kind_returns_None()
             {
-                Assert.That(Value.Kind, Is.EqualTo(ValueKind.None));
+                Assert.That(Value.Kind, Is.EqualTo(ArgValueKind.None));
             }
 
             [Test]
@@ -133,12 +133,12 @@ namespace DocoptNet.Tests
         [TestFixture]
         public class True
         {
-            static Value Value => true;
+            static ArgValue Value => true;
 
             [Test]
             public void Kind_returns_Boolean()
             {
-                Assert.That(Value.Kind, Is.EqualTo(ValueKind.Boolean));
+                Assert.That(Value.Kind, Is.EqualTo(ArgValueKind.Boolean));
             }
 
             [Test]
@@ -249,12 +249,12 @@ namespace DocoptNet.Tests
         [TestFixture]
         public class False
         {
-            static Value Value => false;
+            static ArgValue Value => false;
 
             [Test]
             public void Kind_returns_Boolean()
             {
-                Assert.That(Value.Kind, Is.EqualTo(ValueKind.Boolean));
+                Assert.That(Value.Kind, Is.EqualTo(ArgValueKind.Boolean));
             }
 
             [Test]
@@ -366,12 +366,12 @@ namespace DocoptNet.Tests
         public class Integer
         {
             const int UnderlyingValue = 42;
-            static Value Value => UnderlyingValue;
+            static ArgValue Value => UnderlyingValue;
 
             [Test]
             public void Kind_returns_Integer()
             {
-                Assert.That(Value.Kind, Is.EqualTo(ValueKind.Integer));
+                Assert.That(Value.Kind, Is.EqualTo(ArgValueKind.Integer));
             }
 
             [Test]
@@ -483,12 +483,12 @@ namespace DocoptNet.Tests
         public class String
         {
             const string UnderlyingValue = "foobar";
-            static Value Value => UnderlyingValue;
+            static ArgValue Value => UnderlyingValue;
 
             [Test]
             public void Kind_returns_String()
             {
-                Assert.That(Value.Kind, Is.EqualTo(ValueKind.String));
+                Assert.That(Value.Kind, Is.EqualTo(ArgValueKind.String));
             }
 
             [Test]
@@ -600,12 +600,12 @@ namespace DocoptNet.Tests
         {
             static readonly DocoptNet.StringList UnderlyingValue = DocoptNet.StringList.TopBottom("foo", "bar", "baz");
 
-            static Value Value => UnderlyingValue;
+            static ArgValue Value => UnderlyingValue;
 
             [Test]
             public void Kind_returns_String()
             {
-                Assert.That(Value.Kind, Is.EqualTo(ValueKind.StringList));
+                Assert.That(Value.Kind, Is.EqualTo(ArgValueKind.StringList));
             }
 
             [Test]

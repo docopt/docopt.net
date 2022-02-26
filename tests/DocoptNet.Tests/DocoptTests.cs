@@ -47,7 +47,7 @@ namespace DocoptNet.Tests
         [Test]
         public void Test_issue_40_same_prefix()
         {
-            var expected = new Dictionary<string, Value>
+            var expected = new Dictionary<string, ArgValue>
                 {
                     {"--aabb", false},
                     {"--aa", true}
@@ -59,7 +59,7 @@ namespace DocoptNet.Tests
         [Test]
         public void Match_arg_only()
         {
-            var expected = new Dictionary<string, Value>
+            var expected = new Dictionary<string, ArgValue>
                 {
                     {"-v", false},
                     {"A", "arg"}
@@ -73,7 +73,7 @@ namespace DocoptNet.Tests
         [Test]
         public void Match_opt_and_arg()
         {
-            var expected = new Dictionary<string, Value>
+            var expected = new Dictionary<string, ArgValue>
                 {
                     {"-v", true},
                     {"A", "arg"}
@@ -98,7 +98,7 @@ namespace DocoptNet.Tests
         [Test]
         public void Match_one_opt_with_arg()
         {
-            var expected = new Dictionary<string, Value>
+            var expected = new Dictionary<string, ArgValue>
                 {
                     {"-v", true},
                     {"-q", false},
@@ -115,7 +115,7 @@ namespace DocoptNet.Tests
         [Test]
         public void Match_one_opt_only()
         {
-            var expected = new Dictionary<string, Value>
+            var expected = new Dictionary<string, ArgValue>
                 {
                     {"-v", true},
                     {"-q", false},
@@ -176,7 +176,7 @@ namespace DocoptNet.Tests
         [Test]
         public void Test_issue_59_assign_empty_string_to_long()
         {
-            var expected = new Dictionary<string, Value>
+            var expected = new Dictionary<string, ArgValue>
                 {
                     {"--long", ""}
                 };
@@ -187,7 +187,7 @@ namespace DocoptNet.Tests
         [Test]
         public void Test_issue_59_assign_empty_string_to_short()
         {
-            var expected = new Dictionary<string, Value>
+            var expected = new Dictionary<string, ArgValue>
                 {
                     {"-l", ""}
                 };

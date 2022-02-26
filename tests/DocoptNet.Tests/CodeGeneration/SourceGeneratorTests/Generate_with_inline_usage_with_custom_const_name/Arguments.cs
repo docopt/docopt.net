@@ -93,13 +93,13 @@ partial class Arguments : IEnumerable<KeyValuePair<string, object?>>
                                     case 0:
                                     {
                                         // Command(ship, False)
-                                        c.Match(PatternMatcher.MatchCommand, "ship", ValueKind.Boolean);
+                                        c.Match(PatternMatcher.MatchCommand, "ship", ArgValueKind.Boolean);
                                     }
                                     break;
                                     case 1:
                                     {
                                         // Command(new, False)
-                                        c.Match(PatternMatcher.MatchCommand, "new", ValueKind.Boolean);
+                                        c.Match(PatternMatcher.MatchCommand, "new", ArgValueKind.Boolean);
                                     }
                                     break;
                                     case 2:
@@ -109,7 +109,7 @@ partial class Arguments : IEnumerable<KeyValuePair<string, object?>>
                                         while (d.Next())
                                         {
                                             // Argument(<name>, [])
-                                            d.Match(PatternMatcher.MatchArgument, "<name>", ValueKind.StringList);
+                                            d.Match(PatternMatcher.MatchArgument, "<name>", ArgValueKind.StringList);
                                             if (!d.LastMatched)
                                             {
                                                 break;
@@ -138,31 +138,31 @@ partial class Arguments : IEnumerable<KeyValuePair<string, object?>>
                                     case 0:
                                     {
                                         // Command(ship, False)
-                                        c.Match(PatternMatcher.MatchCommand, "ship", ValueKind.Boolean);
+                                        c.Match(PatternMatcher.MatchCommand, "ship", ArgValueKind.Boolean);
                                     }
                                     break;
                                     case 1:
                                     {
                                         // Argument(<name>, [])
-                                        c.Match(PatternMatcher.MatchArgument, "<name>", ValueKind.StringList);
+                                        c.Match(PatternMatcher.MatchArgument, "<name>", ArgValueKind.StringList);
                                     }
                                     break;
                                     case 2:
                                     {
                                         // Command(move, False)
-                                        c.Match(PatternMatcher.MatchCommand, "move", ValueKind.Boolean);
+                                        c.Match(PatternMatcher.MatchCommand, "move", ArgValueKind.Boolean);
                                     }
                                     break;
                                     case 3:
                                     {
                                         // Argument(<x>, )
-                                        c.Match(PatternMatcher.MatchArgument, "<x>", ValueKind.None);
+                                        c.Match(PatternMatcher.MatchArgument, "<x>", ArgValueKind.None);
                                     }
                                     break;
                                     case 4:
                                     {
                                         // Argument(<y>, )
-                                        c.Match(PatternMatcher.MatchArgument, "<y>", ValueKind.None);
+                                        c.Match(PatternMatcher.MatchArgument, "<y>", ArgValueKind.None);
                                     }
                                     break;
                                     case 5:
@@ -172,7 +172,7 @@ partial class Arguments : IEnumerable<KeyValuePair<string, object?>>
                                         while (d.Next())
                                         {
                                             // Option(,--speed,1,10)
-                                            d.Match(PatternMatcher.MatchOption, "--speed", ValueKind.String);
+                                            d.Match(PatternMatcher.MatchOption, "--speed", ArgValueKind.String);
                                             if (!d.LastMatched)
                                             {
                                                 break;
@@ -201,25 +201,25 @@ partial class Arguments : IEnumerable<KeyValuePair<string, object?>>
                                     case 0:
                                     {
                                         // Command(ship, False)
-                                        c.Match(PatternMatcher.MatchCommand, "ship", ValueKind.Boolean);
+                                        c.Match(PatternMatcher.MatchCommand, "ship", ArgValueKind.Boolean);
                                     }
                                     break;
                                     case 1:
                                     {
                                         // Command(shoot, False)
-                                        c.Match(PatternMatcher.MatchCommand, "shoot", ValueKind.Boolean);
+                                        c.Match(PatternMatcher.MatchCommand, "shoot", ArgValueKind.Boolean);
                                     }
                                     break;
                                     case 2:
                                     {
                                         // Argument(<x>, )
-                                        c.Match(PatternMatcher.MatchArgument, "<x>", ValueKind.None);
+                                        c.Match(PatternMatcher.MatchArgument, "<x>", ArgValueKind.None);
                                     }
                                     break;
                                     case 3:
                                     {
                                         // Argument(<y>, )
-                                        c.Match(PatternMatcher.MatchArgument, "<y>", ValueKind.None);
+                                        c.Match(PatternMatcher.MatchArgument, "<y>", ArgValueKind.None);
                                     }
                                     break;
                                 }
@@ -242,7 +242,7 @@ partial class Arguments : IEnumerable<KeyValuePair<string, object?>>
                                     case 0:
                                     {
                                         // Command(mine, False)
-                                        c.Match(PatternMatcher.MatchCommand, "mine", ValueKind.Boolean);
+                                        c.Match(PatternMatcher.MatchCommand, "mine", ArgValueKind.Boolean);
                                     }
                                     break;
                                     case 1:
@@ -260,13 +260,13 @@ partial class Arguments : IEnumerable<KeyValuePair<string, object?>>
                                                     case 0:
                                                     {
                                                         // Command(set, False)
-                                                        e.Match(PatternMatcher.MatchCommand, "set", ValueKind.Boolean);
+                                                        e.Match(PatternMatcher.MatchCommand, "set", ArgValueKind.Boolean);
                                                     }
                                                     break;
                                                     case 1:
                                                     {
                                                         // Command(remove, False)
-                                                        e.Match(PatternMatcher.MatchCommand, "remove", ValueKind.Boolean);
+                                                        e.Match(PatternMatcher.MatchCommand, "remove", ArgValueKind.Boolean);
                                                     }
                                                     break;
                                                 }
@@ -287,13 +287,13 @@ partial class Arguments : IEnumerable<KeyValuePair<string, object?>>
                                     case 2:
                                     {
                                         // Argument(<x>, )
-                                        c.Match(PatternMatcher.MatchArgument, "<x>", ValueKind.None);
+                                        c.Match(PatternMatcher.MatchArgument, "<x>", ArgValueKind.None);
                                     }
                                     break;
                                     case 3:
                                     {
                                         // Argument(<y>, )
-                                        c.Match(PatternMatcher.MatchArgument, "<y>", ValueKind.None);
+                                        c.Match(PatternMatcher.MatchArgument, "<y>", ArgValueKind.None);
                                     }
                                     break;
                                     case 4:
@@ -311,13 +311,13 @@ partial class Arguments : IEnumerable<KeyValuePair<string, object?>>
                                                     case 0:
                                                     {
                                                         // Option(,--moored,0,False)
-                                                        e.Match(PatternMatcher.MatchOption, "--moored", ValueKind.Boolean);
+                                                        e.Match(PatternMatcher.MatchOption, "--moored", ArgValueKind.Boolean);
                                                     }
                                                     break;
                                                     case 1:
                                                     {
                                                         // Option(,--drifting,0,False)
-                                                        e.Match(PatternMatcher.MatchOption, "--drifting", ValueKind.Boolean);
+                                                        e.Match(PatternMatcher.MatchOption, "--drifting", ArgValueKind.Boolean);
                                                     }
                                                     break;
                                                 }
@@ -355,7 +355,7 @@ partial class Arguments : IEnumerable<KeyValuePair<string, object?>>
                                 while (d.Next())
                                 {
                                     // Option(-h,--help,0,False)
-                                    d.Match(PatternMatcher.MatchOption, "--help", ValueKind.Boolean);
+                                    d.Match(PatternMatcher.MatchOption, "--help", ArgValueKind.Boolean);
                                     if (!d.LastMatched)
                                     {
                                         break;
@@ -377,7 +377,7 @@ partial class Arguments : IEnumerable<KeyValuePair<string, object?>>
                             while (c.Next())
                             {
                                 // Option(,--version,0,False)
-                                c.Match(PatternMatcher.MatchOption, "--version", ValueKind.Boolean);
+                                c.Match(PatternMatcher.MatchOption, "--version", ArgValueKind.Boolean);
                                 if (!c.LastMatched)
                                 {
                                     break;

@@ -41,11 +41,11 @@ namespace DocoptNet
                                      ApplicationResultAccumulators.ValueObjectDictionary);
         }
 
-        internal static IDictionary<string, Value> ToValueDictionary(this ApplicationResult result)
+        internal static IDictionary<string, ArgValue> ToValueDictionary(this ApplicationResult result)
         {
             if (result is null) throw new ArgumentNullException(nameof(result));
 
-            return result.Accumulate(new Dictionary<string, Value>(),
+            return result.Accumulate(new Dictionary<string, ArgValue>(),
                                      ApplicationResultAccumulators.ValueDictionary);
         }
     }

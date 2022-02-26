@@ -81,7 +81,7 @@ partial class Arguments8 : IEnumerable<KeyValuePair<string, object?>>
                                             case 0:
                                             {
                                                 // Command(run, False)
-                                                e.Match(PatternMatcher.MatchCommand, "run", ValueKind.Boolean);
+                                                e.Match(PatternMatcher.MatchCommand, "run", ArgValueKind.Boolean);
                                             }
                                             break;
                                             case 1:
@@ -91,7 +91,7 @@ partial class Arguments8 : IEnumerable<KeyValuePair<string, object?>>
                                                 while (f.Next())
                                                 {
                                                     // Option(,--fast,0,False)
-                                                    f.Match(PatternMatcher.MatchOption, "--fast", ValueKind.Boolean);
+                                                    f.Match(PatternMatcher.MatchOption, "--fast", ArgValueKind.Boolean);
                                                     if (!f.LastMatched)
                                                     {
                                                         break;
@@ -120,7 +120,7 @@ partial class Arguments8 : IEnumerable<KeyValuePair<string, object?>>
                                             case 0:
                                             {
                                                 // Command(jump, False)
-                                                e.Match(PatternMatcher.MatchCommand, "jump", ValueKind.Boolean);
+                                                e.Match(PatternMatcher.MatchCommand, "jump", ArgValueKind.Boolean);
                                             }
                                             break;
                                             case 1:
@@ -130,7 +130,7 @@ partial class Arguments8 : IEnumerable<KeyValuePair<string, object?>>
                                                 while (f.Next())
                                                 {
                                                     // Option(,--high,0,False)
-                                                    f.Match(PatternMatcher.MatchOption, "--high", ValueKind.Boolean);
+                                                    f.Match(PatternMatcher.MatchOption, "--high", ArgValueKind.Boolean);
                                                     if (!f.LastMatched)
                                                     {
                                                         break;

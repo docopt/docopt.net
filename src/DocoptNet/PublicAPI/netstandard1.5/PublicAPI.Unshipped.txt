@@ -1,6 +1,7 @@
 DocoptNet.ArgsParseOptions
 DocoptNet.ArgsParseOptions.OptionsFirst.get -> bool
 DocoptNet.ArgsParseOptions.WithOptionsFirst(bool value) -> DocoptNet.ArgsParseOptions!
+DocoptNet.ArgValue.ArgValue() -> void
 DocoptNet.IArgumentsResult<T>
 DocoptNet.IArgumentsResult<T>.Arguments.get -> T
 DocoptNet.IBaselineParser<T>
@@ -50,46 +51,45 @@ DocoptNet.StringList.Peek() -> string!
 DocoptNet.StringList.Pop() -> DocoptNet.StringList!
 DocoptNet.StringList.Push(string! value) -> DocoptNet.StringList!
 DocoptNet.StringList.Reverse() -> DocoptNet.StringList!
-DocoptNet.Value
-DocoptNet.Value.IsBoolean.get -> bool
-DocoptNet.Value.IsFalse.get -> bool
-DocoptNet.Value.IsInteger.get -> bool
-DocoptNet.Value.IsNone.get -> bool
-DocoptNet.Value.IsString.get -> bool
-DocoptNet.Value.IsStringList.get -> bool
-DocoptNet.Value.IsTrue.get -> bool
-DocoptNet.Value.Kind.get -> DocoptNet.ValueKind
-DocoptNet.Value.Object.get -> object?
-DocoptNet.Value.TryAsBoolean(out bool value) -> bool
-DocoptNet.Value.TryAsInteger(out int value) -> bool
-DocoptNet.Value.TryAsString(out string? value) -> bool
-DocoptNet.Value.TryAsStringList(out DocoptNet.StringList? value) -> bool
-DocoptNet.Value.Value() -> void
-DocoptNet.ValueKind
-DocoptNet.ValueKind.Boolean = 1 -> DocoptNet.ValueKind
-DocoptNet.ValueKind.Integer = 2 -> DocoptNet.ValueKind
-DocoptNet.ValueKind.None = 0 -> DocoptNet.ValueKind
-DocoptNet.ValueKind.String = 3 -> DocoptNet.ValueKind
-DocoptNet.ValueKind.StringList = 4 -> DocoptNet.ValueKind
+DocoptNet.ArgValue
+DocoptNet.ArgValue.IsBoolean.get -> bool
+DocoptNet.ArgValue.IsFalse.get -> bool
+DocoptNet.ArgValue.IsInteger.get -> bool
+DocoptNet.ArgValue.IsNone.get -> bool
+DocoptNet.ArgValue.IsString.get -> bool
+DocoptNet.ArgValue.IsStringList.get -> bool
+DocoptNet.ArgValue.IsTrue.get -> bool
+DocoptNet.ArgValue.Kind.get -> DocoptNet.ArgValueKind
+DocoptNet.ArgValue.Object.get -> object?
+DocoptNet.ArgValue.TryAsBoolean(out bool value) -> bool
+DocoptNet.ArgValue.TryAsInteger(out int value) -> bool
+DocoptNet.ArgValue.TryAsString(out string? value) -> bool
+DocoptNet.ArgValue.TryAsStringList(out DocoptNet.StringList? value) -> bool
+DocoptNet.ArgValueKind
+DocoptNet.ArgValueKind.Boolean = 1 -> DocoptNet.ArgValueKind
+DocoptNet.ArgValueKind.Integer = 2 -> DocoptNet.ArgValueKind
+DocoptNet.ArgValueKind.None = 0 -> DocoptNet.ArgValueKind
+DocoptNet.ArgValueKind.String = 3 -> DocoptNet.ArgValueKind
+DocoptNet.ArgValueKind.StringList = 4 -> DocoptNet.ArgValueKind
 override DocoptNet.StringList.Equals(object? obj) -> bool
 override DocoptNet.StringList.GetHashCode() -> int
 override DocoptNet.StringList.ToString() -> string!
-override DocoptNet.Value.ToString() -> string!
+override DocoptNet.ArgValue.ToString() -> string!
 static DocoptNet.StringList.BottomTop(params string![]! items) -> DocoptNet.StringList!
 static DocoptNet.StringList.operator !=(DocoptNet.StringList? left, DocoptNet.StringList? right) -> bool
 static DocoptNet.StringList.operator ==(DocoptNet.StringList? left, DocoptNet.StringList? right) -> bool
 static DocoptNet.StringList.TopBottom(params string![]! items) -> DocoptNet.StringList!
-static DocoptNet.Value.explicit operator bool(DocoptNet.Value value) -> bool
-static DocoptNet.Value.explicit operator DocoptNet.StringList!(DocoptNet.Value value) -> DocoptNet.StringList!
-static DocoptNet.Value.explicit operator int(DocoptNet.Value value) -> int
-static DocoptNet.Value.explicit operator string!(DocoptNet.Value value) -> string!
-static DocoptNet.Value.implicit operator DocoptNet.Value(bool value) -> DocoptNet.Value
-static DocoptNet.Value.implicit operator DocoptNet.Value(DocoptNet.StringList! value) -> DocoptNet.Value
-static DocoptNet.Value.implicit operator DocoptNet.Value(int value) -> DocoptNet.Value
-static DocoptNet.Value.implicit operator DocoptNet.Value(string! value) -> DocoptNet.Value
+static DocoptNet.ArgValue.explicit operator bool(DocoptNet.ArgValue value) -> bool
+static DocoptNet.ArgValue.explicit operator DocoptNet.StringList!(DocoptNet.ArgValue value) -> DocoptNet.StringList!
+static DocoptNet.ArgValue.explicit operator int(DocoptNet.ArgValue value) -> int
+static DocoptNet.ArgValue.explicit operator string!(DocoptNet.ArgValue value) -> string!
+static DocoptNet.ArgValue.implicit operator DocoptNet.ArgValue(bool value) -> DocoptNet.ArgValue
+static DocoptNet.ArgValue.implicit operator DocoptNet.ArgValue(DocoptNet.StringList! value) -> DocoptNet.ArgValue
+static DocoptNet.ArgValue.implicit operator DocoptNet.ArgValue(int value) -> DocoptNet.ArgValue
+static DocoptNet.ArgValue.implicit operator DocoptNet.ArgValue(string! value) -> DocoptNet.ArgValue
 static readonly DocoptNet.ArgsParseOptions.Default -> DocoptNet.ArgsParseOptions!
 static readonly DocoptNet.StringList.Empty -> DocoptNet.StringList!
-static readonly DocoptNet.Value.False -> DocoptNet.Value
-static readonly DocoptNet.Value.None -> DocoptNet.Value
-static readonly DocoptNet.Value.True -> DocoptNet.Value
-static DocoptNet.Docopt.CreateParser(string! doc) -> DocoptNet.IHelpFeaturingParser<System.Collections.Generic.IDictionary<string!, DocoptNet.Value>!>!
+static readonly DocoptNet.ArgValue.False -> DocoptNet.ArgValue
+static readonly DocoptNet.ArgValue.None -> DocoptNet.ArgValue
+static readonly DocoptNet.ArgValue.True -> DocoptNet.ArgValue
+static DocoptNet.Docopt.CreateParser(string! doc) -> DocoptNet.IHelpFeaturingParser<System.Collections.Generic.IDictionary<string!, DocoptNet.ArgValue>!>!

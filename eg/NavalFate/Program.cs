@@ -27,7 +27,7 @@ static int ShowHelp(string help) { Console.WriteLine(help); return 0; }
 static int ShowVersion(string version) { Console.WriteLine(version); return 0; }
 static int OnError(string usage) { Console.WriteLine(usage); return 1; }
 
-static int Run(IDictionary<string, Value> arguments)
+static int Run(IDictionary<string, ArgValue> arguments)
 {
     foreach (var (key, value) in arguments)
         Console.WriteLine("{0} = {1}", key, value);

@@ -9,7 +9,7 @@ namespace DocoptNet.Tests
         [Test]
         public void Expect_default_value()
         {
-            var expected = new Dictionary<string, Value>
+            var expected = new Dictionary<string, ArgValue>
                 {
                     {"--data", StringList.TopBottom("x")}
                 };
@@ -20,7 +20,7 @@ namespace DocoptNet.Tests
         [Test]
         public void Expect_default_collection()
         {
-            var expected = new Dictionary<string, Value>
+            var expected = new Dictionary<string, ArgValue>
                 {
                     {"--data", StringList.TopBottom("x", "y")}
                 };
@@ -31,7 +31,7 @@ namespace DocoptNet.Tests
         [Test]
         public void Expect_one_arg()
         {
-            var expected = new Dictionary<string, Value>
+            var expected = new Dictionary<string, ArgValue>
                 {
                     {"--data", StringList.TopBottom("this")}
                 };
