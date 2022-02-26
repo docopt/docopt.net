@@ -13,21 +13,21 @@ namespace DocoptNet.Tests
         }
 
         public static IDictionary<string, ArgValue> Apply(this Docopt docopt,
-                                                       string doc, string cmdLine,
-                                                       bool help = true,
-                                                       object version = null,
-                                                       bool optionsFirst = false,
-                                                       bool exit = false)
+                                                          string doc, string cmdLine,
+                                                          bool help = true,
+                                                          object version = null,
+                                                          bool optionsFirst = false,
+                                                          bool exit = false)
         {
             return docopt.Apply(doc, Args.Parse(cmdLine), help, version, optionsFirst, exit);
         }
 
         public static IDictionary<string, ArgValue> Apply(this Docopt docopt,
-                                                       string doc, Args argv,
-                                                       bool help = true,
-                                                       object version = null,
-                                                       bool optionsFirst = false,
-                                                       bool exit = false)
+                                                          string doc, Args argv,
+                                                          bool help = true,
+                                                          object version = null,
+                                                          bool optionsFirst = false,
+                                                          bool exit = false)
         {
             return Docopt.Internal.Apply(docopt, doc, argv.List.AsEnumerable(), help, version, optionsFirst, exit);
         }
