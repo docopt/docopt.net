@@ -40,7 +40,7 @@ BAZZ
 usage: pit stop
 ";
 
-            Assert.AreEqual(new string[] {}, Docopt.ParseSection("usage:", "foo bar fizz buzz"), "No usage");
+            Assert.IsEmpty(Docopt.ParseSection("usage:", "foo bar fizz buzz"), "No usage");
 
             Assert.AreEqual(new[] {"usage: prog"}, Docopt.ParseSection("usage:", "usage: prog"), "One line usage");
 
