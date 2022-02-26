@@ -35,7 +35,7 @@ namespace DocoptNet.Internals
             {
                 return new Pattern[] { this };
             }
-            return new Pattern[] {};
+            return Array.Empty<Pattern>();
         }
 
         public override string ToString()
