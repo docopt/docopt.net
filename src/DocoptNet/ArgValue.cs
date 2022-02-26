@@ -43,7 +43,7 @@ namespace DocoptNet
                 ArgValueKind.Integer    => Boxed.Integer((int)this),
                 ArgValueKind.String     => (string)this,
                 ArgValueKind.StringList => (StringList)this,
-                _                    => throw new InvalidOperationException()
+                _                       => throw new InvalidOperationException()
             };
 
         string DebugDisplay() => $"{Kind}: {this}";
