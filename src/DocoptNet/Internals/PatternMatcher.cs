@@ -18,7 +18,7 @@ namespace DocoptNet.Internals
     {
         public static MatchResult Match(this LeafPatternMatcher matcher,
                                         Leaves left, Leaves collected,
-                                        string name, ValueKind kind)
+                                        string name, ArgValueKind kind)
         {
             var (index, match) = matcher(left, name);
             return PatternMatcher.MatchLeaf(left, collected, name, kind, index, match);
@@ -31,7 +31,7 @@ namespace DocoptNet.Internals
         bool Next();
         Leaves Left { get; }
         Leaves Collected { get; }
-        bool Match(LeafPatternMatcher matcher, string name, ValueKind kind);
+        bool Match(LeafPatternMatcher matcher, string name, ArgValueKind kind);
         bool Match(Pattern pattern);
         bool Fold(MatchResult match);
         bool LastMatched { get; }
@@ -70,7 +70,7 @@ namespace DocoptNet.Internals
         public Leaves Left { get; private set; }
         public Leaves Collected { get; private set; }
 
-        public bool Match(LeafPatternMatcher matcher, string name, ValueKind kind) =>
+        public bool Match(LeafPatternMatcher matcher, string name, ArgValueKind kind) =>
             Fold(matcher.Match(Left, Collected, name, kind));
 
         public bool Match(Pattern pattern) =>
@@ -112,7 +112,7 @@ namespace DocoptNet.Internals
         public Leaves Left { get; }
         public Leaves Collected { get; }
 
-        public bool Match(LeafPatternMatcher matcher, string name, ValueKind kind) =>
+        public bool Match(LeafPatternMatcher matcher, string name, ArgValueKind kind) =>
             Fold(matcher.Match(Left, Collected, name, kind));
 
         public bool Match(Pattern pattern) =>
@@ -145,7 +145,7 @@ namespace DocoptNet.Internals
         public Leaves Left { get; private set; }
         public Leaves Collected { get; private set; }
 
-        public bool Match(LeafPatternMatcher matcher, string name, ValueKind kind) =>
+        public bool Match(LeafPatternMatcher matcher, string name, ArgValueKind kind) =>
             Fold(matcher.Match(Left, Collected, name, kind));
 
         public bool Match(Pattern pattern) =>
@@ -180,7 +180,7 @@ namespace DocoptNet.Internals
         public Leaves Left { get; private set; }
         public Leaves Collected { get; private set; }
 
-        public bool Match(LeafPatternMatcher matcher, string name, ValueKind kind) =>
+        public bool Match(LeafPatternMatcher matcher, string name, ArgValueKind kind) =>
             Fold(matcher.Match(Left, Collected, name, kind));
 
         public bool Match(Pattern pattern) =>
@@ -247,7 +247,7 @@ namespace DocoptNet.Internals
         }
 
         public static MatchResult MatchLeaf(Leaves left, Leaves collected,
-                                            string name, ValueKind kind,
+                                            string name, ArgValueKind kind,
                                             int index, LeafPattern? match)
         {
             if (match == null)
@@ -255,12 +255,12 @@ namespace DocoptNet.Internals
                 return new MatchResult(false, left, collected);
             }
             var left_ = left.RemoveAt(index);
-            if (kind is ValueKind.StringList or ValueKind.Integer)
+            if (kind is ArgValueKind.StringList or ArgValueKind.Integer)
             {
                 var sameNames = collected.Where(a => a.Name == name).ToList();
                 if (sameNames.Count == 0)
                 {
-                    match.Value = kind == ValueKind.Integer ? 1
+                    match.Value = kind == ArgValueKind.Integer ? 1
                                 : match.Value.TryAsString(out var s) ? StringList.Empty.Push(s)
                                 : match.Value;
                 }

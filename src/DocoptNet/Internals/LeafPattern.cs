@@ -11,7 +11,7 @@ namespace DocoptNet.Internals
     {
         private readonly string _name;
 
-        protected LeafPattern(string name, Value value = default)
+        protected LeafPattern(string name, ArgValue value = default)
         {
             _name = name;
             Value = value;
@@ -26,7 +26,7 @@ namespace DocoptNet.Internals
             get { return _name; }
         }
 
-        public Value Value { get; set; }
+        public ArgValue Value { get; set; }
 
         public override ICollection<Pattern> Flat(params Type[] types)
         {

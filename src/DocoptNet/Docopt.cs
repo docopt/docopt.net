@@ -13,7 +13,7 @@ namespace DocoptNet
 
     partial class Docopt
     {
-        public static IHelpFeaturingParser<IDictionary<string, Value>> CreateParser(string doc) =>
+        public static IHelpFeaturingParser<IDictionary<string, ArgValue>> CreateParser(string doc) =>
             CreateParser(doc, ar => ar.ToValueDictionary());
 
         static IHelpFeaturingParser<T> CreateParser<T>(string doc, Func<ApplicationResult, T> resultSelector) =>
@@ -137,15 +137,15 @@ namespace DocoptNet
         [EditorBrowsable(EditorBrowsableState.Never)]
         internal static class Internal
         {
-            public static IDictionary<string, Value>? Apply(Docopt docopt, string doc, IEnumerable<string> argv,
+            public static IDictionary<string, ArgValue>? Apply(Docopt docopt, string doc, IEnumerable<string> argv,
                                                             bool help = true, object? version = null,
                                                             bool optionsFirst = false, bool exit = false) =>
                 docopt.Apply(doc, Tokens.From(argv), help, version, optionsFirst, exit)?.ToValueDictionary();
 
             public static IEnumerable<T> GetNodes<T>(string doc,
-                                                     Func<string, Value, T> commandSelector,
-                                                     Func<string, Value, T> argumentSelector,
-                                                     Func<string, string, string, int, Value, T> optionSelector)
+                                                     Func<string, ArgValue, T> commandSelector,
+                                                     Func<string, ArgValue, T> argumentSelector,
+                                                     Func<string, string, string, int, ArgValue, T> optionSelector)
             {
                 var nodes =
                     from p in GetFlatPatterns(doc)
@@ -414,14 +414,14 @@ namespace DocoptNet
                     options.Add(option);
                     if (tokens.ThrowsInputError)
                     {
-                        option = new Option(shortName, null, 0, Value.True);
+                        option = new Option(shortName, null, 0, ArgValue.True);
                     }
                 }
                 else
                 {
                     // why is copying necessary here?
                     option = new Option(shortName, similar[0].LongName, similar[0].ArgCount, similar[0].Value);
-                    Value? value = null;
+                    ArgValue? value = null;
                     if (option.ArgCount != 0)
                     {
                         if (left == "")
@@ -430,7 +430,7 @@ namespace DocoptNet
                             {
                                 throw tokens.CreateException(shortName + " requires argument");
                             }
-                            value = tokens.Move() ?? Value.None;
+                            value = tokens.Move() ?? ArgValue.None;
                         }
                         else
                         {
@@ -439,7 +439,7 @@ namespace DocoptNet
                         }
                     }
                     if (tokens.ThrowsInputError)
-                        option.Value = value ?? Value.True;
+                        option.Value = value ?? ArgValue.True;
                 }
                 parsed.Add(option);
             }
@@ -474,7 +474,7 @@ namespace DocoptNet
                 option = new Option(null, longName, argCount);
                 options.Add(option);
                 if (tokens.ThrowsInputError)
-                    option = new Option(null, longName, argCount, value is { } v ? v : Value.True);
+                    option = new Option(null, longName, argCount, value is { } v ? v : ArgValue.True);
             }
             else
             {
@@ -494,7 +494,7 @@ namespace DocoptNet
                     }
                 }
                 if (tokens.ThrowsInputError)
-                    option.Value = value is { } v ? v : Value.True;
+                    option.Value = value is { } v ? v : ArgValue.True;
             }
             return new[] {option};
         }

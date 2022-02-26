@@ -4,7 +4,7 @@ namespace DocoptNet.Internals
 
     class Argument: LeafPattern
     {
-        public Argument(string name) : base(name, Value.None)
+        public Argument(string name) : base(name, ArgValue.None)
         {
         }
 
@@ -20,7 +20,7 @@ namespace DocoptNet.Internals
 
         /// <remarks>
         /// This is only used by tests as a convenience. The instantiated
-        /// <see cref="Value"/> is a string representation of the integer.
+        /// <see cref="ArgValue"/> is a string representation of the integer.
         /// </remarks>
 
         public Argument(string name, int value)

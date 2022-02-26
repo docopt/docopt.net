@@ -23,7 +23,7 @@ namespace DocoptNet.Tests
         [Test]
         public void Test_parse_argv_one_opt()
         {
-            Assert.AreEqual(new[] {new Option("-h", null, 0, Value.True)},
+            Assert.AreEqual(new[] {new Option("-h", null, 0, ArgValue.True)},
                             Docopt.ParseArgv(TS("-h"), _options));
         }
 
@@ -32,8 +32,8 @@ namespace DocoptNet.Tests
         {
             Assert.AreEqual(new[]
                 {
-                    new Option("-h", null, 0, Value.True),
-                    new Option("-v", "--verbose", 0, Value.True)
+                    new Option("-h", null, 0, ArgValue.True),
+                    new Option("-v", "--verbose", 0, ArgValue.True)
                 },
                             Docopt.ParseArgv(TS("-h --verbose"), _options));
         }
@@ -43,7 +43,7 @@ namespace DocoptNet.Tests
         {
             Assert.AreEqual(new[]
                 {
-                    new Option("-h", null, 0, Value.True),
+                    new Option("-h", null, 0, ArgValue.True),
                     new Option("-f", "--file", 1, "f.txt")
                 },
                             Docopt.ParseArgv(TS("-h --file f.txt"), _options));
@@ -55,7 +55,7 @@ namespace DocoptNet.Tests
             Assert.AreEqual(
                 new Pattern[]
                     {
-                        new Option("-h", null, 0, Value.True),
+                        new Option("-h", null, 0, ArgValue.True),
                         new Option("-f", "--file", 1, "f.txt"),
                         new Argument(null, "arg")
                     },
@@ -68,7 +68,7 @@ namespace DocoptNet.Tests
             Assert.AreEqual(
                 new Pattern[]
                     {
-                        new Option("-h", null, 0, Value.True),
+                        new Option("-h", null, 0, ArgValue.True),
                         new Option("-f", "--file", 1, "f.txt"),
                         new Argument(null, "arg"),
                         new Argument(null, "arg2")
@@ -82,7 +82,7 @@ namespace DocoptNet.Tests
             Assert.AreEqual(
                 new Pattern[]
                     {
-                        new Option("-h", null, 0, Value.True),
+                        new Option("-h", null, 0, ArgValue.True),
                         new Argument(null, "arg"),
                         new Argument(null, "--"),
                         new Argument(null, "-v")

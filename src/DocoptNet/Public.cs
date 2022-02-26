@@ -11,7 +11,7 @@ namespace DocoptNet
     public partial class ValueObject { }
     public partial class ArgsParseOptions { }
     public partial class StringList { }
-    public partial struct Value { }
+    public partial struct ArgValue { }
     public partial interface IParser<out T> { }
     public partial interface IHelpFeaturingParser<out T> { }
     public partial interface IVersionFeaturingParser<out T> { }

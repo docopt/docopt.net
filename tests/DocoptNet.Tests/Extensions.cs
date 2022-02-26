@@ -12,7 +12,7 @@ namespace DocoptNet.Tests
             return PatternMatcher.Match(pattern, left.AsReadOnly());
         }
 
-        public static IDictionary<string, Value> Apply(this Docopt docopt,
+        public static IDictionary<string, ArgValue> Apply(this Docopt docopt,
                                                        string doc, string cmdLine,
                                                        bool help = true,
                                                        object version = null,
@@ -22,7 +22,7 @@ namespace DocoptNet.Tests
             return docopt.Apply(doc, Args.Parse(cmdLine), help, version, optionsFirst, exit);
         }
 
-        public static IDictionary<string, Value> Apply(this Docopt docopt,
+        public static IDictionary<string, ArgValue> Apply(this Docopt docopt,
                                                        string doc, Args argv,
                                                        bool help = true,
                                                        object version = null,

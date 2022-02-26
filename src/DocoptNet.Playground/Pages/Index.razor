@@ -84,13 +84,13 @@
     string _input;
     string _lastInput;
     string _output;
-    IDictionary<string, Value> _args;
+    IDictionary<string, ArgValue> _args;
     List<Node> _nodes;
     bool _error;
     TimeSpan? _ms;
     ElementReference _inputTextArea;
 
-    record Node(string Name, ValueKind ValueKind, int Count, Value Value);
+    record Node(string Name, ArgValueKind ValueKind, int Count, ArgValue Value);
 
     bool OptionsFirst
     {
@@ -175,13 +175,13 @@ Options:
             var argv = _commandLine.Split((char[])null, StringSplitOptions.RemoveEmptyEntries);
             _nodes = Docopt.Internal
                            .GetNodes(_input,
-                                     (name, value) => new Node(name, value.Kind, 0, Value.None),
-                                     (name, value) => new Node(name, value.IsStringList ? ValueKind.StringList : ValueKind.String, 0, Value.None),
-                                     (name, _, _, _, value) => new Node(name, value.Kind, 0, Value.None))
-                           .GroupBy(e => e.Name, e => e, (_, g) => new Node(g.First().Name, g.First().ValueKind, g.Count(), Value.None))
+                                     (name, value) => new Node(name, value.Kind, 0, ArgValue.None),
+                                     (name, value) => new Node(name, value.IsStringList ? ArgValueKind.StringList : ArgValueKind.String, 0, ArgValue.None),
+                                     (name, _, _, _, value) => new Node(name, value.Kind, 0, ArgValue.None))
+                           .GroupBy(e => e.Name, e => e, (_, g) => new Node(g.First().Name, g.First().ValueKind, g.Count(), ArgValue.None))
                            .ToList();
             _args = Docopt.Internal.Apply(docopt, _input, argv.AsEnumerable(), help: false, version: null, optionsFirst: _optionsFirst, exit: false);
-            _nodes = _nodes.Select(n => new Node(n.Name, n.ValueKind, n.Count, _args.TryGetValue(n.Name, out var v) ? v : Value.None)).ToList();
+            _nodes = _nodes.Select(n => new Node(n.Name, n.ValueKind, n.Count, _args.TryGetValue(n.Name, out var v) ? v : ArgValue.None)).ToList();
             _ms = sw.Elapsed;
         }
         catch (DocoptBaseException e)

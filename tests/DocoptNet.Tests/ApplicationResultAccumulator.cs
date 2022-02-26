@@ -53,42 +53,42 @@ namespace DocoptNet.Tests
         [TestFixture]
         public class ValueDictionary
         {
-            static readonly IApplicationResultAccumulator<IDictionary<string, Value>> Accumulator = ApplicationResultAccumulators.ValueDictionary;
+            static readonly IApplicationResultAccumulator<IDictionary<string, ArgValue>> Accumulator = ApplicationResultAccumulators.ValueDictionary;
 
             [Test]
             public void Command_adds_entry_with_value()
             {
-                IDictionary<string, Value> dict = new Dictionary<string, Value>();
+                IDictionary<string, ArgValue> dict = new Dictionary<string, ArgValue>();
                 dict = Accumulator.Command(dict, "command", true);
                 var value = dict["command"];
-                Assert.That(value, Is.InstanceOf<Value>());
+                Assert.That(value, Is.InstanceOf<ArgValue>());
                 Assert.That((bool)value, Is.EqualTo(true));
             }
 
             [Test]
             public void Argument_adds_entry_with_value()
             {
-                IDictionary<string, Value> dict = new Dictionary<string, Value>();
+                IDictionary<string, ArgValue> dict = new Dictionary<string, ArgValue>();
                 dict = Accumulator.Argument(dict, "<argument>", "value");
                 var value = dict["<argument>"];
-                Assert.That(value, Is.InstanceOf<Value>());
+                Assert.That(value, Is.InstanceOf<ArgValue>());
                 Assert.That((string)value, Is.EqualTo("value"));
             }
 
             [Test]
             public void Option_adds_entry_with_value()
             {
-                IDictionary<string, Value> dict = new Dictionary<string, Value>();
+                IDictionary<string, ArgValue> dict = new Dictionary<string, ArgValue>();
                 dict = Accumulator.Option(dict, "--option", "value");
                 var value = dict["--option"];
-                Assert.That(value, Is.InstanceOf<Value>());
+                Assert.That(value, Is.InstanceOf<ArgValue>());
                 Assert.That((string)value, Is.EqualTo("value"));
             }
 
             [Test]
             public void GetResult_returns_same()
             {
-                IDictionary<string, Value> dict = new Dictionary<string, Value>();
+                IDictionary<string, ArgValue> dict = new Dictionary<string, ArgValue>();
                 Assert.That(Accumulator.GetResult(dict), Is.SameAs(dict));
             }
         }

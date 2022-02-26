@@ -9,7 +9,7 @@ namespace DocoptNet.Tests
         [Test]
         public void Required()
         {
-            var expected = new Dictionary<string, Value>
+            var expected = new Dictionary<string, ArgValue>
                 {
                     {"add", true}
                 };
@@ -20,7 +20,7 @@ namespace DocoptNet.Tests
         [Test]
         public void Optional_no_args()
         {
-            var expected = new Dictionary<string, Value>
+            var expected = new Dictionary<string, ArgValue>
                 {
                     {"add", false}
                 };
@@ -31,7 +31,7 @@ namespace DocoptNet.Tests
         [Test]
         public void Optional_one_arg()
         {
-            var expected = new Dictionary<string, Value>
+            var expected = new Dictionary<string, ArgValue>
                 {
                     {"add", true}
                 };
@@ -42,7 +42,7 @@ namespace DocoptNet.Tests
         [Test]
         public void Optional_either_first_specified()
         {
-            var expected = new Dictionary<string, Value>
+            var expected = new Dictionary<string, ArgValue>
                 {
                     {"add", true},
                     {"rm", false}
@@ -54,7 +54,7 @@ namespace DocoptNet.Tests
         [Test]
         public void Optional_either_second_specified()
         {
-            var expected = new Dictionary<string, Value>
+            var expected = new Dictionary<string, ArgValue>
                 {
                     {"add", false},
                     {"rm", true}
@@ -66,7 +66,7 @@ namespace DocoptNet.Tests
         [Test]
         public void Required_both_specified()
         {
-            var expected = new Dictionary<string, Value>
+            var expected = new Dictionary<string, ArgValue>
                 {
                     {"a", true},
                     {"b", true}

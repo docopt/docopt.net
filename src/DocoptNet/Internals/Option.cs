@@ -9,18 +9,18 @@ namespace DocoptNet.Internals
         public string LongName { get; private set; }
         public int ArgCount { get; private set; }
 
-        public Option(string shortName = null, string longName = null, int argCount = 0, Value? value = null)
+        public Option(string shortName = null, string longName = null, int argCount = 0, ArgValue? value = null)
             : base()
         {
             ShortName = shortName;
             LongName = longName;
             ArgCount = argCount;
-            var v = value ?? Value.False;
-            Value = v.IsFalse && argCount > 0 ? Value.None : v;
+            var v = value ?? ArgValue.False;
+            Value = v.IsFalse && argCount > 0 ? ArgValue.None : v;
         }
 
         public Option(string shortName, string longName, int argCount, string value)
-            : this(shortName, longName, argCount, (Value)value)
+            : this(shortName, longName, argCount, (ArgValue)value)
         {
         }
 
@@ -45,7 +45,7 @@ namespace DocoptNet.Internals
             string shortName = null;
             string longName = null;
             var argCount = 0;
-            var value = Value.False;
+            var value = ArgValue.False;
             var (options, _, description) = optionDescription.Trim().Partition(DESC_SEPARATOR);
             foreach (var s in options.Split(OptionDelimiters, StringSplitOptions.RemoveEmptyEntries))
             {
@@ -64,7 +64,7 @@ namespace DocoptNet.Internals
             {
                 var r = new Regex(@"\[default: (.*)\]", RegexOptions.IgnoreCase);
                 var m = r.Match(description);
-                value = m.Success ? m.Groups[1].Value : Value.None;
+                value = m.Success ? m.Groups[1].Value : ArgValue.None;
             }
             return new Option(shortName, longName, argCount, value);
         }

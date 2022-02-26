@@ -9,7 +9,7 @@ namespace DocoptNet.Tests
         [Test]
         public void Match_opt_first()
         {
-            var expected = new Dictionary<string, Value>
+            var expected = new Dictionary<string, ArgValue>
                 {
                     {"--opt", true},
                     {"<args>", StringList.TopBottom("this", "that")}
@@ -21,7 +21,7 @@ namespace DocoptNet.Tests
         [Test]
         public void Match_args_first()
         {
-            var expected = new Dictionary<string, Value>
+            var expected = new Dictionary<string, ArgValue>
                 {
                     {"--opt", true},
                     {"<args>", StringList.TopBottom("this", "that")}
@@ -33,7 +33,7 @@ namespace DocoptNet.Tests
         [Test]
         public void Check_options_first()
         {
-            var expected = new Dictionary<string, Value>
+            var expected = new Dictionary<string, ArgValue>
                 {
                     {"--opt", false},
                     {"<args>", StringList.TopBottom("this", "that", "--opt")}

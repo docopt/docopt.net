@@ -29,7 +29,7 @@ public class ParserApiTests
 
     const string Version = "Naval Fate 2.0";
 
-    static IParser<IDictionary<string, Value>>.IResult Parse(string commandLine) =>
+    static IParser<IDictionary<string, ArgValue>>.IResult Parse(string commandLine) =>
         Docopt.CreateParser(Help).WithVersion(Version).Parse(Args.Parse(commandLine).List);
 
     [Test]
@@ -37,7 +37,7 @@ public class ParserApiTests
     {
         switch (Parse("ship new foo bar"))
         {
-            case IArgumentsResult<IDictionary<string, Value>> { Arguments: var args }:
+            case IArgumentsResult<IDictionary<string, ArgValue>> { Arguments: var args }:
                 Assert.True(args["ship"].IsTrue);
                 Assert.True(args["new"].IsTrue);
                 Assert.That((StringList)args["<name>"], Is.EqualTo(new[] { "foo", "bar" }));
@@ -146,7 +146,7 @@ public class ParserApiTests
 
     public class ParserTests
     {
-        static readonly IParser<IDictionary<string, Value>> Parser =
+        static readonly IParser<IDictionary<string, ArgValue>> Parser =
             Docopt.CreateParser(Help).WithVersion(Version);
 
         [Test]
@@ -203,7 +203,7 @@ public class ParserApiTests
 
     public class HelpFeaturingParserTests
     {
-        static readonly IHelpFeaturingParser<IDictionary<string, Value>> Parser = Docopt.CreateParser(Help);
+        static readonly IHelpFeaturingParser<IDictionary<string, ArgValue>> Parser = Docopt.CreateParser(Help);
 
         [Test]
         public void Match_Args()
@@ -244,7 +244,7 @@ public class ParserApiTests
 
     public class VersionFeaturingParserTests
     {
-        static readonly IVersionFeaturingParser<IDictionary<string, Value>> Parser =
+        static readonly IVersionFeaturingParser<IDictionary<string, ArgValue>> Parser =
             Docopt.CreateParser(Help).DisableHelp().WithVersion(Version);
 
         [Test]
@@ -286,7 +286,7 @@ public class ParserApiTests
 
     public class BaselineParserTests
     {
-        static readonly IBaselineParser<IDictionary<string, Value>> Parser =
+        static readonly IBaselineParser<IDictionary<string, ArgValue>> Parser =
             Docopt.CreateParser(Help).DisableHelp();
 
         [Test]

@@ -23,25 +23,25 @@ namespace DocoptNet
 
     static class ApplicationResultAccumulators
     {
-        public static readonly IApplicationResultAccumulator<IDictionary<string, Value>> ValueDictionary = new ValueDictionaryAccumulator();
+        public static readonly IApplicationResultAccumulator<IDictionary<string, ArgValue>> ValueDictionary = new ValueDictionaryAccumulator();
         public static readonly IApplicationResultAccumulator<IDictionary<string, ValueObject>> ValueObjectDictionary = new ValueObjectDictionaryAccumulator();
 
-        sealed class ValueDictionaryAccumulator : IApplicationResultAccumulator<IDictionary<string, Value>>
+        sealed class ValueDictionaryAccumulator : IApplicationResultAccumulator<IDictionary<string, ArgValue>>
         {
-            public IDictionary<string, Value> Command(IDictionary<string, Value> state, string name, bool value) => Adding(state, name, value);
-            public IDictionary<string, Value> Command(IDictionary<string, Value> state, string name, int value) => Adding(state, name, value);
-            public IDictionary<string, Value> Argument(IDictionary<string, Value> state, string name) => Adding(state, name, Value.None);
-            public IDictionary<string, Value> Argument(IDictionary<string, Value> state, string name, string value) => Adding(state, name, value);
-            public IDictionary<string, Value> Argument(IDictionary<string, Value> state, string name, StringList value) => Adding(state, name, value);
-            public IDictionary<string, Value> Option(IDictionary<string, Value> state, string name) => Adding(state, name, Value.None);
-            public IDictionary<string, Value> Option(IDictionary<string, Value> state, string name, bool value) => Adding(state, name, value);
-            public IDictionary<string, Value> Option(IDictionary<string, Value> state, string name, string value) => Adding(state, name, value);
-            public IDictionary<string, Value> Option(IDictionary<string, Value> state, string name, int value) => Adding(state, name, value);
-            public IDictionary<string, Value> Option(IDictionary<string, Value> state, string name, StringList value) => Adding(state, name, value);
+            public IDictionary<string, ArgValue> Command(IDictionary<string, ArgValue> state, string name, bool value) => Adding(state, name, value);
+            public IDictionary<string, ArgValue> Command(IDictionary<string, ArgValue> state, string name, int value) => Adding(state, name, value);
+            public IDictionary<string, ArgValue> Argument(IDictionary<string, ArgValue> state, string name) => Adding(state, name, ArgValue.None);
+            public IDictionary<string, ArgValue> Argument(IDictionary<string, ArgValue> state, string name, string value) => Adding(state, name, value);
+            public IDictionary<string, ArgValue> Argument(IDictionary<string, ArgValue> state, string name, StringList value) => Adding(state, name, value);
+            public IDictionary<string, ArgValue> Option(IDictionary<string, ArgValue> state, string name) => Adding(state, name, ArgValue.None);
+            public IDictionary<string, ArgValue> Option(IDictionary<string, ArgValue> state, string name, bool value) => Adding(state, name, value);
+            public IDictionary<string, ArgValue> Option(IDictionary<string, ArgValue> state, string name, string value) => Adding(state, name, value);
+            public IDictionary<string, ArgValue> Option(IDictionary<string, ArgValue> state, string name, int value) => Adding(state, name, value);
+            public IDictionary<string, ArgValue> Option(IDictionary<string, ArgValue> state, string name, StringList value) => Adding(state, name, value);
 
-            public IDictionary<string, Value> GetResult(IDictionary<string, Value> state) => state;
+            public IDictionary<string, ArgValue> GetResult(IDictionary<string, ArgValue> state) => state;
 
-            static IDictionary<string, Value> Adding(IDictionary<string, Value> dict, string name, Value value)
+            static IDictionary<string, ArgValue> Adding(IDictionary<string, ArgValue> dict, string name, ArgValue value)
             {
                 dict[name] = value;
                 return dict;
