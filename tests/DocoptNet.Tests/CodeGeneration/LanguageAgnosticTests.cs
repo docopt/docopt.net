@@ -70,7 +70,7 @@ public partial class Program
                 static int ParseInt(string s) => int.Parse(s, NumberStyles.None, CultureInfo.InvariantCulture);
                 var (errorLineNumber, _) =
                     e is AssertionException
-                    && Regex.Match(e.Message, @"\(([1-9][0-9]*),([1-9][0-9]*)\):\s*error\b") is { Success: true, Groups: {} groups }
+                    && Regex.Match(e.Message, @"\(([1-9][0-9]*),([1-9][0-9]*)\):\s*error\b") is { Success: true, Groups: var groups }
                     ? (ParseInt(groups[1].Value), ParseInt(groups[2].Value))
                     : default;
                 var sourceText = SourceGenerator.Generate(null, "Program", SourceText.From(doc));

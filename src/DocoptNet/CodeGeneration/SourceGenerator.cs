@@ -154,7 +154,7 @@ namespace DocoptNet.CodeGeneration
 
             var docoptSources =
                 context.AdditionalFiles
-                       .Choose(at => context.AnalyzerConfigOptions.GetOptions(at) is {} options
+                       .Choose(at => context.AnalyzerConfigOptions.GetOptions(at) is var options
                                      && options.TryGetValue(Metadata.SourceItemType, out var type)
                                      && "Docopt".Equals(type, StringComparison.OrdinalIgnoreCase)
                                      && at.GetText() is {} text

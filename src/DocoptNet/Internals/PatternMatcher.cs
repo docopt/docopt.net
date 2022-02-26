@@ -218,7 +218,7 @@ namespace DocoptNet.Internals
                 case Required  { Children: { Count: var count } children }: return MatchBranch(children, new RequiredMatcher(count, left, collected));
                 case Either    { Children: { Count: var count } children }: return MatchBranch(children, new EitherMatcher(count, left, collected));
                 case Optional  { Children: { Count: var count } children }: return MatchBranch(children, new OptionalMatcher(count, left, collected));
-                case OneOrMore { Children: {} children }: return MatchBranch(children, new OneOrMoreMatcher(1, left, collected));
+                case OneOrMore { Children: var children }: return MatchBranch(children, new OneOrMoreMatcher(1, left, collected));
                 case LeafPattern leaf:
                 {
                     var matcher = leaf switch
