@@ -29,7 +29,7 @@ namespace DocoptNet.Internals
                     '?' => "Question",
                     _ => null,
                 };
-                if (replacement is {} r)
+                if (replacement is { } r)
                 {
                     result += r;
                     makeUpperCase = true;

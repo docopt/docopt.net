@@ -9,8 +9,8 @@ namespace DocoptNet.Internals
         public string LongName { get; private set; }
         public int ArgCount { get; private set; }
 
-        public Option(string shortName = null, string longName = null, int argCount = 0, ArgValue? value = null)
-            : base()
+        public Option(string shortName = null, string longName = null, int argCount = 0, ArgValue? value = null) :
+            base()
         {
             ShortName = shortName;
             LongName = longName;
@@ -19,10 +19,8 @@ namespace DocoptNet.Internals
             Value = v.IsFalse && argCount > 0 ? ArgValue.None : v;
         }
 
-        public Option(string shortName, string longName, int argCount, string value)
-            : this(shortName, longName, argCount, (ArgValue)value)
-        {
-        }
+        public Option(string shortName, string longName, int argCount, string value) :
+            this(shortName, longName, argCount, (ArgValue)value) { }
 
         public override string Name
         {

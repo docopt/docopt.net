@@ -13,15 +13,9 @@ namespace DocoptNet
         //    http://msdn.microsoft.com/library/default.asp?url=/library/en-us/dncscol/html/csharp07192001.asp
         //
 
-        public DocoptLanguageErrorException()
-        {
-        }
-        public DocoptLanguageErrorException(string? message) : base(message)
-        {
-        }
-        public DocoptLanguageErrorException(string? message, Exception inner) : base(message, inner)
-        {
-        }
+        public DocoptLanguageErrorException() { }
+        public DocoptLanguageErrorException(string? message) : base(message) { }
+        public DocoptLanguageErrorException(string? message, Exception inner) : base(message, inner) { }
     }
 }
 
@@ -35,10 +29,8 @@ namespace DocoptNet
     [Serializable]
     partial class DocoptLanguageErrorException
     {
-        protected DocoptLanguageErrorException(SerializationInfo info, StreamingContext context)
-            : base(info, context)
-        {
-        }
+        protected DocoptLanguageErrorException(SerializationInfo info, StreamingContext context) :
+            base(info, context) { }
     }
 }
 

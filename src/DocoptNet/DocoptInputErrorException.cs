@@ -13,17 +13,9 @@ namespace DocoptNet
         //    http://msdn.microsoft.com/library/default.asp?url=/library/en-us/dncscol/html/csharp07192001.asp
         //
 
-        public DocoptInputErrorException()
-        {
-        }
-        public DocoptInputErrorException(string? message)
-            : base(message)
-        {
-        }
-        public DocoptInputErrorException(string? message, Exception? inner)
-            : base(message, inner)
-        {
-        }
+        public DocoptInputErrorException() { }
+        public DocoptInputErrorException(string? message) : base(message) { }
+        public DocoptInputErrorException(string? message, Exception? inner) : base(message, inner) { }
     }
 }
 
@@ -37,10 +29,8 @@ namespace DocoptNet
     [Serializable]
     partial class DocoptInputErrorException
     {
-        protected DocoptInputErrorException(SerializationInfo info, StreamingContext context)
-            : base(info, context)
-        {
-        }
+        protected DocoptInputErrorException(SerializationInfo info, StreamingContext context) :
+            base(info, context) { }
     }
 }
 

@@ -157,7 +157,7 @@ namespace DocoptNet.CodeGeneration
                        .Choose(at => context.AnalyzerConfigOptions.GetOptions(at) is var options
                                      && options.TryGetValue(Metadata.SourceItemType, out var type)
                                      && "Docopt".Equals(type, StringComparison.OrdinalIgnoreCase)
-                                     && at.GetText() is {} text
+                                     && at.GetText() is { } text
                                      ? Some((rootNamespace,
                                              options.TryGetValue(Metadata.Name, out var name)
                                              && !string.IsNullOrWhiteSpace(name)
@@ -297,8 +297,8 @@ namespace DocoptNet.CodeGeneration
                             code.New["List<Option>"].NewLine
                                 .Block[code.Each(options,
                                                  static (code, option, _) =>
-                                                     code.NewTargeted["("][option.ShortName is {} sn ? code.Literal(sn) : code.Null][", "]
-                                                         [option.LongName is {} ln ? code.Literal(ln) : code.Null][", "]
+                                                     code.NewTargeted["("][option.ShortName is { } sn ? code.Literal(sn) : code.Null][", "]
+                                                         [option.LongName is { } ln ? code.Literal(ln) : code.Null][", "]
                                                          .Literal(option.ArgCount)[", "]
                                                          [Value(code, option.Value)]["),"].NewLine).SkipNextNewLine]]
                         .NewLine

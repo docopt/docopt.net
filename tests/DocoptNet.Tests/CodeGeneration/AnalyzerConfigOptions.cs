@@ -14,10 +14,10 @@ namespace DocoptNet.Tests.CodeGeneration
         readonly ImmutableDictionary<string, string> _options;
 
         public AnalyzerConfigOptions(params KeyValuePair<string, string>[] options) :
-            this(options.AsEnumerable()) {}
+            this(options.AsEnumerable()) { }
 
         public AnalyzerConfigOptions(IEnumerable<KeyValuePair<string, string>> options) :
-            this(ImmutableDictionary.CreateRange(options)) {}
+            this(ImmutableDictionary.CreateRange(options)) { }
 
         public AnalyzerConfigOptions(ImmutableDictionary<string, string> options) =>
             _options = options;

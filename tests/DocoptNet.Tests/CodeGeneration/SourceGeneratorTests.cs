@@ -356,7 +356,7 @@ dotnet script {Path.Combine("tests", "DocoptNet.Tests", "sgss.csx")} inspect -i"
 
         sealed class NavalFateArgs : ProgramArgs
         {
-            public NavalFateArgs(IDictionary args) : base(args) {}
+            public NavalFateArgs(IDictionary args) : base(args) { }
 
             public bool?        CmdShip        => Get("ship", v => (bool?)v);
             public bool?        CmdNew         => Get("new", v => (bool?)v);

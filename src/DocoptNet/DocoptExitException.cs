@@ -13,15 +13,9 @@ namespace DocoptNet
         //    http://msdn.microsoft.com/library/default.asp?url=/library/en-us/dncscol/html/csharp07192001.asp
         //
 
-        public DocoptExitException()
-        {
-        }
-        public DocoptExitException(string? message) : base(message)
-        {
-        }
-        public DocoptExitException(string? message, Exception? inner) : base(message, inner)
-        {
-        }
+        public DocoptExitException() { }
+        public DocoptExitException(string? message) : base(message) { }
+        public DocoptExitException(string? message, Exception? inner) : base(message, inner) { }
     }
 }
 
@@ -35,10 +29,8 @@ namespace DocoptNet
     [Serializable]
     partial class DocoptExitException
     {
-        protected DocoptExitException(SerializationInfo info, StreamingContext context)
-            : base(info, context)
-        {
-        }
+        protected DocoptExitException(SerializationInfo info, StreamingContext context) :
+            base(info, context) { }
     }
 }
 

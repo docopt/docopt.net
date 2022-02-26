@@ -13,19 +13,9 @@ namespace DocoptNet
         //    http://msdn.microsoft.com/library/default.asp?url=/library/en-us/dncscol/html/csharp07192001.asp
         //
 
-        public DocoptBaseException()
-        {
-        }
-
-        public DocoptBaseException(string? message)
-            : base(message)
-        {
-        }
-
-        public DocoptBaseException(string? message, Exception? inner)
-            : base(message, inner)
-        {
-        }
+        public DocoptBaseException() { }
+        public DocoptBaseException(string? message) : base(message) { }
+        public DocoptBaseException(string? message, Exception? inner) : base(message, inner) { }
 
         public int ErrorCode
         {
@@ -44,10 +34,8 @@ namespace DocoptNet
     [Serializable]
     partial class DocoptBaseException
     {
-        protected DocoptBaseException(SerializationInfo info, StreamingContext context)
-            : base(info, context)
-        {
-        }
+        protected DocoptBaseException(SerializationInfo info, StreamingContext context) :
+            base(info, context) { }
     }
 }
 

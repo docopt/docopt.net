@@ -17,9 +17,7 @@ namespace DocoptNet.Internals
             Value = value;
         }
 
-        protected LeafPattern()
-        {
-        }
+        protected LeafPattern() { }
 
         public override string Name
         {
