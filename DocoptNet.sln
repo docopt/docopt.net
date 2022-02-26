@@ -27,6 +27,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "SourceGenerator", "SourceGe
 	ProjectSection(SolutionItems) = preProject
 		eg\SourceGenerator\Directory.Build.props = eg\SourceGenerator\Directory.Build.props
 		eg\SourceGenerator\Directory.Build.targets = eg\SourceGenerator\Directory.Build.targets
+		eg\SourceGenerator\Extensions.cs = eg\SourceGenerator\Extensions.cs
 	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NavalFate", "eg\SourceGenerator\NavalFate\NavalFate.csproj", "{E41419E5-251C-4093-ADDE-77EF694964E3}"

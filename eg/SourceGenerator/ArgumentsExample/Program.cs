@@ -1,36 +1,23 @@
 using System;
-using DocoptNet;
 using ArgumentsExample;
 
-ProgramArguments arguments;
+return ProgramArguments.CreateParser().Run(args, Main);
 
-try
+static int Main(ProgramArguments args)
 {
-    arguments = ProgramArguments.Apply(args);
-}
-catch (DocoptExitException e)
-{
-    Console.WriteLine(e.Message);
-    return e.ErrorCode;
-}
-catch (DocoptInputErrorException e)
-{
-    Console.Error.WriteLine(e);
-    return 0xbd;
-}
+    foreach (var (name, value) in args)
+        Console.WriteLine($"{name} = {value}");
 
-foreach (var (name, value) in arguments)
-    Console.WriteLine($"{name} = {value}");
-
-Console.WriteLine($@"{{
-    Help       = {arguments.OptHelp    },
-    V          = {arguments.OptV       },
-    Q          = {arguments.OptQ       },
-    R          = {arguments.OptR       },
-    Left       = {arguments.OptLeft    },
-    Right      = {arguments.OptRight   },
-    Correction = {arguments.ArgCorrection},
-    File       = [{string.Join(", ", arguments.ArgFile)}],
+    Console.WriteLine($@"{{
+    Help       = {args.OptHelp},
+    V          = {args.OptV},
+    Q          = {args.OptQ},
+    R          = {args.OptR},
+    Left       = {args.OptLeft},
+    Right      = {args.OptRight},
+    Correction = {args.ArgCorrection},
+    File       = [{string.Join(", ", args.ArgFile)}],
 }}");
 
-return 0;
+    return 0;
+}

@@ -18,8 +18,6 @@ namespace DocoptNet.Internals
     [EditorBrowsable(Never)] public partial class PatternMatcher { }
     [EditorBrowsable(Never)] public partial struct ReadOnlyList<T> { }
     [EditorBrowsable(Never)] public partial struct RequiredMatcher { }
-    [EditorBrowsable(Never)] public partial class StringList { }
-    [EditorBrowsable(Never)] public partial struct Value { }
 }
 
 #endif

@@ -1,13 +1,11 @@
 #nullable enable
 
-namespace DocoptNet.Internals
+namespace DocoptNet
 {
     using System;
-    using System.ComponentModel;
     using System.Diagnostics;
     using System.Diagnostics.CodeAnalysis;
 
-    [EditorBrowsable(EditorBrowsableState.Never)]
     #if DOCOPTNET_PUBLIC
     public // ...
     #endif

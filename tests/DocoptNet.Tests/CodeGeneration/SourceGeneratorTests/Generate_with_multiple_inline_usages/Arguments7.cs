@@ -2,40 +2,53 @@
 
 using System.Collections;
 using System.Collections.Generic;
+using DocoptNet;
 using DocoptNet.Internals;
 using Leaves = DocoptNet.Internals.ReadOnlyList<DocoptNet.Internals.LeafPattern>;
-using static DocoptNet.Internals.GeneratedSourceModule;
 
 partial class Arguments7 : IEnumerable<KeyValuePair<string, object?>>
 {
     public const string Usage = "Usage: my_program (run [--fast] | jump [--high])";
 
-    public static Arguments7 Apply(IEnumerable<string> args, bool help = true, object? version = null, bool optionsFirst = false)
+    static readonly IBaselineParser<Arguments7> Parser = GeneratedSourceModule.CreateParser(Help, Parse);
+
+    public static IBaselineParser<Arguments7> CreateParser() => Parser;
+
+    static IParser<Arguments7>.IResult Parse(IEnumerable<string> args, ParseFlags flags, string? version)
     {
         var options = new List<Option>
         {
             new(null, "--fast", 0, false),
             new(null, "--high", 0, false),
         };
-        var left = ParseArgv(Help, args, options, optionsFirst, help, version);
-        var required = new RequiredMatcher(1, left, new Leaves());
-        Match(ref required);
-        var collected = GetSuccessfulCollection(required, Usage);
-        var result = new Arguments7();
 
-        foreach (var leaf in collected)
+        return GeneratedSourceModule.Parse(Help, Usage, args, options, flags, version, Parse);
+
+        static IParser<Arguments7>.IResult Parse(Leaves left)
         {
-            var value = leaf.Value is { IsStringList: true } ? ((StringList)leaf.Value).Reverse() : leaf.Value;
-            switch (leaf.Name)
+            var required = new RequiredMatcher(1, left, new Leaves());
+            Match(ref required);
+            if (!required.Result || required.Left.Count > 0)
             {
-                case "run": result.CmdRun = (bool)value; break;
-                case "--fast": result.OptFast = (bool)value; break;
-                case "jump": result.CmdJump = (bool)value; break;
-                case "--high": result.OptHigh = (bool)value; break;
+                return GeneratedSourceModule.CreateInputErrorResult<Arguments7>(string.Empty, Usage);
             }
-        }
+            var collected = required.Collected;
+            var result = new Arguments7();
 
-        return result;
+            foreach (var leaf in collected)
+            {
+                var value = leaf.Value is { IsStringList: true } ? ((StringList)leaf.Value).Reverse() : leaf.Value;
+                switch (leaf.Name)
+                {
+                    case "run": result.CmdRun = (bool)value; break;
+                    case "--fast": result.OptFast = (bool)value; break;
+                    case "jump": result.CmdJump = (bool)value; break;
+                    case "--high": result.OptHigh = (bool)value; break;
+                }
+            }
+
+            return GeneratedSourceModule.CreateArgumentsResult(result);
+        }
 
         static void Match(ref RequiredMatcher required)
         {

@@ -256,6 +256,11 @@ namespace DocoptNet.CodeGeneration
                                         .Select(g => (LeafPattern)g.First())
                                         .ToList();
 
+            var (parserTypeName, parserConfigurationCode) =
+                leaves.OfType<Option>().Any(o => o is { Name: "-h" or "--help" })
+                    ? (nameof(IHelpFeaturingParser<object>), ".EnableHelp()")
+                    : (nameof(IBaselineParser<object>), string.Empty);
+
             const string usageConstName = "Usage";
 
             code["#nullable enable annotations"].NewLine
@@ -263,9 +268,9 @@ namespace DocoptNet.CodeGeneration
                 .NewLine
                 .Using("System.Collections")
                 .Using("System.Collections.Generic")
+                .Using("DocoptNet")
                 .Using("DocoptNet.Internals")
                 .UsingAlias("Leaves")["DocoptNet.Internals.ReadOnlyList<DocoptNet.Internals.LeafPattern>"]
-                .UsingStatic["DocoptNet.Internals.GeneratedSourceModule"]
 
                 .NewLine
                 [ns is not null ? code.Namespace(ns) : code.Blank()]
@@ -279,7 +284,14 @@ namespace DocoptNet.CodeGeneration
                     .Public.Const(usageConstName, usage)
 
                     .NewLine
-                    .Public.Static[name][" Apply(IEnumerable<string> args, bool help = true, object? version = null, bool optionsFirst = false)"]
+                    .Static.ReadOnly[parserTypeName]["<"][name]["> "]
+                                    .Assign("Parser")[code["GeneratedSourceModule.CreateParser("][helpConstName][", Parse)"][parserConfigurationCode]]
+
+                    .NewLine
+                    .Public.Static[parserTypeName]["<"][name]["> CreateParser()"].Lambda["Parser"]
+
+                    .NewLine
+                    .Static["IParser<"][name][">.IResult Parse(IEnumerable<string> args, ParseFlags flags, string? version)"]
                     .NewLine.Block[code
                         .Var("options")[
                             code.New["List<Option>"].NewLine
@@ -289,31 +301,36 @@ namespace DocoptNet.CodeGeneration
                                                          [option.LongName is {} ln ? code.Literal(ln) : code.Null][", "]
                                                          .Literal(option.ArgCount)[", "]
                                                          [Value(code, option.Value)]["),"].NewLine).SkipNextNewLine]]
-                        .Var("left")["ParseArgv(" + helpConstName + ", args, options, optionsFirst, help, version)"]
-                        .Var("required")[code.New["RequiredMatcher(1, left, "].New["Leaves()"][')']]
-                        ["Match(ref required)"].EndStatement
-                        .Var("collected")["GetSuccessfulCollection(required, " + usageConstName + ")"]
-                        .Var("result")[code.New[name]["()"]]
-                        [leaves.Any()
-                             ? code.NewLine
-                                   .ForEach["var leaf in collected"][
-                                        code.Var("value")["leaf.Value is { IsStringList: true } ? ((StringList)leaf.Value).Reverse() : leaf.Value"]
-                                            .Switch["leaf.Name"]
-                                            .Cases(leaves, default(Unit),
-                                                   static (_, leaf, _) => CSharpSourceBuilder.SwitchCaseChoice.Choose(leaf.Name),
-                                                   static (code, _, leaf) =>
-                                                       code[' ']
-                                                          .Assign(code["result."][InferPropertyName(leaf)])[
-                                                               code['(']
-                                                                   [leaf switch { Option   { Value.IsString: true } => "string",
-                                                                                  Argument { Value.IsNone: true } or Option { ArgCount: not 0, Value.Kind: not ValueKind.StringList } => "string?",
-                                                                                  { Value.Kind: var kind } => MapType(kind) }]
-                                                                   [")value"].SkipNextNewLine][' '])]
-                             : code.Blank()
-                        ]
-
                         .NewLine
-                        .Return["result"]
+                        .Return[code["GeneratedSourceModule.Parse("][helpConstName][", "][usageConstName][", args, options, flags, version, Parse)"]]
+                        .NewLine
+                        ["static IParser<"][name][">.IResult Parse(Leaves left)"].NewLine.Block[code
+                            .Var("required")[code.New["RequiredMatcher(1, left, "].New["Leaves()"][')']]
+                            ["Match(ref required)"].EndStatement
+                            .If["!required.Result || required.Left.Count > 0"][code
+                                .Return[code["GeneratedSourceModule.CreateInputErrorResult<"][name][">(string.Empty, "][usageConstName][")"]]]
+                            .Var("collected")["required.Collected"]
+                            .Var("result")[code.New[name]["()"]]
+                            [leaves.Any()
+                                 ? code.NewLine
+                                       .ForEach["var leaf in collected"][
+                                            code.Var("value")["leaf.Value is { IsStringList: true } ? ((StringList)leaf.Value).Reverse() : leaf.Value"]
+                                                .Switch["leaf.Name"]
+                                                .Cases(leaves, default(Unit),
+                                                       static (_, leaf, _) => CSharpSourceBuilder.SwitchCaseChoice.Choose(leaf.Name),
+                                                       static (code, _, leaf) =>
+                                                           code[' ']
+                                                              .Assign(code["result."][InferPropertyName(leaf)])[
+                                                                   code['(']
+                                                                       [leaf switch { Option   { Value.IsString: true } => "string",
+                                                                                      Argument { Value.IsNone: true } or Option { ArgCount: not 0, Value.Kind: not ValueKind.StringList } => "string?",
+                                                                                      { Value.Kind: var kind } => MapType(kind) }]
+                                                                       [")value"].SkipNextNewLine][' '])]
+                                 : code.Blank()
+                            ]
+
+                            .NewLine
+                            .Return["GeneratedSourceModule.CreateArgumentsResult(result)"]]
 
                         .NewLine
                         ["static void Match(ref RequiredMatcher required)"].NewLine.Block[

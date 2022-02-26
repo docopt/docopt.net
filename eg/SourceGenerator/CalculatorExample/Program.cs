@@ -1,38 +1,26 @@
 using System;
 using DocoptNet;
 
-Arguments arguments;
+return Arguments.CreateParser().Run(args, Main);
 
-try
+static int Main(Arguments args)
 {
-    arguments = Arguments.Apply(args);
-}
-catch (DocoptExitException e)
-{
-    Console.WriteLine(e.Message);
-    return e.ErrorCode;
-}
-catch (DocoptInputErrorException e)
-{
-    Console.Error.WriteLine(e);
-    return 0xbd;
-}
+    foreach (var (name, value) in args)
+        Console.WriteLine($"{name} = {value}");
 
-foreach (var (name, value) in arguments)
-    Console.WriteLine($"{name} = {value}");
-
-Console.WriteLine($@"{{
-    Help     = {arguments.OptHelp    },
-    +        = {arguments.CmdPlus    },
-    -        = {arguments.CmdMinus   },
-    *        = {arguments.CmdStar    },
-    /        = {arguments.CmdSlash   },
-    Function = {arguments.ArgFunction},
-    Comma    = {arguments.CmdComma   },
-    Value    = [{string.Join(", ", arguments.ArgValue)}],
+    Console.WriteLine($@"{{
+    Help     = {args.OptHelp},
+    +        = {args.CmdPlus},
+    -        = {args.CmdMinus},
+    *        = {args.CmdStar},
+    /        = {args.CmdSlash},
+    Function = {args.ArgFunction},
+    Comma    = {args.CmdComma},
+    Value    = [{string.Join(", ", args.ArgValue)}],
 }}");
 
-return 0;
+    return 0;
+}
 
 [DocoptArguments]
 partial class Arguments

@@ -1,35 +1,24 @@
 using System;
-using DocoptNet;
 using OptionsShortcutExample;
 
-ProgramArguments arguments;
+return ProgramArguments.CreateParser()
+                       .WithVersion("1.0.0rc2")
+                       .Run(args, Main);
 
-try
+static int Main(ProgramArguments args)
 {
-    arguments = ProgramArguments.Apply(args, version: "1.0.0rc2");
-}
-catch (DocoptExitException e)
-{
-    Console.WriteLine(e.Message);
-    return e.ErrorCode;
-}
-catch (DocoptInputErrorException e)
-{
-    Console.Error.WriteLine(e);
-    return 0xbd;
-}
-
-foreach (var (name, value) in arguments)
-    Console.WriteLine($"{name} = {value}");
+    foreach (var (name, value) in args)
+        Console.WriteLine($"{name} = {value}");
 
 Console.WriteLine($@"{{
-    Help    = {arguments.OptHelp   },
-    Version = {arguments.OptVersion},
-    Number  = {arguments.OptNumber },
-    Timeout = {arguments.OptTimeout},
-    Apply   = {arguments.OptApply  },
-    Q       = {arguments.OptQ      },
-    Port    = {arguments.ArgPort   },
+    Help    = {args.OptHelp   },
+    Version = {args.OptVersion},
+    Number  = {args.OptNumber },
+    Timeout = {args.OptTimeout},
+    Apply   = {args.OptApply  },
+    Q       = {args.OptQ      },
+    Port    = {args.ArgPort   },
 }}");
 
-return 0;
+    return 0;
+}

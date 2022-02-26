@@ -1,4 +1,4 @@
-#nullable enable annotations
+#nullable enable
 
 namespace DocoptNet
 {
@@ -7,11 +7,61 @@ namespace DocoptNet
     using System.ComponentModel;
     using System.Diagnostics;
     using System.Linq;
+    using System.Runtime.CompilerServices;
     using System.Text;
     using System.Text.RegularExpressions;
 
     partial class Docopt
     {
+        public static IHelpFeaturingParser<IDictionary<string, Value>> CreateParser(string doc) =>
+            CreateParser(doc, ar => ar.ToValueDictionary());
+
+        static IHelpFeaturingParser<T> CreateParser<T>(string doc, Func<ApplicationResult, T> resultSelector) =>
+            new Parser<T>(doc, (doc, argv, flags, version) =>
+            {
+                var exitUsage = ParseSection("usage:", doc) switch
+                {
+                    { Length: 0 } => throw new DocoptLanguageErrorException("\"usage:\" (case-insensitive) not found."),
+                    { Length: > 1 } => throw new DocoptLanguageErrorException("More that one \"usage:\" (case-insensitive)."),
+                    var sections => sections[0]
+                };
+                var options = ParseDefaults(doc);
+                var pattern = ParsePattern(FormalUsage(exitUsage), options);
+                var tokens = Tokens.From(argv);
+
+                ReadOnlyList<LeafPattern> arguments;
+                try
+                {
+                    var optionsFirst = (flags & ParseFlags.OptionsFirst) != ParseFlags.None;
+                    arguments = ParseArgv(tokens, options, optionsFirst).AsReadOnly();
+                }
+                catch (DocoptInputErrorException e)
+                {
+                    return new ParseInputErrorResult<T>(e.Message, exitUsage);
+                }
+
+                var patternOptions = pattern.Flat<Option>().Distinct().ToList();
+                // [default] syntax for argument is disabled
+                foreach (OptionsShortcut optionsShortcut in pattern.Flat(typeof (OptionsShortcut)))
+                {
+                    var docOptions = ParseDefaults(doc);
+                    optionsShortcut.Children = docOptions.Distinct().Except(patternOptions).ToList();
+                }
+
+                var help = (flags & ParseFlags.DisableHelp) == ParseFlags.None;
+                if (help && arguments.Any(o => o is { Name: "-h" or "--help", Value.IsTrue: true }))
+                    return new ParseHelpResult<T>(doc);
+
+                if (version is { } someVersion && arguments.Any(o => o is { Name: "--version", Value.IsTrue: true }))
+                    return new ParseVersionResult<T>(someVersion);
+
+                return pattern.Fix().Match(arguments) is (true, { Count: 0 }, var collected)
+                     ? new ArgumentsResult<T>(resultSelector(new ApplicationResult(pattern.Flat().OfType<LeafPattern>()
+                                                                                          .Concat(collected)
+                                                                                          .ToReadOnlyList())))
+                     : new ParseInputErrorResult<T>("Invalid usage.", exitUsage);
+            });
+
         public event EventHandler<PrintExitEventArgs>? PrintExit;
 
         public IDictionary<string, ValueObject>? Apply(string doc)
@@ -27,25 +77,39 @@ namespace DocoptNet
 
         ApplicationResult? Apply(string doc, IEnumerable<string> argv,
                                  bool help = true, object? version = null,
-                                 bool optionsFirst = false, bool exit = false) =>
-            Apply(doc, Tokens.From(argv), help, version, optionsFirst, exit);
-
-        ApplicationResult? Apply(string doc, Tokens tokens,
-                                 bool help, object? version, bool optionsFirst, bool exit)
+                                 bool optionsFirst = false, bool exit = false)
         {
+            SetDefaultPrintExitHandlerIfNecessary(exit);
+
             try
             {
-                SetDefaultPrintExitHandlerIfNecessary(exit);
+                var parser = CreateParser(doc, ar => ar);
+                parser = parser.WithOptions(parser.Options.WithOptionsFirst(optionsFirst));
 
-                var parsedResult = Parse(doc, tokens, optionsFirst);
+                const string dummyVersion = "(version)";
 
-                if (help && parsedResult.IsHelpOptionSpecified)
-                    OnPrintExit(doc);
+                var result = (help, version) switch
+                {
+                    (true, null)      => (object)parser.Parse(argv),
+                    (true, not null)  => parser.WithVersion(dummyVersion).Parse(argv),
+                    (false, not null) => parser.DisableHelp().WithVersion(dummyVersion).Parse(argv),
+                    (false, null)     => parser.DisableHelp().Parse(argv)
+                };
 
-                if (version is not null && parsedResult.IsVersionOptionSpecified)
-                    OnPrintExit(version.ToString());
-
-                return parsedResult.Apply();
+                switch (result)
+                {
+                    case IArgumentsResult<ApplicationResult> { Arguments: var args }:
+                        return args;
+                    case IHelpResult:
+                        OnPrintExit(doc);
+                        return null;
+                    case IVersionResult:
+                        OnPrintExit(version!.ToString()!);
+                        return null;
+                    case IInputErrorResult { Usage: var usage }:
+                        throw new DocoptInputErrorException(usage);
+                    default: throw new SwitchExpressionException(result);
+                }
             }
             catch (DocoptBaseException e)
             {
@@ -56,53 +120,6 @@ namespace DocoptNet
 
                 return null;
             }
-        }
-
-        static ParsedResult Parse(string doc, Tokens tokens, bool optionsFirst)
-        {
-            var usageSections = ParseSection("usage:", doc);
-            if (usageSections.Length == 0)
-                throw new DocoptLanguageErrorException("\"usage:\" (case-insensitive) not found.");
-            if (usageSections.Length > 1)
-                throw new DocoptLanguageErrorException("More that one \"usage:\" (case-insensitive).");
-            var exitUsage = usageSections[0];
-            var options = ParseDefaults(doc);
-            var pattern = ParsePattern(FormalUsage(exitUsage), options);
-            var arguments = ParseArgv(tokens, options, optionsFirst).AsReadOnly();
-            var patternOptions = pattern.Flat<Option>().Distinct().ToList();
-            // [default] syntax for argument is disabled
-            foreach (OptionsShortcut optionsShortcut in pattern.Flat(typeof (OptionsShortcut)))
-            {
-                var docOptions = ParseDefaults(doc);
-                optionsShortcut.Children = docOptions.Distinct().Except(patternOptions).ToList();
-            }
-
-            return new ParsedResult(pattern, arguments, exitUsage);
-        }
-
-        sealed class ParsedResult
-        {
-            readonly Required _pattern;
-            readonly ReadOnlyList<LeafPattern> _arguments;
-            readonly string _exitUsage;
-
-            public ParsedResult(Required pattern, ReadOnlyList<LeafPattern> arguments, string exitUsage)
-            {
-                _pattern = pattern;
-                _arguments = arguments;
-                _exitUsage = exitUsage;
-            }
-
-            public bool IsHelpOptionSpecified =>
-                _arguments.Any(o => o is { Name: "-h" or "--help", Value.IsTrue: true });
-
-            public bool IsVersionOptionSpecified =>
-                _arguments.Any(o => o is { Name: "--version", Value.IsTrue: true });
-
-            public ApplicationResult Apply() =>
-                _pattern.Fix().Match(_arguments) is (true, { Count: 0 }, var collected)
-                    ? new ApplicationResult(_pattern.Flat().OfType<LeafPattern>().Concat(collected).ToReadOnlyList())
-                    : throw new DocoptInputErrorException(_exitUsage);
         }
 
         private void SetDefaultPrintExitHandlerIfNecessary(bool exit)

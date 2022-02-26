@@ -1,44 +1,33 @@
 using System;
-using DocoptNet;
 using OptionsExample;
 
-ProgramArguments arguments;
+return ProgramArguments.CreateParser()
+                       .WithVersion("1.0.0rc2")
+                       .Run(args, Main);
 
-try
+static int Main(ProgramArguments args)
 {
-    arguments = ProgramArguments.Apply(args, version: "1.0.0rc2");
-}
-catch (DocoptExitException e)
-{
-    Console.WriteLine(e.Message);
-    return e.ErrorCode;
-}
-catch (DocoptInputErrorException e)
-{
-    Console.Error.WriteLine(e);
-    return 0xbd;
-}
+    foreach (var (name, value) in args)
+        Console.WriteLine($"{name} = {value}");
 
-foreach (var (name, value) in arguments)
-    Console.WriteLine($"{name} = {value}");
-
-Console.WriteLine($@"{{
-    Help       = {arguments.OptHelp      },
-    Verbose    = {arguments.OptVerbose   },
-    Quiet      = {arguments.OptQuiet     },
-    Repeat     = {arguments.OptRepeat    },
-    File       = {arguments.OptFile      },
-    Exclude    = {arguments.OptExclude   },
-    Select     = {arguments.OptSelect    },
-    Ignore     = {arguments.OptIgnore    },
-    ShowSource = {arguments.OptShowSource},
-    Statistics = {arguments.OptStatistics},
-    Count      = {arguments.OptCount     },
-    Benchmark  = {arguments.OptBenchmark },
-    Path       = [{string.Join(", ", arguments.ArgPath)}],
-    Doctest    = {arguments.OptDoctest   },
-    Testsuite  = {arguments.OptTestsuite },
-    Version    = {arguments.OptVersion   },
+    Console.WriteLine($@"{{
+    Help       = {args.OptHelp      },
+    Verbose    = {args.OptVerbose   },
+    Quiet      = {args.OptQuiet     },
+    Repeat     = {args.OptRepeat    },
+    File       = {args.OptFile      },
+    Exclude    = {args.OptExclude   },
+    Select     = {args.OptSelect    },
+    Ignore     = {args.OptIgnore    },
+    ShowSource = {args.OptShowSource},
+    Statistics = {args.OptStatistics},
+    Count      = {args.OptCount     },
+    Benchmark  = {args.OptBenchmark },
+    Path       = [{string.Join(", ", args.ArgPath)}],
+    Doctest    = {args.OptDoctest   },
+    Testsuite  = {args.OptTestsuite },
+    Version    = {args.OptVersion   },
 }}");
 
-return 0;
+    return 0;
+}

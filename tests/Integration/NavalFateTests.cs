@@ -3,11 +3,9 @@
 namespace DocoptNet.Tests.Integration
 {
     using System;
-    using System.Diagnostics;
-    using Internals;
     using NUnit.Framework;
     using NUnit.Framework.Constraints;
-    using static NavalFateTestsBase.FlagArgs;
+    using static FlagArgs;
 
     public interface INavalFateArguments
     {
@@ -28,23 +26,28 @@ namespace DocoptNet.Tests.Integration
         public bool OptVersion { get; }
     }
 
-    public abstract class NavalFateTestsBase
+    [Flags]
+    public enum FlagArgs
     {
-        protected abstract INavalFateArguments Apply(string commandLine, string? version = null);
+        CmdShip     = 1 << 0,
+        CmdNew      = 1 << 1,
+        CmdMove     = 1 << 2,
+        CmdShoot    = 1 << 3,
+        CmdMine     = 1 << 4,
+        CmdSet      = 1 << 5,
+        CmdRemove   = 1 << 6,
+        OptMoored   = 1 << 7,
+        OptDrifting = 1 << 8,
+    }
 
-        [Flags]
-        public enum FlagArgs
-        {
-            CmdShip     = 1 << 0,
-            CmdNew      = 1 << 1,
-            CmdMove     = 1 << 2,
-            CmdShoot    = 1 << 3,
-            CmdMine     = 1 << 4,
-            CmdSet      = 1 << 5,
-            CmdRemove   = 1 << 6,
-            OptMoored   = 1 << 7,
-            OptDrifting = 1 << 8,
-        }
+    public abstract class NavalFateTestsBase<T> where T : INavalFateArguments
+    {
+        protected NavalFateTestsBase(IHelpFeaturingParser<T> parser) => Parser = parser;
+
+        IHelpFeaturingParser<T> Parser { get; }
+
+        private IParser<T>.IResult Parse(string commandLine) =>
+            (IParser<T>.IResult)Parser.Parse(commandLine.Split(' '));
 
         [TestCase("ship new foo bar baz", CmdShip | CmdNew, new[] { "foo", "bar", "baz" }, null, null, "10")]
         [TestCase("ship foo move 123 456", CmdShip | CmdMove, new[] { "foo" }, "123", "456", "10")]
@@ -56,7 +59,7 @@ namespace DocoptNet.Tests.Integration
         [TestCase("mine set 123 456 --drifting", CmdMine | CmdSet | OptDrifting, new string[0], "123", "456", "10")]
         public void GoodUsage(string commandLine, FlagArgs flags, string[] names, string x, string y, string speed)
         {
-            var args = Apply(commandLine);
+            var args = ((IArgumentsResult<T>)Parse(commandLine)).Arguments;
 
             IResolveConstraint IsFlag(FlagArgs flag) => flags.HasFlag(flag) ? Is.True : Is.False;
 
@@ -86,20 +89,18 @@ namespace DocoptNet.Tests.Integration
         [TestCase("mine set remove 123 456")]
         public void BadUsage(string commandLine)
         {
-            var ex = Assert.Throws<DocoptInputErrorException>(() => Apply(commandLine));
+            var result = (IInputErrorResult)Parse(commandLine);
 
-            Debug.Assert(ex is not null);
-            Assert.That(ex.Message, Is.EqualTo(NavalFateArguments.Usage));
+            Assert.That(result.Usage, Is.EqualTo(NavalFateArguments.Usage));
         }
 
         [TestCase("-h")]
         [TestCase("--help")]
         public void Help(string commandLine)
         {
-            var ex = Assert.Throws<DocoptExitException>(() => Apply(commandLine));
+            var result = (IHelpResult)Parse(commandLine);
 
-            Debug.Assert(ex is not null);
-            Assert.That(ex.Message, Is.EqualTo(NavalFateArguments.Help));
+            Assert.That(result.Help, Is.EqualTo(NavalFateArguments.Help));
         }
 
         [Test]
@@ -107,23 +108,23 @@ namespace DocoptNet.Tests.Integration
         {
             const string version = "1.2.3";
 
-            var ex = Assert.Throws<DocoptExitException>(() => Apply("--version", version: version));
+            var argv = new[] { "--version" };
+            var result = (IVersionResult)Parser.WithVersion(version).Parse(argv);
 
-            Debug.Assert(ex is not null);
-            Assert.That(ex.Message, Is.EqualTo(version));
+            Assert.That(result.Version, Is.EqualTo(version));
         }
     }
 
-    sealed partial class NavalFateArguments : INavalFateArguments { }
+    public sealed partial class NavalFateArguments : INavalFateArguments { }
 
-    public class NavalFateTests : NavalFateTestsBase
+    public class NavalFateTests : NavalFateTestsBase<NavalFateArguments>
     {
-        protected override INavalFateArguments Apply(string commandLine, string? version = null) =>
-            NavalFateArguments.Apply(commandLine.Split(' '), version: version);
+        public NavalFateTests() :
+            base(NavalFateArguments.CreateParser()) { }
     }
 
     [DocoptArguments]
-    sealed partial class InlineNavalFateArguments : INavalFateArguments
+    public sealed partial class InlineNavalFateArguments : INavalFateArguments
     {
         public const string Help = @"Naval Fate.
 
@@ -144,9 +145,9 @@ namespace DocoptNet.Tests.Integration
 ";
     }
 
-    public class InlineNavalFateTests : NavalFateTestsBase
+    public class InlineNavalFateTests : NavalFateTestsBase<InlineNavalFateArguments>
     {
-        protected override INavalFateArguments Apply(string commandLine, string? version = null) =>
-            NavalFateArguments.Apply(commandLine.Split(' '), version: version);
+        public InlineNavalFateTests() :
+            base(InlineNavalFateArguments.CreateParser()) { }
     }
 }

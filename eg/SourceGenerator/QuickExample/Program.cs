@@ -1,39 +1,29 @@
 using System;
 using DocoptNet;
 
-Arguments arguments;
+return Arguments.CreateParser()
+                .WithVersion("1.0.0rc2")
+                .Run(args, Main);
 
-try
+static int Main(Arguments args)
 {
-    arguments = Arguments.Apply(args, version: "1.0.0rc2");
-}
-catch (DocoptExitException e)
-{
-    Console.WriteLine(e.Message);
-    return e.ErrorCode;
-}
-catch (DocoptInputErrorException e)
-{
-    Console.Error.WriteLine(e);
-    return 0xbd;
-}
+    foreach (var (name, value) in args)
+        Console.WriteLine($"{name} = {value}");
 
-foreach (var (name, value) in arguments)
-    Console.WriteLine($"{name} = {value}");
-
-Console.WriteLine($@"{{
-    Tcp     = {arguments.CmdTcp    },
-    Host    = {arguments.ArgHost   },
-    Port    = {arguments.ArgPort   },
-    Timeout = {arguments.OptTimeout},
-    Serial  = {arguments.CmdSerial },
-    Baud    = {arguments.OptBaud   },
-    H       = {arguments.OptH      },
-    Help    = {arguments.OptHelp   },
-    Version = {arguments.OptVersion},
+    Console.WriteLine($@"{{
+    Tcp     = {args.CmdTcp    },
+    Host    = {args.ArgHost   },
+    Port    = {args.ArgPort   },
+    Timeout = {args.OptTimeout},
+    Serial  = {args.CmdSerial },
+    Baud    = {args.OptBaud   },
+    H       = {args.OptH      },
+    Help    = {args.OptHelp   },
+    Version = {args.OptVersion},
 }}");
 
-return 0;
+    return 0;
+}
 
 [DocoptArguments]
 partial class Arguments

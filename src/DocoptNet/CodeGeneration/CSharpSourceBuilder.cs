@@ -157,11 +157,12 @@ namespace DocoptNet.CodeGeneration
 
         public CSharpSourceBuilder Break   => this["break"].EndStatement;
 
-        public CSharpSourceBuilder Partial => this["partial "];
-        public CSharpSourceBuilder Static  => this["static "];
-        public CSharpSourceBuilder Class   => this["class "];
-        public CSharpSourceBuilder Public  => this["public "];
-        public CSharpSourceBuilder Yield   => this["yield "];
+        public CSharpSourceBuilder Partial  => this["partial "];
+        public CSharpSourceBuilder Static   => this["static "];
+        public CSharpSourceBuilder ReadOnly => this["readonly "];
+        public CSharpSourceBuilder Class    => this["class "];
+        public CSharpSourceBuilder Public   => this["public "];
+        public CSharpSourceBuilder Yield    => this["yield "];
 
         public CSharpSourceBuilder New         => this["new "];
         public CSharpSourceBuilder NewTargeted => this["new"];
@@ -182,6 +183,7 @@ namespace DocoptNet.CodeGeneration
             this["const string "].Assign(name)[Literal(value)];
 
         public IStatementFlow Return => this["return "];
+        public IStatementFlow Lambda => this[" => "];
         public IStatementFlow Var(string name) => this["var "].Assign(name);
         public IStatementFlow Assign(string name) => this[name].Equal;
         public IStatementFlow Assign(CSharpSourceBuilder code) { AssertSame(code); return Equal; }

@@ -21,11 +21,9 @@
 #endregion
 
 #nullable enable
-#if !NETSTANDARD2_1_OR_GREATER
+#if !NETSTANDARD2_1_OR_GREATER && !NETCOREAPP3_0_OR_GREATER
 
 // Source: https://github.com/dotnet/runtime/blob/804a933e2b699e10391e7f8b4ccbbbfad41bfefc/src/libraries/System.Private.CoreLib/src/System/Runtime/CompilerServices/SwitchExpressionException.cs
-
-using System.Runtime.Serialization;
 
 namespace System.Runtime.CompilerServices
 {
@@ -34,8 +32,7 @@ namespace System.Runtime.CompilerServices
     /// at runtime, e.g. in the C# 8 expression <code>3 switch { 4 => 5 }</code>.
     /// The exception optionally contains an object representing the unmatched value.
     /// </summary>
-    [Serializable]
-    sealed class SwitchExpressionException : InvalidOperationException
+    sealed partial class SwitchExpressionException : InvalidOperationException
     {
         public SwitchExpressionException() :
             this((string?)null) { }
@@ -52,19 +49,7 @@ namespace System.Runtime.CompilerServices
         public SwitchExpressionException(string? message, Exception? innerException) :
             base(message ?? "Non-exhaustive switch expression failed to match its input.", innerException) { }
 
-        SwitchExpressionException(SerializationInfo info, StreamingContext context) :
-            base(info, context)
-        {
-            UnmatchedValue = info.GetValue(nameof(UnmatchedValue), typeof(object));
-        }
-
         public object? UnmatchedValue { get; }
-
-        public override void GetObjectData(SerializationInfo info, StreamingContext context)
-        {
-            base.GetObjectData(info, context);
-            info.AddValue(nameof(UnmatchedValue), UnmatchedValue, typeof(object));
-        }
 
         public override string Message
         {
@@ -80,4 +65,29 @@ namespace System.Runtime.CompilerServices
     }
 }
 
-#endif // NETSTANDARD2_0_OR_GREATER
+#if RUNTIME_SERIALIZATION
+
+namespace System.Runtime.CompilerServices
+{
+    using System.Runtime.Serialization;
+
+    [Serializable]
+    partial class SwitchExpressionException
+    {
+        SwitchExpressionException(SerializationInfo info, StreamingContext context) :
+            base(info, context)
+        {
+            UnmatchedValue = info.GetValue(nameof(UnmatchedValue), typeof(object));
+        }
+
+        public override void GetObjectData(SerializationInfo info, StreamingContext context)
+        {
+            base.GetObjectData(info, context);
+            info.AddValue(nameof(UnmatchedValue), UnmatchedValue, typeof(object));
+        }
+    }
+}
+
+#endif // RUNTIME_SERIALIZATION
+
+#endif // !NETSTANDARD2_1_OR_GREATER && !NETCOREAPP3_0_OR_GREATER

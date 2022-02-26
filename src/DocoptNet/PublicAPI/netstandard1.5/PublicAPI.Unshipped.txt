@@ -1,0 +1,95 @@
+DocoptNet.ArgsParseOptions
+DocoptNet.ArgsParseOptions.OptionsFirst.get -> bool
+DocoptNet.ArgsParseOptions.WithOptionsFirst(bool value) -> DocoptNet.ArgsParseOptions!
+DocoptNet.IArgumentsResult<T>
+DocoptNet.IArgumentsResult<T>.Arguments.get -> T
+DocoptNet.IBaselineParser<T>
+DocoptNet.IBaselineParser<T>.EnableHelp() -> DocoptNet.IHelpFeaturingParser<T>!
+DocoptNet.IBaselineParser<T>.IResult
+DocoptNet.IBaselineParser<T>.IResult.Match<TResult>(System.Func<T, TResult>! args, System.Func<DocoptNet.IInputErrorResult!, TResult>! error) -> TResult
+DocoptNet.IBaselineParser<T>.Options.get -> DocoptNet.ArgsParseOptions!
+DocoptNet.IBaselineParser<T>.Parse(System.Collections.Generic.IEnumerable<string!>! argv) -> DocoptNet.IBaselineParser<T>.IResult!
+DocoptNet.IBaselineParser<T>.WithOptions(DocoptNet.ArgsParseOptions! value) -> DocoptNet.IBaselineParser<T>!
+DocoptNet.IBaselineParser<T>.WithVersion(string! value) -> DocoptNet.IVersionFeaturingParser<T>!
+DocoptNet.IHelpFeaturingParser<T>
+DocoptNet.IHelpFeaturingParser<T>.DisableHelp() -> DocoptNet.IBaselineParser<T>!
+DocoptNet.IHelpFeaturingParser<T>.IResult
+DocoptNet.IHelpFeaturingParser<T>.IResult.Match<TResult>(System.Func<T, TResult>! args, System.Func<DocoptNet.IHelpResult!, TResult>! help, System.Func<DocoptNet.IInputErrorResult!, TResult>! error) -> TResult
+DocoptNet.IHelpFeaturingParser<T>.Options.get -> DocoptNet.ArgsParseOptions!
+DocoptNet.IHelpFeaturingParser<T>.Parse(System.Collections.Generic.IEnumerable<string!>! argv) -> DocoptNet.IHelpFeaturingParser<T>.IResult!
+DocoptNet.IHelpFeaturingParser<T>.WithOptions(DocoptNet.ArgsParseOptions! value) -> DocoptNet.IHelpFeaturingParser<T>!
+DocoptNet.IHelpFeaturingParser<T>.WithVersion(string! value) -> DocoptNet.IParser<T>!
+DocoptNet.IHelpResult
+DocoptNet.IHelpResult.Help.get -> string!
+DocoptNet.IInputErrorResult
+DocoptNet.IInputErrorResult.Error.get -> string!
+DocoptNet.IInputErrorResult.Usage.get -> string!
+DocoptNet.IParser<T>
+DocoptNet.IParser<T>.DisableHelp() -> DocoptNet.IVersionFeaturingParser<T>!
+DocoptNet.IParser<T>.DisableVersion() -> DocoptNet.IHelpFeaturingParser<T>!
+DocoptNet.IParser<T>.IResult
+DocoptNet.IParser<T>.IResult.Match<TResult>(System.Func<T, DocoptNet.IParser<T>.IResult!, TResult>! args, System.Func<DocoptNet.IHelpResult!, DocoptNet.IParser<T>.IResult!, TResult>! help, System.Func<DocoptNet.IVersionResult!, DocoptNet.IParser<T>.IResult!, TResult>! version, System.Func<DocoptNet.IInputErrorResult!, DocoptNet.IParser<T>.IResult!, TResult>! error) -> TResult
+DocoptNet.IParser<T>.IResult.Match<TResult>(System.Func<T, TResult>! args, System.Func<DocoptNet.IHelpResult!, TResult>! help, System.Func<DocoptNet.IVersionResult!, TResult>! version, System.Func<DocoptNet.IInputErrorResult!, TResult>! error) -> TResult
+DocoptNet.IParser<T>.Options.get -> DocoptNet.ArgsParseOptions!
+DocoptNet.IParser<T>.Parse(System.Collections.Generic.IEnumerable<string!>! argv) -> DocoptNet.IParser<T>.IResult!
+DocoptNet.IParser<T>.WithOptions(DocoptNet.ArgsParseOptions! value) -> DocoptNet.IParser<T>!
+DocoptNet.IVersionFeaturingParser<T>
+DocoptNet.IVersionFeaturingParser<T>.DisableVersion() -> DocoptNet.IBaselineParser<T>!
+DocoptNet.IVersionFeaturingParser<T>.EnableHelp() -> DocoptNet.IParser<T>!
+DocoptNet.IVersionFeaturingParser<T>.IResult
+DocoptNet.IVersionFeaturingParser<T>.IResult.Match<TResult>(System.Func<T, TResult>! args, System.Func<DocoptNet.IVersionResult!, TResult>! version, System.Func<DocoptNet.IInputErrorResult!, TResult>! error) -> TResult
+DocoptNet.IVersionFeaturingParser<T>.Parse(System.Collections.Generic.IEnumerable<string!>! argv) -> DocoptNet.IVersionFeaturingParser<T>.IResult!
+DocoptNet.IVersionResult
+DocoptNet.IVersionResult.Version.get -> string!
+DocoptNet.StringList
+DocoptNet.StringList.Count.get -> int
+DocoptNet.StringList.Equals(DocoptNet.StringList? other) -> bool
+DocoptNet.StringList.GetEnumerator() -> System.Collections.Generic.IEnumerator<string!>!
+DocoptNet.StringList.IsEmpty.get -> bool
+DocoptNet.StringList.Peek() -> string!
+DocoptNet.StringList.Pop() -> DocoptNet.StringList!
+DocoptNet.StringList.Push(string! value) -> DocoptNet.StringList!
+DocoptNet.StringList.Reverse() -> DocoptNet.StringList!
+DocoptNet.Value
+DocoptNet.Value.IsBoolean.get -> bool
+DocoptNet.Value.IsFalse.get -> bool
+DocoptNet.Value.IsInteger.get -> bool
+DocoptNet.Value.IsNone.get -> bool
+DocoptNet.Value.IsString.get -> bool
+DocoptNet.Value.IsStringList.get -> bool
+DocoptNet.Value.IsTrue.get -> bool
+DocoptNet.Value.Kind.get -> DocoptNet.ValueKind
+DocoptNet.Value.Object.get -> object?
+DocoptNet.Value.TryAsBoolean(out bool value) -> bool
+DocoptNet.Value.TryAsInteger(out int value) -> bool
+DocoptNet.Value.TryAsString(out string? value) -> bool
+DocoptNet.Value.TryAsStringList(out DocoptNet.StringList? value) -> bool
+DocoptNet.Value.Value() -> void
+DocoptNet.ValueKind
+DocoptNet.ValueKind.Boolean = 1 -> DocoptNet.ValueKind
+DocoptNet.ValueKind.Integer = 2 -> DocoptNet.ValueKind
+DocoptNet.ValueKind.None = 0 -> DocoptNet.ValueKind
+DocoptNet.ValueKind.String = 3 -> DocoptNet.ValueKind
+DocoptNet.ValueKind.StringList = 4 -> DocoptNet.ValueKind
+override DocoptNet.StringList.Equals(object? obj) -> bool
+override DocoptNet.StringList.GetHashCode() -> int
+override DocoptNet.StringList.ToString() -> string!
+override DocoptNet.Value.ToString() -> string!
+static DocoptNet.StringList.BottomTop(params string![]! items) -> DocoptNet.StringList!
+static DocoptNet.StringList.operator !=(DocoptNet.StringList? left, DocoptNet.StringList? right) -> bool
+static DocoptNet.StringList.operator ==(DocoptNet.StringList? left, DocoptNet.StringList? right) -> bool
+static DocoptNet.StringList.TopBottom(params string![]! items) -> DocoptNet.StringList!
+static DocoptNet.Value.explicit operator bool(DocoptNet.Value value) -> bool
+static DocoptNet.Value.explicit operator DocoptNet.StringList!(DocoptNet.Value value) -> DocoptNet.StringList!
+static DocoptNet.Value.explicit operator int(DocoptNet.Value value) -> int
+static DocoptNet.Value.explicit operator string!(DocoptNet.Value value) -> string!
+static DocoptNet.Value.implicit operator DocoptNet.Value(bool value) -> DocoptNet.Value
+static DocoptNet.Value.implicit operator DocoptNet.Value(DocoptNet.StringList! value) -> DocoptNet.Value
+static DocoptNet.Value.implicit operator DocoptNet.Value(int value) -> DocoptNet.Value
+static DocoptNet.Value.implicit operator DocoptNet.Value(string! value) -> DocoptNet.Value
+static readonly DocoptNet.ArgsParseOptions.Default -> DocoptNet.ArgsParseOptions!
+static readonly DocoptNet.StringList.Empty -> DocoptNet.StringList!
+static readonly DocoptNet.Value.False -> DocoptNet.Value
+static readonly DocoptNet.Value.None -> DocoptNet.Value
+static readonly DocoptNet.Value.True -> DocoptNet.Value
+static DocoptNet.Docopt.CreateParser(string! doc) -> DocoptNet.IHelpFeaturingParser<System.Collections.Generic.IDictionary<string!, DocoptNet.Value>!>!
