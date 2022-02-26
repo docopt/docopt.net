@@ -9,8 +9,7 @@ namespace DocoptNet.Internals
         public string LongName { get; private set; }
         public int ArgCount { get; private set; }
 
-        public Option(string shortName = null, string longName = null, int argCount = 0, ArgValue? value = null) :
-            base()
+        public Option(string shortName = null, string longName = null, int argCount = 0, ArgValue? value = null)
         {
             ShortName = shortName;
             LongName = longName;
