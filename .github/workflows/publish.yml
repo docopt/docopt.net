@@ -17,4 +17,9 @@ jobs:
       - run: |
           pip install mkdocs-material
           pip install mdx_truly_sane_lists
-      - run: mkdocs gh-deploy --force
+      - run: mkdocs build
+      - name: Deploy
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./site
