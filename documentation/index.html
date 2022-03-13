@@ -9,7 +9,7 @@
       
       
       <link rel="icon" href="../assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.2.3, mkdocs-material-8.2.2">
+      <meta name="generator" content="mkdocs-1.2.3, mkdocs-material-8.2.5">
     
     
       
@@ -17,7 +17,7 @@
       
     
     
-      <link rel="stylesheet" href="../assets/stylesheets/main.e8d9bf0c.min.css">
+      <link rel="stylesheet" href="../assets/stylesheets/main.2d9f7617.min.css">
       
         
         <link rel="stylesheet" href="../assets/stylesheets/palette.e6a45f82.min.css">
@@ -27,6 +27,7 @@
     
     
       
+        
         
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
         <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
@@ -386,6 +387,13 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#versioning" class="md-nav__link">
+    Versioning
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -489,6 +497,13 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#versioning" class="md-nav__link">
+    Versioning
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -530,6 +545,19 @@ locally.</p>
 color and themes, plugins and extension. The table of contents is also defined
 in the configuration file, under the section <code>nav</code>. It requires a manual
 update when a new page is added to the documentation.</p>
+<h2 id="versioning">Versioning</h2>
+<p>Each version has its own documentation. When a version is released, its
+documentation is archived under a directory with a <code>v</code> prefix, as in <code>v0.7</code>.
+The <code>archive.sh</code> script can be used to perform the archival:</p>
+<div class="highlight"><pre><span></span><code>./archive.sh &lt;version&gt;
+</code></pre></div>
+<p>Replace <code>&lt;version&gt;</code> with a version number like <code>0.7</code> or <code>1.x</code>.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Some files in the documentation are symbolic links because their content
+does not change across versions. After running the archival script, check
+that symbolic links were preserved and fix as necessary.</p>
+</div>
 
               
             </article>
@@ -613,7 +641,7 @@ update when a new page is added to the documentation.</p>
     <script id="__config" type="application/json">{"base": "..", "features": ["navigation.tabs", "navigation.tabs.sticky", "navigation.sections", "navigation.top", "navigation.tracking", "search.suggest", "search.highlight"], "translations": {"clipboard.copy": "Copy to clipboard", "clipboard.copied": "Copied to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.placeholder": "Type to start searching", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.term.missing": "Missing", "select.version.title": "Select version"}, "search": "../assets/javascripts/workers/search.bd0b6b67.min.js", "version": {"provider": "mike"}}</script>
     
     
-      <script src="../assets/javascripts/bundle.9f3ca3d1.min.js"></script>
+      <script src="../assets/javascripts/bundle.467223ff.min.js"></script>
       
         <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
       
