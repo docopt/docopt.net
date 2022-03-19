@@ -25,8 +25,9 @@ theme:
     - search.suggest
     - search.highlight
 
+site_url: http://docopt.github.io/docopt.net/dev/
 repo_url: https://github.com/docopt/docopt.net
-edit_uri: edit/doc/main/docs/
+edit_uri: edit/doc/main/dev/docs/
 
 markdown_extensions:
   - pymdownx.highlight

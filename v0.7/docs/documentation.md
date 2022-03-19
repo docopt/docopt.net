@@ -1,1 +1,1 @@
-../../docs/documentation.md
+../../dev/docs/documentation.md

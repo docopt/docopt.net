@@ -17,13 +17,7 @@ jobs:
       - run: |
           pip install mkdocs-material
           pip install mdx_truly_sane_lists
-      - run: mkdocs build
-      - run: |
-          for d in v*; do
-            cd $d
-            mkdocs build -d ../site/$d
-            cd ..
-          done
+      - run: ./build.sh
       - name: Deploy
         uses: peaceiris/actions-gh-pages@v3
         with:
