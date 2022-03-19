@@ -69,9 +69,9 @@ ensures that the program invocation matches the usage pattern; it parses
 options, arguments and commands based on that. The basic idea is that *a good
 help message has all necessary information in it to make a parser*.
 
-## Differences from reference python implementation
+## Differences from reference Python implementation
 
-- This port should be fully Docopt language compatible with the python reference
+- This port should be fully Docopt language compatible with the Python reference
   implementation.
 
 - Because C# is statically typed, the return dictionary is of type
