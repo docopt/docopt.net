@@ -1,17 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
     <url>
-         <loc>http://docopt.github.io/docopt.net/v0.7/</loc>
+         <loc>http://docopt.github.io/docopt.net/dev/</loc>
          <lastmod>2022-03-19</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>http://docopt.github.io/docopt.net/v0.7/documentation/</loc>
+         <loc>http://docopt.github.io/docopt.net/dev/documentation/</loc>
          <lastmod>2022-03-19</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>http://docopt.github.io/docopt.net/v0.7/license/</loc>
+         <loc>http://docopt.github.io/docopt.net/dev/license/</loc>
          <lastmod>2022-03-19</lastmod>
          <changefreq>daily</changefreq>
     </url>

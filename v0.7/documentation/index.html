@@ -8,6 +8,8 @@
       
       
       
+        <link rel="canonical" href="http://docopt.github.io/docopt.net/v0.7/documentation/">
+      
       <link rel="icon" href="../assets/images/favicon.png">
       <meta name="generator" content="mkdocs-1.2.3, mkdocs-material-8.2.5">
     
@@ -516,7 +518,7 @@
             <article class="md-content__inner md-typeset">
               
                 
-<a href="https://github.com/docopt/docopt.net/edit/doc/main/docs/v0.7/documentation.md" title="Edit this page" class="md-content__button md-icon">
+<a href="https://github.com/docopt/docopt.net/edit/doc/main/v0.7/docs/documentation.md" title="Edit this page" class="md-content__button md-icon">
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20.71 7.04c.39-.39.39-1.04 0-1.41l-2.34-2.34c-.37-.39-1.02-.39-1.41 0l-1.84 1.83 3.75 3.75M3 17.25V21h3.75L17.81 9.93l-3.75-3.75L3 17.25z"/></svg>
 </a>
 
@@ -537,7 +539,7 @@ locally.</p>
 <div class="highlight"><pre><span></span><code>docker build -t docopt-net-doc .
 </code></pre></div>
 <p>Once successfully built, run the image using:</p>
-<div class="highlight"><pre><span></span><code>docker run --rm -it -p 8000:8000 -v ${PWD}:/docs docopt-net-doc
+<div class="highlight"><pre><span></span><code>docker run --rm -it -p 8000:8000 -v ${PWD}:/docs -w /docs/dev docopt-net-doc
 </code></pre></div>
 <p>Open a browser and navigate to <code>http://localhost:8000/</code>.</p>
 <h2 id="configuration">Configuration</h2>
@@ -548,15 +550,30 @@ update when a new page is added to the documentation.</p>
 <h2 id="versioning">Versioning</h2>
 <p>Each version has its own documentation. When a version is released, its
 documentation is archived under a directory with a <code>v</code> prefix, as in <code>v0.7</code>.
-The <code>archive.sh</code> script can be used to perform the archival:</p>
-<div class="highlight"><pre><span></span><code>./archive.sh &lt;version&gt;
+The latest documentation that is currently under development is under <code>dev</code>.</p>
+<p>The archival steps are as follows:</p>
+<ol>
+<li>
+<p>Copy all versioned files and directories under <code>dev</code> to an adjacent
+   directory for the new version.</p>
+</li>
+<li>
+<p>Edit <code>mkdocs.yml</code> of the archived version and update the URL for <code>site_url</code>
+   and <code>edit_uri</code> such that <code>dev</code> is replaced with the directory name of the
+   archived version.</p>
+</li>
+<li>
+<p>Add the archived version's directory to version control (Git).</p>
+</li>
+</ol>
+<p>The container setup described in the <a href="#working-locally">Working Locally</a> section can also be
+used to build the complete documentation with all versions using:</p>
+<div class="highlight"><pre><span></span><code>docker run --rm -v ${PWD}:/docs --entrypoint /bin/sh docopt-net-doc ./build.sh
 </code></pre></div>
-<p>Replace <code>&lt;version&gt;</code> with a version number like <code>0.7</code> or <code>1.x</code>.</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <p>Some files in the documentation are symbolic links because their content
-does not change across versions. After running the archival script, check
-that symbolic links were preserved and fix as necessary.</p>
+does not change across versions. Check the symbolic links were preserved and fix as necessary.</p>
 </div>
 
               
