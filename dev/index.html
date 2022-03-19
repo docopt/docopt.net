@@ -383,47 +383,6 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#strongly-typed-arguments-with-t4-macro" class="md-nav__link">
-    Strongly typed arguments with T4 Macro
-  </a>
-  
-    <nav class="md-nav" aria-label="Strongly typed arguments with T4 Macro">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#sample-mainusagetxt" class="md-nav__link">
-    Sample Main.usage.txt
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#resulting-t4docopnetcs" class="md-nav__link">
-    Resulting T4DocopNet.cs
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#using-the-generated-code" class="md-nav__link">
-    Using the generated code
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#getting-rid-of-the-t4-macro" class="md-nav__link">
-    Getting rid of the T4 macro
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
   <a href="#changelog" class="md-nav__link">
     Changelog
   </a>
@@ -601,47 +560,6 @@
           <li class="md-nav__item">
   <a href="#option-descriptions-format" class="md-nav__link">
     Option descriptions format
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#strongly-typed-arguments-with-t4-macro" class="md-nav__link">
-    Strongly typed arguments with T4 Macro
-  </a>
-  
-    <nav class="md-nav" aria-label="Strongly typed arguments with T4 Macro">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#sample-mainusagetxt" class="md-nav__link">
-    Sample Main.usage.txt
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#resulting-t4docopnetcs" class="md-nav__link">
-    Resulting T4DocopNet.cs
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#using-the-generated-code" class="md-nav__link">
-    Using the generated code
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#getting-rid-of-the-t4-macro" class="md-nav__link">
-    Getting rid of the T4 macro
   </a>
   
 </li>
@@ -1003,92 +921,6 @@ Other: --bad  # BAD, line does not start with dash &quot;-&quot;
 </code></pre></div>
 </li>
 </ul>
-<h2 id="strongly-typed-arguments-with-t4-macro">Strongly typed arguments with T4 Macro</h2>
-<div class="admonition warning">
-<p class="admonition-title">Deprecated</p>
-<p>This feature has been deprecated and will be removed starting with version
-0.7.</p>
-</div>
-<p>Include the <code>T4DocoptNet.tt*</code> files in your main project to enable the strongly
-type arguments code generation. Then add a file called Main.usage.txt to your
-project. Store the usage document in this file instead of creating a string
-constant in your program. When the <code>T4DocoptNet.tt</code> macro is applied, a class
-called <code>MainArgs</code> in a file called <code>T4DocoptNet.cs</code> will be generated. It will
-publish the following members:</p>
-<blockquote>
-<ul>
-<li><code>USAGE</code> public string constant that returns the usage document.</li>
-<li>A set of properties that correspond to the commands, arguments, switches and
-  options defined in the usage document.</li>
-</ul>
-</blockquote>
-<p>Note that if you name the usage file <code>Foo.usage.txt</code>, the generated class will
-be called <code>FooArgs</code>.</p>
-<h3 id="sample-mainusagetxt">Sample <code>Main.usage.txt</code></h3>
-<blockquote>
-<p>Test.</p>
-<p>Usage: prog command ARG FILES... [-o --switch --long=ARG]</p>
-</blockquote>
-<h3 id="resulting-t4docopnetcs">Resulting <code>T4DocopNet.cs</code></h3>
-<p>The generated class publishes the different argument items as strongly typed
-properties. Its constructor accepts the same parameters than the <code>Docopt.Apply</code>
-method. The original usage text is published as a string constant e.g.
-<code>MainArgs.USAGE</code>.</p>
-<div class="highlight"><pre><span></span><code><span class="c1">// Generated class for Main.usage.txt</span>
-<span class="k">public</span><span class="w"> </span><span class="k">class</span><span class="w"> </span><span class="nc">MainArgs</span><span class="w"></span>
-<span class="p">{</span><span class="w"></span>
-<span class="w">  </span><span class="k">public</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="kt">string</span><span class="w"> </span><span class="n">USAGE</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="s">@&quot;Test.</span>
-
-<span class="s">Usage: prog command ARG FILES... [-o --switch --long=ARG]</span>
-<span class="s">&quot;</span><span class="p">;</span><span class="w"></span>
-<span class="w">  </span><span class="k">private</span><span class="w"> </span><span class="k">readonly</span><span class="w"> </span><span class="n">IDictionary</span><span class="p">&lt;</span><span class="kt">string</span><span class="p">,</span><span class="w"> </span><span class="n">ValueObject</span><span class="p">&gt;</span><span class="w"> </span><span class="n">_args</span><span class="p">;</span><span class="w"></span>
-<span class="w">  </span><span class="k">public</span><span class="w"> </span><span class="nf">MainArgs</span><span class="p">(</span><span class="n">ICollection</span><span class="p">&lt;</span><span class="kt">string</span><span class="p">&gt;</span><span class="w"> </span><span class="n">argv</span><span class="p">,</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="n">help</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="k">true</span><span class="p">,</span><span class="w"></span>
-<span class="w">                          </span><span class="kt">object</span><span class="w"> </span><span class="n">version</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="k">null</span><span class="p">,</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="n">optionsFirst</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="k">false</span><span class="p">,</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="n">exit</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="k">false</span><span class="p">)</span><span class="w"></span>
-<span class="w">  </span><span class="p">{</span><span class="w"></span>
-<span class="w">    </span><span class="n">_args</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">Docopt</span><span class="p">().</span><span class="n">Apply</span><span class="p">(</span><span class="n">USAGE</span><span class="p">,</span><span class="w"> </span><span class="n">argv</span><span class="p">,</span><span class="w"> </span><span class="n">help</span><span class="p">,</span><span class="w"> </span><span class="n">version</span><span class="p">,</span><span class="w"> </span><span class="n">optionsFirst</span><span class="p">,</span><span class="w"> </span><span class="n">exit</span><span class="p">);</span><span class="w"></span>
-<span class="w">  </span><span class="p">}</span><span class="w"></span>
-
-<span class="w">  </span><span class="k">public</span><span class="w"> </span><span class="n">IDictionary</span><span class="p">&lt;</span><span class="kt">string</span><span class="p">,</span><span class="w"> </span><span class="n">ValueObject</span><span class="p">&gt;</span><span class="w"> </span><span class="n">Args</span><span class="w"></span>
-<span class="w">  </span><span class="p">{</span><span class="w"></span>
-<span class="w">    </span><span class="k">get</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">_args</span><span class="p">;</span><span class="w"> </span><span class="p">}</span><span class="w"></span>
-<span class="w">  </span><span class="p">}</span><span class="w"></span>
-
-<span class="w">  </span><span class="k">public</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="n">CmdCommand</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">get</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">_args</span><span class="p">[</span><span class="s">&quot;command&quot;</span><span class="p">].</span><span class="n">IsTrue</span><span class="p">;</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="p">}</span><span class="w"></span>
-<span class="w">  </span><span class="k">public</span><span class="w"> </span><span class="kt">string</span><span class="w"> </span><span class="n">ArgArg</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">get</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">_args</span><span class="p">[</span><span class="s">&quot;ARG&quot;</span><span class="p">].</span><span class="n">ToString</span><span class="p">();</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="p">}</span><span class="w"></span>
-<span class="w">  </span><span class="k">public</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="n">OptO</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">get</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">_args</span><span class="p">[</span><span class="s">&quot;-o&quot;</span><span class="p">].</span><span class="n">IsTrue</span><span class="p">;</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="p">}</span><span class="w"></span>
-<span class="w">  </span><span class="k">public</span><span class="w"> </span><span class="kt">string</span><span class="w"> </span><span class="n">OptLong</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">get</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">_args</span><span class="p">[</span><span class="s">&quot;--long&quot;</span><span class="p">].</span><span class="n">ToString</span><span class="p">();</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="p">}</span><span class="w"></span>
-<span class="w">  </span><span class="k">public</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="n">OptSwitch</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">get</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">_args</span><span class="p">[</span><span class="s">&quot;--switch&quot;</span><span class="p">].</span><span class="n">IsTrue</span><span class="p">;</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="p">}</span><span class="w"></span>
-<span class="w">  </span><span class="k">public</span><span class="w"> </span><span class="n">ArrayList</span><span class="w"> </span><span class="n">ArgFiles</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">get</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">_args</span><span class="p">[</span><span class="s">&quot;FILES&quot;</span><span class="p">].</span><span class="n">AsList</span><span class="p">;</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="p">}</span><span class="w"></span>
-
-<span class="p">}</span><span class="w"></span>
-</code></pre></div>
-<h3 id="using-the-generated-code">Using the generated code</h3>
-<div class="highlight"><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">Program</span><span class="w"></span>
-<span class="p">{</span><span class="w"></span>
-
-<span class="w">   </span><span class="k">static</span><span class="w"> </span><span class="k">void</span><span class="w"> </span><span class="nf">DoStuff</span><span class="p">(</span><span class="kt">string</span><span class="w"> </span><span class="n">arg</span><span class="p">,</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="n">flagO</span><span class="p">,</span><span class="w"> </span><span class="kt">string</span><span class="w"> </span><span class="n">longValue</span><span class="p">)</span><span class="w"></span>
-<span class="w">   </span><span class="p">{</span><span class="w"></span>
-<span class="w">   </span><span class="c1">// ...</span>
-<span class="w">   </span><span class="p">}</span><span class="w"></span>
-
-<span class="w">  </span><span class="k">static</span><span class="w"> </span><span class="k">void</span><span class="w"> </span><span class="nf">Main</span><span class="p">(</span><span class="kt">string</span><span class="p">[]</span><span class="w"> </span><span class="n">argv</span><span class="p">)</span><span class="w"></span>
-<span class="w">  </span><span class="p">{</span><span class="w"></span>
-<span class="w">    </span><span class="c1">// Automatically exit(1) if invalid arguments</span>
-<span class="w">    </span><span class="kt">var</span><span class="w"> </span><span class="n">args</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">MainArgs</span><span class="p">(</span><span class="n">argv</span><span class="p">,</span><span class="w"> </span><span class="n">exit</span><span class="p">:</span><span class="w"> </span><span class="k">true</span><span class="p">);</span><span class="w"></span>
-<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">args</span><span class="p">.</span><span class="n">CmdCommand</span><span class="p">)</span><span class="w"></span>
-<span class="w">    </span><span class="p">{</span><span class="w"></span>
-<span class="w">      </span><span class="n">Console</span><span class="p">.</span><span class="n">WriteLine</span><span class="p">(</span><span class="s">&quot;First command&quot;</span><span class="p">);</span><span class="w"></span>
-<span class="w">      </span><span class="n">DoStuff</span><span class="p">(</span><span class="n">args</span><span class="p">.</span><span class="n">ArgArg</span><span class="p">,</span><span class="w"> </span><span class="n">args</span><span class="p">.</span><span class="n">OptO</span><span class="p">,</span><span class="w"> </span><span class="n">args</span><span class="p">.</span><span class="n">OptLong</span><span class="p">);</span><span class="w"></span>
-<span class="w">    </span><span class="p">}</span><span class="w"></span>
-<span class="w">  </span><span class="p">}</span><span class="w"></span>
-<span class="p">}</span><span class="w"></span>
-</code></pre></div>
-<p>You can also access the <code>MainArgs.USAGE</code> string constant as follows:</p>
-<div class="highlight"><pre><span></span><code><span class="n">Console</span><span class="p">.</span><span class="n">WriteLine</span><span class="p">(</span><span class="s">&quot;Usage: &quot;</span><span class="w"> </span><span class="p">+</span><span class="w"> </span><span class="n">MainArgs</span><span class="p">.</span><span class="n">USAGE</span><span class="p">)</span><span class="w"></span>
-</code></pre></div>
-<h3 id="getting-rid-of-the-t4-macro">Getting rid of the T4 macro</h3>
-<p>If you don't want to use the strongly typed arguments, just delete the
-<code>T4DocoptNet.*</code> files from the project.</p>
 <h2 id="changelog">Changelog</h2>
 <p><strong>docopt.net</strong> follows <a href="http://semver.org">semantic versioning</a>. The first
 release with stable API will be 1.0.0 (soon). Until then, you are encouraged to
