@@ -46,7 +46,7 @@ return argsParser.Parse(args)
 
 switch (argsParser.Parse(args))
 {
-    case IArgumentsResult<IDictionary<string, Value>> { Arguments: var arguments }: return Run(arguments);
+    case IArgumentsResult<IDictionary<string, ArgValue>> { Arguments: var arguments }: return Run(arguments);
     case IHelpResult: return ShowHelp(help);
     case IVersionResult { Version: var version }: return ShowVersion(version);
     case IInputErrorResult { Usage: var usage }: return OnError(usage);
