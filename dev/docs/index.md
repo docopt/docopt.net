@@ -4,7 +4,7 @@ hide:
   - navigation
 ---
 
-# `docopt.net` is a .NET port of docopt
+# **docopt.net** is a .NET implementation of [docopt]
 
 [![NuGet Package](https://buildstats.info/nuget/docopt.net)][nupkg]
 
@@ -24,42 +24,33 @@ help message--*the way you want it*.
 **docopt.net** helps you create most beautiful command-line interfaces *easily*:
 
 ```c#
+#nullable enable
+
 using System;
 using DocoptNet;
 
-namespace NavalFate
-{
-    internal class Program
-    {
-        private const string usage = @"Naval Fate.
+const string usage = @"Naval Fate.
 
-    Usage:
-      naval_fate.exe ship new <name>...
-      naval_fate.exe ship <name> move <x> <y> [--speed=<kn>]
-      naval_fate.exe ship shoot <x> <y>
-      naval_fate.exe mine (set|remove) <x> <y> [--moored | --drifting]
-      naval_fate.exe (-h | --help)
-      naval_fate.exe --version
+Usage:
+  naval_fate.exe ship new <name>...
+  naval_fate.exe ship <name> move <x> <y> [--speed=<kn>]
+  naval_fate.exe ship shoot <x> <y>
+  naval_fate.exe mine (set|remove) <x> <y> [--moored | --drifting]
+  naval_fate.exe (-h | --help)
+  naval_fate.exe --version
 
-    Options:
-      -h --help     Show this screen.
-      --version     Show version.
-      --speed=<kn>  Speed in knots [default: 10].
-      --moored      Moored (anchored) mine.
-      --drifting    Drifting mine.
+Options:
+  -h --help     Show this screen.
+  --version     Show version.
+  --speed=<kn>  Speed in knots [default: 10].
+  --moored      Moored (anchored) mine.
+  --drifting    Drifting mine.
 
-    ";
+";
 
-        private static void Main(string[] args)
-        {
-            var arguments = new Docopt().Apply(usage, args, version: "Naval Fate 2.0", exit: true);
-            foreach (var argument in arguments)
-            {
-                Console.WriteLine("{0} = {1}", argument.Key, argument.Value);
-            }
-        }
-    }
-}
+var arguments = new Docopt().Apply(usage, args, version: "Naval Fate 2.0", exit: true)!;
+foreach (var (key, value) in arguments)
+    Console.WriteLine("{0} = {1}", key, value);
 ```
 
 Beat that! The option parser is generated based on the docstring above that is
@@ -71,28 +62,226 @@ help message has all necessary information in it to make a parser*.
 
 ## Differences from reference Python implementation
 
-- This port should be fully Docopt language compatible with the Python reference
-  implementation.
-
-- Because C# is statically typed, the return dictionary is of type
-  `IDictionary<string, ValueObject>` where `ValueObject` is a simple wrapper
-  class around entry values.
+**docopt.net** started as a straightforward port of [the Python reference
+implementation][docopt.py] and should support all the features of the [docopt]
+language/format. The API was then adjusted to be more idiomatic and provide
+strong, even compile-time, guarantees. For example, arguments can be parsed into
+a dictionary of the type `IDictionary<string, ArgValue>`, where `ArgValue` is a
+simple wrapper around an argument value that can be interrogated, cast and
+pattern-matched based on the actual/expected value type.
 
 ## Installation
 
-Use dotnet
+To use **docopt.net** to your project, add the package using:
 
     dotnet add package docopt.net
 
-Use nuget
-
-    nuget install docopt.net
-
-Under Visual Studio
-
-Just drop `DocoptNet.dll` file into your project; it is self-contained.
-
 ## API
+
+There are three ways to work with **docopt.net**:
+
+1. Use [an API that was inspired from the reference Python
+   implementation][older-api]. This was the first and only API up to version
+   0.8.0. Developers that have worked with the Python implementation will feel
+   at home with this flavour of the API, but bear in mind that it may
+   be rendered obsolete in a future version.
+
+2. Starting with version 0.8.0, there is a newer API that provides a more
+   idiomatic model for a statically typed language like C#.
+
+3. Building on top of the new API introduced with version 0.8.0,
+   **docopt.net** comes with a _source generator_ for projects using C# 9 or
+   later. It can generate a type containing all the arguments in the [docopt]
+   usage of a program. It provides the strongest compile-time guarantees such
+   that if the usage changes in some incompatible way, the program will most
+   probably even fail to compile!
+
+This section primarily deals with the newer API introduced with version 0.8.0.
+There is a [separate section][older-api] for the API inspired by [the reference
+Python implementation][docopt.py].
+
+The following program shows one usage of the new API:
+
+```c#
+using System;
+using System.Collections.Generic;
+using DocoptNet;
+
+const string help = @"Naval Fate.
+
+Usage:
+  naval_fate.exe ship new <name>...
+  naval_fate.exe ship <name> move <x> <y> [--speed=<kn>]
+  naval_fate.exe ship shoot <x> <y>
+  naval_fate.exe mine (set|remove) <x> <y> [--moored | --drifting]
+  naval_fate.exe (-h | --help)
+  naval_fate.exe --version
+
+Options:
+  -h --help     Show this screen.
+  --version     Show version.
+  --speed=<kn>  Speed in knots [default: 10].
+  --moored      Moored (anchored) mine.
+  --drifting    Drifting mine.
+
+";
+
+static int ShowHelp(string help) { Console.WriteLine(help); return 0; }
+static int ShowVersion(string version) { Console.WriteLine(version); return 0; }
+static int OnError(string usage) { Console.WriteLine(usage); return 1; }
+
+static int Run(IDictionary<string, ArgValue> arguments)
+{
+    foreach (var (key, value) in arguments)
+        Console.WriteLine("{0} = {1}", key, value);
+    return 0;
+}
+
+return Docopt.CreateParser(help)
+             .WithVersion("Naval Fate 2.0")
+             .Parse(args)
+             .Match(Run,
+                    result => ShowHelp(result.Help),
+                    result => ShowVersion(result.Version),
+                    result => OnError(result.Usage));
+```
+
+Instead of using `Match`, it is also possible to use pattern-matching in C# on
+the result of the `Parse` method:
+
+```c#
+var parser = Docopt.CreateParser(help).WithVersion("Naval Fate 2.0");
+
+return parser.Parse(args) switch
+{
+    IArgumentsResult<IDictionary<string, ArgValue>> { Arguments: var arguments } => Run(arguments),
+    IHelpResult => ShowHelp(help),
+    IVersionResult { Version: var version } => ShowVersion(version),
+    IInputErrorResult { Usage: var usage } => OnError(usage),
+    var result => throw new System.Runtime.CompilerServices.SwitchExpressionException(result)
+};
+```
+
+The version using `Match` provides stronger guarantees because the arity of the
+`Match` method will change depending on the requested options. For example, if
+the call to `WithVersion` is commented out, the code will fail to compile unless
+the second argument to `Match` is also removed or commented out:
+
+```c#
+return Docopt.CreateParser(help)
+          // .WithVersion("Naval Fate 2.0")
+             .Parse(args)
+             .Match(Run,
+                    result => ShowHelp(result.Help),
+                 // result => ShowVersion(result.Version),
+                    result => OnError(result.Usage));
+```
+
+In contrast, the version using the `switch` expression and pattern-matching will
+never produce a compile-time error but the _switch arm_ that matches on
+`IVersionResult` will simply never occur at run-time. The `Match` method makes
+such changes obvious.
+
+The `Docopt.CreateParser` method takes a single argument:
+
+- `doc` is a string that contains a **help message** that will be parsed to
+  create the option parser. The simple rules of how to write such a help message
+  are given in [later sections][help-format].
+
+It returns a parser whose `Parse` method can then be supplied with the run-time
+command-line arguments:
+
+```c#
+const string help = @"Naval Fate.
+
+Usage:
+  naval_fate.exe ship new <name>...
+  naval_fate.exe ship <name> move <x> <y> [--speed=<kn>]
+  naval_fate.exe ship shoot <x> <y>
+  naval_fate.exe mine (set|remove) <x> <y> [--moored | --drifting]
+  naval_fate.exe (-h | --help)
+  naval_fate.exe --version
+
+Options:
+  -h --help     Show this screen.
+  --version     Show version.
+  --speed=<kn>  Speed in knots [default: 10].
+  --moored      Moored (anchored) mine.
+  --drifting    Drifting mine.
+
+";
+
+var parser = Docopt.CreateParser(help);
+var result = var parser.Parse(args);
+```
+
+The result of the `Parse` method is one the following types:
+
+- `IArgumentsResult<T>`: the parsed arguments as `T` when command-line is valid
+  per usage.
+- `IHelpResult`: the result when help is requested via `-h` or `--help`.
+- `IVersionResult`: the result when version is requested via `--version`.
+- `IInputErrorResult`: the input error result if the given command-line
+  arguments do not match the usage.
+
+`Docopt.CreateParser` returns a parser that by default assumes the program usage
+supports the _help_ flags, `-h` or `--help`. It _greedily_ parses these and
+returns `IHelpResult` if found. To disable this behaviour, call `DisableHelp()`
+on the parser, e.g.:
+
+```c#
+var parser = Docopt.CreateParser(help)
+                   .DisableHelp();
+var result = var parser.Parse(args);
+```
+
+Doing so means that the parser's `Parse` method will never return `IHelpResult`
+and it is upto the program to handle these flags, for example as follows:
+
+```c#
+switch (argsParser.Parse(args))
+{
+    case IArgumentsResult<IDictionary<string, ArgValue>> { Arguments: var arguments }:
+        foreach (var (key, value) in arguments)
+            Console.WriteLine("{0} = {1}", key, value);
+        if (arguments["--help"].IsBoolean)
+            Console.WriteLine(help);
+        return 0;
+    case var result:
+        throw new System.Runtime.CompilerServices.SwitchExpressionException(result);
+}
+```
+
+Like greedy processing of help flags can be disabled, the parser returned by
+`Docopt.CreateParser` can be configured to _greedily_ parse the `--version`
+flag. The parser's `Parse` method will then return `IVersionResult`. The
+configuration is done via the `WithVersion` method as show below:
+
+```c#
+var parser = Docopt.CreateParser(help)
+                   .WithVersion("Naval Fate 2.0");
+```
+
+The version string supplied (`"Naval Fate 2.0"` in the example above) is then
+populated in the `Version` property of the `IVersionResult` instance.
+
+The API of the parser instance returned by `Docopt.CreateParser` is adaptive. As
+certain options are configured, the API returns immutable instances of the
+parser and limits or expands further composition. Moreover, the result of the
+parser's `Parse` method has a `Match` method that can be supplied callback
+functions to handle each of the resulting types. The arity of the `Match` method
+adjusts depending on the composed features.
+
+### Source Generator
+
+Coming soon&hellip;
+
+## Older API
+
+!!! warning
+
+    This flavour of the API that was inspired by [the reference Python
+    implementation][docopt.py] may be rendered obsolete in a future version.
 
 ```c#
 using DocoptNet;
@@ -147,7 +336,7 @@ public IDictionary<string, ValueObject> Apply(string doc, ICollection<string> ar
   it will print the supplied version and terminate. `version` could be any
   printable object, but most likely a string, e.g. `"2.1.0rc1"`.
 
-  > Note, when `docopt.net` is set to automatically handle `-h`, `--help` and
+  > Note, when **docopt.net** is set to automatically handle `-h`, `--help` and
   > `--version` options, you still need to mention them in usage pattern for
   > this to work. Also, for your users to know about them.
 
@@ -360,7 +549,7 @@ specify explicitly the version in your dependency tools, e.g.:
 
 !!! note "0.7.0 or later"
 
-     See [releases] for changelog and notes.
+    See [releases] for changelog and notes.
 
 - 0.6.1.11 Bug fix.
 - 0.6.1.8 Added support for .NET Core RC2.
@@ -374,3 +563,7 @@ specify explicitly the version in your dependency tools, e.g.:
 - 0.6.1.1 Initial port. All reference language agnostic tests pass.
 
 [releases]: https://github.com/docopt/docopt.net/releases
+[docopt]: http://docopt.org/
+[docopt.py]: https://github.com/docopt/docopt
+[older-api]: #older-api
+[help-format]: [#help-message-format]
