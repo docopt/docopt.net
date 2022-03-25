@@ -44,13 +44,13 @@ return argsParser.Parse(args)
 
 #else // Alternatively, using pattern-matching on the result:
 
-switch (argsParser.Parse(args))
+return argsParser.Parse(args) switch
 {
-    case IArgumentsResult<IDictionary<string, ArgValue>> { Arguments: var arguments }: return Run(arguments);
-    case IHelpResult: return ShowHelp(help);
-    case IVersionResult { Version: var version }: return ShowVersion(version);
-    case IInputErrorResult { Usage: var usage }: return OnError(usage);
-    case var result: throw new System.Runtime.CompilerServices.SwitchExpressionException(result);
-}
+    IArgumentsResult<IDictionary<string, ArgValue>> { Arguments: var arguments } => Run(arguments),
+    IHelpResult => ShowHelp(help),
+    IVersionResult { Version: var version } => ShowVersion(version),
+    IInputErrorResult { Usage: var usage } => OnError(usage),
+    var result => throw new System.Runtime.CompilerServices.SwitchExpressionException(result)
+};
 
 #endif
