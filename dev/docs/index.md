@@ -275,6 +275,70 @@ parser's `Parse` method has a `Match` method that can be supplied callback
 functions to handle each of the resulting types. The arity of the `Match` method
 adjusts depending on the composed features.
 
+If the parsed command-line arguments conform to the program usage then the
+`Parse` method returns an instance of `IArgumentsResult<IDictionary<string,
+ArgValue>>` whose `Arguments` property is a dictionary of name-value pairs (that
+is, `IDictionary<string, ArgValue>`). `ArgValue` is a discriminated union of the
+various kinds of values possible:
+
+- `None`: represents a missing or not applicable value for an argument
+  (`<argument>`) or an option expecting a value (`--option=VALUE`).
+
+- `Boolean`: represents a Boolean that is `true` when a command or an option
+  (`--option`) is present and `false` otherwise.
+
+- `Integer`: represents the number of times a command (`command...`) or option
+  (`--option...`) has been specified.
+
+- `String`: represents the value of a non-repeatable argument (`<argument>`) or
+  option that expects a value (`--option=VALUE`).
+
+- `StringList`: represent an immutable collection of `String` values for
+  repeatable arguments (`<argument>...`) and options (`--file=FILE...`).
+
+Given the following example usage:
+
+    Naval Fate.
+
+    Usage:
+      naval_fate.exe ship new <name>...
+      naval_fate.exe ship <name> move <x> <y> [--speed=<kn>]
+      naval_fate.exe ship shoot <x> <y>
+      naval_fate.exe mine (set|remove) <x> <y> [--moored | --drifting]
+      naval_fate.exe (-h | --help)
+      naval_fate.exe --version
+
+    Options:
+      -h --help     Show this screen.
+      --version     Show version.
+      --speed=<kn>  Speed in knots [default: 10].
+      --moored      Moored (anchored) mine.
+      --drifting    Drifting mine.
+
+The resulting dictionary will contain the following keys and value kinds:
+
+| Name         | Type            |
+|--------------|-----------------|
+| `ship`       | `Boolean`       |
+| `new`        | `Boolean`       |
+| `<name>`     | `StringList`    |
+| `move`       | `Boolean`       |
+| `<x>`        | `String`/`None` |
+| `<y>`        | `String`/`None` |
+| `--speed`    | `String`        |
+| `shoot`      | `Boolean`       |
+| `mine`       | `Boolean`       |
+| `set`        | `Boolean`       |
+| `remove`     | `Boolean`       |
+| `--moored`   | `Boolean`       |
+| `--drifting` | `Boolean`       |
+| `--help`     | `Boolean`       |
+| `--version`  | `Boolean`       |
+
+The `ArgValue` type has several properties to interrogate the actual value kind
+at run-time, conversion to `Object` as well as support for explicit casts to
+`Boolean`, `Int32`, `String` and `StringList`.
+
 ### Source Generator
 
 Coming soon&hellip;
