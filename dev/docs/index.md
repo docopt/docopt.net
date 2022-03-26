@@ -164,8 +164,8 @@ return parser.Parse(args) switch
 
 The version using `Match` provides stronger guarantees because the arity of the
 `Match` method will change depending on the requested options. For example, if
-the call to `WithVersion` is commented out, the code will fail to compile unless
-the second argument to `Match` is also removed or commented out:
+the call to `WithVersion` is commented-out, the code will fail to compile unless
+the second argument to `Match` is also removed or commented-out:
 
 ```c#
 return Docopt.CreateParser(help)
@@ -178,9 +178,8 @@ return Docopt.CreateParser(help)
 ```
 
 In contrast, the version using the `switch` expression and pattern-matching will
-never produce a compile-time error but the _switch arm_ that matches on
-`IVersionResult` will simply never occur at run-time. The `Match` method makes
-such changes obvious.
+never produce a compile-time error but the _switch arm_ for `IVersionResult`
+will simply never match at run-time..
 
 The `Docopt.CreateParser` method takes a single argument:
 
@@ -219,15 +218,18 @@ The result of the `Parse` method is one the following types:
 
 - `IArgumentsResult<T>`: the parsed arguments as `T` when command-line is valid
   per usage.
+
 - `IHelpResult`: the result when help is requested via `-h` or `--help`.
+
 - `IVersionResult`: the result when version is requested via `--version`.
+
 - `IInputErrorResult`: the input error result if the given command-line
   arguments do not match the usage.
 
 `Docopt.CreateParser` returns a parser that by default assumes the program usage
 supports the _help_ flags, `-h` or `--help`. It _greedily_ parses these and
 returns `IHelpResult` if found. To disable this behaviour, call `DisableHelp()`
-on the parser, e.g.:
+on the parser, as in:
 
 ```c#
 var parser = Docopt.CreateParser(help)
@@ -236,7 +238,8 @@ var result = var parser.Parse(args);
 ```
 
 Doing so means that the parser's `Parse` method will never return `IHelpResult`
-and it is upto the program to handle these flags, for example as follows:
+and it is therefore up to the program to handle these flags, for example, as
+follows:
 
 ```c#
 switch (argsParser.Parse(args))
@@ -244,7 +247,7 @@ switch (argsParser.Parse(args))
     case IArgumentsResult<IDictionary<string, ArgValue>> { Arguments: var arguments }:
         foreach (var (key, value) in arguments)
             Console.WriteLine("{0} = {1}", key, value);
-        if (arguments["--help"].IsBoolean)
+        if (arguments["--help"].IsTrue)
             Console.WriteLine(help);
         return 0;
     case var result:
