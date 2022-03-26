@@ -987,7 +987,180 @@ Options:
 at run-time, conversion to <code>Object</code> as well as support for explicit casts to
 <code>Boolean</code>, <code>Int32</code>, <code>String</code> and <code>StringList</code>.</p>
 <h3 id="source-generator">Source Generator</h3>
-<p>Coming soon&hellip;</p>
+<p><strong>docopt.net</strong> also comes with a <a href="https://devblogs.microsoft.com/dotnet/introducing-c-source-generators/">C# source generator</a> starting with version
+0.8.0. The source generator generates a strong-typed class for the program
+arguments given its help message. There are two ways to invoke the source
+generator, by putting the help message either in an extenal text file or
+directly in a string constant.</p>
+<p>Maintaining the help text in an external file might be simpler for some
+projects. The source generator is called by the C# compiler as part of the build
+process. The source generator will look for any file that is part of the project
+and whose name ends in <code>.docopt.txt</code> and use its content as the help message
+source. It will then generate a C# class representing the command, arguments and
+options found in the usage section of the help message.</p>
+<p>Suppose a C# project contains a text file called <code>Program.docopt.txt</code> with the
+following content:</p>
+<div class="highlight"><pre><span></span><code>Naval Fate.
+
+Usage:
+  naval_fate.exe ship new &lt;name&gt;...
+  naval_fate.exe ship &lt;name&gt; move &lt;x&gt; &lt;y&gt; [--speed=&lt;kn&gt;]
+  naval_fate.exe ship shoot &lt;x&gt; &lt;y&gt;
+  naval_fate.exe mine (set|remove) &lt;x&gt; &lt;y&gt; [--moored | --drifting]
+  naval_fate.exe (-h | --help)
+  naval_fate.exe --version
+
+Options:
+  -h --help     Show this screen.
+  --version     Show version.
+  --speed=&lt;kn&gt;  Speed in knots [default: 10].
+  --moored      Moored (anchored) mine.
+  --drifting    Drifting mine.
+</code></pre></div>
+<p>The source generator will then generate a class that looks something like the
+following:</p>
+<div class="highlight"><pre><span></span><code><span class="k">partial</span><span class="w"> </span><span class="k">class</span><span class="w"> </span><span class="nc">ProgramArguments</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="n">IEnumerable</span><span class="p">&lt;</span><span class="n">KeyValuePair</span><span class="p">&lt;</span><span class="kt">string</span><span class="p">,</span><span class="w"> </span><span class="kt">object?</span><span class="p">&gt;&gt;</span><span class="w"></span>
+<span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="k">public</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="kt">string</span><span class="w"> </span><span class="n">Help</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="s">@&quot;Naval Fate.</span>
+
+<span class="s">    Usage:</span>
+<span class="s">      naval_fate.exe ship new &lt;name&gt;...</span>
+<span class="s">      naval_fate.exe ship &lt;name&gt; move &lt;x&gt; &lt;y&gt; [--speed=&lt;kn&gt;]</span>
+<span class="s">      naval_fate.exe ship shoot &lt;x&gt; &lt;y&gt;</span>
+<span class="s">      naval_fate.exe mine (set|remove) &lt;x&gt; &lt;y&gt; [--moored | --drifting]</span>
+<span class="s">      naval_fate.exe (-h | --help)</span>
+<span class="s">      naval_fate.exe --version</span>
+
+<span class="s">    Options:</span>
+<span class="s">      -h --help     Show this screen.</span>
+<span class="s">      --version     Show version.</span>
+<span class="s">      --speed=&lt;kn&gt;  Speed in knots [default: 10].</span>
+<span class="s">      --moored      Moored (anchored) mine.</span>
+<span class="s">      --drifting    Drifting mine.</span>
+<span class="s">&quot;</span><span class="p">;</span><span class="w"></span>
+
+<span class="w">    </span><span class="k">public</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="kt">string</span><span class="w"> </span><span class="n">Usage</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="s">@&quot;Usage:</span>
+<span class="s">      naval_fate.exe ship new &lt;name&gt;...</span>
+<span class="s">      naval_fate.exe ship &lt;name&gt; move &lt;x&gt; &lt;y&gt; [--speed=&lt;kn&gt;]</span>
+<span class="s">      naval_fate.exe ship shoot &lt;x&gt; &lt;y&gt;</span>
+<span class="s">      naval_fate.exe mine (set|remove) &lt;x&gt; &lt;y&gt; [--moored | --drifting]</span>
+<span class="s">      naval_fate.exe (-h | --help)</span>
+<span class="s">      naval_fate.exe --version&quot;</span><span class="p">;</span><span class="w"></span>
+
+<span class="w">    </span><span class="k">public</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="n">CmdShip</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">get</span><span class="p">;</span><span class="w"> </span><span class="k">private</span><span class="w"> </span><span class="k">set</span><span class="p">;</span><span class="w"> </span><span class="p">}</span><span class="w"></span>
+<span class="w">    </span><span class="k">public</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="n">CmdNew</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">get</span><span class="p">;</span><span class="w"> </span><span class="k">private</span><span class="w"> </span><span class="k">set</span><span class="p">;</span><span class="w"> </span><span class="p">}</span><span class="w"></span>
+<span class="w">    </span><span class="k">public</span><span class="w"> </span><span class="n">StringList</span><span class="w"> </span><span class="n">ArgName</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">get</span><span class="p">;</span><span class="w"> </span><span class="k">private</span><span class="w"> </span><span class="k">set</span><span class="p">;</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">StringList</span><span class="p">.</span><span class="n">Empty</span><span class="p">;</span><span class="w"></span>
+<span class="w">    </span><span class="k">public</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="n">CmdMove</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">get</span><span class="p">;</span><span class="w"> </span><span class="k">private</span><span class="w"> </span><span class="k">set</span><span class="p">;</span><span class="w"> </span><span class="p">}</span><span class="w"></span>
+<span class="w">    </span><span class="k">public</span><span class="w"> </span><span class="kt">string?</span><span class="w"> </span><span class="n">ArgX</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">get</span><span class="p">;</span><span class="w"> </span><span class="k">private</span><span class="w"> </span><span class="k">set</span><span class="p">;</span><span class="w"> </span><span class="p">}</span><span class="w"></span>
+<span class="w">    </span><span class="k">public</span><span class="w"> </span><span class="kt">string?</span><span class="w"> </span><span class="n">ArgY</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">get</span><span class="p">;</span><span class="w"> </span><span class="k">private</span><span class="w"> </span><span class="k">set</span><span class="p">;</span><span class="w"> </span><span class="p">}</span><span class="w"></span>
+<span class="w">    </span><span class="k">public</span><span class="w"> </span><span class="kt">string</span><span class="w"> </span><span class="n">OptSpeed</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">get</span><span class="p">;</span><span class="w"> </span><span class="k">private</span><span class="w"> </span><span class="k">set</span><span class="p">;</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="s">&quot;10&quot;</span><span class="p">;</span><span class="w"></span>
+<span class="w">    </span><span class="k">public</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="n">CmdShoot</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">get</span><span class="p">;</span><span class="w"> </span><span class="k">private</span><span class="w"> </span><span class="k">set</span><span class="p">;</span><span class="w"> </span><span class="p">}</span><span class="w"></span>
+<span class="w">    </span><span class="k">public</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="n">CmdMine</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">get</span><span class="p">;</span><span class="w"> </span><span class="k">private</span><span class="w"> </span><span class="k">set</span><span class="p">;</span><span class="w"> </span><span class="p">}</span><span class="w"></span>
+<span class="w">    </span><span class="k">public</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="n">CmdSet</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">get</span><span class="p">;</span><span class="w"> </span><span class="k">private</span><span class="w"> </span><span class="k">set</span><span class="p">;</span><span class="w"> </span><span class="p">}</span><span class="w"></span>
+<span class="w">    </span><span class="k">public</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="n">CmdRemove</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">get</span><span class="p">;</span><span class="w"> </span><span class="k">private</span><span class="w"> </span><span class="k">set</span><span class="p">;</span><span class="w"> </span><span class="p">}</span><span class="w"></span>
+<span class="w">    </span><span class="k">public</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="n">OptMoored</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">get</span><span class="p">;</span><span class="w"> </span><span class="k">private</span><span class="w"> </span><span class="k">set</span><span class="p">;</span><span class="w"> </span><span class="p">}</span><span class="w"></span>
+<span class="w">    </span><span class="k">public</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="n">OptDrifting</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">get</span><span class="p">;</span><span class="w"> </span><span class="k">private</span><span class="w"> </span><span class="k">set</span><span class="p">;</span><span class="w"> </span><span class="p">}</span><span class="w"></span>
+<span class="w">    </span><span class="k">public</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="n">OptHelp</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">get</span><span class="p">;</span><span class="w"> </span><span class="k">private</span><span class="w"> </span><span class="k">set</span><span class="p">;</span><span class="w"> </span><span class="p">}</span><span class="w"></span>
+<span class="w">    </span><span class="k">public</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="n">OptVersion</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">get</span><span class="p">;</span><span class="w"> </span><span class="k">private</span><span class="w"> </span><span class="k">set</span><span class="p">;</span><span class="w"> </span><span class="p">}</span><span class="w"></span>
+
+<span class="w">    </span><span class="k">public</span><span class="w"> </span><span class="k">static</span><span class="w"> </span><span class="n">IHelpFeaturingParser</span><span class="p">&lt;</span><span class="n">ProgramArguments</span><span class="p">&gt;</span><span class="w"> </span><span class="n">CreateParser</span><span class="p">()</span><span class="w"></span>
+<span class="w">    </span><span class="p">{</span><span class="w"></span>
+<span class="w">        </span><span class="cm">/* omitted for brevity */</span><span class="w"></span>
+<span class="w">    </span><span class="p">}</span><span class="w"></span>
+
+<span class="w">    </span><span class="n">IEnumerator</span><span class="p">&lt;</span><span class="n">KeyValuePair</span><span class="p">&lt;</span><span class="kt">string</span><span class="p">,</span><span class="w"> </span><span class="kt">object?</span><span class="p">&gt;&gt;</span><span class="w"> </span><span class="n">GetEnumerator</span><span class="p">()</span><span class="w"></span>
+<span class="w">    </span><span class="p">{</span><span class="w"></span>
+<span class="w">        </span><span class="cm">/* omitted for brevity */</span><span class="w"></span>
+<span class="w">    </span><span class="p">}</span><span class="w"></span>
+
+<span class="w">    </span><span class="n">IEnumerator</span><span class="p">&lt;</span><span class="n">KeyValuePair</span><span class="p">&lt;</span><span class="kt">string</span><span class="p">,</span><span class="w"> </span><span class="kt">object?</span><span class="p">&gt;&gt;</span><span class="w"> </span><span class="n">IEnumerable</span><span class="p">&lt;</span><span class="n">KeyValuePair</span><span class="p">&lt;</span><span class="kt">string</span><span class="p">,</span><span class="w"> </span><span class="kt">object?</span><span class="p">&gt;&gt;.</span><span class="n">GetEnumerator</span><span class="p">()</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="n">GetEnumerator</span><span class="p">();</span><span class="w"></span>
+<span class="w">    </span><span class="n">IEnumerator</span><span class="w"> </span><span class="n">IEnumerable</span><span class="p">.</span><span class="n">GetEnumerator</span><span class="p">()</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="n">GetEnumerator</span><span class="p">();</span><span class="w"></span>
+<span class="p">}</span><span class="w"></span>
+</code></pre></div>
+<p>The generated class will:</p>
+<ul>
+<li>have the same name as the text file with the <code>.docopt.txt</code> suffix replaced
+  with <code>Arguments</code>, such that <code>Program.docopt.txt</code> will generate a class named
+  <code>ProgramArguments</code>.</li>
+</ul>
+<ul>
+<li>be <code>partial</code> so you can continue to enhance through another part in a separate
+  C# source file.</li>
+</ul>
+<ul>
+<li>sit in the project's namespace.</li>
+</ul>
+<ul>
+<li>have a public string constant named <code>Help</code> that will contain the entire help
+  text from the source file as a verbatim string literal.</li>
+</ul>
+<ul>
+<li>have a public string constant named <code>Usage</code> that will contain the usage
+  section of the help message.</li>
+</ul>
+<ul>
+<li>have a public read-write property for each command, argument and option
+  defined in the usage where the property name will reflect the name of the
+  command, argument or option (after applying Pascal casing transformations) and
+  bear the prefix <code>Cmd</code> for a command, <code>Arg</code> for an argument or <code>Opt</code> for an
+  option. If two distinct options have only short names that differ in case,
+  as in <code>-m</code> and <code>-M</code> then the former will be named <code>OptM</code> and the latter
+  <code>OptUpperM</code>.</li>
+</ul>
+<ul>
+<li>implement <code>IEnumerable&lt;KeyValuePair&lt;string, object?&gt;&gt;</code> so the arguments can
+  be iterated, for example, in a <code>foreach</code> loop.</li>
+</ul>
+<ul>
+<li>have a public static method called <code>CreateParser</code> that takes no arguments and
+  returns a parser whose <code>Parse</code> method, when supplied the command-line
+  arguments, will return <code>IArgumentsResult&lt;T&gt;</code>; the <code>T</code> will be the generated
+  class.</li>
+</ul>
+<p>The generated class can then be used in the project as shown below:</p>
+<div class="highlight"><pre><span></span><code><span class="c1">// Program.cs</span>
+
+<span class="k">using</span><span class="w"> </span><span class="nn">System</span><span class="p">;</span><span class="w"></span>
+<span class="k">using</span><span class="w"> </span><span class="nn">NavalFate</span><span class="p">;</span><span class="w"></span>
+
+<span class="k">static</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="nf">ShowHelp</span><span class="p">(</span><span class="kt">string</span><span class="w"> </span><span class="n">help</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">Console</span><span class="p">.</span><span class="n">WriteLine</span><span class="p">(</span><span class="n">help</span><span class="p">);</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="m">0</span><span class="p">;</span><span class="w"> </span><span class="p">}</span><span class="w"></span>
+<span class="k">static</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="nf">ShowVersion</span><span class="p">(</span><span class="kt">string</span><span class="w"> </span><span class="n">version</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">Console</span><span class="p">.</span><span class="n">WriteLine</span><span class="p">(</span><span class="n">version</span><span class="p">);</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="m">0</span><span class="p">;</span><span class="w"> </span><span class="p">}</span><span class="w"></span>
+<span class="k">static</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="nf">OnError</span><span class="p">(</span><span class="kt">string</span><span class="w"> </span><span class="n">usage</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">Console</span><span class="p">.</span><span class="n">WriteLine</span><span class="p">(</span><span class="n">usage</span><span class="p">);</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="m">1</span><span class="p">;</span><span class="w"> </span><span class="p">}</span><span class="w"></span>
+
+<span class="k">static</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="nf">Main</span><span class="p">(</span><span class="n">ProgramArguments</span><span class="w"> </span><span class="n">args</span><span class="p">)</span><span class="w"></span>
+<span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="k">foreach</span><span class="w"> </span><span class="p">(</span><span class="kt">var</span><span class="w"> </span><span class="p">(</span><span class="n">name</span><span class="p">,</span><span class="w"> </span><span class="k">value</span><span class="p">)</span><span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="n">args</span><span class="p">)</span><span class="w"></span>
+<span class="w">        </span><span class="n">Console</span><span class="p">.</span><span class="n">WriteLine</span><span class="p">(</span><span class="s">$&quot;{name} = {value}&quot;</span><span class="p">);</span><span class="w"></span>
+
+<span class="w">    </span><span class="n">Console</span><span class="p">.</span><span class="n">WriteLine</span><span class="p">(</span><span class="err">$</span><span class="s">@&quot;{{</span>
+<span class="s">    Ship     = {args.CmdShip    },</span>
+<span class="s">    New      = {args.CmdNew     },</span>
+<span class="s">    Name     = [{string.Join(&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;, args.ArgName)}],</span>
+<span class="w">    </span><span class="n">Move</span><span class="w">     </span><span class="p">=</span><span class="w"> </span><span class="p">{</span><span class="n">args</span><span class="p">.</span><span class="n">CmdMove</span><span class="w">    </span><span class="p">},</span><span class="w"></span>
+<span class="w">    </span><span class="n">X</span><span class="w">        </span><span class="p">=</span><span class="w"> </span><span class="p">{</span><span class="n">args</span><span class="p">.</span><span class="n">ArgX</span><span class="w">       </span><span class="p">},</span><span class="w"></span>
+<span class="w">    </span><span class="n">Y</span><span class="w">        </span><span class="p">=</span><span class="w"> </span><span class="p">{</span><span class="n">args</span><span class="p">.</span><span class="n">ArgY</span><span class="w">       </span><span class="p">},</span><span class="w"></span>
+<span class="w">    </span><span class="n">Speed</span><span class="w">    </span><span class="p">=</span><span class="w"> </span><span class="p">{</span><span class="n">args</span><span class="p">.</span><span class="n">OptSpeed</span><span class="w">   </span><span class="p">},</span><span class="w"></span>
+<span class="w">    </span><span class="n">Shoot</span><span class="w">    </span><span class="p">=</span><span class="w"> </span><span class="p">{</span><span class="n">args</span><span class="p">.</span><span class="n">CmdShoot</span><span class="w">   </span><span class="p">},</span><span class="w"></span>
+<span class="w">    </span><span class="n">Mine</span><span class="w">     </span><span class="p">=</span><span class="w"> </span><span class="p">{</span><span class="n">args</span><span class="p">.</span><span class="n">CmdMine</span><span class="w">    </span><span class="p">},</span><span class="w"></span>
+<span class="w">    </span><span class="n">Set</span><span class="w">      </span><span class="p">=</span><span class="w"> </span><span class="p">{</span><span class="n">args</span><span class="p">.</span><span class="n">CmdSet</span><span class="w">     </span><span class="p">},</span><span class="w"></span>
+<span class="w">    </span><span class="n">Remove</span><span class="w">   </span><span class="p">=</span><span class="w"> </span><span class="p">{</span><span class="n">args</span><span class="p">.</span><span class="n">CmdRemove</span><span class="w">  </span><span class="p">},</span><span class="w"></span>
+<span class="w">    </span><span class="n">Moored</span><span class="w">   </span><span class="p">=</span><span class="w"> </span><span class="p">{</span><span class="n">args</span><span class="p">.</span><span class="n">OptMoored</span><span class="w">  </span><span class="p">},</span><span class="w"></span>
+<span class="w">    </span><span class="n">Drifting</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="p">{</span><span class="n">args</span><span class="p">.</span><span class="n">OptDrifting</span><span class="p">},</span><span class="w"></span>
+<span class="w">    </span><span class="n">Help</span><span class="w">     </span><span class="p">=</span><span class="w"> </span><span class="p">{</span><span class="n">args</span><span class="p">.</span><span class="n">OptHelp</span><span class="w">    </span><span class="p">},</span><span class="w"></span>
+<span class="w">    </span><span class="n">Version</span><span class="w">  </span><span class="p">=</span><span class="w"> </span><span class="p">{</span><span class="n">args</span><span class="p">.</span><span class="n">OptVersion</span><span class="w"> </span><span class="p">},</span><span class="w"></span>
+<span class="p">}}</span><span class="s">&quot;);</span>
+
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="m">0</span><span class="p">;</span><span class="w"></span>
+<span class="p">}</span><span class="w"></span>
+
+<span class="k">return</span><span class="w"> </span><span class="n">Docopt</span><span class="p">.</span><span class="n">CreateParser</span><span class="p">()</span><span class="w"></span>
+<span class="w">             </span><span class="p">.</span><span class="n">WithVersion</span><span class="p">(</span><span class="s">&quot;Naval Fate 2.0&quot;</span><span class="p">)</span><span class="w"></span>
+<span class="w">             </span><span class="p">.</span><span class="n">Parse</span><span class="p">(</span><span class="n">args</span><span class="p">)</span><span class="w"></span>
+<span class="w">             </span><span class="p">.</span><span class="n">Match</span><span class="p">(</span><span class="n">Main</span><span class="p">,</span><span class="w"></span>
+<span class="w">                    </span><span class="n">result</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="n">ShowHelp</span><span class="p">(</span><span class="n">result</span><span class="p">.</span><span class="n">Help</span><span class="p">),</span><span class="w"></span>
+<span class="w">                    </span><span class="n">result</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="n">ShowVersion</span><span class="p">(</span><span class="n">result</span><span class="p">.</span><span class="n">Version</span><span class="p">),</span><span class="w"></span>
+<span class="w">                    </span><span class="n">result</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="n">OnError</span><span class="p">(</span><span class="n">result</span><span class="p">.</span><span class="n">Usage</span><span class="p">));</span><span class="w"></span>
+</code></pre></div>
 <h2 id="older-api">Older API</h2>
 <div class="admonition warning">
 <p class="admonition-title">Warning</p>
