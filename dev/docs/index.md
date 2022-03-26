@@ -341,7 +341,181 @@ at run-time, conversion to `Object` as well as support for explicit casts to
 
 ### Source Generator
 
-Coming soon&hellip;
+**docopt.net** also comes with a [C# source generator] starting with version
+0.8.0. The source generator generates a strong-typed class for the program
+arguments given its help message. There are two ways to invoke the source
+generator, by putting the help message either in an extenal text file or
+directly in a string constant.
+
+Maintaining the help text in an external file might be simpler for some
+projects. The source generator is called by the C# compiler as part of the build
+process. The source generator will look for any file that is part of the project
+and whose name ends in `.docopt.txt` and use its content as the help message
+source. It will then generate a C# class representing the command, arguments and
+options found in the usage section of the help message.
+
+Suppose a C# project contains a text file called `Program.docopt.txt` with the
+following content:
+
+    Naval Fate.
+
+    Usage:
+      naval_fate.exe ship new <name>...
+      naval_fate.exe ship <name> move <x> <y> [--speed=<kn>]
+      naval_fate.exe ship shoot <x> <y>
+      naval_fate.exe mine (set|remove) <x> <y> [--moored | --drifting]
+      naval_fate.exe (-h | --help)
+      naval_fate.exe --version
+
+    Options:
+      -h --help     Show this screen.
+      --version     Show version.
+      --speed=<kn>  Speed in knots [default: 10].
+      --moored      Moored (anchored) mine.
+      --drifting    Drifting mine.
+
+The source generator will then generate a class that looks something like the
+following:
+
+```c#
+partial class ProgramArguments : IEnumerable<KeyValuePair<string, object?>>
+{
+    public const string Help = @"Naval Fate.
+
+    Usage:
+      naval_fate.exe ship new <name>...
+      naval_fate.exe ship <name> move <x> <y> [--speed=<kn>]
+      naval_fate.exe ship shoot <x> <y>
+      naval_fate.exe mine (set|remove) <x> <y> [--moored | --drifting]
+      naval_fate.exe (-h | --help)
+      naval_fate.exe --version
+
+    Options:
+      -h --help     Show this screen.
+      --version     Show version.
+      --speed=<kn>  Speed in knots [default: 10].
+      --moored      Moored (anchored) mine.
+      --drifting    Drifting mine.
+";
+
+    public const string Usage = @"Usage:
+      naval_fate.exe ship new <name>...
+      naval_fate.exe ship <name> move <x> <y> [--speed=<kn>]
+      naval_fate.exe ship shoot <x> <y>
+      naval_fate.exe mine (set|remove) <x> <y> [--moored | --drifting]
+      naval_fate.exe (-h | --help)
+      naval_fate.exe --version";
+
+    public bool CmdShip { get; private set; }
+    public bool CmdNew { get; private set; }
+    public StringList ArgName { get; private set; } = StringList.Empty;
+    public bool CmdMove { get; private set; }
+    public string? ArgX { get; private set; }
+    public string? ArgY { get; private set; }
+    public string OptSpeed { get; private set; } = "10";
+    public bool CmdShoot { get; private set; }
+    public bool CmdMine { get; private set; }
+    public bool CmdSet { get; private set; }
+    public bool CmdRemove { get; private set; }
+    public bool OptMoored { get; private set; }
+    public bool OptDrifting { get; private set; }
+    public bool OptHelp { get; private set; }
+    public bool OptVersion { get; private set; }
+
+    public static IHelpFeaturingParser<ProgramArguments> CreateParser()
+    {
+        /* omitted for brevity */
+    }
+
+    IEnumerator<KeyValuePair<string, object?>> GetEnumerator()
+    {
+        /* omitted for brevity */
+    }
+
+    IEnumerator<KeyValuePair<string, object?>> IEnumerable<KeyValuePair<string, object?>>.GetEnumerator() => GetEnumerator();
+    IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
+}
+```
+
+The generated class will:
+
+- have the same name as the text file with the `.docopt.txt` suffix replaced
+  with `Arguments`, such that `Program.docopt.txt` will generate a class named
+  `ProgramArguments`.
+
+- be `partial` so you can continue to enhance through another part in a separate
+  C# source file.
+
+- sit in the project's namespace.
+
+- have a public string constant named `Help` that will contain the entire help
+  text from the source file as a verbatim string literal.
+
+- have a public string constant named `Usage` that will contain the usage
+  section of the help message.
+
+- have a public read-write property for each command, argument and option
+  defined in the usage where the property name will reflect the name of the
+  command, argument or option (after applying Pascal casing transformations) and
+  bear the prefix `Cmd` for a command, `Arg` for an argument or `Opt` for an
+  option. If two distinct options have only short names that differ in case,
+  as in `-m` and `-M` then the former will be named `OptM` and the latter
+  `OptUpperM`.
+
+- implement `IEnumerable<KeyValuePair<string, object?>>` so the arguments can
+  be iterated, for example, in a `foreach` loop.
+
+- have a public static method called `CreateParser` that takes no arguments and
+  returns a parser whose `Parse` method, when supplied the command-line
+  arguments, will return `IArgumentsResult<T>`; the `T` will be the generated
+  class.
+
+The generated class can then be used in the project as shown below:
+
+```c#
+// Program.cs
+
+using System;
+using NavalFate;
+
+static int ShowHelp(string help) { Console.WriteLine(help); return 0; }
+static int ShowVersion(string version) { Console.WriteLine(version); return 0; }
+static int OnError(string usage) { Console.WriteLine(usage); return 1; }
+
+static int Main(ProgramArguments args)
+{
+    foreach (var (name, value) in args)
+        Console.WriteLine($"{name} = {value}");
+
+    Console.WriteLine($@"{{
+    Ship     = {args.CmdShip    },
+    New      = {args.CmdNew     },
+    Name     = [{string.Join(", ", args.ArgName)}],
+    Move     = {args.CmdMove    },
+    X        = {args.ArgX       },
+    Y        = {args.ArgY       },
+    Speed    = {args.OptSpeed   },
+    Shoot    = {args.CmdShoot   },
+    Mine     = {args.CmdMine    },
+    Set      = {args.CmdSet     },
+    Remove   = {args.CmdRemove  },
+    Moored   = {args.OptMoored  },
+    Drifting = {args.OptDrifting},
+    Help     = {args.OptHelp    },
+    Version  = {args.OptVersion },
+}}");
+
+    return 0;
+}
+
+return Docopt.CreateParser()
+             .WithVersion("Naval Fate 2.0")
+             .Parse(args)
+             .Match(Main,
+                    result => ShowHelp(result.Help),
+                    result => ShowVersion(result.Version),
+                    result => OnError(result.Usage));
+```
 
 ## Older API
 
@@ -634,3 +808,4 @@ specify explicitly the version in your dependency tools, e.g.:
 [docopt.py]: https://github.com/docopt/docopt
 [older-api]: #older-api
 [help-format]: [#help-message-format]
+[C# source generator]: https://devblogs.microsoft.com/dotnet/introducing-c-source-generators/
