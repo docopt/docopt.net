@@ -773,8 +773,8 @@ the result of the <code>Parse</code> method:</p>
 </code></pre></div>
 <p>The version using <code>Match</code> provides stronger guarantees because the arity of the
 <code>Match</code> method will change depending on the requested options. For example, if
-the call to <code>WithVersion</code> is commented out, the code will fail to compile unless
-the second argument to <code>Match</code> is also removed or commented out:</p>
+the call to <code>WithVersion</code> is commented-out, the code will fail to compile unless
+the second argument to <code>Match</code> is also removed or commented-out:</p>
 <div class="highlight"><pre><span></span><code><span class="k">return</span><span class="w"> </span><span class="n">Docopt</span><span class="p">.</span><span class="n">CreateParser</span><span class="p">(</span><span class="n">help</span><span class="p">)</span><span class="w"></span>
 <span class="w">          </span><span class="c1">// .WithVersion(&quot;Naval Fate 2.0&quot;)</span>
 <span class="w">             </span><span class="p">.</span><span class="n">Parse</span><span class="p">(</span><span class="n">args</span><span class="p">)</span><span class="w"></span>
@@ -784,9 +784,8 @@ the second argument to <code>Match</code> is also removed or commented out:</p>
 <span class="w">                    </span><span class="n">result</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="n">OnError</span><span class="p">(</span><span class="n">result</span><span class="p">.</span><span class="n">Usage</span><span class="p">));</span><span class="w"></span>
 </code></pre></div>
 <p>In contrast, the version using the <code>switch</code> expression and pattern-matching will
-never produce a compile-time error but the <em>switch arm</em> that matches on
-<code>IVersionResult</code> will simply never occur at run-time. The <code>Match</code> method makes
-such changes obvious.</p>
+never produce a compile-time error but the <em>switch arm</em> for <code>IVersionResult</code>
+will simply never match at run-time..</p>
 <p>The <code>Docopt.CreateParser</code> method takes a single argument:</p>
 <ul>
 <li><code>doc</code> is a string that contains a <strong>help message</strong> that will be parsed to
@@ -821,27 +820,34 @@ command-line arguments:</p>
 <ul>
 <li><code>IArgumentsResult&lt;T&gt;</code>: the parsed arguments as <code>T</code> when command-line is valid
   per usage.</li>
+</ul>
+<ul>
 <li><code>IHelpResult</code>: the result when help is requested via <code>-h</code> or <code>--help</code>.</li>
+</ul>
+<ul>
 <li><code>IVersionResult</code>: the result when version is requested via <code>--version</code>.</li>
+</ul>
+<ul>
 <li><code>IInputErrorResult</code>: the input error result if the given command-line
   arguments do not match the usage.</li>
 </ul>
 <p><code>Docopt.CreateParser</code> returns a parser that by default assumes the program usage
 supports the <em>help</em> flags, <code>-h</code> or <code>--help</code>. It <em>greedily</em> parses these and
 returns <code>IHelpResult</code> if found. To disable this behaviour, call <code>DisableHelp()</code>
-on the parser, e.g.:</p>
+on the parser, as in:</p>
 <div class="highlight"><pre><span></span><code><span class="kt">var</span><span class="w"> </span><span class="n">parser</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">Docopt</span><span class="p">.</span><span class="n">CreateParser</span><span class="p">(</span><span class="n">help</span><span class="p">)</span><span class="w"></span>
 <span class="w">                   </span><span class="p">.</span><span class="n">DisableHelp</span><span class="p">();</span><span class="w"></span>
 <span class="kt">var</span><span class="w"> </span><span class="n">result</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="kt">var</span><span class="w"> </span><span class="n">parser</span><span class="p">.</span><span class="n">Parse</span><span class="p">(</span><span class="n">args</span><span class="p">);</span><span class="w"></span>
 </code></pre></div>
 <p>Doing so means that the parser's <code>Parse</code> method will never return <code>IHelpResult</code>
-and it is upto the program to handle these flags, for example as follows:</p>
+and it is therefore up to the program to handle these flags, for example, as
+follows:</p>
 <div class="highlight"><pre><span></span><code><span class="k">switch</span><span class="w"> </span><span class="p">(</span><span class="n">argsParser</span><span class="p">.</span><span class="n">Parse</span><span class="p">(</span><span class="n">args</span><span class="p">))</span><span class="w"></span>
 <span class="p">{</span><span class="w"></span>
 <span class="w">    </span><span class="k">case</span><span class="w"> </span><span class="n">IArgumentsResult</span><span class="p">&lt;</span><span class="n">IDictionary</span><span class="p">&lt;</span><span class="kt">string</span><span class="p">,</span><span class="w"> </span><span class="n">ArgValue</span><span class="p">&gt;&gt;</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">Arguments</span><span class="p">:</span><span class="w"> </span><span class="kt">var</span><span class="w"> </span><span class="n">arguments</span><span class="w"> </span><span class="p">}:</span><span class="w"></span>
 <span class="w">        </span><span class="k">foreach</span><span class="w"> </span><span class="p">(</span><span class="kt">var</span><span class="w"> </span><span class="p">(</span><span class="n">key</span><span class="p">,</span><span class="w"> </span><span class="k">value</span><span class="p">)</span><span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="n">arguments</span><span class="p">)</span><span class="w"></span>
 <span class="w">            </span><span class="n">Console</span><span class="p">.</span><span class="n">WriteLine</span><span class="p">(</span><span class="s">&quot;{0} = {1}&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">key</span><span class="p">,</span><span class="w"> </span><span class="k">value</span><span class="p">);</span><span class="w"></span>
-<span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">arguments</span><span class="p">[</span><span class="s">&quot;--help&quot;</span><span class="p">].</span><span class="n">IsBoolean</span><span class="p">)</span><span class="w"></span>
+<span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">arguments</span><span class="p">[</span><span class="s">&quot;--help&quot;</span><span class="p">].</span><span class="n">IsTrue</span><span class="p">)</span><span class="w"></span>
 <span class="w">            </span><span class="n">Console</span><span class="p">.</span><span class="n">WriteLine</span><span class="p">(</span><span class="n">help</span><span class="p">);</span><span class="w"></span>
 <span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="m">0</span><span class="p">;</span><span class="w"></span>
 <span class="w">    </span><span class="k">case</span><span class="w"> </span><span class="kt">var</span><span class="w"> </span><span class="n">result</span><span class="p">:</span><span class="w"></span>
@@ -863,6 +869,123 @@ parser and limits or expands further composition. Moreover, the result of the
 parser's <code>Parse</code> method has a <code>Match</code> method that can be supplied callback
 functions to handle each of the resulting types. The arity of the <code>Match</code> method
 adjusts depending on the composed features.</p>
+<p>If the parsed command-line arguments conform to the program usage then the
+<code>Parse</code> method returns an instance of <code>IArgumentsResult&lt;IDictionary&lt;string,
+ArgValue&gt;&gt;</code> whose <code>Arguments</code> property is a dictionary of name-value pairs (that
+is, <code>IDictionary&lt;string, ArgValue&gt;</code>). <code>ArgValue</code> is a discriminated union of the
+various kinds of values possible:</p>
+<ul>
+<li><code>None</code>: represents a missing or not applicable value for an argument
+  (<code>&lt;argument&gt;</code>) or an option expecting a value (<code>--option=VALUE</code>).</li>
+</ul>
+<ul>
+<li><code>Boolean</code>: represents a Boolean that is <code>true</code> when a command or an option
+  (<code>--option</code>) is present and <code>false</code> otherwise.</li>
+</ul>
+<ul>
+<li><code>Integer</code>: represents the number of times a command (<code>command...</code>) or option
+  (<code>--option...</code>) has been specified.</li>
+</ul>
+<ul>
+<li><code>String</code>: represents the value of a non-repeatable argument (<code>&lt;argument&gt;</code>) or
+  option that expects a value (<code>--option=VALUE</code>).</li>
+</ul>
+<ul>
+<li><code>StringList</code>: represent an immutable collection of <code>String</code> values for
+  repeatable arguments (<code>&lt;argument&gt;...</code>) and options (<code>--file=FILE...</code>).</li>
+</ul>
+<p>Given the following example usage:</p>
+<div class="highlight"><pre><span></span><code>Naval Fate.
+
+Usage:
+  naval_fate.exe ship new &lt;name&gt;...
+  naval_fate.exe ship &lt;name&gt; move &lt;x&gt; &lt;y&gt; [--speed=&lt;kn&gt;]
+  naval_fate.exe ship shoot &lt;x&gt; &lt;y&gt;
+  naval_fate.exe mine (set|remove) &lt;x&gt; &lt;y&gt; [--moored | --drifting]
+  naval_fate.exe (-h | --help)
+  naval_fate.exe --version
+
+Options:
+  -h --help     Show this screen.
+  --version     Show version.
+  --speed=&lt;kn&gt;  Speed in knots [default: 10].
+  --moored      Moored (anchored) mine.
+  --drifting    Drifting mine.
+</code></pre></div>
+<p>The resulting dictionary will contain the following keys and value kinds:</p>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Type</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>ship</code></td>
+<td><code>Boolean</code></td>
+</tr>
+<tr>
+<td><code>new</code></td>
+<td><code>Boolean</code></td>
+</tr>
+<tr>
+<td><code>&lt;name&gt;</code></td>
+<td><code>StringList</code></td>
+</tr>
+<tr>
+<td><code>move</code></td>
+<td><code>Boolean</code></td>
+</tr>
+<tr>
+<td><code>&lt;x&gt;</code></td>
+<td><code>String</code>/<code>None</code></td>
+</tr>
+<tr>
+<td><code>&lt;y&gt;</code></td>
+<td><code>String</code>/<code>None</code></td>
+</tr>
+<tr>
+<td><code>--speed</code></td>
+<td><code>String</code></td>
+</tr>
+<tr>
+<td><code>shoot</code></td>
+<td><code>Boolean</code></td>
+</tr>
+<tr>
+<td><code>mine</code></td>
+<td><code>Boolean</code></td>
+</tr>
+<tr>
+<td><code>set</code></td>
+<td><code>Boolean</code></td>
+</tr>
+<tr>
+<td><code>remove</code></td>
+<td><code>Boolean</code></td>
+</tr>
+<tr>
+<td><code>--moored</code></td>
+<td><code>Boolean</code></td>
+</tr>
+<tr>
+<td><code>--drifting</code></td>
+<td><code>Boolean</code></td>
+</tr>
+<tr>
+<td><code>--help</code></td>
+<td><code>Boolean</code></td>
+</tr>
+<tr>
+<td><code>--version</code></td>
+<td><code>Boolean</code></td>
+</tr>
+</tbody>
+</table>
+<p>The <code>ArgValue</code> type has several properties to interrogate the actual value kind
+at run-time, conversion to <code>Object</code> as well as support for explicit casts to
+<code>Boolean</code>, <code>Int32</code>, <code>String</code> and <code>StringList</code>.</p>
 <h3 id="source-generator">Source Generator</h3>
 <p>Coming soon&hellip;</p>
 <h2 id="older-api">Older API</h2>
