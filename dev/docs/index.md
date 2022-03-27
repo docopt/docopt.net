@@ -457,7 +457,7 @@ The generated class will:
 - have a public read-write property for each command, argument and option
   defined in the usage where the property name will reflect the name of the
   command, argument or option (after applying Pascal casing transformations) and
-  bear the prefix `Cmd` for a command, `Arg` for an argument or `Opt` for an
+  bear the prefix `Cmd` for a command, `Arg` for an argument and `Opt` for an
   option. If two distinct options have only short names that differ in case,
   as in `-m` and `-M` then the former will be named `OptM` and the latter
   `OptUpperM`.
