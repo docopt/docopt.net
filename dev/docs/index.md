@@ -460,7 +460,8 @@ The generated class will:
   bear the prefix `Cmd` for a command, `Arg` for an argument and `Opt` for an
   option. If two distinct options have only short names that differ in case,
   as in `-m` and `-M` then the former will be named `OptM` and the latter
-  `OptUpperM`.
+  `OptUpperM`. The type of the property will be either `Boolean`/`bool`,
+  `Int32`/`int`, `String` or `StringList`.
 
 - implement `IEnumerable<KeyValuePair<string, object?>>` so the arguments can
   be iterated, for example, in a `foreach` loop.
