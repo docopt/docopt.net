@@ -342,17 +342,25 @@ at run-time, conversion to `Object` as well as support for explicit casts to
 ### Source Generator
 
 **docopt.net** also comes with a [C# source generator] starting with version
-0.8.0. The source generator generates a strong-typed class for the program
-arguments given its help message. There are two ways to invoke the source
-generator, by putting the help message either in an extenal text file or
-directly in a string constant.
+0.8.0. The source generator is called by the C# compiler as part of the build
+process. It generates a strong-typed class for the program arguments given its
+help message in one of two ways:
 
-Maintaining the help text in an external file might be simpler for some
-projects. The source generator is called by the C# compiler as part of the build
-process. The source generator will look for any file that is part of the project
-and whose name ends in `.docopt.txt` and use its content as the help message
-source. It will then generate a C# class representing the command, arguments and
-options found in the usage section of the help message.
+- in an extenal text file.
+- directly inlined in a C# source file as a string constant.
+
+If the help text is large, it might be best maintained in a separate text file.
+If the program usage is very trivial with, for example, just options and
+arguments, it might be simplest to embed it directly into a string constant and
+have fewer files to maintain for a project. Both approaches are discussed in
+their respective sections next.
+
+#### Help in a External File
+
+The source generator will look for any file that is part of the project and
+whose name ends in `.docopt.txt` and use its content as the help message source.
+It will then generate a C# class representing the command, arguments and options
+found in the usage section of the help message.
 
 Suppose a C# project contains a text file called `Program.docopt.txt` with the
 following content:
@@ -516,6 +524,60 @@ return Docopt.CreateParser()
                     result => ShowHelp(result.Help),
                     result => ShowVersion(result.Version),
                     result => OnError(result.Usage));
+```
+
+#### Help in a String Constant
+
+Much of what has been discussed in the [previous section][ext-help] also applies
+to this as far as the generated code goes. The difference is in how the source
+generator locates the string constant containing. When the C# compiler builds
+the project, the source generator will look for any _partial class_ decorated
+with the `[DocoptArguments]` attribute and has a string constant named `Help`:
+
+```c#
+using DocoptNet;
+
+[DocoptArguments]
+partial class ProgramArguments
+{
+    const string Help = @"Naval Fate.
+
+    Usage:
+      naval_fate.exe ship new <name>...
+      naval_fate.exe ship <name> move <x> <y> [--speed=<kn>]
+      naval_fate.exe ship shoot <x> <y>
+      naval_fate.exe mine (set|remove) <x> <y> [--moored | --drifting]
+      naval_fate.exe (-h | --help)
+      naval_fate.exe --version
+
+    Options:
+      -h --help     Show this screen.
+      --version     Show version.
+      --speed=<kn>  Speed in knots [default: 10].
+      --moored      Moored (anchored) mine.
+      --drifting    Drifting mine.
+";
+}
+```
+
+The source generator will then generate another part to the class definition
+with the methods and properties discussed in the [previous section][ext-help].
+
+The help string constant can have any access modifier. It does not have to be
+public.
+
+If is possible to give the string constant containing the help message or text
+another name than `Help` by supplying the alternate name via the `HelpConstName`
+property of the `[DocoptArguments]` attribute:
+
+```c#
+using DocoptNet;
+
+[DocoptArguments(HelpConstName = nameof(HelpText))]
+partial class ProgramArguments
+{
+    const string HelpText = @"...";
+}
 ```
 
 ## Older API
@@ -810,3 +872,4 @@ specify explicitly the version in your dependency tools, e.g.:
 [older-api]: #older-api
 [help-format]: [#help-message-format]
 [C# source generator]: https://devblogs.microsoft.com/dotnet/introducing-c-source-generators/
+[ext-help]: #help-in-a-external-file
