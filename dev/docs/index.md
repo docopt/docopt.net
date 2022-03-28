@@ -11,14 +11,14 @@ hide:
   [nupkg]: https://www.nuget.org/packages/docopt.net/
 
 Isn't it awesome how [CommandLineParser] and [PowerArgs] generate help messages
-based on your code?!
+based on your code?
 
   [CommandLineParser]: https://nuget.org/packages/CommandLineParser/
   [PowerArgs]: https://nuget.org/packages/PowerArgs/
 
-*Hell no!* You know what's awesome? It's when the option parser *is* generated
+You know what's even more awesome? It's when the option parser *is* generated
 based on the beautiful help message that you write yourself! This way you don't
-need to write this stupid repeatable parser-code, and instead can write only the
+need to write this boilerplate parser-code, and instead can write only the
 help message--*the way you want it*.
 
 **docopt.net** helps you create most beautiful command-line interfaces *easily*:
