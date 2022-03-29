@@ -16,7 +16,6 @@
     <SignAssembly>true</SignAssembly>
     <PublicSign Condition=" '$(OS)' != 'Windows_NT' ">true</PublicSign>
     <IsPackable>true</IsPackable>
-    <Copyright>Copyright (c) 2013 Dinh Doan Van Bien, dinh@doanvanbien.com</Copyright>
     <NetStandardImplicitPackageVersion>2.0.3</NetStandardImplicitPackageVersion>
     <PackageId>docopt.net</PackageId>
     <PackageLicenseUrl>https://github.com/docopt/docopt.net/blob/master/LICENSE-MIT</PackageLicenseUrl>
@@ -31,7 +30,12 @@
             var arguments = new Docopt().Apply("Usage: prog [-a] [-b] FILE", args);
             if (arguments["-a"].IsTrue) {{ ... }}
     </Description>
-    <Copyright>Copyright (c) 2012-2014 Vladimir Keleshev, Dinh Doan Van Bien</Copyright>
+    <Copyright>Copyright (C) 2012-2014 Vladimir Keleshev.
+Copyright (C) 2013 Dinh Doan Van Bien.
+Copyright (C) 2021 Atif Aziz.
+Portions Copyright (C) .NET Foundation and Contributors.
+Portions Copyright (C) West Wind Technologies, 2008.
+    </Copyright>
     <PackageTags>parser;command line argument;option library;syntax;shell;beautiful;posix;python;console;command-line;docopt</PackageTags>
   </PropertyGroup>
 

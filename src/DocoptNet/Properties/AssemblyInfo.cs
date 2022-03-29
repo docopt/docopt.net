@@ -1,3 +1,6 @@
+// Licensed under terms of MIT license (see LICENSE-MIT)
+// Copyright 2012 Vladimir Keleshev, 2013 Dinh Doan Van Bien, 2021 Atif Aziz
+
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 

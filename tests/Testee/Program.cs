@@ -1,3 +1,6 @@
+// Licensed under terms of MIT license (see LICENSE-MIT)
+// Copyright 2013 Dinh Doan Van Bien, 2021 Atif Aziz
+
 namespace Testee
 {
     using System;
