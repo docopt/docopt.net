@@ -1,0 +1,16 @@
+{
+  "$schema": "http://json.schemastore.org/template",
+  "author": "Atif Aziz",
+  "classifications": [
+    "Common",
+    "Console"
+  ],
+  "identity": "DocoptNet.Templates.Console",
+  "name": "Console App (docopt.net)",
+  "shortName": "docopt-console",
+  "tags": {
+    "language": "C#",
+    "type": "project"
+  },
+  "sourceName": "DocoptNet.Console"
+}
