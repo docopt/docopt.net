@@ -128,7 +128,7 @@ Options:
 
 static int ShowHelp(string help) { Console.WriteLine(help); return 0; }
 static int ShowVersion(string version) { Console.WriteLine(version); return 0; }
-static int OnError(string usage) { Console.WriteLine(usage); return 1; }
+static int OnError(string usage) { Console.Error.WriteLine(usage); return 1; }
 
 static int Run(IDictionary<string, ArgValue> arguments)
 {
