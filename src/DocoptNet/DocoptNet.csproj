@@ -24,7 +24,7 @@
     <PackageOutputPath>..\..\dist</PackageOutputPath>
     <PackageReleaseNotes Condition="'$(PackageReleaseNotes)' == '' And '$(PackageReleaseNotesFile)' != ''">$([System.IO.File]::ReadAllText('$(PackageReleaseNotesFile)'))</PackageReleaseNotes>
     <Title>docopt.net, a beautiful command-line parser</Title>
-    <Authors>Dinh Doan Van Bien;Vladimir Keleshev</Authors>
+    <Authors>Dinh Doan Van Bien;Vladimir Keleshev;Atif Aziz</Authors>
     <Description>docopt.net is the .net version of the docopt python beautiful command line parser.  docopt.net helps you define an interface for your command-line app, and automatically generate a parser for it. docopt.net is based on conventions that have been used for decades in help messages and man pages for program interface description.  Interface description in docopt.net is such a help message, but formalized. Check out http://docopt.org for a more detailed explanation.
         Quick example:
             var arguments = new Docopt().Apply("Usage: prog [-a] [-b] FILE", args);
