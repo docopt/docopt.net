@@ -1,7 +1,10 @@
 # MIT License
 
-Copyright &copy; 2012 Vladimir Keleshev (<vladimir@keleshev.com>), Dinh Doan
-Van Bien (<dinh@doanvanbien.com>)
+- &copy; 2012-2014 Vladimir Keleshev <vladimir@keleshev.com>
+- &copy; 2013 Dinh Doan Van Bien <dinh@doanvanbien.com>
+- &copy; 2021 Atif Aziz
+- Portions &copy; .NET Foundation and Contributors
+- Portions &copy; West Wind Technologies, 2008
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
