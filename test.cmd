@@ -1,7 +1,7 @@
 @echo off
 setlocal
 pushd "%~dp0"
-dotnet pack
+if not defined CI dotnet pack
 dotnet new --install src\ConsoleApp || goto :finally
 dotnet new docopt-console -o tmp -n MyConsoleApp || goto :finally
 dotnet run --project tmp -- --help || goto :finally
