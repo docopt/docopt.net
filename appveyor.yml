@@ -1,0 +1,29 @@
+version: '{build}'
+image:
+  - Visual Studio 2022
+skip_commits:
+  files:
+    - '*.md'
+    - '*.txt'
+    - '.git*'
+configuration: Release
+install:
+- cmd: curl -OsSL https://dot.net/v1/dotnet-install.ps1
+- ps: |
+    if ($isWindows) {
+      ./dotnet-install.ps1 -JsonFile global.json
+    }
+- sh: |
+    curl -OsSL https://dot.net/v1/dotnet-install.sh
+    chmod +x dotnet-install.sh
+    ./dotnet-install.sh --jsonfile global.json
+    export PATH="$HOME/.dotnet:$PATH"
+before_build:
+- dotnet --info
+build_script:
+- dotnet pack
+test_script:
+- cmd: call test.cmd
+artifacts:
+- path: 'dist\*.nupkg'
+  name: NuGet
