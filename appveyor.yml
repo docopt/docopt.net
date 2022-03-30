@@ -21,7 +21,7 @@ install:
 before_build:
 - dotnet --info
 build_script:
-- dotnet pack
+- ps: dotnet pack "-p:RepositoryCommit=$(git rev-parse HEAD)"
 test_script:
 - cmd: call test.cmd
 artifacts:
