@@ -1,4 +1,4 @@
-using DocoptNet;
+using DocoptNet.ConsoleApp;
 
 return ProgramArguments.CreateParser()
                        .WithVersion(ThisAssembly.Info.Version)
@@ -38,26 +38,4 @@ static int Print(TextWriter writer, string message, int exitCode = 0)
 {
     writer.WriteLine(message);
     return exitCode;
-}
-
-[DocoptArguments]
-partial class ProgramArguments
-{
-    const string Help = @"Naval Fate.
-
-Usage:
-    $ ship new <name>...
-    $ ship <name> move <x> <y> [--speed=<kn>]
-    $ ship shoot <x> <y>
-    $ mine (set|remove) <x> <y> [--moored | --drifting]
-    $ (-h | --help)
-    $ --version
-
-Options:
-    -h --help     Show this screen.
-    --version     Show version.
-    --speed=<kn>  Speed in knots [default: 10].
-    --moored      Moored (anchored) mine.
-    --drifting    Drifting mine.
-";
 }
