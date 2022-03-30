@@ -21,4 +21,8 @@
     <Compile Remove="**\*" />
   </ItemGroup>
 
+  <Target Name="CleanTempDirs" AfterTargets="Pack">
+    <RemoveDir Directories="bin;obj" />
+  </Target>
+
 </Project>
