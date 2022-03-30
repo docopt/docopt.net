@@ -6,7 +6,7 @@ return ProgramArguments.CreateParser()
                        .Match(Main,
                               result => Print(Console.Out, FormatHelp(result.Help)),
                               result => Print(Console.Out, result.Version),
-                              result => Print(Console.Error, FormatHelp(result.Usage), 1));
+                              result => Print(Console.Error, FormatHelp(result.Usage), exitCode: 1));
 
 static int Main(ProgramArguments args)
 {
