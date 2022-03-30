@@ -349,6 +349,13 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#usage" class="md-nav__link">
+    Usage
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#api" class="md-nav__link">
     API
   </a>
@@ -576,6 +583,13 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#usage" class="md-nav__link">
+    Usage
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#api" class="md-nav__link">
     API
   </a>
@@ -729,6 +743,23 @@ pattern-matched based on the actual/expected value type.</p>
 <p>To use <strong>docopt.net</strong> to your project, add the package using:</p>
 <div class="highlight"><pre><span></span><code>dotnet add package docopt.net
 </code></pre></div>
+<h2 id="usage">Usage</h2>
+<p>There are templates available for use with <code>dotnet new</code> that can be installed
+with the following command:</p>
+<div class="highlight"><pre><span></span><code>dotnet new --install docopt.net.templates::0.1.0
+</code></pre></div>
+<p>To create a new console application that uses <strong>docopt.net</strong>, run the
+following command in a new and empty directory:</p>
+<div class="highlight"><pre><span></span><code>dotnet new docopt-console
+</code></pre></div>
+<p>then run the new console project with <code>dotnet run</code>. For example:</p>
+<div class="highlight"><pre><span></span><code>mkdir MyConsoleApp
+cd MyConsoleApp
+dotnet new docopt-console
+dotnet run -- --help
+</code></pre></div>
+<p>The console application will use the new <a href="#api">API</a> and <a href="#source-generator">source generator</a>
+with the <a href="#help-in-a-external-file">help in an external file</a> called <code>Program.docopt.txt</code>.</p>
 <h2 id="api">API</h2>
 <p>There are three ways to work with <strong>docopt.net</strong>:</p>
 <ol>
