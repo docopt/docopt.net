@@ -15,7 +15,7 @@ To uninstall, run:
 
 ## Usage
 
-Once installed, a new console application can be created the following
+Once installed, a new console application can be created using the following
 command:
 
     dotnet new docopt-console -o ConsoleApp
