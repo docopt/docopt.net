@@ -870,6 +870,6 @@ specify explicitly the version in your dependency tools, e.g.:
 [docopt]: http://docopt.org/
 [docopt.py]: https://github.com/docopt/docopt
 [older-api]: #older-api
-[help-format]: [#help-message-format]
+[help-format]: #help-message-format
 [C# source generator]: https://devblogs.microsoft.com/dotnet/introducing-c-source-generators/
 [ext-help]: #help-in-a-external-file
