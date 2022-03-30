@@ -76,6 +76,30 @@ To use **docopt.net** to your project, add the package using:
 
     dotnet add package docopt.net
 
+## Usage
+
+There are templates available for use with `dotnet new` that can be installed
+with the following command:
+
+    dotnet new --install docopt.net.templates::0.1.0
+
+To create a new console application that uses **docopt.net**, run the
+following command in a new and empty directory:
+
+    dotnet new docopt-console
+
+then run the new console project with `dotnet run`. For example:
+
+    mkdir MyConsoleApp
+    cd MyConsoleApp
+    dotnet new docopt-console
+    dotnet run -- --help
+
+The console application will use the new [API](#api) and [source generator]
+with the [help in an external file] called `Program.docopt.txt`.
+
+[help in an external file]: #help-in-a-external-file
+
 ## API
 
 There are three ways to work with **docopt.net**:
@@ -873,3 +897,4 @@ specify explicitly the version in your dependency tools, e.g.:
 [help-format]: #help-message-format
 [C# source generator]: https://devblogs.microsoft.com/dotnet/introducing-c-source-generators/
 [ext-help]: #help-in-a-external-file
+[source generator]: #source-generator
