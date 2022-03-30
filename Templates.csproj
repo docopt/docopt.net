@@ -8,11 +8,15 @@
     <Authors>Atif Aziz</Authors>
     <Description>Templates for creating console applications with command-line parsing support using docopt.net.</Description>
     <PackageTags>dotnet-new;templates;docopt;console;cli;args;argv</PackageTags>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageProjectUrl>https://docopt.github.io/docopt.net/</PackageProjectUrl>
+    <PackageOutputPath>dist</PackageOutputPath>
+    <RepositoryType>git</RepositoryType>
+    <RepositoryUrl>https://github.com/docopt/docopt.net.git</RepositoryUrl>
     <TargetFramework>netstandard2.0</TargetFramework>
     <IncludeContentInPack>true</IncludeContentInPack>
     <IncludeBuildOutput>false</IncludeBuildOutput>
     <ContentTargetFolders>content</ContentTargetFolders>
-    <PackageOutputPath>dist</PackageOutputPath>
     <NoWarn>$(NoWarn);NU5128</NoWarn>    
   </PropertyGroup>
 
