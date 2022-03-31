@@ -54,6 +54,7 @@ extra_javascript:
 
 nav:
   - index.md
+  - Try Online: "/docopt.net/try/"
   - 'Contributing':
     - documentation.md
   - About:
