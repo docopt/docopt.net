@@ -1,0 +1,156 @@
+@import url('open-iconic/font/css/open-iconic-bootstrap.min.css');
+
+html, body {
+    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;    
+}
+
+body {
+    overflow: hidden;
+}
+
+a, .btn-link {
+    color: #0366d6;
+}
+
+.btn-primary {
+    color: #fff;
+    background-color: #1b6ec2;
+    border-color: #1861ac;
+}
+
+.content {
+    padding-top: 1.1rem;
+}
+
+.valid.modified:not([type=checkbox]) {
+    outline: 1px solid #26b050;
+}
+
+.invalid {
+    outline: 1px solid red;
+}
+
+.validation-message {
+    color: red;
+}
+
+#blazor-error-ui {
+    background: lightyellow;
+    bottom: 0;
+    box-shadow: 0 -1px 2px rgba(0, 0, 0, 0.2);
+    display: none;
+    left: 0;
+    padding: 0.6rem 1.25rem 0.7rem 1.25rem;
+    position: fixed;
+    width: 100%;
+    z-index: 1000;
+}
+
+#blazor-error-ui .dismiss {
+    cursor: pointer;
+    position: absolute;
+    right: 0.75rem;
+    top: 0.5rem;
+}
+
+html, body {
+    background-color: #21222c;
+    height: 100%;
+    margin: 0;
+    padding: 0;
+}
+
+#app {
+    display: grid;
+    grid-template-rows: 2em 5em auto;
+    height: 100%;
+}
+
+#stats {
+    background-color: bisque;
+    padding: 0.2em 1em;
+    display: flex;
+}
+
+#stats > * {
+    display: block;
+    flex: 1;
+}
+
+#optionsFirst {
+    text-align: right;
+}
+
+#about {
+    text-align: center;
+}
+
+#argv-pane {
+    display: flex;
+}
+
+tt, code {
+    font-family: 'Lucida Console', Monaco, 'Courier New', Courier, monospace;
+    font-size: 1em;
+}
+
+#argv, #doc, #etc {
+    font-family: 'Lucida Console', Monaco, 'Courier New', Courier, monospace;
+    padding: 0.5em;
+    background-color: #282a36;
+    color: #f8f8f2;
+}
+
+#argv {
+    flex: 1;
+    margin: 10px;
+    border: 1px solid #44475a;
+}
+
+#args {
+    color: #bd93f9;
+}
+
+#args code {
+    white-space: nowrap;
+    color: #8be9fd;
+}
+
+#args th {
+    color: #8be9fd;
+}
+
+#args th {
+    color: #ffb86c;
+}
+
+#result-pane {
+    display: grid;
+    grid-template-columns: 1.5fr 1fr 1fr;
+    color: #f8f8f2;
+}
+
+#result-pane > * {
+    margin: 0 10px 0 0;
+}
+
+#result-pane > :not(#doc) {
+    background-color: #282a36;
+}
+
+#result-pane textarea {
+    border: none;
+}
+
+#result-pane > :last-child {
+    margin-right: 0;
+}
+
+#result-pane
+{
+    overflow-y: scroll;
+}
+
+#etc.syntax-error {
+    color: #ff5555;
+}
