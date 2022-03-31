@@ -18,6 +18,24 @@ jobs:
           pip install mkdocs-material
           pip install mdx_truly_sane_lists
       - run: ./build.sh
+      - name: Checkout master
+        uses: actions/checkout@v3
+        with:
+          ref: master
+          path: main
+      - name: Setup dotnet
+        uses: actions/setup-dotnet@v1
+        with:
+          dotnet-version: 6.0.x
+      - name: Build Blazor application
+        shell: pwsh
+        run: |
+          dotnet publish -c Release -o try main/src/DocoptNet.Playground
+          $indexPath = 'try/wwwroot/index.html'
+          $index = Get-Content -Raw $indexPath
+          $index = $index -replace '(?<=\bbase href=")/(?=")', '/docopt.net/try/'
+          Set-Content $indexPath $index -NoNewLine
+          Move-Item try/wwwroot site/try
       - name: Deploy
         uses: peaceiris/actions-gh-pages@v3
         with:
