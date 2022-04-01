@@ -1259,13 +1259,13 @@ following:</p>
 <span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="m">0</span><span class="p">;</span><span class="w"></span>
 <span class="p">}</span><span class="w"></span>
 
-<span class="k">return</span><span class="w"> </span><span class="n">Docopt</span><span class="p">.</span><span class="n">CreateParser</span><span class="p">()</span><span class="w"></span>
-<span class="w">             </span><span class="p">.</span><span class="n">WithVersion</span><span class="p">(</span><span class="s">&quot;Naval Fate 2.0&quot;</span><span class="p">)</span><span class="w"></span>
-<span class="w">             </span><span class="p">.</span><span class="n">Parse</span><span class="p">(</span><span class="n">args</span><span class="p">)</span><span class="w"></span>
-<span class="w">             </span><span class="p">.</span><span class="n">Match</span><span class="p">(</span><span class="n">Main</span><span class="p">,</span><span class="w"></span>
-<span class="w">                    </span><span class="n">result</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="n">ShowHelp</span><span class="p">(</span><span class="n">result</span><span class="p">.</span><span class="n">Help</span><span class="p">),</span><span class="w"></span>
-<span class="w">                    </span><span class="n">result</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="n">ShowVersion</span><span class="p">(</span><span class="n">result</span><span class="p">.</span><span class="n">Version</span><span class="p">),</span><span class="w"></span>
-<span class="w">                    </span><span class="n">result</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="n">OnError</span><span class="p">(</span><span class="n">result</span><span class="p">.</span><span class="n">Usage</span><span class="p">));</span><span class="w"></span>
+<span class="k">return</span><span class="w"> </span><span class="n">ProgramArguments</span><span class="p">.</span><span class="n">CreateParser</span><span class="p">()</span><span class="w"></span>
+<span class="w">                       </span><span class="p">.</span><span class="n">WithVersion</span><span class="p">(</span><span class="s">&quot;Naval Fate 2.0&quot;</span><span class="p">)</span><span class="w"></span>
+<span class="w">                       </span><span class="p">.</span><span class="n">Parse</span><span class="p">(</span><span class="n">args</span><span class="p">)</span><span class="w"></span>
+<span class="w">                       </span><span class="p">.</span><span class="n">Match</span><span class="p">(</span><span class="n">Main</span><span class="p">,</span><span class="w"></span>
+<span class="w">                              </span><span class="n">result</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="n">ShowHelp</span><span class="p">(</span><span class="n">result</span><span class="p">.</span><span class="n">Help</span><span class="p">),</span><span class="w"></span>
+<span class="w">                              </span><span class="n">result</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="n">ShowVersion</span><span class="p">(</span><span class="n">result</span><span class="p">.</span><span class="n">Version</span><span class="p">),</span><span class="w"></span>
+<span class="w">                              </span><span class="n">result</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="n">OnError</span><span class="p">(</span><span class="n">result</span><span class="p">.</span><span class="n">Usage</span><span class="p">));</span><span class="w"></span>
 </code></pre></div>
 <h4 id="help-in-a-string-constant">Help in a String Constant</h4>
 <p>Much of what has been discussed in the <a href="#help-in-a-external-file">previous section</a> also applies
