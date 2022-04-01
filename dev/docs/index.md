@@ -541,13 +541,13 @@ static int Main(ProgramArguments args)
     return 0;
 }
 
-return Docopt.CreateParser()
-             .WithVersion("Naval Fate 2.0")
-             .Parse(args)
-             .Match(Main,
-                    result => ShowHelp(result.Help),
-                    result => ShowVersion(result.Version),
-                    result => OnError(result.Usage));
+return ProgramArguments.CreateParser()
+                       .WithVersion("Naval Fate 2.0")
+                       .Parse(args)
+                       .Match(Main,
+                              result => ShowHelp(result.Help),
+                              result => ShowVersion(result.Version),
+                              result => OnError(result.Usage));
 ```
 
 #### Help in a String Constant
