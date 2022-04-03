@@ -142,6 +142,23 @@ Naval Fate.
             });
         }
 
+        [Test]
+        public void Generate_with_nested_namespace()
+        {
+            AssertMatchesSnapshot(new[]
+            {
+                ("Program.cs", SourceText.From(@"
+                    namespace Outer
+                    {
+                        namespace Inner
+                        {
+                            [DocoptNet.DocoptArguments]
+                            partial class Arguments { const string Help = @""Usage: program""; }
+                        }
+                    }"))
+            });
+        }
+
         void AssertMatchesSnapshot((string Path, SourceText Text)[] sources,
                                    [CallerMemberName]string? callerName = null)
         {
