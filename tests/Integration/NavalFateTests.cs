@@ -165,4 +165,19 @@ namespace DocoptNet.Tests.Integration
                 base(Integration.InlineNavalFateArguments.CreateParser()) { }
         }
     }
+
+    public static partial class NavalFateProgram
+    {
+        [DocoptArguments]
+        public sealed partial class Arguments : INavalFateArguments
+        {
+            const string Help = InlineNavalFateArguments.Help;
+        }
+    }
+
+    public class NestedNavalFateTests : NavalFateTestsBase<NavalFateProgram.Arguments>
+    {
+        public NestedNavalFateTests() :
+            base(NavalFateProgram.Arguments.CreateParser()) { }
+    }
 }
