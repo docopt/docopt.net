@@ -8,7 +8,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="docopt.net" Version="0.8.0" />
+    <PackageReference Include="docopt.net" Version="0.8.1" />
     <PackageReference Include="ThisAssembly.AssemblyInfo" Version="1.0.9" />
   </ItemGroup>
 
