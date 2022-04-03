@@ -160,6 +160,14 @@ Naval Fate.
             var testPath = Path.Combine(nameof(SourceGeneratorTests), callerName!);
             var actualSourcesPath = Path.Combine(TestContext.CurrentContext.WorkDirectory, testPath);
 
+            try
+            {
+                Directory.Delete(actualSourcesPath, true);
+            }
+            catch (DirectoryNotFoundException)
+            {
+                // ignore
+            }
             Directory.CreateDirectory(actualSourcesPath);
 
             // If there were diagnostics emitted then write a file with a
