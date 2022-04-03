@@ -109,13 +109,19 @@ namespace DocoptNet.CodeGeneration
             var syntaxReceiver = (SyntaxReceiver)(context.SyntaxContextReceiver ?? throw new NullReferenceException());
 
             SemanticModel? model = null;
+            SyntaxTree? modelSyntaxTree = null;
 
             var docoptTypes = new List<(string? Namespace, string Name, DocoptArgumentsAttribute? ArgumentsAttribute,
                                         SourceText Help, GenerationOptions Options)>();
 
             foreach (var (cds, attributeData) in syntaxReceiver.ClassAttributes)
             {
-                model ??= context.Compilation.GetSemanticModel(cds.SyntaxTree);
+                if (model is null || modelSyntaxTree != cds.SyntaxTree)
+                {
+                    model = context.Compilation.GetSemanticModel(cds.SyntaxTree);
+                    modelSyntaxTree = cds.SyntaxTree;
+                }
+
                 var symbol = model.GetDeclaredSymbol(cds) as INamedTypeSymbol;
                 if (symbol is null)
                     continue;
