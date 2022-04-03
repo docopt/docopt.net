@@ -159,6 +159,39 @@ Naval Fate.
             });
         }
 
+        [Test]
+        public void Generate_with_classes_from_different_namespaces_share_the_same_name()
+        {
+            AssertMatchesSnapshot(new[]
+            {
+                ("Program.cs", SourceText.From(@"
+                    [DocoptNet.DocoptArguments]
+                    sealed partial class ProgramArguments
+                    {
+                        const string Help = ""Usage: program"";
+                    }
+
+                    namespace Namespace1
+                    {
+                        [DocoptNet.DocoptArguments]
+                        sealed partial class ProgramArguments
+                        {
+                            const string Help = ""Usage: program"";
+                        }
+                    }
+
+                    namespace Namespace2
+                    {
+                        [DocoptNet.DocoptArguments]
+                        sealed partial class ProgramArguments
+                        {
+                            const string Help = ""Usage: program"";
+                        }
+                    }
+                    "))
+            });
+        }
+
         void AssertMatchesSnapshot((string Path, SourceText Text)[] sources,
                                    [CallerMemberName]string? callerName = null)
         {

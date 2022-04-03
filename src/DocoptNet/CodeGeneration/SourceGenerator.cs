@@ -161,7 +161,7 @@ namespace DocoptNet.CodeGeneration
                 try
                 {
                     if (Generate(ns, name, attribute?.HelpConstName, help, options) is { Length: > 0 } source)
-                        context.AddSource(name + ".cs", source);
+                        context.AddSource((ns is { } someNamespace ? someNamespace + "." + name : name) + ".cs", source);
                 }
                 catch (DocoptLanguageErrorException e)
                 {
