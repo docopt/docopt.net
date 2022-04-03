@@ -82,6 +82,16 @@ namespace DocoptNet.CodeGeneration
         public CSharpSourceBuilder this[char code] { get { Append(code); return this; } }
         public CSharpSourceBuilder this[CSharpSourceBuilder code] { get { AssertSame(code); return this; } }
 
+        public CSharpSourceBuilder this[IEnumerable<CSharpSourceBuilder> codes]
+        {
+            get
+            {
+                foreach (var code in codes)
+                    _ = this[code];
+                return this;
+            }
+        }
+
         public CSharpSourceBuilder Blank() => this;
         public CSharpSourceBuilder NewLine { get { AppendLine(); return this; } }
 

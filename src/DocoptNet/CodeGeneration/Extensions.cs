@@ -18,14 +18,32 @@
 
 namespace DocoptNet.CodeGeneration
 {
+    using System.Collections.Generic;
     using System.Diagnostics;
     using Microsoft.CodeAnalysis;
+    using Microsoft.CodeAnalysis.CSharp.Syntax;
     using Microsoft.CodeAnalysis.Diagnostics;
+
+    static partial class Extensions
+    {
+        /// <remarks>
+        /// Parents are returned in order of nearest to furthest ancestry.
+        /// </remarks>
+        public static IEnumerable<TypeDeclarationSyntax> GetParents(this BaseTypeDeclarationSyntax syntax)
+        {
+            for (var tds = syntax.Parent as TypeDeclarationSyntax;
+                 tds is not null;
+                 tds = tds.Parent as TypeDeclarationSyntax)
+            {
+                yield return tds;
+            }
+        }
+    }
 
     // Inspiration & credit:
     // https://github.com/devlooped/ThisAssembly/blob/43eb32fa24c25ddafda1058a53857ea3e305296a/src/GeneratorExtension.cs
 
-    static partial class Extensions
+    partial class Extensions
     {
         public static void LaunchDebuggerIfFlagged(this GeneratorExecutionContext context,
                                                    string generatorName) =>

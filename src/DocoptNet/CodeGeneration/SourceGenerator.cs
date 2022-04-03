@@ -111,7 +111,9 @@ namespace DocoptNet.CodeGeneration
             SemanticModel? model = null;
             SyntaxTree? modelSyntaxTree = null;
 
-            var docoptTypes = new List<(string? Namespace, string Name, DocoptArgumentsAttribute? ArgumentsAttribute,
+            var docoptTypes = new List<(string? Namespace, string Name,
+                                        IEnumerable<TypeDeclarationSyntax> Parents,
+                                        DocoptArgumentsAttribute? ArgumentsAttribute,
                                         SourceText Help, GenerationOptions Options)>();
 
             foreach (var (cds, attributeData) in syntaxReceiver.ClassAttributes)
@@ -137,7 +139,7 @@ namespace DocoptNet.CodeGeneration
                                            && name == attribute.HelpConstName ? Some(help) : default)
                                  .FirstOrDefault();
                 if (help is { } someHelp)
-                    docoptTypes.Add((namespaceName, className, attribute, SourceText.From(someHelp), GenerationOptions.SkipHelpConst));
+                    docoptTypes.Add((namespaceName, className, cds.GetParents().Where(tds => tds is ClassDeclarationSyntax).Reverse(), attribute, SourceText.From(someHelp), GenerationOptions.SkipHelpConst));
                 else
                     context.ReportDiagnostic(Diagnostic.Create(MissingHelpConstError, symbol.Locations.First(), symbol, attribute.HelpConstName));
             }
@@ -156,18 +158,38 @@ namespace DocoptNet.CodeGeneration
                                              && !string.IsNullOrWhiteSpace(name)
                                                  ? name
                                                  : Path.GetFileName(at.Path).Partition(".").Item1 + "Arguments",
+                                             Enumerable.Empty<TypeDeclarationSyntax>(),
                                              (DocoptArgumentsAttribute?)null,
                                              text,
                                              GenerationOptions.None))
                                      : default)
                        .ToImmutableArray();
 
-            foreach (var (ns, name, attribute, help, options) in docoptSources.Concat(docoptTypes))
+            var hintNameBuilder = new StringBuilder();
+
+            foreach (var (ns, name, parents, attribute, help, options) in docoptSources.Concat(docoptTypes))
             {
                 try
                 {
-                    if (Generate(ns, name, attribute?.HelpConstName, help, options) is { Length: > 0 } source)
-                        context.AddSource((ns is { } someNamespace ? someNamespace + "." + name : name) + ".cs", source);
+                    var parentNames = parents.Select(p => p.Identifier.ToString()).ToArray();
+                    if (Generate(ns, name, parentNames, attribute?.HelpConstName, help, options) is { Length: > 0 } source)
+                    {
+                        hintNameBuilder.Clear();
+                        if (ns is { } someNamespace)
+                            hintNameBuilder.Append(someNamespace).Append('.');
+                        if (parentNames.Length > 0)
+                        {
+                            foreach (var pn in parentNames)
+                            {
+                                // NOTE! Microsoft.CodeAnalysis.CSharp 3.10 does not allow use of "+"
+                                // as is conventional for nested types. It is allowed later versions;
+                                // see: https://github.com/dotnet/roslyn/issues/58476
+                                hintNameBuilder.Append(pn).Append('-');
+                            }
+                        }
+                        hintNameBuilder.Append(name);
+                        context.AddSource(hintNameBuilder.Append(".cs").ToString(), source);
+                    }
                 }
                 catch (DocoptLanguageErrorException e)
                 {
@@ -208,17 +230,17 @@ namespace DocoptNet.CodeGeneration
         }
 
         public static SourceText Generate(string? ns, string name, SourceText text) =>
-            Generate(ns, name, null, text, GenerationOptions.None);
+            Generate(ns, name, Enumerable.Empty<string>(), null, text, GenerationOptions.None);
 
-        static SourceText Generate(string? ns, string name, string? helpConstName,
+        static SourceText Generate(string? ns, string name, IEnumerable<string> parents, string? helpConstName,
                                    SourceText text, GenerationOptions generationOptions) =>
-            Generate(ns, name, helpConstName, text, null, generationOptions);
+            Generate(ns, name, parents, helpConstName, text, null, generationOptions);
 
         public static SourceText Generate(string? ns, string name,
                                           SourceText text, Encoding? outputEncoding) =>
-            Generate(ns, name, null, text, outputEncoding, GenerationOptions.None);
+            Generate(ns, name, Enumerable.Empty<string>(), null, text, outputEncoding, GenerationOptions.None);
 
-        static SourceText Generate(string? ns, string name, string? helpConstName,
+        static SourceText Generate(string? ns, string name, IEnumerable<string> parents, string? helpConstName,
                                    SourceText text, Encoding? outputEncoding, GenerationOptions options)
         {
             if (text.Length == 0)
@@ -229,7 +251,7 @@ namespace DocoptNet.CodeGeneration
 
             Generate(code,
                      ns is { Length: 0 } ? null : ns,
-                     name, helpConstName ?? DefaultHelpConstName, helpText,
+                     name, parents, helpConstName ?? DefaultHelpConstName, helpText,
                      options);
 
             return new StringBuilderSourceText(code.StringBuilder, outputEncoding ?? text.Encoding ?? Utf8BomlessEncoding);
@@ -238,6 +260,7 @@ namespace DocoptNet.CodeGeneration
         static void Generate(CSharpSourceBuilder code,
                              string? ns,
                              string name,
+                             IEnumerable<string> parents,
                              string helpConstName,
                              string helpText,
                              GenerationOptions generationOptions)
@@ -267,6 +290,7 @@ namespace DocoptNet.CodeGeneration
 
                 .NewLine
                 [ns is not null ? code.Namespace(ns) : code.Blank()]
+                [from p in parents select code.Partial.Class[p].NewLine.BlockStart]
 
                 .Partial.Class[name][" : IEnumerable<KeyValuePair<string, object?>>"].NewLine.SkipNextNewLine.Block[code
                     [(generationOptions & GenerationOptions.SkipHelpConst) == GenerationOptions.SkipHelpConst
@@ -353,6 +377,7 @@ namespace DocoptNet.CodeGeneration
                                    }]
                                   .NewLine)
                 ] // class
+                [from p in parents select code.BlockEnd]
                 [ns is not null ? code.BlockEnd : code.Blank()]
                 .Blank();
 

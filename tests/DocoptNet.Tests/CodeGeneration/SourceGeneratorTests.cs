@@ -187,8 +187,45 @@ Naval Fate.
                         {
                             const string Help = ""Usage: program"";
                         }
+                    }"))
+            });
+        }
+
+        [Test]
+        public void Generate_with_nested_args_class()
+        {
+            AssertMatchesSnapshot(new[]
+            {
+                ("Program.cs", SourceText.From(@"
+                    static partial class Program
+                    {
+                        [DocoptNet.DocoptArguments]
+                        sealed partial class Arguments
+                        {
+                            const string Help = ""Usage: program"";
+                        }
+
+                        partial class Nested
+                        {
+                            [DocoptNet.DocoptArguments]
+                            sealed partial class Arguments
+                            {
+                                const string Help = ""Usage: program"";
+                            }
+                        }
                     }
-                    "))
+
+                    namespace MyConsoleApp
+                    {
+                        static partial class Program
+                        {
+                            [DocoptNet.DocoptArguments]
+                            sealed partial class Arguments
+                            {
+                                const string Help = ""Usage: program"";
+                            }
+                        }
+                    }"))
             });
         }
 
