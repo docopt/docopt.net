@@ -6,7 +6,7 @@ namespace DocoptNet.Internals
     using System;
     using System.Text.RegularExpressions;
 
-    partial class Option : LeafPattern
+    sealed partial class Option : LeafPattern
     {
         public string ShortName { get; private set; }
         public string LongName { get; private set; }

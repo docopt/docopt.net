@@ -5,7 +5,7 @@ namespace DocoptNet.Internals
 {
     using System.Globalization;
 
-    class Argument: LeafPattern
+    sealed class Argument : LeafPattern
     {
         public Argument(string name) : base(name, ArgValue.None) { }
 
