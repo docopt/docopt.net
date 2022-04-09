@@ -10,7 +10,7 @@ static int Main(ProgramArguments args)
     foreach (var (name, value) in args)
         Console.WriteLine($"{name} = {value}");
 
-Console.WriteLine($@"{{
+    Console.WriteLine($@"{{
     Help    = {args.OptHelp   },
     Version = {args.OptVersion},
     Number  = {args.OptNumber },
