@@ -6,8 +6,7 @@ namespace DocoptNet.Tests
     [TestFixture]
     public class ParseArgvTests
     {
-        readonly Option[] _options = new[]
-            {new Option("-h"), new Option("-v", "--verbose"), new Option("-f", "--file", 1)};
+        readonly Option[] _options = { new("-h"), new("-v", "--verbose"), new("-f", "--file", 1) };
 
         Tokens TS(string s)
         {
