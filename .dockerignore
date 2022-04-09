@@ -1,0 +1,5 @@
+.git/
+**/bin/
+**/obj/
+dist/
+**/TestResults/

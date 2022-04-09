@@ -11,7 +11,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DocoptNet.Tests", "tests\Do
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NavalFate", "eg\NavalFate\NavalFate.csproj", "{2B454F8B-D702-4281-80DF-367142007B0C}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Testee", "tests\Testee\Testee.csproj", "{C3490CAE-5A69-4852-BD61-50179D587D0D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Testee", "tests\LanguageAgnosticTests\Testee.csproj", "{C3490CAE-5A69-4852-BD61-50179D587D0D}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{9967E170-11B4-4859-A3AA-10A960CF9D86}"
 	ProjectSection(SolutionItems) = preProject
