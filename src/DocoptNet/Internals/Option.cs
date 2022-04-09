@@ -8,9 +8,9 @@ namespace DocoptNet.Internals
 
     sealed partial class Option : LeafPattern
     {
-        public string ShortName { get; private set; }
-        public string LongName { get; private set; }
-        public int ArgCount { get; private set; }
+        public string ShortName { get; }
+        public string LongName { get; }
+        public int ArgCount { get; }
 
         public Option(string shortName = null, string longName = null, int argCount = 0, ArgValue? value = null)
         {
