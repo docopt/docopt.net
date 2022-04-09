@@ -125,7 +125,7 @@ namespace DocoptNet
             }
         }
 
-        private void SetDefaultPrintExitHandlerIfNecessary(bool exit)
+        void SetDefaultPrintExitHandlerIfNecessary(bool exit)
         {
             if (exit && PrintExit == null)
                 // Default behaviour is to print usage
@@ -287,7 +287,7 @@ namespace DocoptNet
             return new Required(result.ToArray());
         }
 
-        private static IEnumerable<Pattern> ParseExpr(Tokens tokens, ICollection<Option> options)
+        static IEnumerable<Pattern> ParseExpr(Tokens tokens, ICollection<Option> options)
         {
             // expr ::= seq ( '|' seq )* ;
             var seq = ParseSeq(tokens, options);
@@ -321,7 +321,7 @@ namespace DocoptNet
             return result;
         }
 
-        private static ICollection<Pattern> ParseSeq(Tokens tokens, ICollection<Option> options)
+        static ICollection<Pattern> ParseSeq(Tokens tokens, ICollection<Option> options)
         {
             // seq ::= ( atom [ '...' ] )* ;
             var result = new List<Pattern>();
@@ -338,7 +338,7 @@ namespace DocoptNet
             return result;
         }
 
-        private static IEnumerable<Pattern> ParseAtom(Tokens tokens, ICollection<Option> options)
+        static IEnumerable<Pattern> ParseAtom(Tokens tokens, ICollection<Option> options)
         {
             // atom ::= '(' expr ')' | '[' expr ']' | 'options'
             //  | long | shorts | argument | command ;
@@ -393,7 +393,7 @@ namespace DocoptNet
             return result;
         }
 
-        private static IEnumerable<Option> ParseShorts(Tokens tokens, ICollection<Option> options)
+        static IEnumerable<Option> ParseShorts(Tokens tokens, ICollection<Option> options)
         {
             // shorts ::= '-' ( chars )* [ [ ' ' ] chars ] ;
 
@@ -449,7 +449,7 @@ namespace DocoptNet
             return parsed;
         }
 
-        private static IEnumerable<Option> ParseLong(Tokens tokens, ICollection<Option> options)
+        static IEnumerable<Option> ParseLong(Tokens tokens, ICollection<Option> options)
         {
             // long ::= '--' chars [ ( ' ' | '=' ) chars ] ;
             var (longName, eq, value) = tokens.Move().Partition("=") switch

@@ -12,7 +12,7 @@ namespace DocoptNet.Internals
     /// </summary>
     abstract partial class LeafPattern: Pattern
     {
-        private readonly string _name;
+        readonly string _name;
 
         protected LeafPattern(string name, ArgValue value = default)
         {

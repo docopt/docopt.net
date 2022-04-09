@@ -33,6 +33,7 @@ indent_size = 4
 
 [*.cs]
 csharp_using_directive_placement = inside_namespace
+dotnet_style_require_accessibility_modifiers = never
 
 # this. preferences
 dotnet_style_qualification_for_event = false

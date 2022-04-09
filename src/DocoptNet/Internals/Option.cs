@@ -34,7 +34,7 @@ namespace DocoptNet.Internals
             return $"Option({ShortName},{LongName},{ArgCount},{Value})";
         }
 
-        private const string DESC_SEPARATOR = "  ";
+        const string DESC_SEPARATOR = "  ";
 
         static readonly char[] OptionDelimiters = { ' ', '\t', ',', '=' };
 

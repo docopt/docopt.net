@@ -7,8 +7,8 @@ namespace DocoptNet.Tests
     public class BasicPatternMatchingTests
     {
         // ( -a N [ -x Z ] )
-        private readonly Pattern _pattern = new Required(new Option("-a"), new Argument("N"),
-                                                         new Optional(new Option("-x"), new Argument("Z")));
+        readonly Pattern _pattern = new Required(new Option("-a"), new Argument("N"),
+                                                 new Optional(new Option("-x"), new Argument("Z")));
 
         [Test]
         public void Should_match_required()

@@ -5,7 +5,7 @@ namespace DocoptNet.Tests
     [TestFixture]
     public class ParsePatternTests
     {
-        private readonly Option[] _options = new[] {new Option("-h"), new Option("-v", "--verbose"), new Option("-f", "--file", 1)};
+        readonly Option[] _options = new[] {new Option("-h"), new Option("-v", "--verbose"), new Option("-f", "--file", 1)};
 
         [Test]
         public void Test_parse_pattern_one_optional_option()

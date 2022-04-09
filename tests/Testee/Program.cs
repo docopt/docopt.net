@@ -12,7 +12,7 @@ namespace Testee
     using System.Text.Json;
     using DocoptNet;
 
-    internal class Program
+    class Program
     {
         public static string Docopt(string doc, string[] cmdLine)
         {
@@ -60,7 +60,7 @@ namespace Testee
             }
         }
 
-        private static void Main(string[] args)
+        static void Main(string[] args)
         {
             Stream inputStream = Console.OpenStandardInput();
             var bytes = new byte[100];

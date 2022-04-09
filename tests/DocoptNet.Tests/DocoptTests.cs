@@ -84,7 +84,7 @@ namespace DocoptNet.Tests
             Assert.AreEqual(expected, actual);
         }
 
-        private const string DOC = @"Usage: prog [-vqr] [FILE]
+        const string DOC = @"Usage: prog [-vqr] [FILE]
               prog INPUT OUTPUT
               prog --help
 
