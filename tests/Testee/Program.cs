@@ -11,7 +11,7 @@ using DocoptNet;
 var doc = Console.In.ReadToEnd();
 Console.WriteLine(Docopt(doc, args));
 
-static string Docopt(string doc, string[] cmdLine)
+static string Docopt(string doc, ICollection<string> cmdLine)
 {
     try
     {
@@ -19,9 +19,7 @@ static string Docopt(string doc, string[] cmdLine)
         var dict = new Dictionary<string, object>();
         foreach (var argument in arguments)
         {
-            if (argument.Value == null)
-                dict[argument.Key] = null;
-            else if (argument.Value.IsList)
+            if (argument.Value.IsList)
             {
                 var l = new ArrayList();
                 foreach (var item in argument.Value.AsList)
