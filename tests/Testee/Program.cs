@@ -6,8 +6,6 @@ namespace Testee
     using System;
     using System.Collections;
     using System.Collections.Generic;
-    using System.IO;
-    using System.Text;
     using System.Text.Encodings.Web;
     using System.Text.Json;
     using DocoptNet;
@@ -62,19 +60,8 @@ namespace Testee
 
         static void Main(string[] args)
         {
-            var inputStream = Console.OpenStandardInput();
-            var bytes = new byte[100];
-            var sb = new StringBuilder();
-            var outputLength = inputStream.Read(bytes, 0, 100);
-            while (outputLength > 0)
-            {
-                var chars = Encoding.UTF8.GetChars(bytes, 0, outputLength);
-                sb.Append(chars);
-                outputLength = inputStream.Read(bytes, 0, 100);
-            }
-            var doc = sb.ToString();
-            var s = Docopt(doc, args);
-            Console.WriteLine(s);
+            var doc = Console.In.ReadToEnd();
+            Console.WriteLine(Docopt(doc, args));
         }
     }
 }
