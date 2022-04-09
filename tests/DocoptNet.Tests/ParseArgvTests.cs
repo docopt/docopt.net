@@ -30,10 +30,10 @@ namespace DocoptNet.Tests
         public void Test_parse_argv_short_and_long()
         {
             Assert.AreEqual(new[]
-                {
-                    new Option("-h", null, 0, ArgValue.True),
-                    new Option("-v", "--verbose", 0, ArgValue.True)
-                },
+                            {
+                                new Option("-h", null, 0, ArgValue.True),
+                                new Option("-v", "--verbose", 0, ArgValue.True)
+                            },
                             Docopt.ParseArgv(TS("-h --verbose"), _options));
         }
 
@@ -41,52 +41,49 @@ namespace DocoptNet.Tests
         public void Test_parse_argv_opt_with_arg()
         {
             Assert.AreEqual(new[]
-                {
-                    new Option("-h", null, 0, ArgValue.True),
-                    new Option("-f", "--file", 1, "f.txt")
-                },
+                            {
+                                new Option("-h", null, 0, ArgValue.True),
+                                new Option("-f", "--file", 1, "f.txt")
+                            },
                             Docopt.ParseArgv(TS("-h --file f.txt"), _options));
         }
 
         [Test]
         public void Test_parse_argv_with_arg()
         {
-            Assert.AreEqual(
-                new Pattern[]
-                    {
-                        new Option("-h", null, 0, ArgValue.True),
-                        new Option("-f", "--file", 1, "f.txt"),
-                        new Argument(null, "arg")
-                    },
-                Docopt.ParseArgv(TS("-h --file f.txt arg"), _options));
+            Assert.AreEqual(new Pattern[]
+                            {
+                                new Option("-h", null, 0, ArgValue.True),
+                                new Option("-f", "--file", 1, "f.txt"),
+                                new Argument(null, "arg")
+                            },
+                            Docopt.ParseArgv(TS("-h --file f.txt arg"), _options));
         }
 
         [Test]
         public void Test_parse_argv_two_args()
         {
-            Assert.AreEqual(
-                new Pattern[]
-                    {
-                        new Option("-h", null, 0, ArgValue.True),
-                        new Option("-f", "--file", 1, "f.txt"),
-                        new Argument(null, "arg"),
-                        new Argument(null, "arg2")
-                    },
-                Docopt.ParseArgv(TS("-h --file f.txt arg arg2"), _options));
+            Assert.AreEqual(new Pattern[]
+                            {
+                                new Option("-h", null, 0, ArgValue.True),
+                                new Option("-f", "--file", 1, "f.txt"),
+                                new Argument(null, "arg"),
+                                new Argument(null, "arg2")
+                            },
+                            Docopt.ParseArgv(TS("-h --file f.txt arg arg2"), _options));
         }
 
         [Test]
         public void Test_parse_argv_with_double_dash()
         {
-            Assert.AreEqual(
-                new Pattern[]
-                    {
-                        new Option("-h", null, 0, ArgValue.True),
-                        new Argument(null, "arg"),
-                        new Argument(null, "--"),
-                        new Argument(null, "-v")
-                    },
-                Docopt.ParseArgv(TS("-h arg -- -v"), _options));
+            Assert.AreEqual(new Pattern[]
+                            {
+                                new Option("-h", null, 0, ArgValue.True),
+                                new Argument(null, "arg"),
+                                new Argument(null, "--"),
+                                new Argument(null, "-v")
+                            },
+                            Docopt.ParseArgv(TS("-h arg -- -v"), _options));
         }
     }
 }
