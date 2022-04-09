@@ -84,7 +84,7 @@ namespace DocoptNet.Tests
             Assert.AreEqual(expected, actual);
         }
 
-        const string DOC = @"Usage: prog [-vqr] [FILE]
+        const string Doc = @"Usage: prog [-vqr] [FILE]
               prog INPUT OUTPUT
               prog --help
 
@@ -108,7 +108,7 @@ namespace DocoptNet.Tests
                     {"INPUT", default},
                     {"OUTPUT", default}
                 };
-            var actual = new Docopt().Apply(DOC, "-v file.py");
+            var actual = new Docopt().Apply(Doc, "-v file.py");
             Assert.AreEqual(expected, actual);
         }
 
@@ -125,20 +125,20 @@ namespace DocoptNet.Tests
                     {"INPUT", default},
                     {"OUTPUT", default}
                 };
-            var actual = new Docopt().Apply(DOC, "-v");
+            var actual = new Docopt().Apply(Doc, "-v");
             Assert.AreEqual(expected, actual);
         }
 
         [Test]
         public void No_match()
         {
-            Assert.Throws<DocoptInputErrorException>(() => new Docopt().Apply(DOC, "-v input.py output.py"));
+            Assert.Throws<DocoptInputErrorException>(() => new Docopt().Apply(Doc, "-v input.py output.py"));
         }
 
         [Test]
         public void Non_existent_long()
         {
-            Assert.Throws<DocoptInputErrorException>(() => new Docopt().Apply(DOC, "--fake"));
+            Assert.Throws<DocoptInputErrorException>(() => new Docopt().Apply(Doc, "--fake"));
         }
 
         [Test]
@@ -152,7 +152,7 @@ namespace DocoptNet.Tests
                     message = e.Message;
                     errorCode = e.ErrorCode;
                 };
-            d.Apply(DOC, "--fake", exit:true);
+            d.Apply(Doc, "--fake", exit:true);
             StringAssert.StartsWith("Usage", message);
             Assert.AreEqual(1, errorCode, "Should exit with error code 1 when exit=true and invalid args provided");
         }
@@ -168,7 +168,7 @@ namespace DocoptNet.Tests
                 message = e.Message;
                 errorCode = e.ErrorCode;
             };
-            d.Apply(DOC, "--help");
+            d.Apply(Doc, "--help");
             StringAssert.StartsWith("Usage", message);
             Assert.AreEqual(0, errorCode);
         }

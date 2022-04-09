@@ -8,7 +8,7 @@ namespace DocoptNet.Tests
         [Test]
         public void Test_parse_defaults()
         {
-            const string DOC = @"usage: prog
+            const string doc = @"usage: prog
                 Options:
                 -h, --help  Print help message.
                 -o FILE     Output file.
@@ -17,7 +17,7 @@ namespace DocoptNet.Tests
 
             var expected = new Option[]
                 {new Option("-h", "--help"), new Option("-o", null, 1), new Option(null, "--verbose")};
-            Assert.AreEqual(expected, Docopt.ParseDefaults(DOC));
+            Assert.AreEqual(expected, Docopt.ParseDefaults(doc));
         }
 
         [Test]

@@ -12,10 +12,10 @@ namespace DocoptNet.Tests
         [Test]
         public void String_Split_with_no_args_should_split_on_white_space()
         {
-            const string TEST_STRING = "first second\tthird\nfourth \n\t\ffifth";
-            var s1 = TEST_STRING.Split();
+            const string testString = "first second\tthird\nfourth \n\t\ffifth";
+            var s1 = testString.Split();
             Assert.AreEqual(8, s1.Length);
-            var s2 = TEST_STRING.Split(Array.Empty<char>(), StringSplitOptions.RemoveEmptyEntries);
+            var s2 = testString.Split(Array.Empty<char>(), StringSplitOptions.RemoveEmptyEntries);
             Assert.AreEqual(5, s2.Length);
         }
     }

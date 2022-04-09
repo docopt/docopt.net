@@ -34,7 +34,7 @@ namespace DocoptNet.Internals
             return $"Option({ShortName},{LongName},{ArgCount},{Value})";
         }
 
-        const string DESC_SEPARATOR = "  ";
+        const string DescSeparator = "  ";
 
         static readonly char[] OptionDelimiters = { ' ', '\t', ',', '=' };
 
@@ -46,7 +46,7 @@ namespace DocoptNet.Internals
             string longName = null;
             var argCount = 0;
             var value = ArgValue.False;
-            var (options, _, description) = optionDescription.Trim().Partition(DESC_SEPARATOR);
+            var (options, _, description) = optionDescription.Trim().Partition(DescSeparator);
             foreach (var s in options.Split(OptionDelimiters, StringSplitOptions.RemoveEmptyEntries))
             {
                 if (s.StartsWith("--"))
