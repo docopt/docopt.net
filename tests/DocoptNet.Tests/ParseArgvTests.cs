@@ -8,7 +8,7 @@ namespace DocoptNet.Tests
     {
         readonly Option[] _options = { new("-h"), new("-v", "--verbose"), new("-f", "--file", 1) };
 
-        Tokens TS(string s)
+        static Tokens TS(string s)
         {
             return Tokens.From(s.Split((char[])null, StringSplitOptions.RemoveEmptyEntries));
         }
