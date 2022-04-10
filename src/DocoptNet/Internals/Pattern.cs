@@ -5,7 +5,6 @@ namespace DocoptNet.Internals
 {
     using System;
     using System.Collections.Generic;
-    using System.Diagnostics;
     using System.Linq;
 
     abstract partial class Pattern
@@ -36,67 +35,6 @@ namespace DocoptNet.Internals
             return ToString()!.GetHashCode();
         }
 
-        public IList<Pattern> Children { get; set; }
-
-        public Pattern Fix()
-        {
-            FixIdentities();
-            FixRepeatingArguments();
-            return this;
-        }
-
-        /// <summary>
-        ///     Make pattern-tree tips point to same object if they are equal.
-        /// </summary>
-        public void FixIdentities(ICollection<Pattern> uniq = null)
-        {
-            var listUniq = uniq ?? Flat().Distinct().ToList();
-            for (var i = 0; i < Children.Count; i++)
-            {
-                var child = Children[i];
-                if (child is LeafPattern)
-                {
-                    Debug.Assert(listUniq.Contains(child));
-                    Children[i] = listUniq.First(p => p.Equals(child));
-                }
-                else
-                {
-                    child.FixIdentities(listUniq);
-                }
-            }
-        }
-
-        public Pattern FixRepeatingArguments()
-        {
-            var transform = Transform(this);
-            var either = transform.Children.Select(c => c.Children);
-            foreach (var aCase in either)
-            {
-                var cx = aCase.ToList();
-                var l = aCase.Where(e => cx.Count(c2 => c2.Equals(e)) > 1).ToList();
-
-                foreach (var e in l.OfType<LeafPattern>())
-                {
-                    if (e is Argument or Option { ArgCount: > 0 })
-                    {
-                        if (e.Value.IsNone)
-                        {
-                            e.Value = StringList.Empty;
-                        }
-                        else if (!e.Value.IsStringList)
-                        {
-                            e.Value = StringList.BottomTop(e.Value.ToString().Split((char[])null, StringSplitOptions.RemoveEmptyEntries));
-                        }
-                    }
-                    if (e is Command or Option { ArgCount: 0 })
-                    {
-                        e.Value = 0;
-                    }
-                }
-            }
-            return this;
-        }
-
         /// <summary>
         ///     Expand pattern into an (almost) equivalent one, but with single Either.
         ///     Example: ((-a | -b) (-c | -d)) => (-a -c | -a -d | -b -c | -b -d)
@@ -110,7 +48,7 @@ namespace DocoptNet.Internals
             {
                 var children = groups[0];
                 groups.RemoveAt(0);
-                if (children.FirstOrDefault(c => c is BranchPattern) is { } branch)
+                if (children.OfType<BranchPattern>().FirstOrDefault() is { } branch)
                 {
                     children.Remove(branch);
                     switch (branch)

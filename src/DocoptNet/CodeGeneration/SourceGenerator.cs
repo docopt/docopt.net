@@ -404,7 +404,7 @@ namespace DocoptNet.CodeGeneration
                         var mv = Vars[level++];
                         code.Var(mv)[code.New[matcher]['('].Literal(children.Count)[", "][pmv][".Left, "][pmv][".Collected)"]]
                             .While[code[mv][".Next()"]][
-                                (pattern.Children.Count switch
+                                (children.Count switch
                                 {
                                     > 1 => code.Switch[code[mv][".Index"]]
                                                .Cases(children, arg: (MatchVar: mv, Level: level),
