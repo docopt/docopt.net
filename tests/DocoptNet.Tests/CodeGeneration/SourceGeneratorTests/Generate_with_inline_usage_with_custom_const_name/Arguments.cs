@@ -24,11 +24,11 @@ partial class Arguments : IEnumerable<KeyValuePair<string, object?>>
     {
         var options = new List<Option>
         {
-            new("-h", "--help", 0, false),
-            new(null, "--version", 0, false),
-            new(null, "--speed", 1, "10"),
-            new(null, "--moored", 0, false),
-            new(null, "--drifting", 0, false),
+            new('h', "--help", 0, value: false),
+            new("--version", 0, value: false),
+            new("--speed", 1, value: "10"),
+            new("--moored", 0, value: false),
+            new("--drifting", 0, value: false),
         };
 
         return GeneratedSourceModule.Parse(HelpText, Usage, args, options, flags, version, Parse);

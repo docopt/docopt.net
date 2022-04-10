@@ -5,12 +5,12 @@ namespace DocoptNet.Tests
     [TestFixture]
     public class ParsePatternTests
     {
-        readonly Option[] _options = { new("-h"), new("-v", "--verbose"), new("-f", "--file", 1) };
+        readonly Option[] _options = { new("-h", null), new("-v", "--verbose"), new("-f", "--file", 1) };
 
         [Test]
         public void Test_parse_pattern_one_optional_option()
         {
-            Assert.AreEqual(new Required(new Optional(new Option("-h"))), Docopt.ParsePattern("[ -h ]", _options));
+            Assert.AreEqual(new Required(new Optional(new Option("-h", null))), Docopt.ParsePattern("[ -h ]", _options));
         }
 
         [Test]
@@ -23,7 +23,7 @@ namespace DocoptNet.Tests
         [Test]
         public void Test_parse_pattern_either_options()
         {
-            Assert.AreEqual(new Required(new Optional(new Either(new Option("-h"), new Option("-v", "--verbose")))),
+            Assert.AreEqual(new Required(new Optional(new Either(new Option("-h", null), new Option("-v", "--verbose")))),
                             Docopt.ParsePattern("[ -h | -v ]", _options));
         }
 
@@ -31,7 +31,7 @@ namespace DocoptNet.Tests
         public void Test_parse_pattern_either_options_and_optional_arg_opt()
         {
             Assert.AreEqual(new Required(new Required(
-                                             new Either(new Option("-h"),
+                                             new Either(new Option("-h", null),
                                                         new Required(new Option("-v", "--verbose"),
                                                                      new Optional(new Option("-f", "--file", 1))
                                                             )
@@ -45,7 +45,7 @@ namespace DocoptNet.Tests
         public void Test_parse_pattern_optional_and_oneormore_arg()
         {
             Assert.AreEqual(new Required(new Required(
-                                             new Either(new Option("-h"),
+                                             new Either(new Option("-h", null),
                                                         new Required(new Option("-v", "--verbose"),
                                                                      new Optional(new Option("-f", "--file", 1)),
                                                                      new OneOrMore(new Argument("N"))
@@ -77,7 +77,7 @@ namespace DocoptNet.Tests
         [Test]
         public void Test_parse_pattern_option_with_optional_arg()
         {
-            Assert.AreEqual(new Required(new Optional(new Option("-h")), new Optional(new Argument("N"))),
+            Assert.AreEqual(new Required(new Optional(new Option("-h", null)), new Optional(new Argument("N"))),
                             Docopt.ParsePattern("[ -h ] [N]", _options));
         }
 

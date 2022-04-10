@@ -81,13 +81,13 @@
 {
     bool _optionsFirst;
     bool _lastOptionsFirst;
-    string _commandLine;
-    string _lastCommandLine;
-    string _input;
-    string _lastInput;
-    string _output;
-    IDictionary<string, ArgValue> _args;
-    List<Node> _nodes;
+    string _commandLine = string.Empty;
+    string? _lastCommandLine;
+    string? _input;
+    string? _lastInput;
+    string? _output;
+    IDictionary<string, ArgValue>? _args;
+    List<Node>? _nodes;
     bool _error;
     TimeSpan? _ms;
     ElementReference _inputTextArea;
@@ -145,7 +145,7 @@ Options:
         _error = false;
         _ms = null;
 
-        if (_input.Length == 0)
+        if (_input is null or { Length: 0 })
             return;
 
         var sw = Stopwatch.StartNew();
@@ -174,7 +174,7 @@ Options:
             _output = sb.ToString();
 
             var docopt = new Docopt();
-            var argv = _commandLine.Split((char[])null, StringSplitOptions.RemoveEmptyEntries);
+            var argv = _commandLine.Split((char[]?)null, StringSplitOptions.RemoveEmptyEntries);
             _nodes = Docopt.Internal
                            .GetNodes(_input,
                                      (name, value) => new Node(name, value.Kind, 0, ArgValue.None),
@@ -182,7 +182,7 @@ Options:
                                      (name, _, _, _, value) => new Node(name, value.Kind, 0, ArgValue.None))
                            .GroupBy(e => e.Name, e => e, (_, g) => new Node(g.First().Name, g.First().ValueKind, g.Count(), ArgValue.None))
                            .ToList();
-            _args = Docopt.Internal.Apply(docopt, _input, argv.AsEnumerable(), help: false, version: null, optionsFirst: _optionsFirst, exit: false);
+            _args = Docopt.Internal.Apply(docopt, _input, argv.AsEnumerable(), help: false, version: null, optionsFirst: _optionsFirst, exit: false)!;
             _nodes = _nodes.Select(n => new Node(n.Name, n.ValueKind, n.Count, _args.TryGetValue(n.Name, out var v) ? v : ArgValue.None)).ToList();
             _ms = sw.Elapsed;
         }

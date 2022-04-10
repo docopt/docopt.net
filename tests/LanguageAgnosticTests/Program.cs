@@ -16,7 +16,7 @@ static string Docopt(string doc, ICollection<string> cmdLine)
     try
     {
         var arguments = new Docopt().Apply(doc, cmdLine)!;
-        var dict = new Dictionary<string, object>();
+        var dict = new Dictionary<string, object?>();
         foreach (var argument in arguments)
         {
             if (argument.Value.IsList)

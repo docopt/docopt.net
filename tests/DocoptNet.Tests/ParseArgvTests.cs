@@ -6,7 +6,7 @@ namespace DocoptNet.Tests
     [TestFixture]
     public class ParseArgvTests
     {
-        readonly Option[] _options = { new("-h"), new("-v", "--verbose"), new("-f", "--file", 1) };
+        readonly Option[] _options = { new("-h", null), new("-v", "--verbose"), new("-f", "--file", 1) };
 
         static Tokens Tokens(string s) =>
             DocoptNet.Tokens.From(s.Split((char[])null, StringSplitOptions.RemoveEmptyEntries));

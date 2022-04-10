@@ -12,7 +12,7 @@ namespace DocoptNet.Internals
         public abstract string Name { get; }
 
         // override object.Equals
-        public override bool Equals(object obj)
+        public override bool Equals(object? obj)
         {
             //
             // See the full list of guidelines at

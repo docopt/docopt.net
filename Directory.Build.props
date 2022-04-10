@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <LangVersion>10</LangVersion>
-    <Nullable>warnings</Nullable>
+    <Nullable>enable</Nullable>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
     <!--
       > [CS8785] warning is emitted if a source generator failed to produce output

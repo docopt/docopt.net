@@ -314,10 +314,11 @@ namespace DocoptNet.CodeGeneration
                             code.New["List<Option>"].NewLine
                                 .Block[code.Each(options,
                                                  static (code, option, _) =>
-                                                     code.NewTargeted["("][option.ShortName is { } sn ? code.Literal(sn) : code.Null][", "]
-                                                         [option.LongName is { } ln ? code.Literal(ln) : code.Null][", "]
+                                                     code.NewTargeted["("]
+                                                         [option.ShortName is { } sn ? code.Literal(sn[1])[", "] : code.Blank()]
+                                                         [option.LongName is { } ln ? code.Literal(ln)[", "] : code.Blank()]
                                                          .Literal(option.ArgCount)[", "]
-                                                         [Value(code, option.Value)]["),"].NewLine).SkipNextNewLine]]
+                                                         ["value: "][Value(code, option.Value)]["),"].NewLine).SkipNextNewLine]]
                         .NewLine
                         .Return[code["GeneratedSourceModule.Parse("][helpConstName][", "][usageConstName][", args, options, flags, version, Parse)"]]
                         .NewLine
@@ -441,7 +442,7 @@ namespace DocoptNet.CodeGeneration
                 {
                     Command  { Name: var name } => $"Cmd{GenerateCodeHelper.ConvertToPascalCase(name.ToLowerInvariant())}",
                     Argument { Name: var name } => $"Arg{GenerateCodeHelper.ConvertToPascalCase(name.Replace("<", "").Replace(">", "").ToLowerInvariant())}",
-                    Option   { LongName: null, ShortName: var name } when char.IsUpper(name[1]) => $"OptUpper{name[1]}",
+                    Option   { LongName: null, ShortName: { } name } when char.IsUpper(name[1]) => $"OptUpper{name[1]}",
                     Option   { Name: var name } => $"Opt{GenerateCodeHelper.ConvertToPascalCase(name.ToLowerInvariant())}",
                     var p => throw new NotSupportedException($"Unsupported pattern: {p}")
                 };
