@@ -124,19 +124,7 @@ namespace DocoptNet.CodeGeneration
               ? this['@'][Quote][value.Replace(Quote, Quote + Quote)][Quote]
               : this[Quote][value][Quote];
 
-        public CSharpSourceBuilder Literal(char value)
-        {
-            Append('\'');
-            Append(value);
-            Append('\'');
-            return this;
-        }
-
-        public CSharpSourceBuilder Literal(int value)
-        {
-            Append(value);
-            return this;
-        }
+        public CSharpSourceBuilder Literal(int value) { Append(value); return this; }
 
         public CSharpSourceBuilder Each<T>(IEnumerable<T> source, Func<CSharpSourceBuilder, T, int, CSharpSourceBuilder> builder)
         {

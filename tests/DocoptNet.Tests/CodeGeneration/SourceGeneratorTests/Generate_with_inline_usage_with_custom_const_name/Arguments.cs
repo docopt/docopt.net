@@ -24,7 +24,7 @@ partial class Arguments : IEnumerable<KeyValuePair<string, object?>>
     {
         var options = new List<Option>
         {
-            new('h', "--help", 0, value: false),
+            new("-h", "--help", 0, value: false),
             new("--version", 0, value: false),
             new("--speed", 1, value: "10"),
             new("--moored", 0, value: false),

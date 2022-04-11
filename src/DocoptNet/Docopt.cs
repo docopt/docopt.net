@@ -416,11 +416,11 @@ namespace DocoptNet
                 }
                 if (similar.Count < 1)
                 {
-                    option = new Option(shortName[1], 0);
+                    option = new Option(shortName, 0);
                     options.Add(option);
                     if (tokens.ThrowsInputError)
                     {
-                        option = new Option(shortName[1], 0, ArgValue.True);
+                        option = new Option(shortName, 0, ArgValue.True);
                     }
                 }
                 else
@@ -428,8 +428,8 @@ namespace DocoptNet
                     // why is copying necessary here?
                     option = similar[0] switch
                     {
-                        { LongName: not null } s => new Option(shortName[1], s.LongName, s.ArgCount, s.Value),
-                        var s => new Option(shortName[1], s.ArgCount, s.Value),
+                        { LongName: not null } s => new Option(shortName, s.LongName, s.ArgCount, s.Value),
+                        var s => new Option(shortName, s.ArgCount, s.Value),
                     };
                     ArgValue? value = null;
                     if (option.ArgCount != 0)
@@ -490,7 +490,7 @@ namespace DocoptNet
             {
                 option = similar[0].MapName(static (s, ln) => new Option(ln, s.ArgCount, s.Value),
                                             static (s, sn) => new Option(sn, s.ArgCount, s.Value),
-                                            static (s, ln, sn) => new Option(sn[1], ln, s.ArgCount, s.Value));
+                                            static (s, ln, sn) => new Option(sn, ln, s.ArgCount, s.Value));
                 if (option.ArgCount == 0)
                 {
                     if (value != null)

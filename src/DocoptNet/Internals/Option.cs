@@ -4,6 +4,7 @@
 namespace DocoptNet.Internals
 {
     using System;
+    using System.Diagnostics;
     using System.Text.RegularExpressions;
 
     partial class Option : LeafPattern
@@ -12,20 +13,19 @@ namespace DocoptNet.Internals
         public string? LongName { get; }
         public int ArgCount { get; }
 
-        public Option(char shortName, int argCount = 0, ArgValue? value = null) :
-            this(ShortNameString(shortName), null, argCount, value) { }
+        public Option(string name, int argCount = 0, ArgValue? value = null) :
+            this((name.Length == 2 ? name : null, // short names are always 2 characters long, e.g. "-h".
+                  name.Length > 2 ? name : null), // long names are always at least 3 characters long, e.g. "--help".
+                 argCount, value) { }
 
-        public Option(string longName, int argCount = 0, ArgValue? value = null) :
-            this(null, longName, argCount, value) { }
+        public Option(string shortName, string longName, int argCount = 0, ArgValue? value = null) :
+            this((shortName, longName), argCount, value) { }
 
-        public Option(char shortName, string longName, int argCount = 0, ArgValue? value = null) :
-            this(ShortNameString(shortName), longName, argCount, value) { }
-
-        /* FIXME */public Option(string? shortName, string? longName, int argCount = 0, ArgValue? value = null) :
-            base(longName ?? shortName!, value switch { null or { IsFalse: true } when argCount > 0 => ArgValue.None, var v => v ?? ArgValue.False })
+        Option((string? Short, string? Long) name, int argCount, ArgValue? value) :
+            base(name.Long ?? name.Short!, value switch { null or { IsFalse: true } when argCount > 0 => ArgValue.None, var v => v ?? ArgValue.False })
         {
-            ShortName = shortName;
-            LongName = longName;
+            Debug.Assert(name is not (null, null));
+            (ShortName, LongName) = name;
             ArgCount = argCount;
         }
 
@@ -88,32 +88,7 @@ namespace DocoptNet.Internals
                 var m = r.Match(description);
                 value = m.Success ? m.Groups[1].Value : ArgValue.None;
             }
-            return new Option(shortName, longName, argCount, value);
+            return new Option((shortName, longName), argCount, value);
         }
-
-        static readonly string?[] ShortNameMap =
-        {
-            "-0", "-1", "-2", "-3", "-4", "-5", "-6", "-7", "-8", "-9",
-            null, // :
-            null, // ;
-            null, // <
-            null, // =
-            null, // >
-            "-?", // ?
-            null, // @
-            "-A", "-B", "-C", "-D", "-E", "-F", "-G", "-H", "-I", "-J", "-K", "-L", "-M",
-            "-N", "-O", "-P", "-Q", "-R", "-S", "-T", "-U", "-V", "-W", "-X", "-Y", "-Z",
-            null, // [
-            null, // \
-            null, // ]
-            null, // ^
-            null, // _
-            null, // `
-            "-a", "-b", "-c", "-d", "-e", "-f", "-g", "-h", "-i", "-j", "-k", "-l", "-m",
-            "-n", "-o", "-p", "-q", "-r", "-s", "-t", "-u", "-v", "-w", "-x", "-y", "-z",
-        };
-
-        public static string ShortNameString(char ch) =>
-            (ch is >= '0' and <= 'z' ? ShortNameMap[ch - '0'] : null) ?? "-" + ch;
     }
 }
