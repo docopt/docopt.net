@@ -211,14 +211,10 @@ namespace DocoptNet
 
         protected void OnPrintExit(string doc, int errorCode = 0)
         {
-            if (PrintExit == null)
-            {
-                throw new DocoptExitException(doc);
-            }
+            if (PrintExit is { } handler)
+                handler(this, new PrintExitEventArgs(doc, errorCode));
             else
-            {
-                PrintExit(this, new PrintExitEventArgs(doc, errorCode));
-            }
+                throw new DocoptExitException(doc);
         }
 
         /// <summary>
