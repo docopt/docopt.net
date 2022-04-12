@@ -1,6 +1,7 @@
 namespace DocoptNet.Tests
 {
     using NUnit.Framework;
+    using static DocoptNet.Tests.ArgumentFactory;
     using static DocoptNet.Tests.PatternFactory;
 
     [TestFixture]
@@ -13,7 +14,7 @@ namespace DocoptNet.Tests
                 new MatchResult(true,
                                 Leaves(),
                                 Leaves(new Command("c", true))),
-                new Command("c").Match(new Argument(null, "c"))
+                new Command("c").Match(Argument("c"))
                 );
         }
 
@@ -35,7 +36,7 @@ namespace DocoptNet.Tests
                 new MatchResult(true,
                                 Leaves(new Option("-x"), new Option("-a") ),
                                 Leaves(new Command("c", true) )),
-                new Command("c").Match(new Option("-x"), new Option("-a"), new Argument(null, "c"))
+                new Command("c").Match(new Option("-x"), new Option("-a"), Argument("c"))
                 );
         }
 
@@ -46,7 +47,7 @@ namespace DocoptNet.Tests
                 new MatchResult(true,
                                 Leaves(),
                                 Leaves(new Command("rm", true) )),
-                new Either(new Command("add"), new Command("rm")).Match(new Argument(null, "rm"))
+                new Either(new Command("add"), new Command("rm")).Match(Argument("rm"))
                 );
         }
 

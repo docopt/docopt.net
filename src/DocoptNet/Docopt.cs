@@ -234,7 +234,7 @@ namespace DocoptNet
             {
                 if (token == "--")
                 {
-                    parsed.AddRange(tokens.Select(v => new Argument(null!, v)));
+                    parsed.AddRange(tokens.Select(Argument.Unnamed));
                     return parsed;
                 }
 
@@ -248,12 +248,12 @@ namespace DocoptNet
                 }
                 else if (optionsFirst)
                 {
-                    parsed.AddRange(tokens.Select(v => new Argument(null!, v)));
+                    parsed.AddRange(tokens.Select(Argument.Unnamed));
                     return parsed;
                 }
                 else
                 {
-                    parsed.Add(new Argument(null!, tokens.Move()));
+                    parsed.Add(Argument.Unnamed(tokens.Move()));
                 }
             }
             return parsed;

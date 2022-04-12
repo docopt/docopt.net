@@ -1,6 +1,7 @@
 namespace DocoptNet.Tests
 {
     using NUnit.Framework;
+    using static DocoptNet.Tests.ArgumentFactory;
     using static DocoptNet.Tests.PatternFactory;
 
     [TestFixture]
@@ -68,8 +69,8 @@ namespace DocoptNet.Tests
             Assert.AreEqual(
                 new MatchResult(true,
                                 Leaves(),
-                                Leaves(new Argument("N", 9) )),
-                new Optional(new Argument("N")).Match(new Argument(null, 9))
+                                Leaves(Argument("N", 9) )),
+                new Optional(new Argument("N")).Match(Argument(9))
                 );
         }
 

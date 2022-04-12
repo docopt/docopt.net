@@ -1,15 +1,16 @@
 namespace DocoptNet.Tests
 {
     using System;
+    using static DocoptNet.Tests.ArgumentFactory;
     using NUnit.Framework;
 
     [TestFixture]
     public class ParseArgvTests
     {
-        readonly Option[] _options = { new("-h", null), new("-v", "--verbose"), new("-f", "--file", 1) };
+        readonly Option[] _options = { new("-h"), new("-v", "--verbose"), new("-f", "--file", 1) };
 
         static Tokens Tokens(string s) =>
-            DocoptNet.Tokens.From(s.Split((char[])null, StringSplitOptions.RemoveEmptyEntries));
+            DocoptNet.Tokens.From(s.Split((char[]?)null, StringSplitOptions.RemoveEmptyEntries));
 
         [Test]
         public void Test_parse_argv_empty()
@@ -20,7 +21,7 @@ namespace DocoptNet.Tests
         [Test]
         public void Test_parse_argv_one_opt()
         {
-            Assert.AreEqual(new[] {new Option("-h", null, 0, ArgValue.True)},
+            Assert.AreEqual(new[] {new Option("-h", 0, ArgValue.True)},
                             Docopt.ParseArgv(Tokens("-h"), _options));
         }
 
@@ -29,7 +30,7 @@ namespace DocoptNet.Tests
         {
             Assert.AreEqual(new[]
                             {
-                                new Option("-h", null, 0, ArgValue.True),
+                                new Option("-h", 0, ArgValue.True),
                                 new Option("-v", "--verbose", 0, ArgValue.True)
                             },
                             Docopt.ParseArgv(Tokens("-h --verbose"), _options));
@@ -40,7 +41,7 @@ namespace DocoptNet.Tests
         {
             Assert.AreEqual(new[]
                             {
-                                new Option("-h", null, 0, ArgValue.True),
+                                new Option("-h", 0, ArgValue.True),
                                 new Option("-f", "--file", 1, "f.txt")
                             },
                             Docopt.ParseArgv(Tokens("-h --file f.txt"), _options));
@@ -51,9 +52,9 @@ namespace DocoptNet.Tests
         {
             Assert.AreEqual(new Pattern[]
                             {
-                                new Option("-h", null, 0, ArgValue.True),
+                                new Option("-h", 0, ArgValue.True),
                                 new Option("-f", "--file", 1, "f.txt"),
-                                new Argument(null, "arg")
+                                Argument("arg")
                             },
                             Docopt.ParseArgv(Tokens("-h --file f.txt arg"), _options));
         }
@@ -63,10 +64,10 @@ namespace DocoptNet.Tests
         {
             Assert.AreEqual(new Pattern[]
                             {
-                                new Option("-h", null, 0, ArgValue.True),
+                                new Option("-h", 0, ArgValue.True),
                                 new Option("-f", "--file", 1, "f.txt"),
-                                new Argument(null, "arg"),
-                                new Argument(null, "arg2")
+                                Argument("arg"),
+                                Argument("arg2")
                             },
                             Docopt.ParseArgv(Tokens("-h --file f.txt arg arg2"), _options));
         }
@@ -76,10 +77,10 @@ namespace DocoptNet.Tests
         {
             Assert.AreEqual(new Pattern[]
                             {
-                                new Option("-h", null, 0, ArgValue.True),
-                                new Argument(null, "arg"),
-                                new Argument(null, "--"),
-                                new Argument(null, "-v")
+                                new Option("-h", 0, ArgValue.True),
+                                Argument("arg"),
+                                Argument("--"),
+                                Argument("-v")
                             },
                             Docopt.ParseArgv(Tokens("-h arg -- -v"), _options));
         }

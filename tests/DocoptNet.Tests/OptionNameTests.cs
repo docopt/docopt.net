@@ -8,7 +8,7 @@ namespace DocoptNet.Tests
         [Test]
         public void Short_only()
         {
-            Assert.AreEqual("-h", new Option("-h", null).Name);
+            Assert.AreEqual("-h", new Option("-h").Name);
         }
 
         [Test]
@@ -20,7 +20,7 @@ namespace DocoptNet.Tests
         [Test]
         public void Long_only()
         {
-            Assert.AreEqual("--help", new Option(null, "--help").Name);
+            Assert.AreEqual("--help", new Option("--help").Name);
         }
     }
 }

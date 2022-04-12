@@ -9,6 +9,7 @@ namespace DocoptNet.Tests
     using System.Text.RegularExpressions;
     using Newtonsoft.Json;
     using NUnit.Framework;
+    using Shouldly;
 
     [TestFixture]
     public class LanguageAgnosticTests
@@ -21,8 +22,9 @@ namespace DocoptNet.Tests
 
             try
             {
-                var arguments = new Docopt().Apply(doc, cmdLine);
-                var dict = new Dictionary<string, object>();
+                var arguments = new Docopt().Apply(doc, cmdLine)
+                                            .ShouldNotBeNull();
+                var dict = new Dictionary<string, object?>();
                 foreach (var argument in arguments)
                     dict[argument.Key] = argument.Value.Object;
                 actual = JsonConvert.SerializeObject(dict);
