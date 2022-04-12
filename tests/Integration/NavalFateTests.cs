@@ -1,5 +1,3 @@
-#nullable enable
-
 namespace DocoptNet.Tests.Integration
 {
     using System;

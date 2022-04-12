@@ -14,8 +14,6 @@
 //
 #endregion
 
-#nullable enable
-
 namespace DocoptNet.CodeGeneration
 {
     using System.Collections.Generic;
