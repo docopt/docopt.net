@@ -279,7 +279,7 @@ namespace DocoptNet.CodeGeneration
 
             const string usageConstName = "Usage";
 
-            code["#nullable enable annotations"].NewLine
+            code["#nullable enable"].NewLine
 
                 .NewLine
                 .Using("System.Collections")
