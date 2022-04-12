@@ -318,7 +318,7 @@ namespace DocoptNet.CodeGeneration
                                                          [option.ShortName is { } sn ? code.Literal(sn)[", "] : code.Blank()]
                                                          [option.LongName is { } ln ? code.Literal(ln)[", "] : code.Blank()]
                                                          .Literal(option.ArgCount)[", "]
-                                                         ["value: "][Value(code, option.Value)]["),"].NewLine).SkipNextNewLine]]
+                                                         [Value(code, option.Value)]["),"].NewLine).SkipNextNewLine]]
                         .NewLine
                         .Return[code["GeneratedSourceModule.Parse("][helpConstName][", "][usageConstName][", args, options, flags, version, Parse)"]]
                         .NewLine
