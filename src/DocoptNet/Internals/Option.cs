@@ -7,7 +7,7 @@ namespace DocoptNet.Internals
     using System.Diagnostics;
     using System.Text.RegularExpressions;
 
-    partial class Option : LeafPattern
+    sealed partial class Option : LeafPattern
     {
         public string? ShortName { get; }
         public string? LongName { get; }
@@ -28,9 +28,6 @@ namespace DocoptNet.Internals
             (ShortName, LongName) = name;
             ArgCount = argCount;
         }
-
-        protected Option(string name, int argCount, string str) :
-            this(name, argCount, (ArgValue)str) { }
 
         public TResult MapName<TResult>(Func<Option, string, TResult> longSelector,
                                         Func<Option, string, TResult> shortSelector,
