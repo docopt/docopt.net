@@ -139,8 +139,8 @@ namespace DocoptNet
         internal static class Internal
         {
             public static IDictionary<string, ArgValue>? Apply(Docopt docopt, string doc, IEnumerable<string> argv,
-                                                            bool help = true, object? version = null,
-                                                            bool optionsFirst = false, bool exit = false) =>
+                                                               bool help = true, object? version = null,
+                                                               bool optionsFirst = false, bool exit = false) =>
                 docopt.Apply(doc, Tokens.From(argv), help, version, optionsFirst, exit)?.ToValueDictionary();
 
             public static IEnumerable<T> GetNodes<T>(string doc,
@@ -212,21 +212,17 @@ namespace DocoptNet
 
         protected void OnPrintExit(string doc, int errorCode = 0)
         {
-            if (PrintExit == null)
-            {
-                throw new DocoptExitException(doc);
-            }
+            if (PrintExit is { } handler)
+                handler(this, new PrintExitEventArgs(doc, errorCode));
             else
-            {
-                PrintExit(this, new PrintExitEventArgs(doc, errorCode));
-            }
+                throw new DocoptExitException(doc);
         }
 
         /// <summary>
         ///     Parse command-line argument vector.
         /// </summary>
         internal static IList<LeafPattern> ParseArgv(Tokens tokens, ICollection<Option> options,
-            bool optionsFirst = false)
+                                                     bool optionsFirst = false)
         {
             //    If options_first:
             //        argv ::= [ long | shorts ]* [ argument ]* [ '--' [ argument ]* ] ;
