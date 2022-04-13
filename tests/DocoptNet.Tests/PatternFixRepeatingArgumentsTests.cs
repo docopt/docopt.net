@@ -7,25 +7,6 @@ namespace DocoptNet.Tests
     [TestFixture]
     public class PatternFixRepeatingArgumentsTests
     {
-        /* FIXME
-        [Test]
-        public void Should_fix_option()
-        {
-            Assert.AreEqual(
-                new Option("-a"),
-                new Option("-a").FixRepeatingArguments()
-                );
-        }
-
-        [Test]
-        public void Should_fix_arg()
-        {
-            Assert.AreEqual(
-                new Argument("A"),
-                new Argument("A").FixRepeatingArguments()
-                );
-        }
-        */
         [Test]
         public void Should_fix_required_args()
         {
