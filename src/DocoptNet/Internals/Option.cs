@@ -21,6 +21,9 @@ namespace DocoptNet.Internals
         public Option(string shortName, string longName, int argCount = 0, ArgValue? value = null) :
             this((shortName, longName), argCount, value) { }
 
+        public Option(Option other) :
+            this((other.ShortName, other.LongName), other.ArgCount, other.Value) { }
+
         Option((string? Short, string? Long) name, int argCount, ArgValue? value) :
             base(name.Long ?? name.Short!, value switch { null or { IsFalse: true } when argCount > 0 => ArgValue.None, var v => v ?? ArgValue.False })
         {
@@ -28,14 +31,6 @@ namespace DocoptNet.Internals
             (ShortName, LongName) = name;
             ArgCount = argCount;
         }
-
-        public TResult MapName<TResult>(Func<Option, string, TResult> longSelector,
-                                        Func<Option, string, TResult> shortSelector,
-                                        Func<Option, string, string, TResult> longShortSelector) =>
-            MapName((Long: longSelector, Short: shortSelector, LongShort: longShortSelector),
-                    static (self, ln, f) => f.Long(self, ln),
-                    static (self, sn, f) => f.Short(self, sn),
-                    static (self, ln, sn, f) => f.LongShort(self, ln, sn));
 
         public TResult MapName<T, TResult>(T arg,
                                            Func<Option, string, T, TResult> longSelector,

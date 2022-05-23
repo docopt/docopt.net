@@ -482,9 +482,7 @@ namespace DocoptNet
             }
             else
             {
-                option = similar[0].MapName(static (s, ln) => new Option(ln, s.ArgCount, s.Value),
-                                            static (s, sn) => new Option(sn, s.ArgCount, s.Value),
-                                            static (s, ln, sn) => new Option(sn, ln, s.ArgCount, s.Value));
+                option = new Option(similar[0]);
                 if (option.ArgCount == 0)
                 {
                     if (value != null)
