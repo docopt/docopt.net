@@ -1,4 +1,4 @@
-#nullable enable annotations
+#nullable enable
 
 using System.Collections;
 using System.Collections.Generic;
@@ -18,8 +18,8 @@ partial class Arguments4 : IEnumerable<KeyValuePair<string, object?>>
     {
         var options = new List<Option>
         {
-            new(null, "--fast", 0, false),
-            new(null, "--high", 0, false),
+            new("--fast", 0, false),
+            new("--high", 0, false),
         };
 
         return GeneratedSourceModule.Parse(Help, Usage, args, options, flags, version, Parse);

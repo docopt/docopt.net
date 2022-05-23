@@ -10,15 +10,13 @@ namespace DocoptNet.Internals
     /// <summary>
     /// Leaf/terminal node of a pattern tree.
     /// </summary>
-    abstract partial class LeafPattern: Pattern
+    abstract partial class LeafPattern : Pattern
     {
         protected LeafPattern(string name, ArgValue value = default)
         {
             Name = name;
             Value = value;
         }
-
-        protected LeafPattern() { }
 
         public override string Name { get; }
 

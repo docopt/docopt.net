@@ -19,10 +19,11 @@ namespace DocoptNet.Tests
         public void Should_fix_some_args()
         {
             var pattern = new Required(new Optional(new Argument("X"), new Argument("N")), new Argument("N"));
-            Assert.AreEqual(pattern.Children[0].Children[1], pattern.Children[1]);
-            Assert.AreNotSame(pattern.Children[0].Children[1], pattern.Children[1]);
+            var branch = (BranchPattern)pattern.Children[0];
+            Assert.AreEqual(branch.Children[1], pattern.Children[1]);
+            Assert.AreNotSame(branch.Children[1], pattern.Children[1]);
             pattern.FixIdentities();
-            Assert.AreSame(pattern.Children[0].Children[1], pattern.Children[1]);
+            Assert.AreSame(branch.Children[1], pattern.Children[1]);
         }
     }
 }

@@ -12,22 +12,22 @@ namespace DocoptNet.Tests
             return PatternMatcher.Match(pattern, left.AsReadOnly());
         }
 
-        public static IDictionary<string, ArgValue> Apply(this Docopt docopt,
-                                                          string doc, string cmdLine,
-                                                          bool help = true,
-                                                          object version = null,
-                                                          bool optionsFirst = false,
-                                                          bool exit = false)
+        public static IDictionary<string, ArgValue>? Apply(this Docopt docopt,
+                                                           string doc, string cmdLine,
+                                                           bool help = true,
+                                                           object? version = null,
+                                                           bool optionsFirst = false,
+                                                           bool exit = false)
         {
             return docopt.Apply(doc, Args.Parse(cmdLine), help, version, optionsFirst, exit);
         }
 
-        public static IDictionary<string, ArgValue> Apply(this Docopt docopt,
-                                                          string doc, Args argv,
-                                                          bool help = true,
-                                                          object version = null,
-                                                          bool optionsFirst = false,
-                                                          bool exit = false)
+        public static IDictionary<string, ArgValue>? Apply(this Docopt docopt,
+                                                           string doc, Args argv,
+                                                           bool help = true,
+                                                           object? version = null,
+                                                           bool optionsFirst = false,
+                                                           bool exit = false)
         {
             return Docopt.Internal.Apply(docopt, doc, argv.List.AsEnumerable(), help, version, optionsFirst, exit);
         }
@@ -90,7 +90,7 @@ namespace DocoptNet.Tests
         public static Args Parse(string cmdLine) =>
             // A very naive way to split a command line into individual
             // arguments but good enough for the test cases so far:
-            new(cmdLine.Split((char[])null, StringSplitOptions.RemoveEmptyEntries));
+            new(cmdLine.Split((char[]?)null, StringSplitOptions.RemoveEmptyEntries));
 
         public Args(IList<string> list) => List = list;
         public IList<string> List { get; }

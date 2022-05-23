@@ -1,8 +1,6 @@
 // Licensed under terms of MIT license (see LICENSE-MIT)
 // Copyright 2012 Vladimir Keleshev, 2013 Dinh Doan Van Bien, 2021 Atif Aziz
 
-#nullable enable
-
 namespace DocoptNet
 {
     using System;
@@ -148,7 +146,7 @@ namespace DocoptNet
             public static IEnumerable<T> GetNodes<T>(string doc,
                                                      Func<string, ArgValue, T> commandSelector,
                                                      Func<string, ArgValue, T> argumentSelector,
-                                                     Func<string, string, string, int, ArgValue, T> optionSelector)
+                                                     Func<string, string?, string?, int, ArgValue, T> optionSelector)
             {
                 var nodes =
                     from p in GetFlatPatterns(doc)
@@ -156,7 +154,10 @@ namespace DocoptNet
                     {
                         Command command   => (true, Value: commandSelector(command.Name, command.Value)),
                         Argument argument => (true, Value: argumentSelector(argument.Name, argument.Value)),
-                        Option option     => (true, Value: optionSelector(option.Name, option.LongName, option.ShortName, option.ArgCount, option.Value)),
+                        Option option     => (true, Value: option.MapName(optionSelector,
+                                                                          static (option, ln, f) => f(option.Name, ln, null, option.ArgCount, option.Value),
+                                                                          static (option, sn, f) => f(option.Name, null, sn, option.ArgCount, option.Value),
+                                                                          static (option, ln, sn, f) => f(option.Name, ln, sn, option.ArgCount, option.Value))),
                         _ => default,
                     }
                     into p
@@ -233,7 +234,7 @@ namespace DocoptNet
             {
                 if (token == "--")
                 {
-                    parsed.AddRange(tokens.Select(v => new Argument(null, v)));
+                    parsed.AddRange(tokens.Select(Argument.Unnamed));
                     return parsed;
                 }
 
@@ -247,12 +248,12 @@ namespace DocoptNet
                 }
                 else if (optionsFirst)
                 {
-                    parsed.AddRange(tokens.Select(v => new Argument(null, v)));
+                    parsed.AddRange(tokens.Select(Argument.Unnamed));
                     return parsed;
                 }
                 else
                 {
-                    parsed.Add(new Argument(null, tokens.Move()));
+                    parsed.Add(Argument.Unnamed(tokens.Move()));
                 }
             }
             return parsed;
@@ -409,17 +410,21 @@ namespace DocoptNet
                 }
                 if (similar.Count < 1)
                 {
-                    option = new Option(shortName, null, 0);
+                    option = new Option(shortName, 0);
                     options.Add(option);
                     if (tokens.ThrowsInputError)
                     {
-                        option = new Option(shortName, null, 0, ArgValue.True);
+                        option = new Option(shortName, 0, ArgValue.True);
                     }
                 }
                 else
                 {
                     // why is copying necessary here?
-                    option = new Option(shortName, similar[0].LongName, similar[0].ArgCount, similar[0].Value);
+                    option = similar[0] switch
+                    {
+                        { LongName: not null } s => new Option(shortName, s.LongName, s.ArgCount, s.Value),
+                        var s => new Option(shortName, s.ArgCount, s.Value),
+                    };
                     ArgValue? value = null;
                     if (option.ArgCount != 0)
                     {
@@ -459,25 +464,25 @@ namespace DocoptNet
             {
                 // If not exact match
                 similar =
-                    options.Where(o => !string.IsNullOrEmpty(o.LongName) && o.LongName.StartsWith(longName)).ToList();
+                    options.Where(o => o is { LongName: { Length: > 0 } ln } && ln.StartsWith(longName)).ToList();
             }
             if (similar.Count > 1)
             {
                 // Might be simply specified ambiguously 2+ times?
-                throw tokens.CreateException($"{longName} is not a unique prefix: {string.Join(", ", similar.Select(o => o.LongName))}?");
+                throw tokens.CreateException($"{longName} is not a unique prefix: {string.Join(", ", similar.Select(o => o.Name))}?");
             }
             Option option;
             if (similar.Count < 1)
             {
                 var argCount = eq ? 1 : 0;
-                option = new Option(null, longName, argCount);
+                option = new Option(longName, argCount);
                 options.Add(option);
                 if (tokens.ThrowsInputError)
-                    option = new Option(null, longName, argCount, value is { } v ? v : ArgValue.True);
+                    option = new Option(longName, argCount, value is { } v ? v : ArgValue.True);
             }
             else
             {
-                option = new Option(similar[0].ShortName, similar[0].LongName, similar[0].ArgCount, similar[0].Value);
+                option = new Option(similar[0]);
                 if (option.ArgCount == 0)
                 {
                     if (value != null)

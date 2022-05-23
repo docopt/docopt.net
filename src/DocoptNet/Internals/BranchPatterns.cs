@@ -5,6 +5,7 @@ namespace DocoptNet.Internals
 {
     using System;
     using System.Collections.Generic;
+    using System.Diagnostics;
     using System.Linq;
 
     /// <summary>
@@ -22,6 +23,8 @@ namespace DocoptNet.Internals
         {
             get { return ToString(); }
         }
+
+        public IList<Pattern> Children { get; set; }
 
         public IEnumerable<Pattern> Flat<T>() where T: Pattern
         {
@@ -41,6 +44,65 @@ namespace DocoptNet.Internals
         public override string ToString()
         {
             return $"{GetType().Name}({string.Join(", ", Children.Select(c => c == null ? "None" : c.ToString()))})";
+        }
+
+        public Pattern Fix()
+        {
+            FixIdentities();
+            FixRepeatingArguments();
+            return this;
+        }
+
+        /// <summary>
+        ///     Make pattern-tree tips point to same object if they are equal.
+        /// </summary>
+        public void FixIdentities(ICollection<Pattern>? uniq = null)
+        {
+            var listUniq = uniq ?? Flat().Distinct().ToList();
+            for (var i = 0; i < Children.Count; i++)
+            {
+                var child = Children[i];
+                if (child is LeafPattern)
+                {
+                    Debug.Assert(listUniq.Contains(child));
+                    Children[i] = listUniq.First(p => p.Equals(child));
+                }
+                else
+                {
+                    ((BranchPattern)child).FixIdentities(listUniq);
+                }
+            }
+        }
+
+        public Pattern FixRepeatingArguments()
+        {
+            var transform = Transform(this);
+            var either = transform.Children.OfType<BranchPattern>().Select(c => c.Children);
+            foreach (var aCase in either)
+            {
+                var cx = aCase.ToList();
+                var l = aCase.Where(e => cx.Count(c2 => c2.Equals(e)) > 1).ToList();
+
+                foreach (var e in l.OfType<LeafPattern>())
+                {
+                    if (e is Argument or Option { ArgCount: > 0 })
+                    {
+                        if (e.Value.IsNone)
+                        {
+                            e.Value = StringList.Empty;
+                        }
+                        else if (!e.Value.IsStringList)
+                        {
+                            e.Value = StringList.BottomTop(e.Value.ToString().Split((char[]?)null, StringSplitOptions.RemoveEmptyEntries));
+                        }
+                    }
+                    if (e is Command or Option { ArgCount: 0 })
+                    {
+                        e.Value = 0;
+                    }
+                }
+            }
+            return this;
         }
     }
 

@@ -1,6 +1,7 @@
 namespace DocoptNet.Tests
 {
     using NUnit.Framework;
+    using static DocoptNet.Tests.ArgumentFactory;
 
     [TestFixture]
     public class ArgumentTests
@@ -8,7 +9,7 @@ namespace DocoptNet.Tests
         [Test]
         public void ToString_string_value_returns_string_in_expected_format()
         {
-            var argument = new Argument("arg", "foobar");
+            var argument = Argument("arg", "foobar");
             Assert.AreEqual("Argument(arg, foobar)", argument.ToString());
         }
 
@@ -22,7 +23,7 @@ namespace DocoptNet.Tests
         [Test]
         public void ToString_array_value_returns_string_in_expected_format()
         {
-            var argument = new Argument("arg", new[] { "foo", "bar", "baz" });
+            var argument = Argument("arg", StringList.BottomTop("foo", "bar", "baz"));
             Assert.AreEqual("Argument(arg, [foo, bar, baz])", argument.ToString());
         }
     }

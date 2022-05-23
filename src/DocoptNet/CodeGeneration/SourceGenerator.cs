@@ -1,8 +1,6 @@
 // Licensed under terms of MIT license (see LICENSE-MIT)
 // Copyright 2021 Atif Aziz, Dinh Doan Van Bien
 
-#nullable enable
-
 namespace DocoptNet.CodeGeneration
 {
     using System;
@@ -279,7 +277,7 @@ namespace DocoptNet.CodeGeneration
 
             const string usageConstName = "Usage";
 
-            code["#nullable enable annotations"].NewLine
+            code["#nullable enable"].NewLine
 
                 .NewLine
                 .Using("System.Collections")
@@ -314,8 +312,9 @@ namespace DocoptNet.CodeGeneration
                             code.New["List<Option>"].NewLine
                                 .Block[code.Each(options,
                                                  static (code, option, _) =>
-                                                     code.NewTargeted["("][option.ShortName is { } sn ? code.Literal(sn) : code.Null][", "]
-                                                         [option.LongName is { } ln ? code.Literal(ln) : code.Null][", "]
+                                                     code.NewTargeted["("]
+                                                         [option.ShortName is { } sn ? code.Literal(sn)[", "] : code.Blank()]
+                                                         [option.LongName is { } ln ? code.Literal(ln)[", "] : code.Blank()]
                                                          .Literal(option.ArgCount)[", "]
                                                          [Value(code, option.Value)]["),"].NewLine).SkipNextNewLine]]
                         .NewLine
@@ -404,7 +403,7 @@ namespace DocoptNet.CodeGeneration
                         var mv = Vars[level++];
                         code.Var(mv)[code.New[matcher]['('].Literal(children.Count)[", "][pmv][".Left, "][pmv][".Collected)"]]
                             .While[code[mv][".Next()"]][
-                                (pattern.Children.Count switch
+                                (children.Count switch
                                 {
                                     > 1 => code.Switch[code[mv][".Index"]]
                                                .Cases(children, arg: (MatchVar: mv, Level: level),
@@ -441,7 +440,7 @@ namespace DocoptNet.CodeGeneration
                 {
                     Command  { Name: var name } => $"Cmd{GenerateCodeHelper.ConvertToPascalCase(name.ToLowerInvariant())}",
                     Argument { Name: var name } => $"Arg{GenerateCodeHelper.ConvertToPascalCase(name.Replace("<", "").Replace(">", "").ToLowerInvariant())}",
-                    Option   { LongName: null, ShortName: var name } when char.IsUpper(name[1]) => $"OptUpper{name[1]}",
+                    Option   { LongName: null, ShortName: { } name } when char.IsUpper(name[1]) => $"OptUpper{name[1]}",
                     Option   { Name: var name } => $"Opt{GenerateCodeHelper.ConvertToPascalCase(name.ToLowerInvariant())}",
                     var p => throw new NotSupportedException($"Unsupported pattern: {p}")
                 };

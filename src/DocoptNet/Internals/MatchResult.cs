@@ -16,7 +16,7 @@ namespace DocoptNet.Internals
             Collected = collected;
         }
 
-        public override bool Equals(object obj)
+        public override bool Equals(object? obj)
         {
             //
             // See the full list of guidelines at

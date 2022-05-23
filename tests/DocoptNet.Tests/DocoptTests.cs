@@ -3,6 +3,7 @@ namespace DocoptNet.Tests
     using System.Collections.Generic;
     using System.Linq;
     using NUnit.Framework;
+    using Shouldly;
 
     [TestFixture]
     public class DocoptTests
@@ -198,7 +199,8 @@ namespace DocoptNet.Tests
         [Test]
         public void Test_issue_68_options_shortcut_does_not_include_options_in_usage_pattern()
         {
-            var args = new Docopt().Apply("usage: prog [-ab] [options]\noptions: -x\n -y", "-ax");
+            var args = new Docopt().Apply("usage: prog [-ab] [options]\noptions: -x\n -y", "-ax")
+                                   .ShouldNotBeNull();
             Assert.True(args["-a"].IsTrue);
             Assert.True(args["-b"].IsFalse);
             Assert.True(args["-x"].IsTrue);
