@@ -572,7 +572,7 @@ public partial class " + ProgramArgumentsClassName + @" { }
                                          trees, references: null,
                                          new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary,
                                                                       generalDiagnosticOption: ReportDiagnostic.Error))
-                                 .WithReferenceAssemblies(ReferenceAssemblyKind.Net50)
+                                 .WithReferenceAssemblies(ReferenceAssemblyKind.Net60)
                                  .AddReferences(MetadataReference.CreateFromFile(Path.Combine(TestContext.CurrentContext.TestDirectory, "Newtonsoft.Json.dll")))
                                  .AddReferences(MetadataReference.CreateFromFile(typeof(Docopt).Assembly.Location));
 
