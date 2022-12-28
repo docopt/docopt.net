@@ -16,14 +16,12 @@ install:
     if ($isWindows) {
       ./dotnet-install.ps1 -JsonFile global.json
       ./dotnet-install.ps1 -Runtime dotnet -Version 6.0.12 -SkipNonVersionedFiles
-      ./dotnet-install.ps1 -Runtime dotnet -Version 3.1.22 -SkipNonVersionedFiles
     }
 - sh: |
     curl -OsSL https://dot.net/v1/dotnet-install.sh
     chmod +x dotnet-install.sh
     ./dotnet-install.sh --jsonfile global.json
     ./dotnet-install.sh --runtime dotnet --version 6.0.12 --skip-non-versioned-files
-    ./dotnet-install.sh --runtime dotnet --version 3.1.22 --skip-non-versioned-files
     export PATH="$HOME/.dotnet:$PATH"
 before_build:
 - dotnet --info

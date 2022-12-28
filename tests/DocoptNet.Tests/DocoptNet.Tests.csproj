@@ -1,14 +1,14 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>net7.0;net6.0;netcoreapp3.1;net47</TargetFrameworks>
+    <TargetFrameworks>net7.0;net6.0;net47</TargetFrameworks>
     <AssemblyOriginatorKeyFile>..\..\src\DocoptNet\DocoptNet.snk</AssemblyOriginatorKeyFile>
     <SignAssembly>true</SignAssembly>
     <PublicSign Condition=" '$(OS)' != 'Windows_NT' ">true</PublicSign>
     <IsPackable>false</IsPackable>
   </PropertyGroup>
 
-  <ItemGroup Condition="'$(TargetFramework)' == 'netcoreapp3.1' Or '$(TargetFramework)' == 'net47'">
+  <ItemGroup Condition="'$(TargetFramework)' == 'net47'">
     <Compile Remove="CodeGeneration\*.cs" />
     <None Remove="CodeGeneration\*.cs" />
   </ItemGroup>
