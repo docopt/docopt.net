@@ -34,7 +34,7 @@ namespace DocoptNet
                 try
                 {
                     var optionsFirst = (flags & ParseFlags.OptionsFirst) != ParseFlags.None;
-                    arguments = ParseArgv(tokens, options, optionsFirst).AsReadOnly();
+                    arguments = new ReadOnlyList<LeafPattern>(ParseArgv(tokens, options, optionsFirst));
                 }
                 catch (DocoptInputErrorException e)
                 {
