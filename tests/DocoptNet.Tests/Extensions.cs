@@ -9,7 +9,7 @@ namespace DocoptNet.Tests
     {
         public static MatchResult Match(this Pattern pattern, params LeafPattern[] left)
         {
-            return PatternMatcher.Match(pattern, left.AsReadOnly());
+            return PatternMatcher.Match(pattern, new ReadOnlyList<LeafPattern>(left));
         }
 
         public static IDictionary<string, ArgValue>? Apply(this Docopt docopt,
