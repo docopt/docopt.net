@@ -36,15 +36,8 @@ namespace DocoptNet.CodeGeneration
                 DiagnosticSeverity.Error,
                 isEnabledByDefault: true);
 
-        public void Initialize(GeneratorInitializationContext context)
-        {
+        public void Initialize(GeneratorInitializationContext context) =>
             context.RegisterForSyntaxNotifications(() => new SyntaxReceiver());
-            context.RegisterForPostInitialization(context =>
-            {
-                foreach (var (fn, source) in GetEmbeddedCSharpSources(fn => DoesFileNameEndIn(fn, "Attribute")))
-                    context.AddSource(fn, source);
-            });
-        }
 
         sealed class SyntaxReceiver : ISyntaxContextReceiver
         {
@@ -199,24 +192,6 @@ namespace DocoptNet.CodeGeneration
 
         static readonly SourceText EmptySourceText = SourceText.From(string.Empty);
         static readonly Encoding Utf8BomlessEncoding = new UTF8Encoding(encoderShouldEmitUTF8Identifier: false);
-
-        IEnumerable<(string, SourceText)> GetEmbeddedCSharpSources(Func<string, bool> predicate)
-        {
-            const string resourceNamespace = nameof(DocoptNet) + "." + nameof(CodeGeneration);
-            var assembly = GetType().Assembly;
-            foreach (var (rn, fn) in from rn in assembly.GetManifestResourceNames()
-                                     where rn.StartsWith(resourceNamespace) && rn.EndsWith(".cs")
-                                     select (ResourceName: rn, FileName: rn.Substring(resourceNamespace.Length)) into e
-                                     where predicate(e.FileName)
-                                     select e)
-            {
-                using var stream = assembly.GetManifestResourceStream(rn)!;
-                yield return (fn, SourceText.From(stream, canBeEmbedded: true));
-            }
-        }
-
-        static bool DoesFileNameEndIn(string fileName, string ending) =>
-            Path.GetFileNameWithoutExtension(fileName).EndsWith(ending, StringComparison.OrdinalIgnoreCase);
 
         static readonly string[] Vars = "abcdefghijklmnopqrstuvwxyz".Select(ch => ch.ToString()).ToArray();
 
