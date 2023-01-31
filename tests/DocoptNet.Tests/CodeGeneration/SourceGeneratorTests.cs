@@ -551,7 +551,7 @@ public partial class " + ProgramArgumentsClassName + @" { }
         static readonly RsAnalyzerConfigOptions DocoptSourceItemTypeConfigOption =
             new AnalyzerConfigOptions(KeyValuePair.Create("build_metadata.AdditionalFiles.SourceItemType", "Docopt"));
 
-        internal static (CSharpGeneratorDriver, CSharpCompilation)
+        internal static (GeneratorDriver, CSharpCompilation)
             PrepareForGeneration(params (string Path, SourceText Text)[] sources)
         {
             var trees = new List<SyntaxTree>();
@@ -576,7 +576,7 @@ public partial class " + ProgramArgumentsClassName + @" { }
                                  .AddReferences(MetadataReference.CreateFromFile(Path.Combine(TestContext.CurrentContext.TestDirectory, "Newtonsoft.Json.dll")))
                                  .AddReferences(MetadataReference.CreateFromFile(typeof(Docopt).Assembly.Location));
 
-            ISourceGenerator generator = new SourceGenerator();
+            IIncrementalGenerator generator = new SourceGenerator();
 
             var globalOptions = Enumerable.Empty<KeyValuePair<string, string>>();
 
@@ -586,9 +586,9 @@ public partial class " + ProgramArgumentsClassName + @" { }
                     additionalTexts.Select(at => KeyValuePair.Create(at, DocoptSourceItemTypeConfigOption))
                                    .ToImmutableDictionary());
 
-            var driver = CSharpGeneratorDriver.Create(new[] { generator },
-                                                      additionalTexts,
-                                                      optionsProvider: optionsProvider);
+            GeneratorDriver driver = CSharpGeneratorDriver.Create(generator);
+            driver = driver.AddAdditionalTexts(additionalTexts.ToImmutableArray());
+            driver = driver.WithUpdatedAnalyzerConfigOptions(optionsProvider);
 
             return (driver, compilation);
         }

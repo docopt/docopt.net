@@ -17,8 +17,8 @@ namespace DocoptNet.CodeGeneration
     using Unit = System.ValueTuple;
     using static OptionModule;
 
-    [Generator]
-    public sealed class SourceGenerator : ISourceGenerator
+    [Generator(LanguageNames.CSharp)]
+    public sealed class SourceGenerator : IIncrementalGenerator
     {
         static readonly DiagnosticDescriptor SyntaxError =
             new DiagnosticDescriptor(id: "DCPT0001",
@@ -36,49 +36,155 @@ namespace DocoptNet.CodeGeneration
                 DiagnosticSeverity.Error,
                 isEnabledByDefault: true);
 
-        public void Initialize(GeneratorInitializationContext context) =>
-            context.RegisterForSyntaxNotifications(() => new SyntaxReceiver());
-
-        sealed class SyntaxReceiver : ISyntaxContextReceiver
+        public void Initialize(IncrementalGeneratorInitializationContext context)
         {
-            ModelSymbols? _modelSymbols;
+            // FIXME re-instate launching debugger
+            // context.LaunchDebuggerIfFlagged(nameof(DocoptNet));
 
-            public List<(ClassDeclarationSyntax Class, AttributeData Attributes)> ClassAttributes { get; } = new();
+            const string attributeName = $"{nameof(DocoptNet)}.{nameof(DocoptArgumentsAttribute)}";
 
-            sealed class ModelSymbols
+            var docoptTypeResults =
+                context.SyntaxProvider
+                       .ForAttributeWithMetadataName(attributeName,
+                            static (node, _) => node is ClassDeclarationSyntax cds && cds.HasOrPotentiallyHasAttributes(),
+                            static (ctx, _) =>
+                            {
+                                var cds = (ClassDeclarationSyntax)ctx.TargetNode;
+                                var symbol = (INamedTypeSymbol)ctx.TargetSymbol;
+
+                                // TODO emit diagnostics on nested types? symbol.ContainingType != null
+                                var className = symbol.ToDisplayString(SymbolDisplayFormat.MinimallyQualifiedFormat);
+                                var namespaceName =
+                                    symbol.ContainingNamespace.ToDisplayString(FullyQualifiedFormatWithoutGlobalNamespace)
+                                        is { Length: > 0 } s ? s : null;
+                                var attributeData = ctx.Attributes[0];
+                                var attribute = DocoptArgumentsAttribute.From(attributeData);
+                                attribute.HelpConstName ??= DefaultHelpConstName;
+                                var help =
+                                    symbol.GetMembers()
+                                          .Choose(s => s is IFieldSymbol { IsConst: true, Name: var name, ConstantValue: string help }
+                                                    && name == attribute.HelpConstName ? Some(help) : default)
+                                          .FirstOrDefault();
+
+                                if (help is { } someHelp)
+                                {
+                                    return Result.Create((DocoptType?)new()
+                                    {
+                                        Namespace = namespaceName,
+                                        Name = className,
+                                        Parents = cds.GetParents()
+                                                     .Where(tds => tds is ClassDeclarationSyntax)
+                                                     .Reverse()
+                                                     .Select(p => p.Identifier.ToString())
+                                                     .ToImmutableArray(),
+                                        HelpConstName = attribute.HelpConstName,
+                                        Help = SourceText.From(someHelp),
+                                        Options = GenerationOptions.SkipHelpConst
+                                    });
+                                }
+
+                                var diagnostics = ImmutableArray.Create(DiagnosticInfo.Create(MissingHelpConstError, cds, symbol, attribute.HelpConstName));
+
+                                return new Result<DocoptType?>(null, diagnostics);
+                            });
+
+            context.RegisterSourceOutput(docoptTypeResults.Select((r, _) => r.Errors),
+                                         static (context, diagnostics) =>
+                                         {
+                                             foreach (var diagnostic in diagnostics)
+                                                 context.ReportDiagnostic(diagnostic.ToDiagnostic());
+                                         });
+
+            var docoptTypes = docoptTypeResults.Where(r => r.Value is not null)
+                                               .Select((r, _) => r.Value!);
+
+            var rootNamespace =
+                context.AnalyzerConfigOptionsProvider
+                       .Select((e, _) => e.GlobalOptions.TryGetValue("build_property.RootNamespace", out var rootNamespace) ? rootNamespace : null);
+
+            var docoptSources =
+                context.AdditionalTextsProvider
+                       .Combine(context.AnalyzerConfigOptionsProvider)
+                       .Combine(rootNamespace)
+                       .Select((e, _) =>
+                       {
+                           var ((at, analyzerConfigOptions), ns) = e;
+                           return analyzerConfigOptions.GetOptions(at) is var options
+                                  && options.TryGetValue(Metadata.SourceItemType, out var type)
+                                  && "Docopt".Equals(type, StringComparison.OrdinalIgnoreCase)
+                                  && at.GetText() is { } text
+                                  ? (DocoptType?)new()
+                                    {
+                                        Namespace = ns,
+                                        Name = options.TryGetValue(Metadata.Name, out var name)
+                                               && !string.IsNullOrWhiteSpace(name)
+                                             ? name
+                                             : Path.GetFileName(at.Path).Partition(".").Item1 + "Arguments",
+                                        Parents = ImmutableArray<string>.Empty,
+                                        HelpConstName = null,
+                                        Help = text,
+                                        Options = GenerationOptions.None
+                                    }
+                                  : default;
+                       })
+                       .Where(e => e is not null);
+
+            context.RegisterSourceOutput(docoptSources, Generate!);
+            context.RegisterSourceOutput(docoptTypes, Generate);
+
+            static void Generate(SourceProductionContext context, DocoptType dt)
             {
-                public ModelSymbols(SemanticModel model, INamedTypeSymbol attributeType)
+                var hintNameBuilder = new StringBuilder();
+
+                try
                 {
-                    Model = model;
-                    AttributeType = attributeType;
+                    var parentNames = dt.Parents;
+                    if (SourceGenerator.Generate(dt.Namespace, dt.Name, parentNames, dt.HelpConstName, dt.Help, dt.Options)
+                        is { Length: > 0 } source)
+                    {
+                        if (dt.Namespace is { } someNamespace) hintNameBuilder.Append(someNamespace).Append('.');
+                        if (parentNames.AsSpan().Length > 0)
+                        {
+                            foreach (var pn in parentNames)
+                            {
+                                // NOTE! Microsoft.CodeAnalysis.CSharp 3.10 does not allow use of "+"
+                                // as is conventional for nested types. It is allowed later versions;
+                                // see: https://github.com/dotnet/roslyn/issues/58476
+                                hintNameBuilder.Append(pn).Append('-');
+                            }
+                        }
+
+                        hintNameBuilder.Append(dt.Name);
+                        context.AddSource(hintNameBuilder.Append(".cs").ToString(), source);
+                    }
                 }
-
-                public SemanticModel Model { get; }
-                public INamedTypeSymbol AttributeType { get; }
-            }
-
-            ModelSymbols GetModelSymbols(SemanticModel semanticModel)
-            {
-                if (_modelSymbols is { Model: { } model } someModelSymbols && ReferenceEquals(semanticModel, model))
-                    return someModelSymbols;
-
-                const string attributeName = nameof(DocoptNet) + "." + nameof(DocoptArgumentsAttribute);
-                var attributeTypeSymbol = semanticModel.Compilation.GetTypeByMetadataName(attributeName);
-                return _modelSymbols = new ModelSymbols(semanticModel, attributeTypeSymbol ?? throw new NullReferenceException());
-            }
-
-            public void OnVisitSyntaxNode(GeneratorSyntaxContext context)
-            {
-                var attributeTypeSymbol = GetModelSymbols(context.SemanticModel).AttributeType;
-                if (context.Node is AttributeSyntax attribute
-                    && SymbolEqualityComparer.Default.Equals(attributeTypeSymbol, context.SemanticModel.GetTypeInfo(attribute).Type)
-                    && attribute.FirstAncestorOrSelf((ClassDeclarationSyntax _) => true) is { } cds
-                    && context.SemanticModel.GetDeclaredSymbol(cds)?.GetAttributes() is { } attributes)
+                catch (DocoptLanguageErrorException e)
                 {
-                    var attributeData = attributes.First(a => SymbolEqualityComparer.Default.Equals(a.AttributeClass, attributeTypeSymbol));
-                    ClassAttributes.Add((cds, attributeData));
+                    var args = Regex.Replace(e.Message, @"\r?\n", @"\n");
+                    context.ReportDiagnostic(Diagnostic.Create(SyntaxError, Location.None, args));
                 }
             }
+        }
+
+        sealed record DocoptType
+        {
+            public required string? Namespace { get; init; }
+            public required string Name { get; init; }
+            public required EquatableArray<string> Parents { get; init; }
+            public required string? HelpConstName { get; init; }
+            public required SourceText Help { get; init; }
+            public required GenerationOptions Options { get; init; }
+        }
+
+        static class Result
+        {
+            public static Result<TValue> Create<TValue>(TValue value)
+                where TValue : IEquatable<TValue>? =>
+                Create(value, ImmutableArray<DiagnosticInfo>.Empty);
+
+            public static Result<TValue> Create<TValue>(TValue value, EquatableArray<DiagnosticInfo> errors)
+                where TValue : IEquatable<TValue>? =>
+                new(value, errors);
         }
 
         static class Metadata
@@ -92,103 +198,6 @@ namespace DocoptNet.CodeGeneration
             SymbolDisplayFormat.FullyQualifiedFormat.WithGlobalNamespaceStyle(SymbolDisplayGlobalNamespaceStyle.Omitted);
 
         const string DefaultHelpConstName = "Help";
-
-        public void Execute(GeneratorExecutionContext context)
-        {
-            context.LaunchDebuggerIfFlagged(nameof(DocoptNet));
-
-            var syntaxReceiver = (SyntaxReceiver)(context.SyntaxContextReceiver ?? throw new NullReferenceException());
-
-            SemanticModel? model = null;
-            SyntaxTree? modelSyntaxTree = null;
-
-            var docoptTypes = new List<(string? Namespace, string Name,
-                                        IEnumerable<TypeDeclarationSyntax> Parents,
-                                        DocoptArgumentsAttribute? ArgumentsAttribute,
-                                        SourceText Help, GenerationOptions Options)>();
-
-            foreach (var (cds, attributeData) in syntaxReceiver.ClassAttributes)
-            {
-                if (model is null || modelSyntaxTree != cds.SyntaxTree)
-                {
-                    model = context.Compilation.GetSemanticModel(cds.SyntaxTree);
-                    modelSyntaxTree = cds.SyntaxTree;
-                }
-
-                var symbol = model.GetDeclaredSymbol(cds) as INamedTypeSymbol;
-                if (symbol is null)
-                    continue;
-                // TODO emit diagnostics on nested types? symbol.ContainingType != null
-                var className = symbol.ToDisplayString(SymbolDisplayFormat.MinimallyQualifiedFormat);
-                var namespaceName =
-                    symbol.ContainingNamespace.ToDisplayString(FullyQualifiedFormatWithoutGlobalNamespace)
-                    is { Length: > 0 } s ? s : null;
-                var attribute = DocoptArgumentsAttribute.From(attributeData);
-                attribute.HelpConstName ??= DefaultHelpConstName;
-                var help = symbol.GetMembers()
-                                 .Choose(s => s is IFieldSymbol { IsConst: true, Name: var name, ConstantValue: string help }
-                                           && name == attribute.HelpConstName ? Some(help) : default)
-                                 .FirstOrDefault();
-                if (help is { } someHelp)
-                    docoptTypes.Add((namespaceName, className, cds.GetParents().Where(tds => tds is ClassDeclarationSyntax).Reverse(), attribute, SourceText.From(someHelp), GenerationOptions.SkipHelpConst));
-                else
-                    context.ReportDiagnostic(Diagnostic.Create(MissingHelpConstError, symbol.Locations.First(), symbol, attribute.HelpConstName));
-            }
-
-            var globalOptions = context.AnalyzerConfigOptions.GlobalOptions;
-            globalOptions.TryGetValue("build_property.RootNamespace", out var rootNamespace);
-
-            var docoptSources =
-                context.AdditionalFiles
-                       .Choose(at => context.AnalyzerConfigOptions.GetOptions(at) is var options
-                                     && options.TryGetValue(Metadata.SourceItemType, out var type)
-                                     && "Docopt".Equals(type, StringComparison.OrdinalIgnoreCase)
-                                     && at.GetText() is { } text
-                                     ? Some((rootNamespace,
-                                             options.TryGetValue(Metadata.Name, out var name)
-                                             && !string.IsNullOrWhiteSpace(name)
-                                                 ? name
-                                                 : Path.GetFileName(at.Path).Partition(".").Item1 + "Arguments",
-                                             Enumerable.Empty<TypeDeclarationSyntax>(),
-                                             (DocoptArgumentsAttribute?)null,
-                                             text,
-                                             GenerationOptions.None))
-                                     : default)
-                       .ToImmutableArray();
-
-            var hintNameBuilder = new StringBuilder();
-
-            foreach (var (ns, name, parents, attribute, help, options) in docoptSources.Concat(docoptTypes))
-            {
-                try
-                {
-                    var parentNames = parents.Select(p => p.Identifier.ToString()).ToArray();
-                    if (Generate(ns, name, parentNames, attribute?.HelpConstName, help, options) is { Length: > 0 } source)
-                    {
-                        hintNameBuilder.Clear();
-                        if (ns is { } someNamespace)
-                            hintNameBuilder.Append(someNamespace).Append('.');
-                        if (parentNames.Length > 0)
-                        {
-                            foreach (var pn in parentNames)
-                            {
-                                // NOTE! Microsoft.CodeAnalysis.CSharp 3.10 does not allow use of "+"
-                                // as is conventional for nested types. It is allowed later versions;
-                                // see: https://github.com/dotnet/roslyn/issues/58476
-                                hintNameBuilder.Append(pn).Append('-');
-                            }
-                        }
-                        hintNameBuilder.Append(name);
-                        context.AddSource(hintNameBuilder.Append(".cs").ToString(), source);
-                    }
-                }
-                catch (DocoptLanguageErrorException e)
-                {
-                    var args = Regex.Replace(e.Message, @"\r?\n", @"\n");
-                    context.ReportDiagnostic(Diagnostic.Create(SyntaxError, Location.None, args));
-                }
-            }
-        }
 
         static readonly SourceText EmptySourceText = SourceText.From(string.Empty);
         static readonly Encoding Utf8BomlessEncoding = new UTF8Encoding(encoderShouldEmitUTF8Identifier: false);
