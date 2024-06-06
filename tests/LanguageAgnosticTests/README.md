@@ -9,7 +9,7 @@ Compile the **Testee** project then run the following commands:
 
 On Windows, use the following commands:
 
-    dotnet build tests\Testee
+    dotnet build tests\LanguageAgnosticTests
     cd tests\LanguageAgnosticTests
     python language_agnostic_tester.py bin\Debug\net7.0\Testee.exe
 
