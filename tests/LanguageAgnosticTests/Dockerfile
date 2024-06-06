@@ -1,4 +1,4 @@
-FROM mcr.microsoft.com/dotnet/sdk:7.0.101-alpine3.16-amd64 AS build
+FROM mcr.microsoft.com/dotnet/sdk:8.0.300-alpine3.19-amd64 AS build
 
 WORKDIR /project
 
@@ -8,11 +8,11 @@ COPY tests/LanguageAgnosticTests tests/LanguageAgnosticTests
 
 RUN dotnet build tests/LanguageAgnosticTests
 
-FROM mcr.microsoft.com/dotnet/runtime:7.0.1-alpine3.16-amd64
+FROM mcr.microsoft.com/dotnet/runtime:8.0.6-alpine3.19-amd64
 
 WORKDIR /tests
 
-COPY --from=build /project/tests/LanguageAgnosticTests/bin/Debug/net7.0/ bin
+COPY --from=build /project/tests/LanguageAgnosticTests/bin/Debug/net8.0/ bin
 COPY --from=build /project/tests/LanguageAgnosticTests/*.py .
 COPY --from=build /project/tests/LanguageAgnosticTests/*.docopt .
 
