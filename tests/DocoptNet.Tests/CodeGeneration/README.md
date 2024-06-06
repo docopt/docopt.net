@@ -62,7 +62,7 @@ of the project's Git repository.
 
 When a test case fails, run the script as follows:
 
-    dotnet script tests/DocoptNet.Tests/sgss.csx inspect -i
+    dotnet script tests/DocoptNet.Tests/sgss.csx -- inspect -i
 
 The script will create a temporary working tree from the current branch, where
 the expected output will be replaced by the actual output, and then proceed to
@@ -75,12 +75,12 @@ explore the changes.
 
 To remove the temporary working tree and branch, run:
 
-    dotnet script tests/DocoptNet.Tests/sgss.csx clean --force
+    dotnet script tests/DocoptNet.Tests/sgss.csx -- clean --force
 
 If the actual output is intended then running the `accept` command of the script
 will replace the expected output snapshot with the actual output, thus becoming the new expected output:
 
-    dotnet script tests/DocoptNet.Tests/sgss.csx accept
+    dotnet script tests/DocoptNet.Tests/sgss.csx -- accept
 
 For more detailed usage of the script, run:
 

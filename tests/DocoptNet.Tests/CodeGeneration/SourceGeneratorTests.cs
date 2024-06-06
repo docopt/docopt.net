@@ -406,7 +406,7 @@ For details, run:
 
 cd ""{solutionDirPath}""
 dotnet tool restore
-dotnet script {Path.Combine("tests", "DocoptNet.Tests", "sgss.csx")} inspect -i");
+dotnet script {Path.Combine("tests", "DocoptNet.Tests", "sgss.csx")} -- inspect -i");
         }
 
         abstract record SnapshotComparisonResult;
