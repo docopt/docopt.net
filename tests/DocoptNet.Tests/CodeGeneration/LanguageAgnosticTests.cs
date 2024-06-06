@@ -4,6 +4,7 @@ namespace DocoptNet.Tests.CodeGeneration
 {
     using System;
     using System.Collections.Generic;
+    using System.Diagnostics;
     using System.Globalization;
     using System.Reflection;
     using System.Text.RegularExpressions;
@@ -100,6 +101,7 @@ public partial class Program
             if (expected.StartsWith("{"))
             {
                 var expectedDict = JsonConvert.DeserializeObject<Dictionary<string, object>>(expected);
+                Debug.Assert(expectedDict is not null);
                 var actualDict = JsonConvert.DeserializeObject<Dictionary<string, object>>(actual);
                 Assert.That(actualDict, Is.EquivalentTo(expectedDict));
             }
@@ -107,7 +109,7 @@ public partial class Program
             {
                 var expected1 = JsonConvert.DeserializeObject(expected)!.ToString();
                 var actual1 = JsonConvert.DeserializeObject(actual)!.ToString();
-                Assert.AreEqual(expected1, actual1);
+                Assert.That(actual1, Is.EqualTo(expected1));
             }
         }
     }

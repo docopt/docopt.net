@@ -1,6 +1,7 @@
 namespace DocoptNet.Tests
 {
     using NUnit.Framework;
+    using Assert = NUnit.Framework.Legacy.ClassicAssert;
 
     [TestFixture]
     public class PatterEitherTests

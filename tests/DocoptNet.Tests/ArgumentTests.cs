@@ -2,6 +2,7 @@ namespace DocoptNet.Tests
 {
     using NUnit.Framework;
     using static DocoptNet.Tests.ArgumentFactory;
+    using Assert = NUnit.Framework.Legacy.ClassicAssert;
 
     [TestFixture]
     public class ArgumentTests

@@ -2,6 +2,7 @@ namespace DocoptNet.Tests
 {
     using NUnit.Framework;
     using static DocoptNet.Tests.PatternFactory;
+    using Assert = NUnit.Framework.Legacy.ClassicAssert;
 
     [TestFixture]
     public class OptionMatchTests

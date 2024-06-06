@@ -4,6 +4,8 @@ namespace DocoptNet.Tests
     using System.Linq;
     using NUnit.Framework;
     using Shouldly;
+    using Assert = NUnit.Framework.Legacy.ClassicAssert;
+    using StringAssert = NUnit.Framework.Legacy.StringAssert;
 
     [TestFixture]
     public class DocoptTests

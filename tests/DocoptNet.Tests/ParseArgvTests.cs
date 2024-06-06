@@ -3,6 +3,7 @@ namespace DocoptNet.Tests
     using System;
     using static DocoptNet.Tests.ArgumentFactory;
     using NUnit.Framework;
+    using Assert = NUnit.Framework.Legacy.ClassicAssert;
 
     [TestFixture]
     public class ParseArgvTests

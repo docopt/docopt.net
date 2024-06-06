@@ -2,6 +2,7 @@ namespace DocoptNet.Tests
 {
     using System.Collections.Generic;
     using NUnit.Framework;
+    using Assert = NUnit.Framework.Legacy.ClassicAssert;
 
     [TestFixture]
     public class OptionsFirstTests

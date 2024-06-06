@@ -2,6 +2,7 @@ namespace DocoptNet.Tests
 {
     using System;
     using NUnit.Framework;
+    using Assert = NUnit.Framework.Legacy.ClassicAssert;
 
     /// <summary>
     ///     Set of tests to validate assumptions about the BCL or other APIs.

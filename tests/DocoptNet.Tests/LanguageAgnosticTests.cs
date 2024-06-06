@@ -9,6 +9,7 @@ namespace DocoptNet.Tests
     using Newtonsoft.Json;
     using NUnit.Framework;
     using Shouldly;
+    using Assert = NUnit.Framework.Legacy.ClassicAssert;
 
     [TestFixture]
     public class LanguageAgnosticTests

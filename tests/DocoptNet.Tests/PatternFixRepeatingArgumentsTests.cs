@@ -3,6 +3,7 @@ namespace DocoptNet.Tests
     using System;
     using NUnit.Framework;
     using static DocoptNet.Tests.ArgumentFactory;
+    using Assert = NUnit.Framework.Legacy.ClassicAssert;
 
     [TestFixture]
     public class PatternFixRepeatingArgumentsTests

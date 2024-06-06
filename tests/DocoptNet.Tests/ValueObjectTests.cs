@@ -3,6 +3,8 @@ namespace DocoptNet.Tests
     using System.Collections;
     using System.Collections.Generic;
     using NUnit.Framework;
+    using Assert = NUnit.Framework.Legacy.ClassicAssert;
+    using CollectionAssert = NUnit.Framework.Legacy.CollectionAssert;
 
     [TestFixture]
     public class ValueObjectTests

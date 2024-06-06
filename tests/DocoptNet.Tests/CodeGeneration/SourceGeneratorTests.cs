@@ -267,8 +267,9 @@ Naval Fate.
 
             var diagnostics = outputCompilation.GetDiagnostics();
 
-            Assert.False(diagnostics.Any(d => d.Severity == DiagnosticSeverity.Error),
-                         "Failed: " + diagnostics.FirstOrDefault()?.GetMessage());
+            Assert.That(diagnostics.Any(d => d.Severity == DiagnosticSeverity.Error),
+                        Is.False,
+                        "Failed: " + diagnostics.FirstOrDefault()?.GetMessage());
 
             var testPath = Path.Combine(nameof(SourceGeneratorTests), callerName!);
             var actualSourcesPath = Path.Combine(TestContext.CurrentContext.WorkDirectory, testPath);
@@ -601,14 +602,16 @@ public partial class " + ProgramArgumentsClassName + @" { }
                                                      out var outputCompilation,
                                                      out var generateDiagnostics);
 
-            Assert.False(generateDiagnostics.Any(d => d.Severity == DiagnosticSeverity.Error),
-                         "Failed: " + generateDiagnostics.FirstOrDefault()?.GetMessage());
+            Assert.That(generateDiagnostics.Any(d => d.Severity == DiagnosticSeverity.Error),
+                        Is.False,
+                        "Failed: " + generateDiagnostics.FirstOrDefault()?.GetMessage());
 
             using var ms = new MemoryStream();
             var emitResult = outputCompilation.Emit(ms);
 
-            Assert.False(emitResult.Diagnostics.Any(d => d.Severity == DiagnosticSeverity.Error),
-                         "Failed: " + emitResult.Diagnostics.FirstOrDefault());
+            Assert.That(emitResult.Diagnostics.Any(d => d.Severity == DiagnosticSeverity.Error),
+                        Is.False,
+                        "Failed: " + emitResult.Diagnostics.FirstOrDefault());
 
             ms.Position = 0;
 

@@ -2,6 +2,7 @@ namespace DocoptNet.Tests
 {
     using System.Linq;
     using NUnit.Framework;
+    using Assert = NUnit.Framework.Legacy.ClassicAssert;
 
     [TestFixture]
     public class UsageTests
