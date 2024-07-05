@@ -299,7 +299,7 @@ namespace DocoptNet.CodeGeneration
                             .Var("required")[code.New["RequiredMatcher(1, left, "].New["Leaves()"][')']]
                             ["Match(ref required)"].EndStatement
                             .If["!required.Result || required.Left.Count > 0"][code
-                                .Return[code["GeneratedSourceModule.CreateInputErrorResult<"][name][">(string.Empty, "][usageConstName][")"]]]
+                                .Return[code["GeneratedSourceModule.CreateInputErrorResult<"][name][">(required.Left.Count > 0 ? required.LeftNames() : string.Empty, "][usageConstName][")"]]]
                             .Var("collected")["required.Collected"]
                             .Var("result")[code.New[name]["()"]]
                             [leaves.Any()

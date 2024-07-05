@@ -69,6 +69,9 @@ namespace DocoptNet.Internals
         public bool Next() => BranchPatternMatcher.Next(ref _i, _count);
 
         public Leaves Left { get; private set; }
+
+        public string LeftNames() => string.Join(", ", Left.Select(x => x.Name));
+
         public Leaves Collected { get; private set; }
 
         public bool Match(LeafPatternMatcher matcher, string name, ArgValueKind kind) =>
