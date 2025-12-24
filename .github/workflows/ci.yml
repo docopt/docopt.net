@@ -52,9 +52,6 @@ jobs:
       if: runner.os == 'Windows'
       shell: pwsh
       run: |
-        $commitHash = git rev-parse HEAD
-        if ($LASTEXITCODE) { throw "Failed to get commit hash" })
-
         $commitTimestamp = git log -1 --format=%cI
         if ($LASTEXITCODE) { throw "Failed to get commit timestamp" }
         $versionSuffix = ([datetimeoffset]$commitTimestamp).ToUniversalTime().ToString('yyyyMMdd''t''HHmm')
