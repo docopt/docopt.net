@@ -1,0 +1,42 @@
+name: CI
+
+on:
+  push:
+    paths-ignore:
+      - '*.md'
+      - '*.txt'
+      - '.git*'
+  pull_request:
+    paths-ignore:
+      - '*.md'
+      - '*.txt'
+      - '.git*'
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          global-json-file: global.json
+
+      - name: Display .NET info
+        run: dotnet --info
+
+      - name: Pack
+        run: dotnet pack "-p:RepositoryCommit=${{ github.sha }}"
+
+      - name: Test
+        run: ./test.cmd
+        shell: cmd
+
+      - name: Upload NuGet packages
+        uses: actions/upload-artifact@v4
+        with:
+          name: NuGet
+          path: dist/*.nupkg
