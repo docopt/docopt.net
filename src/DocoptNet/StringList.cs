@@ -27,7 +27,7 @@ namespace DocoptNet
             items.Aggregate(Empty, (stack, item) => stack.Push(item));
 
         public static StringList TopBottom(params string[] items) =>
-            items.Reverse().Aggregate(Empty, (stack, item) => stack.Push(item));
+            items.AsEnumerable().Reverse().Aggregate(Empty, (stack, item) => stack.Push(item));
 
         StringList(string value, StringList next) : this(value, next, next.Count + 1) { }
 
