@@ -2,11 +2,15 @@ name: CI
 
 on:
   push:
+    branches:
+      - 'templates/**'
     paths-ignore:
       - '*.md'
       - '*.txt'
       - '.git*'
   pull_request:
+    branches:
+      - 'templates/**'
     paths-ignore:
       - '*.md'
       - '*.txt'
