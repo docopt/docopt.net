@@ -166,7 +166,7 @@ namespace DocoptNet.CodeGeneration
                     if (Generate(ns, name, parentNames, attribute?.HelpConstName, help, options) is { Length: > 0 } source)
                     {
                         hintNameBuilder.Clear();
-                        if (ns is { } someNamespace)
+                        if (ns?.Trim() is { Length: > 0 } someNamespace)
                             hintNameBuilder.Append(someNamespace).Append('.');
                         if (parentNames.Length > 0)
                         {

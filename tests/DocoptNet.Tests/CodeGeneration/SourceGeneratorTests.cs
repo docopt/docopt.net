@@ -55,6 +55,17 @@ Naval Fate.
         }
 
         [Test]
+        public void Generate_with_empty_root_namespace()
+        {
+            AssertMatchesSnapshot(
+                analyzerConfigOptions: new(KeyValuePair.Create("build_property.RootNamespace", string.Empty)),
+                sources: new[]
+            {
+                ("Program.docopt.txt", SourceText.From(NavalFateUsage))
+            });
+        }
+
+        [Test]
         public void Generate_with_inline_usage()
         {
             AssertMatchesSnapshot(new[]
@@ -256,9 +267,10 @@ Naval Fate.
         }
 
         void AssertMatchesSnapshot((string Path, SourceText Text)[] sources,
+                                   AnalyzerConfigOptions? analyzerConfigOptions = null,
                                    [CallerMemberName]string? callerName = null)
         {
-            var (driver, compilation) = PrepareForGeneration(sources);
+            var (driver, compilation) = PrepareForGeneration(analyzerConfigOptions ?? new(), sources);
 
             var grr = driver.RunGeneratorsAndUpdateCompilation(compilation, out var outputCompilation, out _)
                             .GetRunResult().Results.Single();
@@ -340,7 +352,16 @@ Naval Fate.
                        || fn.EndsWith(".json", StringComparison.OrdinalIgnoreCase))
                 select Path.GetRelativePath(solutionDirPath, fp);
 
-            var actualFiles = EnumerateFiles(actualSourcesPath);
+            var actualFiles = EnumerateFiles(actualSourcesPath).ToImmutableArray();
+
+            Assert.That(from gs in grr.GeneratedSources
+                        orderby gs.HintName
+                        select gs.HintName,
+                        Is.EqualTo(from af in actualFiles
+                                   select Path.GetFileName(af) into af
+                                   where af.EndsWith(".cs", StringComparison.OrdinalIgnoreCase)
+                                   orderby af
+                                   select af));
 
             var expectedFiles = Directory.Exists(expectedSourcesPath)
                               ? EnumerateFiles(expectedSourcesPath)
@@ -553,7 +574,12 @@ public partial class " + ProgramArgumentsClassName + @" { }
             new AnalyzerConfigOptions(KeyValuePair.Create("build_metadata.AdditionalFiles.SourceItemType", "Docopt"));
 
         internal static (CSharpGeneratorDriver, CSharpCompilation)
-            PrepareForGeneration(params (string Path, SourceText Text)[] sources)
+            PrepareForGeneration(params (string Path, SourceText Text)[] sources) =>
+            PrepareForGeneration(new AnalyzerConfigOptions(), sources);
+
+        internal static (CSharpGeneratorDriver, CSharpCompilation)
+            PrepareForGeneration(AnalyzerConfigOptions analyzerConfigOptions,
+                                 params (string Path, SourceText Text)[] sources)
         {
             var trees = new List<SyntaxTree>();
             var additionalTexts = new List<AdditionalText>();
@@ -579,11 +605,9 @@ public partial class " + ProgramArgumentsClassName + @" { }
 
             ISourceGenerator generator = new SourceGenerator();
 
-            var globalOptions = Enumerable.Empty<KeyValuePair<string, string>>();
-
             var optionsProvider =
                 new AnalyzerConfigOptionsProvider(
-                    new AnalyzerConfigOptions(globalOptions),
+                    analyzerConfigOptions,
                     additionalTexts.Select(at => KeyValuePair.Create(at, DocoptSourceItemTypeConfigOption))
                                    .ToImmutableDictionary());
 
