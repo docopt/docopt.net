@@ -52,7 +52,13 @@ jobs:
       if: runner.os == 'Windows'
       shell: pwsh
       run: |
-        $versionSuffix = ([datetimeoffset]'${{ github.event.head_commit.timestamp }}').ToUniversalTime().ToString('yyyyMMdd''t''HHmm')
+        $commitHash = git rev-parse HEAD
+        if ($LASTEXITCODE) { throw "Failed to get commit hash" })
+
+        $commitTimestamp = git log -1 --format=%cI
+        if ($LASTEXITCODE) { throw "Failed to get commit timestamp" }
+        $versionSuffix = ([datetimeoffset]$commitTimestamp).ToUniversalTime().ToString('yyyyMMdd''t''HHmm')
+
         $releaseNotesFile = [System.IO.Path]::GetTempFileName()
         $tag = '${{ github.ref_name }}'
         $isTag = '${{ github.ref_type }}' -eq 'tag'
