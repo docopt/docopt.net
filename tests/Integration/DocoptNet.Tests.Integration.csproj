@@ -5,6 +5,10 @@
     <IsPackable>false</IsPackable>
     <RestoreAdditionalProjectSources>$(MSBuildThisFileDirectory)..\..\dist</RestoreAdditionalProjectSources>
     <RestorePackagesPath>$(MSBuildThisFileDirectory).nuget</RestorePackagesPath>
+    <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
+    <!-- Workaround for IDE0005 (Remove unnecessary usings/imports); see https://github.com/dotnet/roslyn/issues/41640 -->
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <NoWarn>$(NoWarn);CS1591</NoWarn>
   </PropertyGroup>
 
   <ItemGroup>
