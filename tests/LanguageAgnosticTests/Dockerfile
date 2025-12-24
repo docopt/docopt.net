@@ -1,4 +1,8 @@
-FROM mcr.microsoft.com/dotnet/sdk:8.0.300-alpine3.19-amd64 AS build
+ARG SDK_VERSION=10.0.101
+ARG RUNTIME_VERSION=10.0.1
+ARG BASE_IMAGE=alpine3.22-amd64
+
+FROM mcr.microsoft.com/dotnet/sdk:${SDK_VERSION}-${BASE_IMAGE} AS build
 
 WORKDIR /project
 
@@ -8,11 +12,11 @@ COPY tests/LanguageAgnosticTests tests/LanguageAgnosticTests
 
 RUN dotnet build tests/LanguageAgnosticTests
 
-FROM mcr.microsoft.com/dotnet/runtime:8.0.6-alpine3.19-amd64
+FROM mcr.microsoft.com/dotnet/runtime:${RUNTIME_VERSION}-${BASE_IMAGE}
 
 WORKDIR /tests
 
-COPY --from=build /project/tests/LanguageAgnosticTests/bin/Debug/net8.0/ bin
+COPY --from=build /project/tests/LanguageAgnosticTests/bin/Debug/net10.0/ bin
 COPY --from=build /project/tests/LanguageAgnosticTests/*.py .
 COPY --from=build /project/tests/LanguageAgnosticTests/*.docopt .
 

@@ -33,7 +33,7 @@ namespace DocoptNet.Tests
         }
     }
 
-#if NETCOREAPP3_1_OR_GREATER
+#if NET8_0_OR_GREATER
 
     [Flags]
     enum StreamContentComparisonFlags
@@ -70,11 +70,17 @@ namespace DocoptNet.Tests
 
             for (var i = 0; i < iterations; i++)
             {
-                first.Read(buffer1);
-                second.Read(buffer2);
+                buffer1.Clear();
+                buffer2.Clear();
 
-                if (BitConverter.ToInt64(buffer1) != BitConverter.ToInt64(buffer2))
+                var bytesRead1 = first.Read(buffer1);
+                var bytesRead2 = second.Read(buffer2);
+
+                if (bytesRead1 != bytesRead2
+                    || BitConverter.ToInt64(buffer1) != BitConverter.ToInt64(buffer2))
+                {
                     return false;
+                }
             }
 
             return true;

@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>netstandard2.1;netstandard2.0;netstandard1.5</TargetFrameworks>
+    <TargetFrameworks>netstandard2.1;netstandard2.0;net47</TargetFrameworks>
     <DefineConstants>$(DefineConstants);DOCOPTNET_PUBLIC</DefineConstants>
     <!--
     TODO Remove the suppression of the following warnings after addressing them:
@@ -37,19 +37,19 @@ Portions Copyright (C) .NET Foundation and Contributors.
 Portions Copyright (C) West Wind Technologies, 2008.
     </Copyright>
     <PackageTags>parser;command line argument;option library;syntax;shell;beautiful;posix;python;console;command-line;docopt</PackageTags>
+    <EmbedUntrackedSources>true</EmbedUntrackedSources>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(TargetFramework)' == 'netstandard2.1' Or '$(TargetFramework)' == 'netstandard2.0'">
     <DefineConstants>$(DefineConstants);RUNTIME_SERIALIZATION</DefineConstants>
   </PropertyGroup>
 
-  <ItemGroup Condition="'$(TargetFramework)' == 'netstandard1.5'">
-    <PackageReference Include="System.Collections.NonGeneric" Version="4.3.0" />
+  <ItemGroup Condition="'$(TargetFramework)' == 'net47'">
     <Compile Remove="CodeGeneration\*.cs" />
     <None Include="CodeGeneration\*.cs" />
   </ItemGroup>
 
-  <ItemGroup Condition="'$(TargetFramework)' != 'netstandard1.5'">
+  <ItemGroup Condition="'$(TargetFramework)' != 'net47'">
     <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="3.10.0" PrivateAssets="all" />
     <AdditionalFiles Include="CodeGeneration\AnalyzerReleases.*.md" />
   </ItemGroup>
@@ -72,7 +72,7 @@ Portions Copyright (C) West Wind Technologies, 2008.
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="DotNet.ReproducibleBuilds" Version="1.1.1">
+    <PackageReference Include="DotNet.ReproducibleBuilds" Version="1.2.39">
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
@@ -80,11 +80,11 @@ Portions Copyright (C) West Wind Technologies, 2008.
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
-    <PackageReference Include="PolySharp" Version="1.14.1">
+    <PackageReference Include="PolySharp" Version="1.15.0">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="System.ValueTuple" Version="4.5.0" />
+    <PackageReference Include="System.ValueTuple" Version="4.6.1" />
   </ItemGroup>
 
   <ItemGroup>

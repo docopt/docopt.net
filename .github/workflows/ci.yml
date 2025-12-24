@@ -37,7 +37,7 @@ jobs:
       uses: actions/setup-dotnet@v4
       with:
         global-json-file: global.json
-        dotnet-version: '6.0.x'
+        dotnet-version: '8.0.x'
 
     - name: Display .NET info
       run: dotnet --info
