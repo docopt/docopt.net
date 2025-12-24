@@ -22,7 +22,7 @@ namespace DocoptNet
         public bool IsInt => Value != null && (Value is int || int.TryParse(Value.ToString(), out _));
         public bool IsString => Value is string;
         public int AsInt => IsList ? 0 : Convert.ToInt32(Value);
-        public ArrayList AsList => Value is ArrayList list ? list : new ArrayList { Value };
+        public ArrayList AsList => Value as ArrayList ?? new ArrayList { Value };
 
         public override bool Equals(object? obj)
         {

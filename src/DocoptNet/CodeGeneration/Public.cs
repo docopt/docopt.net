@@ -3,5 +3,5 @@
 
 namespace DocoptNet
 {
-    public partial class DocoptArgumentsAttribute { }
+    public partial class DocoptArgumentsAttribute;
 }

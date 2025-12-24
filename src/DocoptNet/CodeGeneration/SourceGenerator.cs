@@ -241,8 +241,8 @@ namespace DocoptNet.CodeGeneration
 
             var (parserTypeName, parserConfigurationCode) =
                 leaves.OfType<Option>().Any(o => o is { Name: "-h" or "--help" })
-                    ? (nameof(IHelpFeaturingParser<object>), ".EnableHelp()")
-                    : (nameof(IBaselineParser<object>), string.Empty);
+                    ? (nameof(IHelpFeaturingParser<>), ".EnableHelp()")
+                    : (nameof(IBaselineParser<>), string.Empty);
 
             const string usageConstName = "Usage";
 

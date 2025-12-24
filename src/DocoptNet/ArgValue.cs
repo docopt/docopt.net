@@ -58,8 +58,8 @@ namespace DocoptNet
 
         public bool TryAsBoolean(out bool value) { value = IsBoolean && _int != 0; return IsBoolean; }
         public bool TryAsInteger(out int value) { value = IsInteger ? _int : default; return IsInteger; }
-        public bool TryAsString([NotNullWhen(true)]out string? value) { value = _ref is string s ? s : default; return IsString; }
-        public bool TryAsStringList([NotNullWhen(true)]out StringList? value) { value = _ref is StringList list ? list : default; return IsStringList; }
+        public bool TryAsString([NotNullWhen(true)]out string? value) { value = _ref as string; return IsString; }
+        public bool TryAsStringList([NotNullWhen(true)]out StringList? value) { value = _ref as StringList; return IsStringList; }
 
         public static explicit operator bool(ArgValue value) => value.TryAsBoolean(out var f) ? f : throw new InvalidCastException();
         public static explicit operator int(ArgValue value) => value.TryAsInteger(out var n) ? n : throw new InvalidCastException();

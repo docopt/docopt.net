@@ -14,12 +14,9 @@ namespace DocoptNet.Internals
     abstract partial class BranchPattern : Pattern
     {
 #pragma warning disable IDE0290 // Use primary constructor (protected)
-        protected BranchPattern(params Pattern[] children)
+        protected BranchPattern(params Pattern[] children) =>
 #pragma warning restore IDE0290 // Use primary constructor
-        {
-            if (children == null) throw new ArgumentNullException(nameof(children));
-            Children = children;
-        }
+            Children = children ?? throw new ArgumentNullException(nameof(children));
 
         public override string Name
         {

@@ -377,7 +377,7 @@ namespace DocoptNet
                     {
                         return ParseShorts(tokens, options);
                     }
-                    if ((token.StartsWith("<") && token.EndsWith(">")) || token.All(c => char.IsUpper(c)))
+                    if ((token.StartsWith("<") && token.EndsWith(">")) || token.All(char.IsUpper))
                     {
                         result.Add(new Argument(tokens.Move()));
                     }
@@ -478,7 +478,7 @@ namespace DocoptNet
                 option = new Option(longName, argCount);
                 options.Add(option);
                 if (tokens.ThrowsInputError)
-                    option = new Option(longName, argCount, value is { } v ? v : ArgValue.True);
+                    option = new Option(longName, argCount, value ?? ArgValue.True);
             }
             else
             {
@@ -498,7 +498,7 @@ namespace DocoptNet
                     }
                 }
                 if (tokens.ThrowsInputError)
-                    option.Value = value is { } v ? v : ArgValue.True;
+                    option.Value = value ?? ArgValue.True;
             }
             return [option];
         }
@@ -519,7 +519,7 @@ namespace DocoptNet
                     var s2 = a[i + 1];
                     split.Add(s1 + s2);
                 }
-                var options = split.Where(x => x.StartsWith("-")).Select(x => Option.Parse(x));
+                var options = split.Where(x => x.StartsWith("-")).Select(Option.Parse);
                 defaults.AddRange(options);
             }
             return defaults;

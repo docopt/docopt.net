@@ -20,7 +20,7 @@ namespace DocoptNet
         TResult GetResult(T state);
     }
 
-    interface IApplicationResultAccumulator<T> : IApplicationResultAccumulator<T, T> { }
+    interface IApplicationResultAccumulator<T> : IApplicationResultAccumulator<T, T>;
 
     static class ApplicationResultAccumulators
     {
