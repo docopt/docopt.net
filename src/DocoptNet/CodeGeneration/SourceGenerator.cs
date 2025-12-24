@@ -45,16 +45,10 @@ namespace DocoptNet.CodeGeneration
 
             public List<(ClassDeclarationSyntax Class, AttributeData Attributes)> ClassAttributes { get; } = [];
 
-            sealed class ModelSymbols
+            sealed class ModelSymbols(SemanticModel model, INamedTypeSymbol attributeType)
             {
-                public ModelSymbols(SemanticModel model, INamedTypeSymbol attributeType)
-                {
-                    Model = model;
-                    AttributeType = attributeType;
-                }
-
-                public SemanticModel Model { get; }
-                public INamedTypeSymbol AttributeType { get; }
+                public SemanticModel Model { get; } = model;
+                public INamedTypeSymbol AttributeType { get; } = attributeType;
             }
 
             ModelSymbols GetModelSymbols(SemanticModel semanticModel)

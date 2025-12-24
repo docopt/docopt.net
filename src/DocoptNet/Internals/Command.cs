@@ -3,9 +3,6 @@
 
 namespace DocoptNet.Internals
 {
-    sealed class Command : LeafPattern
-    {
-        public Command(string name, bool value = false) :
-            base(name, value ? ArgValue.True : ArgValue.False) { }
-    }
+    sealed class Command(string name, bool value = false)
+        : LeafPattern(name, value ? ArgValue.True : ArgValue.False);
 }

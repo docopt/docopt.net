@@ -26,15 +26,13 @@ namespace DocoptNet
         string Version { get; }
     }
 
-    sealed class ArgumentsResult<T> :
+    sealed class ArgumentsResult<T>(T args) :
         IArgumentsResult<T>,
         IParser<T>.IResult, IHelpFeaturingParser<T>.IResult,
         IVersionFeaturingParser<T>.IResult,
         IBaselineParser<T>.IResult
     {
-        public ArgumentsResult(T args) => Arguments = args;
-
-        public T Arguments { get; }
+        public T Arguments { get; } = args;
 
         public override string ToString() => Arguments?.ToString() ?? string.Empty;
 
@@ -65,14 +63,12 @@ namespace DocoptNet
             args(Arguments);
     }
 
-    sealed class ParseHelpResult<T> :
+    sealed class ParseHelpResult<T>(string help) :
         IHelpResult,
         IParser<T>.IResult,
         IHelpFeaturingParser<T>.IResult
     {
-        public ParseHelpResult(string help) => Help = help;
-
-        public string Help { get; }
+        public string Help { get; } = help;
 
         TResult IParser<T>.IResult.Match<TResult>(Func<T, TResult> args,
                                                   Func<IHelpResult, TResult> help,
@@ -92,14 +88,12 @@ namespace DocoptNet
             help(this);
     }
 
-    sealed class ParseVersionResult<T> :
+    sealed class ParseVersionResult<T>(string version) :
         IVersionResult,
         IParser<T>.IResult,
         IVersionFeaturingParser<T>.IResult
     {
-        public ParseVersionResult(string version) => Version = version;
-
-        public string Version { get; }
+        public string Version { get; } = version;
 
         TResult IParser<T>.IResult.Match<TResult>(Func<T, TResult> args,
                                                   Func<IHelpResult, TResult> help,
@@ -119,17 +113,15 @@ namespace DocoptNet
             version(this);
     }
 
-    sealed class ParseInputErrorResult<T> :
+    sealed class ParseInputErrorResult<T>(string error, string usage) :
         IInputErrorResult,
         IParser<T>.IResult,
         IHelpFeaturingParser<T>.IResult,
         IVersionFeaturingParser<T>.IResult,
         IBaselineParser<T>.IResult
     {
-        public ParseInputErrorResult(string error, string usage) => (Error, Usage) = (error, usage);
-
-        public string Error { get; }
-        public string Usage { get; }
+        public string Error { get; } = error;
+        public string Usage { get; } = usage;
 
         TResult IParser<T>.IResult.Match<TResult>(Func<T, TResult> args,
                                                   Func<IHelpResult, TResult> help,

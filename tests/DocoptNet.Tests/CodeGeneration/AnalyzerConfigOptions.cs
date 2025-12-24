@@ -7,11 +7,10 @@ namespace DocoptNet.Tests.CodeGeneration
     using System.Diagnostics.CodeAnalysis;
     using System.Linq;
 
-    sealed class AnalyzerConfigOptions : Microsoft.CodeAnalysis.Diagnostics.AnalyzerConfigOptions
+    sealed class AnalyzerConfigOptions(ImmutableDictionary<string, string> options) :
+        Microsoft.CodeAnalysis.Diagnostics.AnalyzerConfigOptions
     {
         public static readonly AnalyzerConfigOptions Empty = new(ImmutableDictionary<string, string>.Empty);
-
-        readonly ImmutableDictionary<string, string> _options;
 
         public AnalyzerConfigOptions(params KeyValuePair<string, string>[] options) :
             this(options.AsEnumerable()) { }
@@ -19,10 +18,7 @@ namespace DocoptNet.Tests.CodeGeneration
         public AnalyzerConfigOptions(IEnumerable<KeyValuePair<string, string>> options) :
             this(ImmutableDictionary.CreateRange(options)) { }
 
-        public AnalyzerConfigOptions(ImmutableDictionary<string, string> options) =>
-            _options = options;
-
         public override bool TryGetValue(string key, [NotNullWhen(true)] out string? value) =>
-            _options.TryGetValue(key, out value);
+            options.TryGetValue(key, out value);
     }
 }

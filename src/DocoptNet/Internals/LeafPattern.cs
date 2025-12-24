@@ -12,7 +12,9 @@ namespace DocoptNet.Internals
     /// </summary>
     abstract partial class LeafPattern : Pattern
     {
+#pragma warning disable IDE0290 // Use primary constructor (protected)
         protected LeafPattern(string name, ArgValue value = default)
+#pragma warning restore IDE0290 // Use primary constructor
         {
             Name = name;
             Value = value;

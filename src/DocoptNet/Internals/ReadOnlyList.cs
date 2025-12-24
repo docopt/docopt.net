@@ -22,10 +22,10 @@ namespace DocoptNet.Internals
     /// read-write <seealso cref="IList{T}"/> is not changed.
     /// </remarks>
 
-    readonly partial struct ReadOnlyList<T> : IReadOnlyList<T>
+    readonly partial struct ReadOnlyList<T>(IList<T> list) : IReadOnlyList<T>
     {
-        public ReadOnlyList(IList<T> list) => List = list;
-        IList<T> List => field ?? Array.Empty<T>();
+        IList<T> List { get => field ?? Array.Empty<T>(); } = list;
+
         public int Count => List.Count;
         public T this[int index] => List[index];
         public IEnumerator<T> GetEnumerator() => List.GetEnumerator();

@@ -93,25 +93,18 @@ namespace DocoptNet.Internals
         public MatchResult Result => _result ?? new MatchResult(true, Left, Collected);
     }
 
-    partial struct EitherMatcher : IBranchPatternMatcher
+    partial struct EitherMatcher(int count, Leaves left, Leaves collected) :
+        IBranchPatternMatcher
     {
-        readonly int _count;
         int _i;
-        MatchResult _match;
-
-        public EitherMatcher(int count, Leaves left, Leaves collected) : this()
-        {
-            _count = count;
-            (Left, Collected) = (left, collected);
-            _match = new MatchResult(false, left, collected);
-        }
+        MatchResult _match = new(false, left, collected);
 
         public int Index => _i - 1;
 
-        public bool Next() => BranchPatternMatcher.Next(ref _i, _count);
+        public bool Next() => BranchPatternMatcher.Next(ref _i, count);
 
-        public Leaves Left { get; }
-        public Leaves Collected { get; }
+        public Leaves Left { get; } = left;
+        public Leaves Collected { get; } = collected;
 
         public bool Match(LeafPatternMatcher matcher, string name, ArgValueKind kind) =>
             Fold(matcher.Match(Left, Collected, name, kind));
@@ -131,20 +124,17 @@ namespace DocoptNet.Internals
         public MatchResult Result => _match;
     }
 
-    partial struct OptionalMatcher : IBranchPatternMatcher
+    partial struct OptionalMatcher(int count, Leaves left, Leaves collected) :
+        IBranchPatternMatcher
     {
-        readonly int _count;
         int _i;
-
-        public OptionalMatcher(int count, Leaves left, Leaves collected) : this() =>
-            (_count, Left, Collected) = (count, left, collected);
 
         public int Index => _i - 1;
 
-        public bool Next() => BranchPatternMatcher.Next(ref _i, _count);
+        public bool Next() => BranchPatternMatcher.Next(ref _i, count);
 
-        public Leaves Left { get; private set; }
-        public Leaves Collected { get; private set; }
+        public Leaves Left { get; private set; } = left;
+        public Leaves Collected { get; private set; } = collected;
 
         public bool Match(LeafPatternMatcher matcher, string name, ArgValueKind kind) =>
             Fold(matcher.Match(Left, Collected, name, kind));
@@ -163,23 +153,23 @@ namespace DocoptNet.Internals
         public MatchResult Result => new(true, Left, Collected);
     }
 
-    partial struct OneOrMoreMatcher : IBranchPatternMatcher
+    partial struct OneOrMoreMatcher(
+#pragma warning disable CS9113 // Parameter is unread.
+                                    int count,
+#pragma warning restore CS9113 // Parameter is unread.
+                                    Leaves left,
+                                    Leaves collected) :
+        IBranchPatternMatcher
     {
-        readonly Leaves _initLeft, _initCollected;
+        readonly Leaves _initLeft = left, _initCollected = collected;
         int _times;
         Leaves? _lastLeft;
-
-        public OneOrMoreMatcher(int count, Leaves left, Leaves collected) : this()
-        {
-            Left = _initLeft = left;
-            Collected = _initCollected = collected;
-        }
 
         public int Index => 0;
         public bool Next() => true;
 
-        public Leaves Left { get; private set; }
-        public Leaves Collected { get; private set; }
+        public Leaves Left { get; private set; } = left;
+        public Leaves Collected { get; private set; } = collected;
 
         public bool Match(LeafPatternMatcher matcher, string name, ArgValueKind kind) =>
             Fold(matcher.Match(Left, Collected, name, kind));

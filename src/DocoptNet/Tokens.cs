@@ -30,7 +30,9 @@ namespace DocoptNet
     {
         readonly Queue<string> _tokens;
 
+#pragma warning disable IDE0290 // Use primary constructor (protected)
         protected Tokens(IEnumerable<string> source) => _tokens = new Queue<string>(source);
+#pragma warning restore IDE0290 // Use primary constructor
 
         public abstract Type ErrorType { get; }
         public abstract Exception CreateException(string message);
@@ -45,16 +47,13 @@ namespace DocoptNet
 
         public override string ToString() => $"current={Current()},count={_tokens.Count}";
 
-        sealed class ContextualTokens<TError> : Tokens where TError : Exception
+        sealed class ContextualTokens<TError>(IEnumerable<string> source,
+                                              Func<string, TError> errorFactory) :
+            Tokens(source)
+            where TError : Exception
         {
-            readonly Func<string, TError> _errorFactory;
-
-            public ContextualTokens(IEnumerable<string> source, Func<string, TError> errorFactory) :
-                base(source) =>
-                _errorFactory = errorFactory;
-
             public override Type ErrorType => typeof(TError);
-            public override Exception CreateException(string message) => _errorFactory(message);
+            public override Exception CreateException(string message) => errorFactory(message);
         }
     }
 }

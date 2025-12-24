@@ -504,12 +504,9 @@ namespace DocoptNet.Tests.CodeGeneration
             public static readonly DocoptOptions Default = new();
         }
 
-        class ProgramArgs
+        class ProgramArgs(IDictionary args)
         {
-            readonly IDictionary _args;
-
-            public ProgramArgs(IDictionary args) =>
-                _args = args ?? throw new ArgumentNullException("args");
+            readonly IDictionary _args = args ?? throw new ArgumentNullException(nameof(args));
 
             public int Count => _args.Count;
 
@@ -519,10 +516,8 @@ namespace DocoptNet.Tests.CodeGeneration
                 : throw new KeyNotFoundException("Key was not present in the dictionary: " + key);
         }
 
-        sealed class NavalFateArgs : ProgramArgs
+        sealed class NavalFateArgs(IDictionary args) : ProgramArgs(args)
         {
-            public NavalFateArgs(IDictionary args) : base(args) { }
-
             public bool?        CmdShip        => Get("ship", v => (bool?)v);
             public bool?        CmdNew         => Get("new", v => (bool?)v);
             public IEnumerable? ArgName        => Get("<name>", v => (IEnumerable?)v);
@@ -540,11 +535,9 @@ namespace DocoptNet.Tests.CodeGeneration
             public bool?        OptVersion     => Get("--version", v => (bool?)v);
         }
 
-        sealed class Program
+        sealed class Program(Type type)
         {
-            readonly Type _type;
-
-            public Program(Type type) => _type = type ?? throw new ArgumentNullException(nameof(type));
+            readonly Type _type = type ?? throw new ArgumentNullException(nameof(type));
 
             public ProgramArgs Run(params string[] argv) =>
                 Run(DocoptOptions.Default, argv);

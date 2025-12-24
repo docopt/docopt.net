@@ -90,7 +90,7 @@ namespace DocoptNet.Tests
 
 #endif
 
-    sealed class Args
+    sealed class Args(IList<string> list)
     {
         public static Args Argv(params string[] args) => new(args);
 
@@ -99,7 +99,6 @@ namespace DocoptNet.Tests
             // arguments but good enough for the test cases so far:
             new(cmdLine.Split((char[]?)null, StringSplitOptions.RemoveEmptyEntries));
 
-        public Args(IList<string> list) => List = list;
-        public IList<string> List { get; }
+        public IList<string> List { get; } = list;
     }
 }

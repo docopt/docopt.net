@@ -6,20 +6,15 @@ namespace DocoptNet.CodeGeneration
     using System.Text;
     using Microsoft.CodeAnalysis.Text;
 
-    sealed class StringBuilderSourceText : SourceText
+    sealed class StringBuilderSourceText(StringBuilder builder, Encoding? encoding = null) : SourceText
     {
-        readonly StringBuilder _builder;
+        public override Encoding? Encoding { get; } = encoding;
+        public override int Length => builder.Length;
+        public override char this[int position] => builder[position];
 
-        public StringBuilderSourceText(StringBuilder builder, Encoding? encoding = null) =>
-            (_builder, Encoding) = (builder, encoding);
-
-        public override Encoding? Encoding { get; }
-        public override int Length => _builder.Length;
-        public override char this[int position] => _builder[position];
-
-        public override string ToString(TextSpan span) => _builder.ToString(span.Start, span.Length);
+        public override string ToString(TextSpan span) => builder.ToString(span.Start, span.Length);
 
         public override void CopyTo(int sourceIndex, char[] destination, int destinationIndex, int count) =>
-            _builder.CopyTo(sourceIndex, destination, destinationIndex, count);
+            builder.CopyTo(sourceIndex, destination, destinationIndex, count);
     }
 }

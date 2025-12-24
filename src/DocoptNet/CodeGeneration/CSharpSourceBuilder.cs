@@ -8,7 +8,7 @@ namespace DocoptNet.CodeGeneration
     using System.Diagnostics;
     using System.Text;
 
-    sealed class CSharpSourceBuilder :
+    sealed class CSharpSourceBuilder(StringBuilder sb) :
         CSharpSourceBuilder.IStatementFlow,
         CSharpSourceBuilder.IBlockFlow,
         CSharpSourceBuilder.IControlBlockFlow,
@@ -18,9 +18,8 @@ namespace DocoptNet.CodeGeneration
         bool _skipNextNewLine;
 
         public CSharpSourceBuilder() : this(new()) { }
-        public CSharpSourceBuilder(StringBuilder sb) => StringBuilder = sb;
 
-        public StringBuilder StringBuilder { get; }
+        public StringBuilder StringBuilder { get; } = sb;
 
         public int Level { get; private set; }
         public bool IsNewLine { get; private set; } = true;

@@ -102,94 +102,84 @@ namespace DocoptNet
 
     delegate IParser<T>.IResult ParseHandler<out T>(string doc, IEnumerable<string> argv, ParseFlags flags, string? version);
 
-    sealed class Parser<T> :
+    sealed class Parser<T>(string doc,
+                           ArgsParseOptions options,
+                           string? version,
+                           ParseHandler<T> handler) :
         IParser<T>,
         IHelpFeaturingParser<T>,
         IVersionFeaturingParser<T>,
         IBaselineParser<T>
     {
-        readonly string _doc;
-        readonly string? _version;
-        readonly ParseHandler<T> _handler;
-        readonly ArgsParseOptions _options;
-
         public Parser(string doc, ParseHandler<T> handler) :
             this(doc, ArgsParseOptions.Default, null, handler) { }
 
-        public Parser(string doc, ArgsParseOptions options, string? version, ParseHandler<T> handler)
-        {
-            _doc = doc;
-            _options = options;
-            _version = version;
-            _handler = handler;
-        }
+        string Version => version ?? throw new InvalidOperationException();
 
-        string Version => _version ?? throw new InvalidOperationException();
-
-        ParseFlags ParseFlags => _options.OptionsFirst ? ParseFlags.OptionsFirst : ParseFlags.None;
+        ParseFlags ParseFlags => options.OptionsFirst ? ParseFlags.OptionsFirst : ParseFlags.None;
 
         IParser<T>.IResult IParser<T>.Parse(IEnumerable<string> argv) =>
-            _handler(_doc, argv, ParseFlags, Version);
+            handler(doc, argv, ParseFlags, Version);
 
         IHelpFeaturingParser<T>.IResult IHelpFeaturingParser<T>.Parse(IEnumerable<string> argv) =>
-            _handler(_doc, argv, ParseFlags, null)
+            handler(doc, argv, ParseFlags, null)
                 .Match((_, r) => (IHelpFeaturingParser<T>.IResult)r,
                        (_, r) => (IHelpFeaturingParser<T>.IResult)r,
                        (_, _) => throw new NotSupportedException(),
                        (_, r) => (IHelpFeaturingParser<T>.IResult)r);
 
         IParser<T> IHelpFeaturingParser<T>.WithVersion(string value) =>
-            new Parser<T>(_doc, _options, value, _handler);
+            new Parser<T>(doc, options, value, handler);
 
         IVersionFeaturingParser<T> IBaselineParser<T>.WithVersion(string value) =>
-            new Parser<T>(_doc, _options, value, _handler);
+            new Parser<T>(doc, options, value, handler);
 
         IHelpFeaturingParser<T> IParser<T>.DisableVersion() =>
-            new Parser<T>(_doc, _options, null, _handler);
+            new Parser<T>(doc, options, null, handler);
 
         IBaselineParser<T> IVersionFeaturingParser<T>.DisableVersion() =>
-            new Parser<T>(_doc, _options, null, _handler);
+            new Parser<T>(doc, options, null, handler);
 
         IVersionFeaturingParser<T> IParser<T>.DisableHelp() =>
-            new Parser<T>(_doc, _options, _version, _handler);
+            new Parser<T>(doc, options, version, handler);
 
         IBaselineParser<T> IHelpFeaturingParser<T>.DisableHelp() =>
-            new Parser<T>(_doc, _options, null, _handler);
+            new Parser<T>(doc, options, null, handler);
 
         IHelpFeaturingParser<T> IBaselineParser<T>.EnableHelp() =>
-            new Parser<T>(_doc, _options, null, _handler);
+            new Parser<T>(doc, options, null, handler);
 
         IParser<T> IVersionFeaturingParser<T>.EnableHelp() =>
-            new Parser<T>(_doc, _options, _version, _handler);
+            new Parser<T>(doc, options, version, handler);
 
         IVersionFeaturingParser<T>.IResult IVersionFeaturingParser<T>.Parse(IEnumerable<string> argv) =>
-            _handler(_doc, argv, ParseFlags | ParseFlags.DisableHelp, Version)
+            handler(doc, argv, ParseFlags | ParseFlags.DisableHelp, Version)
                 .Match((_, r) => (IVersionFeaturingParser<T>.IResult)r,
                        (_, _) => throw new NotSupportedException(),
                        (_, r) => (IVersionFeaturingParser<T>.IResult)r,
                        (_, r) => (IVersionFeaturingParser<T>.IResult)r);
 
         IBaselineParser<T>.IResult IBaselineParser<T>.Parse(IEnumerable<string> argv) =>
-            _handler(_doc, argv, ParseFlags | ParseFlags.DisableHelp, null)
+            handler(doc, argv, ParseFlags | ParseFlags.DisableHelp, null)
                 .Match((_, r) => (IBaselineParser<T>.IResult)r,
                        (_, _) => throw new NotSupportedException(),
                        (_, _) => throw new NotSupportedException(),
                        (_, r) => (IBaselineParser<T>.IResult)r);
 
         Parser<T> WithOptions(ArgsParseOptions value) =>
-            value == _options ? this : new Parser<T>(_doc, value, _version, _handler);
+            value == options ? this : new Parser<T>(doc, value, version, handler);
 
-        ArgsParseOptions IParser<T>.Options => _options;
+        ArgsParseOptions IParser<T>.Options => options;
 
         IParser<T> IParser<T>.WithOptions(ArgsParseOptions value) =>
             WithOptions(value);
 
-        ArgsParseOptions IHelpFeaturingParser<T>.Options => _options;
+        ArgsParseOptions IHelpFeaturingParser<T>.Options => options;
 
         IHelpFeaturingParser<T> IHelpFeaturingParser<T>.WithOptions(ArgsParseOptions value) =>
             WithOptions(value);
 
-        ArgsParseOptions IBaselineParser<T>.Options => _options;
+        ArgsParseOptions IBaselineParser<T>.Options => options;
 
         IBaselineParser<T> IBaselineParser<T>.WithOptions(ArgsParseOptions value) =>
             WithOptions(value);

@@ -533,15 +533,9 @@ namespace DocoptNet
         }
     }
 
-    partial class PrintExitEventArgs : EventArgs
+    partial class PrintExitEventArgs(string msg, int errorCode) : EventArgs
     {
-        public PrintExitEventArgs(string msg, int errorCode)
-        {
-            Message = msg;
-            ErrorCode = errorCode;
-        }
-
-        public string Message { get; set; }
-        public int ErrorCode { get; set; }
+        public string Message { get; set; } = msg;
+        public int ErrorCode { get; set; } = errorCode;
     }
 }

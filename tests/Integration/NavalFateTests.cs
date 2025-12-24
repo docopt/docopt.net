@@ -40,7 +40,9 @@ namespace DocoptNet.Tests.Integration
 
     public abstract class NavalFateTestsBase<T> where T : INavalFateArguments
     {
+#pragma warning disable IDE0290 // Use primary constructor (protected)
         protected NavalFateTestsBase(IHelpFeaturingParser<T> parser) => Parser = parser;
+#pragma warning restore IDE0290 // Use primary constructor
 
         IHelpFeaturingParser<T> Parser { get; }
 

@@ -3,18 +3,13 @@
 
 namespace DocoptNet.Internals
 {
-    readonly partial struct MatchResult
+    readonly partial struct MatchResult(bool matched,
+                                        ReadOnlyList<LeafPattern> left,
+                                        ReadOnlyList<LeafPattern> collected)
     {
-        public readonly bool Matched;
-        public readonly ReadOnlyList<LeafPattern> Left;
-        public readonly ReadOnlyList<LeafPattern> Collected;
-
-        public MatchResult(bool matched, ReadOnlyList<LeafPattern> left, ReadOnlyList<LeafPattern> collected)
-        {
-            Matched = matched;
-            Left = left;
-            Collected = collected;
-        }
+        public readonly bool Matched = matched;
+        public readonly ReadOnlyList<LeafPattern> Left = left;
+        public readonly ReadOnlyList<LeafPattern> Collected = collected;
 
         public override bool Equals(object? obj)
         {
