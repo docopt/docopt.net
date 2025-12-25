@@ -183,7 +183,7 @@ Options:
                            .GroupBy(e => e.Name, e => e, (_, g) => new Node(g.First().Name, g.First().ValueKind, g.Count(), ArgValue.None))
                            .ToList();
             _args = Docopt.Internal.Apply(docopt, _input, argv.AsEnumerable(), help: false, version: null, optionsFirst: _optionsFirst, exit: false)!;
-            _nodes = _nodes.Select(n => new Node(n.Name, n.ValueKind, n.Count, _args.TryGetValue(n.Name, out var v) ? v : ArgValue.None)).ToList();
+            _nodes = _nodes.Select(n => n with { Value = _args.TryGetValue(n.Name, out var v) ? v : ArgValue.None }).ToList();
             _ms = sw.Elapsed;
         }
         catch (DocoptBaseException e)
