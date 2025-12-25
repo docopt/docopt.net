@@ -34,20 +34,23 @@ namespace DocoptNet
 
     static class ApplicationResultExtensions
     {
-        internal static IDictionary<string, ValueObject> ToValueObjectDictionary(this ApplicationResult result)
+        extension(ApplicationResult result)
         {
-            if (result is null) throw new ArgumentNullException(nameof(result));
+            internal IDictionary<string, ValueObject> ToValueObjectDictionary()
+            {
+                if (result is null) throw new ArgumentNullException(nameof(result));
 
-            return result.Accumulate(new Dictionary<string, ValueObject>(),
-                                     ApplicationResultAccumulators.ValueObjectDictionary);
-        }
+                return result.Accumulate(new Dictionary<string, ValueObject>(),
+                                         ApplicationResultAccumulators.ValueObjectDictionary);
+            }
 
-        internal static IDictionary<string, ArgValue> ToValueDictionary(this ApplicationResult result)
-        {
-            if (result is null) throw new ArgumentNullException(nameof(result));
+            internal IDictionary<string, ArgValue> ToValueDictionary()
+            {
+                if (result is null) throw new ArgumentNullException(nameof(result));
 
-            return result.Accumulate(new Dictionary<string, ArgValue>(),
-                                     ApplicationResultAccumulators.ValueDictionary);
+                return result.Accumulate(new Dictionary<string, ArgValue>(),
+                                         ApplicationResultAccumulators.ValueDictionary);
+            }
         }
     }
 }

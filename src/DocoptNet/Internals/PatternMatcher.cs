@@ -207,43 +207,46 @@ namespace DocoptNet.Internals
 
     static partial class PatternMatcher
     {
-        public static MatchResult Match(this Pattern pattern, Leaves left)
+        extension(Pattern pattern)
         {
-            return pattern.Match(left, new Leaves());
-        }
-
-        public static MatchResult Match(this Pattern pattern, Leaves left, Leaves collected)
-        {
-            switch (pattern)
+            public MatchResult Match(Leaves left)
             {
-                case Required  { Children: { Count: var count } children }: return MatchBranch(children, new RequiredMatcher(count, left, collected));
-                case Either    { Children: { Count: var count } children }: return MatchBranch(children, new EitherMatcher(count, left, collected));
-                case Optional  { Children: { Count: var count } children }: return MatchBranch(children, new OptionalMatcher(count, left, collected));
-                case OneOrMore { Children: var children }: return MatchBranch(children, new OneOrMoreMatcher(1, left, collected));
-                case LeafPattern leaf:
-                {
-                    var matcher = leaf switch
-                    {
-                        Command  => CommandMatcher,
-                        Argument => ArgumentMatcher,
-                        Option   => OptionMatcher,
-                        _ => throw new NotSupportedException()
-                    };
-
-                    return matcher.Match(left, collected, leaf.Name, leaf.Value.Kind);
-                }
-                default:
-                    throw new ArgumentException(nameof(pattern));
+                return pattern.Match(left, new Leaves());
             }
 
-            static MatchResult MatchBranch<T>(IList<Pattern> children, T matcher) where T : IBranchPatternMatcher
+            public MatchResult Match(Leaves left, Leaves collected)
             {
-                while (matcher.Next())
+                switch (pattern)
                 {
-                    if (!matcher.Match(children[matcher.Index]))
-                        break;
+                    case Required  { Children: { Count: var count } children }: return MatchBranch(children, new RequiredMatcher(count, left, collected));
+                    case Either    { Children: { Count: var count } children }: return MatchBranch(children, new EitherMatcher(count, left, collected));
+                    case Optional  { Children: { Count: var count } children }: return MatchBranch(children, new OptionalMatcher(count, left, collected));
+                    case OneOrMore { Children: var children }: return MatchBranch(children, new OneOrMoreMatcher(1, left, collected));
+                    case LeafPattern leaf:
+                    {
+                        var matcher = leaf switch
+                        {
+                            Command  => CommandMatcher,
+                            Argument => ArgumentMatcher,
+                            Option   => OptionMatcher,
+                            _ => throw new NotSupportedException()
+                        };
+
+                        return matcher.Match(left, collected, leaf.Name, leaf.Value.Kind);
+                    }
+                    default:
+                        throw new ArgumentException(nameof(pattern));
                 }
-                return matcher.Result;
+
+                static MatchResult MatchBranch<T>(IList<Pattern> children, T matcher) where T : IBranchPatternMatcher
+                {
+                    while (matcher.Next())
+                    {
+                        if (!matcher.Match(children[matcher.Index]))
+                            break;
+                    }
+                    return matcher.Result;
+                }
             }
         }
 

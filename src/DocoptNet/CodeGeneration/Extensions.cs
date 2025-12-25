@@ -47,18 +47,20 @@ namespace DocoptNet.CodeGeneration
                                                    string generatorName) =>
             context.AnalyzerConfigOptions.GlobalOptions.LaunchDebuggerIfFlagged(generatorName);
 
-        public static void LaunchDebuggerIfFlagged(this AnalyzerConfigOptions options,
-                                                   string generatorName)
+        extension(AnalyzerConfigOptions options)
         {
-            if (options.IsFlagged("build_property.DebugSourceGenerators") ||
-                options.IsFlagged("build_property.Debug" + generatorName))
+            public void LaunchDebuggerIfFlagged(string generatorName)
             {
-                Debugger.Launch();
+                if (options.IsFlagged("build_property.DebugSourceGenerators") ||
+                    options.IsFlagged("build_property.Debug" + generatorName))
+                {
+                    Debugger.Launch();
+                }
             }
-        }
 
-        public static bool IsFlagged(this AnalyzerConfigOptions options, string name) =>
-            options.TryGetValue(name, out var s) && bool.TryParse(s, out var flag) && flag;
+            public bool IsFlagged(string name) =>
+                options.TryGetValue(name, out var s) && bool.TryParse(s, out var flag) && flag;
+        }
     }
 }
 
@@ -99,35 +101,38 @@ namespace DocoptNet.CodeGeneration
 
     partial class Extensions
     {
-        public static string EncodeXmlText(this string str) => str.EncodeXmlText(attribute: false);
-        public static string EncodeXmlAttributeValue(this string str) => str.EncodeXmlText(attribute: true);
-
-        static string EncodeXmlText(this string str, bool attribute)
+        extension(string str)
         {
-            StringBuilder? sb = null;
+            public string EncodeXmlText() => str.EncodeXmlText(attribute: false);
+            public string EncodeXmlAttributeValue() => str.EncodeXmlText(attribute: true);
 
-            StringBuilder StringBuilder() => sb ??= new StringBuilder(str.Length);
-            void Append(string s) => StringBuilder().Append(s);
-            void AppendChar(char ch) => StringBuilder().Append(ch);
-
-            foreach (var ch in str)
+            string EncodeXmlText(bool attribute)
             {
-                switch (attribute, ch)
-                {
-                    case (_, '<')    : Append("&lt;"); break;
-                    case (_, '>')    : Append("&gt;"); break;
-                    case (_, '&')    : Append("&amp;"); break;
-                    case (true, '"') : Append("&quot;"); break;
-                    case (true, '\''): Append("&apos;"); break;
-                    case (true, '\n'): Append("&#xA;"); break;
-                    case (true, '\r'): Append("&#xD;"); break;
-                    case (true, '\t'): Append("&#x9;"); break;
-                    case (_, < ' ')  : throw new ArgumentException($"Character U+{(int)ch:X4} is forbidden in XML.", nameof(str));
-                    default          : AppendChar(ch); break;
-                }
-            }
+                StringBuilder? sb = null;
 
-            return sb?.ToString() ?? str;
+                StringBuilder StringBuilder() => sb ??= new StringBuilder(str.Length);
+                void Append(string s) => StringBuilder().Append(s);
+                void AppendChar(char ch) => StringBuilder().Append(ch);
+
+                foreach (var ch in str)
+                {
+                    switch (attribute, ch)
+                    {
+                        case (_, '<')    : Append("&lt;"); break;
+                        case (_, '>')    : Append("&gt;"); break;
+                        case (_, '&')    : Append("&amp;"); break;
+                        case (true, '"') : Append("&quot;"); break;
+                        case (true, '\''): Append("&apos;"); break;
+                        case (true, '\n'): Append("&#xA;"); break;
+                        case (true, '\r'): Append("&#xD;"); break;
+                        case (true, '\t'): Append("&#x9;"); break;
+                        case (_, < ' ')  : throw new ArgumentException($"Character U+{(int)ch:X4} is forbidden in XML.", nameof(str));
+                        default          : AppendChar(ch); break;
+                    }
+                }
+
+                return sb?.ToString() ?? str;
+            }
         }
     }
 }

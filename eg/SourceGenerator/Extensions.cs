@@ -6,29 +6,38 @@ using DocoptNet;
 
 static class ParseResultExtensions
 {
-    public static int Run<T>(this IHelpFeaturingParser<T> parser, IEnumerable<string> args, Func<T, int> runner) =>
-        parser.Run(args, null, null, 0, runner);
+    extension<T>(IHelpFeaturingParser<T> parser)
+    {
+        public int Run(IEnumerable<string> args, Func<T, int> runner) =>
+            parser.Run(args, null, null, 0, runner);
 
-    public static int Run<T>(this IHelpFeaturingParser<T> parser, IEnumerable<string> args,
-                             TextWriter? stdout, TextWriter? stderr, int errorExitCode,
-                             Func<T, int> runner) =>
-        Run(parser.Parse(args), stdout, stderr, errorExitCode, runner);
+        public int Run(IEnumerable<string> args,
+                       TextWriter? stdout, TextWriter? stderr, int errorExitCode,
+                       Func<T, int> runner) =>
+                       Run(parser.Parse(args), stdout, stderr, errorExitCode, runner);
+    }
 
-    public static int Run<T>(this IParser<T> parser, IEnumerable<string> args, Func<T, int> runner) =>
-        parser.Run(args, null, null, 0, runner);
+    extension<T>(IParser<T> parser)
+    {
+        public int Run(IEnumerable<string> args, Func<T, int> runner) =>
+            parser.Run(args, null, null, 0, runner);
 
-    public static int Run<T>(this IParser<T> parser, IEnumerable<string> args,
-                             TextWriter? stdout, TextWriter? stderr, int errorExitCode,
-                             Func<T, int> runner) =>
-        Run(parser.Parse(args), stdout, stderr, errorExitCode, runner);
+        public int Run(IEnumerable<string> args,
+                       TextWriter? stdout, TextWriter? stderr, int errorExitCode,
+                       Func<T, int> runner) =>
+            Run(parser.Parse(args), stdout, stderr, errorExitCode, runner);
+    }
 
-    public static int Run<T>(this IBaselineParser<T> parser, IEnumerable<string> args, Func<T, int> runner) =>
-        parser.Run(args, null, 0, runner);
+    extension<T>(IBaselineParser<T> parser)
+    {
+        public int Run(IEnumerable<string> args, Func<T, int> runner) =>
+            parser.Run(args, null, 0, runner);
 
-    public static int Run<T>(this IBaselineParser<T> parser, IEnumerable<string> args,
-                             TextWriter? stderr, int errorExitCode,
-                             Func<T, int> runner) =>
-        Run(parser.Parse(args), null, stderr, errorExitCode, runner);
+        public int Run(IEnumerable<string> args,
+                       TextWriter? stderr, int errorExitCode,
+                       Func<T, int> runner) =>
+            Run(parser.Parse(args), null, stderr, errorExitCode, runner);
+    }
 
     static int Run<T>(object result,
                       TextWriter? stdout, TextWriter? stderr, int errorExitCode,
