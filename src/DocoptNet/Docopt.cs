@@ -404,7 +404,7 @@ namespace DocoptNet
             while (left != "")
             {
                 var shortName = "-" + left[0];
-                left = left.Substring(1);
+                left = left[1..];
                 var similar = options.Where(o => o.ShortName == shortName).ToList();
                 Option option;
                 if (similar.Count > 1)

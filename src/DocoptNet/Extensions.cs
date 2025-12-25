@@ -14,7 +14,7 @@ namespace DocoptNet
         public static (string, string, string) Partition(this string input, string separator)
         {
             return input.IndexOf(separator, System.StringComparison.Ordinal) is var i and >= 0
-                 ? (input.Substring(0, i), separator, input.Substring(i + separator.Length))
+                 ? (input[..i], separator, input[(i + separator.Length)..])
                  : (input, string.Empty, string.Empty);
         }
     }
