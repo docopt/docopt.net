@@ -100,7 +100,7 @@ namespace DocoptNet.Tests.CodeGeneration
                 actual = "\"user-error\"";
             }
 
-            if (expected.StartsWith("{"))
+            if (expected is ['{', ..])
             {
                 var expectedDict = JsonConvert.DeserializeObject<Dictionary<string, object>>(expected);
                 Debug.Assert(expectedDict is not null);

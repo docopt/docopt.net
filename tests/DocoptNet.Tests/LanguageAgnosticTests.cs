@@ -34,7 +34,7 @@ namespace DocoptNet.Tests
                 actual = "\"user-error\"";
             }
 
-            if (expected.StartsWith("{"))
+            if (expected is ['{', ..])
             {
                 var expectedDict = JsonConvert.DeserializeObject<Dictionary<string, object>>(expected);
                 var actualDict = JsonConvert.DeserializeObject<Dictionary<string, object>>(actual);

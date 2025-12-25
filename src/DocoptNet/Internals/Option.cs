@@ -63,15 +63,11 @@ namespace DocoptNet.Internals
             var (options, _, description) = optionDescription.Trim().Partition(DescSeparator);
             foreach (var s in options.Split(OptionDelimiters, StringSplitOptions.RemoveEmptyEntries))
             {
-                if (s.StartsWith("--"))
-                    longName = s;
-                else if (s.StartsWith("-"))
+                switch (s)
                 {
-                    shortName = s;
-                }
-                else
-                {
-                    argCount = 1;
+                    case ['-', '-', ..]: longName = s ; break;
+                    case ['-', ..]     : shortName = s; break;
+                    default            : argCount = 1 ; break;
                 }
             }
             if (argCount > 0)

@@ -232,28 +232,33 @@ namespace DocoptNet
             var parsed = new List<LeafPattern>();
             while (tokens.Current() is { } token)
             {
-                if (token == "--")
+                switch (token)
                 {
-                    parsed.AddRange(tokens.Select(Argument.Unnamed));
-                    return parsed;
-                }
-
-                if (token.StartsWith("--"))
-                {
-                    parsed.AddRange(ParseLong(tokens, options));
-                }
-                else if (token.StartsWith("-") && tokens.Current() != "-")
-                {
-                    parsed.AddRange(ParseShorts(tokens, options));
-                }
-                else if (optionsFirst)
-                {
-                    parsed.AddRange(tokens.Select(Argument.Unnamed));
-                    return parsed;
-                }
-                else
-                {
-                    parsed.Add(Argument.Unnamed(tokens.Move()));
+                    case "--":
+                    {
+                        parsed.AddRange(tokens.Select(Argument.Unnamed));
+                        return parsed;
+                    }
+                    case ['-', '-', ..]:
+                    {
+                        parsed.AddRange(ParseLong(tokens, options));
+                        break;
+                    }
+                    case ['-', not '-', ..]:
+                    {
+                        parsed.AddRange(ParseShorts(tokens, options));
+                        break;
+                    }
+                    case var _ when optionsFirst:
+                    {
+                        parsed.AddRange(tokens.Select(Argument.Unnamed));
+                        return parsed;
+                    }
+                    case var _:
+                    {
+                        parsed.Add(Argument.Unnamed(tokens.Move()));
+                        break;
+                    }
                 }
             }
             return parsed;
@@ -369,21 +374,19 @@ namespace DocoptNet
                     result.Add(new OptionsShortcut());
                     break;
                 default:
-                    if (token.StartsWith("--") && token != "--")
+                    switch (token)
                     {
-                        return ParseLong(tokens, options);
-                    }
-                    if (token.StartsWith("-") && token != "-" && token != "--")
-                    {
-                        return ParseShorts(tokens, options);
-                    }
-                    if ((token.StartsWith("<") && token.EndsWith(">")) || token.All(char.IsUpper))
-                    {
-                        result.Add(new Argument(tokens.Move()));
-                    }
-                    else
-                    {
-                        result.Add(new Command(tokens.Move()));
+                        case ['-', '-', _, ..]:
+                            return ParseLong(tokens, options);
+                        case ['-', not '-', ..]:
+                            return ParseShorts(tokens, options);
+                        case ['<', _, .., '>']:
+                        case var t when t.All(char.IsUpper):
+                            result.Add(new Argument(tokens.Move()));
+                            break;
+                        default:
+                            result.Add(new Command(tokens.Move()));
+                            break;
                     }
                     break;
             }
@@ -395,7 +398,7 @@ namespace DocoptNet
             // shorts ::= '-' ( chars )* [ [ ' ' ] chars ] ;
 
             var token = tokens.Move() ?? throw new NullReferenceException();
-            Debug.Assert(token.StartsWith("-") && !token.StartsWith("--"));
+            Debug.Assert(token is ['-', not '-', ..]);
             var left = token.TrimStart(['-']);
             var parsed = new List<Option>();
             while (left != "")
@@ -458,7 +461,7 @@ namespace DocoptNet
                 (var ln, "", _) => (ln, false, null),
                 var (ln, _, vs) => (ln, true, vs)
             };
-            Debug.Assert(longName.StartsWith("--"));
+            Debug.Assert(longName is ['-', '-', ..]);
             var similar = options.Where(o => o.LongName == longName).ToList();
             if (tokens.ThrowsInputError && similar.Count == 0)
             {
