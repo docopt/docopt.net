@@ -19,7 +19,7 @@ namespace DocoptNet.Tests.CodeGeneration
         [Test]
         [TestCaseSource(typeof(Tests.LanguageAgnosticTests),
                         nameof(Tests.LanguageAgnosticTests.Docopt),
-                        new object[] { "testcases.docopt" })]
+                        ["testcases.docopt"])]
         public void Test(string doc, string cmdLine, string expected)
         {
             const string main = @"

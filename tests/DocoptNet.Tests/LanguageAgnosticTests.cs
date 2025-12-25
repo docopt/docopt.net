@@ -15,7 +15,7 @@ namespace DocoptNet.Tests
     public class LanguageAgnosticTests
     {
         [Test]
-        [TestCaseSource(nameof(Docopt), new object[] { "testcases.docopt" })]
+        [TestCaseSource(nameof(Docopt), ["testcases.docopt"])]
         public void Test(string doc, string cmdLine, string expected)
         {
             string actual;

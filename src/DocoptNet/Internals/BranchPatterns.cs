@@ -36,7 +36,7 @@ namespace DocoptNet.Internals
             if (types == null) throw new ArgumentNullException(nameof(types));
             if (types.Contains(GetType()))
             {
-                return new Pattern[] { this };
+                return [this];
             }
             return Children.SelectMany(child => child.Flat(types)).ToList();
         }

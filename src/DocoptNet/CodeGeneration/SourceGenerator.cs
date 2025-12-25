@@ -43,7 +43,7 @@ namespace DocoptNet.CodeGeneration
         {
             ModelSymbols? _modelSymbols;
 
-            public List<(ClassDeclarationSyntax Class, AttributeData Attributes)> ClassAttributes { get; } = new();
+            public List<(ClassDeclarationSyntax Class, AttributeData Attributes)> ClassAttributes { get; } = [];
 
             sealed class ModelSymbols
             {
@@ -203,7 +203,7 @@ namespace DocoptNet.CodeGeneration
         }
 
         public static SourceText Generate(string? ns, string name, SourceText text) =>
-            Generate(ns, name, Enumerable.Empty<string>(), null, text, GenerationOptions.None);
+            Generate(ns, name, [], null, text, GenerationOptions.None);
 
         static SourceText Generate(string? ns, string name, IEnumerable<string> parents, string? helpConstName,
                                    SourceText text, GenerationOptions generationOptions) =>
@@ -211,7 +211,7 @@ namespace DocoptNet.CodeGeneration
 
         public static SourceText Generate(string? ns, string name,
                                           SourceText text, Encoding? outputEncoding) =>
-            Generate(ns, name, Enumerable.Empty<string>(), null, text, outputEncoding, GenerationOptions.None);
+            Generate(ns, name, [], null, text, outputEncoding, GenerationOptions.None);
 
         static SourceText Generate(string? ns, string name, IEnumerable<string> parents, string? helpConstName,
                                    SourceText text, Encoding? outputEncoding, GenerationOptions options)

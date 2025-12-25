@@ -97,7 +97,7 @@ namespace DocoptNet.Internals
         /// </summary>
         public IEnumerable<Pattern> Flat()
         {
-            return Flat(new Type[0]);
+            return Flat([]);
         }
     }
 }

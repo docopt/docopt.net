@@ -27,7 +27,7 @@ namespace DocoptNet.Internals
             if (types == null) throw new ArgumentNullException(nameof(types));
             if (types.Length == 0 || types.Contains(GetType()))
             {
-                return new Pattern[] { this };
+                return [this];
             }
             return Array.Empty<Pattern>();
         }

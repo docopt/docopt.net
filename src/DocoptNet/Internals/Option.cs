@@ -50,7 +50,7 @@ namespace DocoptNet.Internals
 
         const string DescSeparator = "  ";
 
-        static readonly char[] OptionDelimiters = { ' ', '\t', ',', '=' };
+        static readonly char[] OptionDelimiters = [' ', '\t', ',', '='];
 
         public static Option Parse(string optionDescription)
         {

@@ -73,7 +73,7 @@ namespace DocoptNet.Tests
             // Therefore resort to run-time reflection...
             var method = typeof(MatchResult).GetMethod("op_False");
             Assert.That(method, Is.Not.Null);
-            var result = (bool?)method!.Invoke(null, new object[] { match });
+            var result = (bool?)method!.Invoke(null, [match]);
 
             if (result == !matched)
                 Assert.Pass();

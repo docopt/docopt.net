@@ -94,12 +94,12 @@ namespace DocoptNet.CodeGeneration
         public CSharpSourceBuilder NewLine { get { AppendLine(); return this; } }
 
         static readonly char[] ForbiddenRegularStringLiteralChars =
-        {
+        [
             '"', '\\', '\r', '\n',
             '\u0085', // Next line character
             '\u2028', // Line separator character
             '\u2029', // Paragraph separator character
-        };
+        ];
 
         const string Quote = "\"";
 

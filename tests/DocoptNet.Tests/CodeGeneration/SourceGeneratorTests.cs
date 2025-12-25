@@ -48,10 +48,10 @@ Naval Fate.
         [Test]
         public void Generate_with_usage_in_external_file()
         {
-            AssertMatchesSnapshot(new[]
-            {
+            AssertMatchesSnapshot(
+            [
                 ("Program.docopt.txt", SourceText.From(NavalFateUsage))
-            });
+            ]);
         }
 
         [Test]
@@ -68,29 +68,29 @@ Naval Fate.
         [Test]
         public void Generate_with_inline_usage()
         {
-            AssertMatchesSnapshot(new[]
-            {
+            AssertMatchesSnapshot(
+            [
                 ("Program.cs", SourceText.From($@"
                     [DocoptNet.DocoptArguments]
                     partial class Arguments
                     {{
                         public const string Help = @""{NavalFateUsage}"";
                     }}"))
-            });
+            ]);
         }
 
         [Test]
         public void Generate_with_inline_usage_with_custom_const_name()
         {
-            AssertMatchesSnapshot(new[]
-            {
+            AssertMatchesSnapshot(
+            [
                 ("Program.cs", SourceText.From($@"
                     [DocoptNet.DocoptArguments(HelpConstName = nameof(HelpText))]
                     partial class Arguments
                     {{
                         public const string HelpText = @""{NavalFateUsage}"";
                     }}"))
-            });
+            ]);
         }
 
         [Test]
@@ -98,8 +98,8 @@ Naval Fate.
         {
             const string help = "Usage: my_program (run [--fast] | jump [--high])";
 
-            AssertMatchesSnapshot(new[]
-            {
+            AssertMatchesSnapshot(
+            [
                 ("Program.cs", SourceText.From(@"
                     using System;
                     using DocoptNet;
@@ -133,14 +133,14 @@ Naval Fate.
 
                     [Arguments]
                     partial class Arguments8 { }"))
-            });
+            ]);
         }
 
         [Test]
         public void Generate_with_inline_usage_missing_help_const()
         {
-            AssertMatchesSnapshot(new[]
-            {
+            AssertMatchesSnapshot(
+            [
                 ("Program.cs", SourceText.From(@"
                     [DocoptNet.DocoptArguments]
                     partial class Arguments1 { }
@@ -150,14 +150,14 @@ Naval Fate.
 
                     [DocoptNet.DocoptArguments]
                     partial class Arguments3 { public string Help => @""Usage: program""; }"))
-            });
+            ]);
         }
 
         [Test]
         public void Generate_with_nested_namespace()
         {
-            AssertMatchesSnapshot(new[]
-            {
+            AssertMatchesSnapshot(
+            [
                 ("Program.cs", SourceText.From(@"
                     namespace Outer
                     {
@@ -167,14 +167,14 @@ Naval Fate.
                             partial class Arguments { const string Help = @""Usage: program""; }
                         }
                     }"))
-            });
+            ]);
         }
 
         [Test]
         public void Generate_with_classes_from_different_namespaces_share_the_same_name()
         {
-            AssertMatchesSnapshot(new[]
-            {
+            AssertMatchesSnapshot(
+            [
                 ("Program.cs", SourceText.From(@"
                     [DocoptNet.DocoptArguments]
                     sealed partial class ProgramArguments
@@ -199,14 +199,14 @@ Naval Fate.
                             const string Help = ""Usage: program"";
                         }
                     }"))
-            });
+            ]);
         }
 
         [Test]
         public void Generate_with_nested_args_class()
         {
-            AssertMatchesSnapshot(new[]
-            {
+            AssertMatchesSnapshot(
+            [
                 ("Program.cs", SourceText.From(@"
                     static partial class Program
                     {
@@ -237,14 +237,14 @@ Naval Fate.
                             }
                         }
                     }"))
-            });
+            ]);
         }
 
         [Test]
         public void Generate_with_classes_in_separate_files()
         {
-            AssertMatchesSnapshot(new[]
-            {
+            AssertMatchesSnapshot(
+            [
                 ("File1.cs", SourceText.From(@"
                     namespace Namespace1
                     {
@@ -263,7 +263,7 @@ Naval Fate.
                             const string Help = ""Usage: program"";
                         }
                     }")),
-            });
+            ]);
         }
 
         void AssertMatchesSnapshot((string Path, SourceText Text)[] sources,
@@ -365,7 +365,7 @@ Naval Fate.
 
             var expectedFiles = Directory.Exists(expectedSourcesPath)
                               ? EnumerateFiles(expectedSourcesPath)
-                              : Enumerable.Empty<string>();
+                              : [];
 
             var results =
                 expectedFiles.FullJoin(actualFiles,
@@ -539,7 +539,7 @@ dotnet script {Path.Combine("tests", "DocoptNet.Tests", "sgss.csx")} -- inspect 
                 var method = _type.GetMethod(parserFactoryMethodName, BindingFlags.Public | BindingFlags.Static);
                 if (method == null)
                     throw new MissingMethodException(_type.Name, parserFactoryMethodName);
-                var parser = (IBaselineParser<object>)method.Invoke(null, Array.Empty<object>())!;
+                var parser = (IBaselineParser<object>)method.Invoke(null, [])!;
                 parser = parser.WithOptions(parser.Options.WithOptionsFirst(options.OptionsFirst));
                 var result = options.Help
                            ? (IParser<object>.IResult)parser.EnableHelp().Parse(argv)
@@ -611,7 +611,7 @@ public partial class " + ProgramArgumentsClassName + @" { }
                     additionalTexts.Select(at => KeyValuePair.Create(at, DocoptSourceItemTypeConfigOption))
                                    .ToImmutableDictionary());
 
-            var driver = CSharpGeneratorDriver.Create(new[] { generator },
+            var driver = CSharpGeneratorDriver.Create([generator],
                                                       additionalTexts,
                                                       optionsProvider: optionsProvider);
 

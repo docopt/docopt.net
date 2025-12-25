@@ -314,7 +314,7 @@ namespace DocoptNet
             }
             result = result.Distinct().ToList();
             if (result.Count > 1)
-                return new[] {new Either(result.ToArray())};
+                return [new Either(result.ToArray())];
             return result;
         }
 
@@ -327,7 +327,7 @@ namespace DocoptNet
                 var atom = ParseAtom(tokens, options);
                 if (tokens.Current() == "...")
                 {
-                    atom = new[] { new OneOrMore(atom.ToArray()) };
+                    atom = [new OneOrMore(atom.ToArray())];
                     tokens.Move();
                 }
                 result.AddRange(atom);
@@ -396,7 +396,7 @@ namespace DocoptNet
 
             var token = tokens.Move() ?? throw new NullReferenceException();
             Debug.Assert(token.StartsWith("-") && !token.StartsWith("--"));
-            var left = token.TrimStart(new[] {'-'});
+            var left = token.TrimStart(['-']);
             var parsed = new List<Option>();
             while (left != "")
             {
@@ -500,7 +500,7 @@ namespace DocoptNet
                 if (tokens.ThrowsInputError)
                     option.Value = value is { } v ? v : ArgValue.True;
             }
-            return new[] {option};
+            return [option];
         }
 
         internal static ICollection<Option> ParseDefaults(string doc)

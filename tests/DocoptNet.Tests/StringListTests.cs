@@ -22,7 +22,7 @@ namespace DocoptNet.Tests
         public void BottomTop()
         {
             var list = StringList.BottomTop("foo", "bar", "baz");
-            Assert.That(list, Is.EqualTo(new[] { "baz", "bar", "foo" }));
+            Assert.That(list, Is.EqualTo(["baz", "bar", "foo"]));
         }
 
         [Test]
@@ -44,8 +44,8 @@ namespace DocoptNet.Tests
             var list1 = StringList.TopBottom("foo", "bar", "baz");
             var list2 = list1.Pop();
             Assert.That(list2, Is.Not.SameAs(list1));
-            Assert.That(list1, Is.EqualTo(new[] { "foo", "bar", "baz" }));
-            Assert.That(list2, Is.EqualTo(new[] { "bar", "baz" }));
+            Assert.That(list1, Is.EqualTo(["foo", "bar", "baz"]));
+            Assert.That(list2, Is.EqualTo(["bar", "baz"]));
         }
 
         [Test]
@@ -54,8 +54,8 @@ namespace DocoptNet.Tests
             var list1 = StringList.TopBottom("bar", "baz");
             var list2 = list1.Push("foo");
             Assert.That(list2, Is.Not.SameAs(list1));
-            Assert.That(list1, Is.EqualTo(new[] { "bar", "baz" }));
-            Assert.That(list2, Is.EqualTo(new[] { "foo", "bar", "baz" }));
+            Assert.That(list1, Is.EqualTo(["bar", "baz"]));
+            Assert.That(list2, Is.EqualTo(["foo", "bar", "baz"]));
         }
 
         [Test]
@@ -77,8 +77,8 @@ namespace DocoptNet.Tests
             var list1 = StringList.TopBottom("foo", "bar", "baz");
             var list2 = list1.Reverse();
             Assert.That(list2, Is.Not.SameAs(list1));
-            Assert.That(list1, Is.EqualTo(new[] { "foo", "bar", "baz" }));
-            Assert.That(list2, Is.EqualTo(new[] { "baz", "bar", "foo" }));
+            Assert.That(list1, Is.EqualTo(["foo", "bar", "baz"]));
+            Assert.That(list2, Is.EqualTo(["baz", "bar", "foo"]));
         }
 
         [TestCase(3, 0, new[] { "foo", "bar", "baz" })]

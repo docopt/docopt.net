@@ -16,8 +16,7 @@ namespace DocoptNet.Tests
                 --verbose   Verbose mode.
             ";
 
-            var expected = new Option[]
-                {new Option("-h", "--help"), new Option("-o", 1), new Option("--verbose")};
+            Option[] expected = [new("-h", "--help"), new("-o", 1), new("--verbose")];
             Assert.AreEqual(expected, Docopt.ParseDefaults(doc));
         }
 
@@ -25,7 +24,7 @@ namespace DocoptNet.Tests
         public void Test_issue_126_defaults_not_parsed_correctly_when_tabs()
         {
             const string section = "Options:\n\t--foo=<arg>  [default: bar]";
-            var expected = new Option[] { new Option("--foo", 1, "bar")};
+            Option[] expected = [new("--foo", 1, "bar")];
             Assert.AreEqual(expected, Docopt.ParseDefaults(section));
         }
     }

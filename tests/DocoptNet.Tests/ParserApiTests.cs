@@ -40,7 +40,7 @@ public class ParserApiTests
             case IArgumentsResult<IDictionary<string, ArgValue>> { Arguments: var args }:
                 Assert.That(args["ship"].IsTrue, Is.True);
                 Assert.That(args["new"].IsTrue, Is.True);
-                Assert.That((StringList)args["<name>"], Is.EqualTo(new[] { "foo", "bar" }));
+                Assert.That((StringList)args["<name>"], Is.EqualTo(["foo", "bar"]));
                 break;
             case var result:
                 Assert.Fail($"Unexpected result: {result}");
@@ -103,7 +103,7 @@ public class ParserApiTests
                          _ => throw new NUnitException());
         Assert.That(args["ship"].IsTrue, Is.True);
         Assert.That(args["new"].IsTrue, Is.True);
-        Assert.That((StringList)args["<name>"], Is.EqualTo(new[] { "foo", "bar" }));
+        Assert.That((StringList)args["<name>"], Is.EqualTo(["foo", "bar"]));
     }
 
     [Test]
@@ -159,7 +159,7 @@ public class ParserApiTests
                                     _ => throw new NUnitException());
             Assert.That(args["ship"].IsTrue, Is.True);
             Assert.That(args["new"].IsTrue, Is.True);
-            Assert.That((StringList)args["<name>"], Is.EqualTo(new[] { "foo", "bar" }));
+            Assert.That((StringList)args["<name>"], Is.EqualTo(["foo", "bar"]));
         }
 
         [Test]
@@ -214,7 +214,7 @@ public class ParserApiTests
                                     _ => throw new NUnitException());
             Assert.That(args["ship"].IsTrue, Is.True);
             Assert.That(args["new"].IsTrue, Is.True);
-            Assert.That((StringList)args["<name>"], Is.EqualTo(new[] { "foo", "bar" }));
+            Assert.That((StringList)args["<name>"], Is.EqualTo(["foo", "bar"]));
         }
 
         [Test]
@@ -256,7 +256,7 @@ public class ParserApiTests
                                     _ => throw new NUnitException());
             Assert.That(args["ship"].IsTrue, Is.True);
             Assert.That(args["new"].IsTrue, Is.True);
-            Assert.That((StringList)args["<name>"], Is.EqualTo(new[] { "foo", "bar" }));
+            Assert.That((StringList)args["<name>"], Is.EqualTo(["foo", "bar"]));
         }
 
         [Test]
@@ -297,7 +297,7 @@ public class ParserApiTests
                                     _ => throw new NUnitException());
             Assert.That(args["ship"].IsTrue, Is.True);
             Assert.That(args["new"].IsTrue, Is.True);
-            Assert.That((StringList)args["<name>"], Is.EqualTo(new[] { "foo", "bar" }));
+            Assert.That((StringList)args["<name>"], Is.EqualTo(["foo", "bar"]));
         }
 
         [TestCase("foobar", "Invalid usage.")]
