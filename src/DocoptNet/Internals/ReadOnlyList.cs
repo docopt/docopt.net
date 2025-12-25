@@ -24,10 +24,8 @@ namespace DocoptNet.Internals
 
     readonly partial struct ReadOnlyList<T> : IReadOnlyList<T>
     {
-        readonly IList<T> _list;
-
-        public ReadOnlyList(IList<T> list) => _list = list;
-        IList<T> List => _list ?? Array.Empty<T>();
+        public ReadOnlyList(IList<T> list) => List = list;
+        IList<T> List => field ?? Array.Empty<T>();
         public int Count => List.Count;
         public T this[int index] => List[index];
         public IEnumerator<T> GetEnumerator() => List.GetEnumerator();
