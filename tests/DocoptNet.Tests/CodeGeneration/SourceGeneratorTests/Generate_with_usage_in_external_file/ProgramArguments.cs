@@ -10,8 +10,7 @@ using Leaves = DocoptNet.Internals.ReadOnlyList<DocoptNet.Internals.LeafPattern>
 
 partial class ProgramArguments : IEnumerable<KeyValuePair<string, object?>>
 {
-    public const string Help = @"
-Naval Fate.
+    public const string Help = @"Naval Fate.
 
     Usage:
       naval_fate.exe ship new <name>...

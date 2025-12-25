@@ -26,24 +26,25 @@ namespace DocoptNet.Tests.CodeGeneration
     [TestFixture]
     public class SourceGeneratorTests
     {
-        const string NavalFateUsage = @"
-Naval Fate.
+        const string NavalFateUsage = """
+            Naval Fate.
 
-    Usage:
-      naval_fate.exe ship new <name>...
-      naval_fate.exe ship <name> move <x> <y> [--speed=<kn>]
-      naval_fate.exe ship shoot <x> <y>
-      naval_fate.exe mine (set|remove) <x> <y> [--moored | --drifting]
-      naval_fate.exe (-h | --help)
-      naval_fate.exe --version
+                Usage:
+                  naval_fate.exe ship new <name>...
+                  naval_fate.exe ship <name> move <x> <y> [--speed=<kn>]
+                  naval_fate.exe ship shoot <x> <y>
+                  naval_fate.exe mine (set|remove) <x> <y> [--moored | --drifting]
+                  naval_fate.exe (-h | --help)
+                  naval_fate.exe --version
 
-    Options:
-      -h --help     Show this screen.
-      --version     Show version.
-      --speed=<kn>  Speed in knots [default: 10].
-      --moored      Moored (anchored) mine.
-      --drifting    Drifting mine.
-";
+                Options:
+                  -h --help     Show this screen.
+                  --version     Show version.
+                  --speed=<kn>  Speed in knots [default: 10].
+                  --moored      Moored (anchored) mine.
+                  --drifting    Drifting mine.
+
+            """;
 
         [Test]
         public void Generate_with_usage_in_external_file()
@@ -70,12 +71,14 @@ Naval Fate.
         {
             AssertMatchesSnapshot(
             [
-                ("Program.cs", SourceText.From($@"
+                ("Program.cs", SourceText.From($$"""
                     [DocoptNet.DocoptArguments]
                     partial class Arguments
-                    {{
-                        public const string Help = @""{NavalFateUsage}"";
-                    }}"))
+                    {
+                        public const string Help = @"{{NavalFateUsage}}";
+                    }
+
+                    """))
             ]);
         }
 
@@ -84,12 +87,14 @@ Naval Fate.
         {
             AssertMatchesSnapshot(
             [
-                ("Program.cs", SourceText.From($@"
+                ("Program.cs", SourceText.From($$"""
                     [DocoptNet.DocoptArguments(HelpConstName = nameof(HelpText))]
                     partial class Arguments
-                    {{
-                        public const string HelpText = @""{NavalFateUsage}"";
-                    }}"))
+                    {
+                        public const string HelpText = @"{{NavalFateUsage}}";
+                    }
+
+                    """))
             ]);
         }
 
@@ -100,7 +105,7 @@ Naval Fate.
 
             AssertMatchesSnapshot(
             [
-                ("Program.cs", SourceText.From(@"
+                ("Program.cs", SourceText.From($$"""
                     using System;
                     using DocoptNet;
                     using ArgumentsAttribute = DocoptNet.DocoptArgumentsAttribute;
@@ -109,30 +114,32 @@ Naval Fate.
                     sealed class AnotherAttribute : Attribute { }
 
                     [DocoptNet.DocoptArguments]
-                    partial class Arguments1 { public const string Help = @""" + help + @"""; }
+                    partial class Arguments1 { public const string Help = @"{{help}}"; }
 
                     [DocoptNet.DocoptArgumentsAttribute]
-                    partial class Arguments2 { public const string Help = @""" + help + @"""; }
+                    partial class Arguments2 { public const string Help = @"{{help}}"; }
 
                     [DocoptArguments]
-                    partial class Arguments3 { public const string Help = @""" + help + @"""; }
+                    partial class Arguments3 { public const string Help = @"{{help}}"; }
 
                     [Arguments]
-                    partial class Arguments4 { public const string Help = @""" + help + @"""; }
+                    partial class Arguments4 { public const string Help = @"{{help}}"; }
 
                     [Arguments]
-                    partial class Arguments5 { public const string Help = @""" + help + @"""; }
+                    partial class Arguments5 { public const string Help = @"{{help}}"; }
 
                     [Another, Arguments]
-                    partial class Arguments6 { public const string Help = @""" + help + @"""; }
+                    partial class Arguments6 { public const string Help = @"{{help}}"; }
 
                     [Another][Arguments]
-                    partial class Arguments7 { public const string Help = @""" + help + @"""; }
+                    partial class Arguments7 { public const string Help = @"{{help}}"; }
 
-                    partial class Arguments8 { public const string Help = @""" + help + @"""; }
+                    partial class Arguments8 { public const string Help = @"{{help}}"; }
 
                     [Arguments]
-                    partial class Arguments8 { }"))
+                    partial class Arguments8 { }
+
+                    """))
             ]);
         }
 
@@ -141,15 +148,17 @@ Naval Fate.
         {
             AssertMatchesSnapshot(
             [
-                ("Program.cs", SourceText.From(@"
+                ("Program.cs", SourceText.From("""
                     [DocoptNet.DocoptArguments]
                     partial class Arguments1 { }
 
-                    [DocoptNet.DocoptArguments(HelpConstName = ""HELP"")]
-                    partial class Arguments2 { public const string Help = @""Usage: program""; }
+                    [DocoptNet.DocoptArguments(HelpConstName = "HELP")]
+                    partial class Arguments2 { public const string Help = @"Usage: program"; }
 
                     [DocoptNet.DocoptArguments]
-                    partial class Arguments3 { public string Help => @""Usage: program""; }"))
+                    partial class Arguments3 { public string Help => @"Usage: program"; }
+
+                    """))
             ]);
         }
 
@@ -158,15 +167,17 @@ Naval Fate.
         {
             AssertMatchesSnapshot(
             [
-                ("Program.cs", SourceText.From(@"
+                ("Program.cs", SourceText.From("""
                     namespace Outer
                     {
                         namespace Inner
                         {
                             [DocoptNet.DocoptArguments]
-                            partial class Arguments { const string Help = @""Usage: program""; }
+                            partial class Arguments { const string Help = @"Usage: program"; }
                         }
-                    }"))
+                    }
+
+                    """))
             ]);
         }
 
@@ -175,11 +186,11 @@ Naval Fate.
         {
             AssertMatchesSnapshot(
             [
-                ("Program.cs", SourceText.From(@"
+                ("Program.cs", SourceText.From("""
                     [DocoptNet.DocoptArguments]
                     sealed partial class ProgramArguments
                     {
-                        const string Help = ""Usage: program"";
+                        const string Help = "Usage: program";
                     }
 
                     namespace Namespace1
@@ -187,7 +198,7 @@ Naval Fate.
                         [DocoptNet.DocoptArguments]
                         sealed partial class ProgramArguments
                         {
-                            const string Help = ""Usage: program"";
+                            const string Help = "Usage: program";
                         }
                     }
 
@@ -196,9 +207,11 @@ Naval Fate.
                         [DocoptNet.DocoptArguments]
                         sealed partial class ProgramArguments
                         {
-                            const string Help = ""Usage: program"";
+                            const string Help = "Usage: program";
                         }
-                    }"))
+                    }
+
+                    """))
             ]);
         }
 
@@ -207,13 +220,13 @@ Naval Fate.
         {
             AssertMatchesSnapshot(
             [
-                ("Program.cs", SourceText.From(@"
+                ("Program.cs", SourceText.From("""
                     static partial class Program
                     {
                         [DocoptNet.DocoptArguments]
                         sealed partial class Arguments
                         {
-                            const string Help = ""Usage: program"";
+                            const string Help = "Usage: program";
                         }
 
                         partial class Nested
@@ -221,7 +234,7 @@ Naval Fate.
                             [DocoptNet.DocoptArguments]
                             sealed partial class Arguments
                             {
-                                const string Help = ""Usage: program"";
+                                const string Help = "Usage: program";
                             }
                         }
                     }
@@ -233,10 +246,12 @@ Naval Fate.
                             [DocoptNet.DocoptArguments]
                             sealed partial class Arguments
                             {
-                                const string Help = ""Usage: program"";
+                                const string Help = "Usage: program";
                             }
                         }
-                    }"))
+                    }
+
+                    """))
             ]);
         }
 
@@ -245,24 +260,28 @@ Naval Fate.
         {
             AssertMatchesSnapshot(
             [
-                ("File1.cs", SourceText.From(@"
+                ("File1.cs", SourceText.From("""
                     namespace Namespace1
                     {
                         [DocoptNet.DocoptArguments]
                         sealed partial class ProgramArguments
                         {
-                            const string Help = ""Usage: program"";
+                            const string Help = "Usage: program";
                         }
-                    }")),
-                ("File2.cs", SourceText.From(@"
+                    }
+
+                    """)),
+                ("File2.cs", SourceText.From("""
                     namespace Namespace2
                     {
                         [DocoptNet.DocoptArguments]
                         sealed partial class ProgramArguments
                         {
-                            const string Help = ""Usage: program"";
+                            const string Help = "Usage: program";
                         }
-                    }")),
+                    }
+
+                    """)),
             ]);
         }
 
@@ -415,19 +434,22 @@ Naval Fate.
 
             var resultFilePath = Path.Combine(actualSourcesPath, ".testdiff");
             File.WriteAllLines(resultFilePath, deltaLines);
-            Assert.Fail($@"Generated code failed expectations:
+            Assert.Fail($"""
+                Generated code failed expectations:
 
-- {matchCount} matched
-- {extraCount} deleted
-- {newCount} added
-- {mismatchCount} modified
-- {grr.Diagnostics.Length} diagnostic(s)
+                - {matchCount} matched
+                - {extraCount} deleted
+                - {newCount} added
+                - {mismatchCount} modified
+                - {grr.Diagnostics.Length} diagnostic(s)
 
-For details, run:
+                For details, run:
 
-cd ""{solutionDirPath}""
-dotnet tool restore
-dotnet script {Path.Combine("tests", "DocoptNet.Tests", "sgss.csx")} -- inspect -i");
+                cd "{solutionDirPath}"
+                dotnet tool restore
+                dotnet script {Path.Combine("tests", "DocoptNet.Tests", "sgss.csx")} -- inspect -i
+
+                """);
         }
 
         abstract record SnapshotComparisonResult;
@@ -555,12 +577,13 @@ dotnet script {Path.Combine("tests", "DocoptNet.Tests", "sgss.csx")} -- inspect 
 
         static Program GenerateProgram(string doc)
         {
-            const string main = @"
-using System.Collections.Generic;
-using DocoptNet;
+            const string main = $$"""
+                using System.Collections.Generic;
+                using DocoptNet;
 
-public partial class " + ProgramArgumentsClassName + @" { }
-";
+                public partial class {{ProgramArgumentsClassName}} { }
+
+                """;
 
             var assembly = GenerateProgram(("Main.cs", SourceText.From(main)),
                                            ("Program.docopt.txt", SourceText.From(doc)));

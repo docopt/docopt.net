@@ -22,43 +22,45 @@ namespace DocoptNet.Tests.CodeGeneration
                         ["testcases.docopt"])]
         public void Test(string doc, string cmdLine, string expected)
         {
-            const string main = @"
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using DocoptNet;
-using DocoptNet.Internals;
-using Newtonsoft.Json;
+            const string main = """
+                using System;
+                using System.Collections;
+                using System.Collections.Generic;
+                using DocoptNet;
+                using DocoptNet.Internals;
+                using Newtonsoft.Json;
 
-public partial class Program
-{
-    public Program(IList<string> argv)
-    {
-        var arguments = ProgramArguments.CreateParser().Parse(argv) switch
-        {
-            IArgumentsResult<ProgramArguments> { Arguments: var args } => args,
-            IInputErrorResult => throw new DocoptInputErrorException(),
-            _ => throw new(),
-        };
-        var dict = new Dictionary<string, object>();
-        foreach (var (name, value) in arguments)
-        {
-            if (value is StringList items)
-            {
-                var l = new ArrayList();
-                foreach (var item in items)
-                    l.Add(item);
-                dict[name] = l;
-            }
-            else
-                dict[name] = value;
-        }
-        Json = JsonConvert.SerializeObject(dict);
-    }
+                public partial class Program
+                {
+                    public Program(IList<string> argv)
+                    {
+                        var arguments = ProgramArguments.CreateParser().Parse(argv) switch
+                        {
+                            IArgumentsResult<ProgramArguments> { Arguments: var args } => args,
+                            IInputErrorResult => throw new DocoptInputErrorException(),
+                            _ => throw new(),
+                        };
+                        var dict = new Dictionary<string, object>();
+                        foreach (var (name, value) in arguments)
+                        {
+                            if (value is StringList items)
+                            {
+                                var l = new ArrayList();
+                                foreach (var item in items)
+                                    l.Add(item);
+                                dict[name] = l;
+                            }
+                            else
+                                dict[name] = value;
+                        }
+                        Json = JsonConvert.SerializeObject(dict);
+                    }
 
-    public string Json { get; }
-}
-";
+                    public string Json { get; }
+                }
+
+                """;
+
             Assembly assembly;
 
             try

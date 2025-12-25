@@ -124,23 +124,25 @@ namespace DocoptNet.Tests.Integration
     [DocoptArguments]
     public sealed partial class InlineNavalFateArguments : INavalFateArguments
     {
-        public const string Help = @"Naval Fate.
+        public const string Help = """
+            Naval Fate.
 
-    Usage:
-      naval_fate.exe ship new <name>...
-      naval_fate.exe ship <name> move <x> <y> [--speed=<kn>]
-      naval_fate.exe ship shoot <x> <y>
-      naval_fate.exe mine (set|remove) <x> <y> [--moored | --drifting]
-      naval_fate.exe (-h | --help)
-      naval_fate.exe --version
+                Usage:
+                  naval_fate.exe ship new <name>...
+                  naval_fate.exe ship <name> move <x> <y> [--speed=<kn>]
+                  naval_fate.exe ship shoot <x> <y>
+                  naval_fate.exe mine (set|remove) <x> <y> [--moored | --drifting]
+                  naval_fate.exe (-h | --help)
+                  naval_fate.exe --version
 
-    Options:
-      -h --help     Show this screen.
-      --version     Show version.
-      --speed=<kn>  Speed in knots [default: 10].
-      --moored      Moored (anchored) mine.
-      --drifting    Drifting mine.
-";
+                Options:
+                  -h --help     Show this screen.
+                  --version     Show version.
+                  --speed=<kn>  Speed in knots [default: 10].
+                  --moored      Moored (anchored) mine.
+                  --drifting    Drifting mine.
+
+            """;
     }
 
     public class InlineNavalFateTests : NavalFateTestsBase<InlineNavalFateArguments>

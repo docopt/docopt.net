@@ -6,8 +6,8 @@
     "category": "Docopt",
     "title": "Missing member",
     "message": "'Arguments1' is missing the help string constant named 'Help'",
-    "line": 2,
-    "char": 34
+    "line": 1,
+    "char": 14
   },
   {
     "id": "DCPT0002",
@@ -16,8 +16,8 @@
     "category": "Docopt",
     "title": "Missing member",
     "message": "'Arguments2' is missing the help string constant named 'HELP'",
-    "line": 5,
-    "char": 34
+    "line": 4,
+    "char": 14
   },
   {
     "id": "DCPT0002",
@@ -26,7 +26,7 @@
     "category": "Docopt",
     "title": "Missing member",
     "message": "'Arguments3' is missing the help string constant named 'Help'",
-    "line": 8,
-    "char": 34
+    "line": 7,
+    "char": 14
   }
 ]

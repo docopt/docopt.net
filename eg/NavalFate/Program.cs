@@ -2,24 +2,25 @@ using System;
 using System.Collections.Generic;
 using DocoptNet;
 
-const string help = @"Naval Fate.
+const string help = """
+    Naval Fate.
 
-Usage:
-  naval_fate.exe ship new <name>...
-  naval_fate.exe ship <name> move <x> <y> [--speed=<kn>]
-  naval_fate.exe ship shoot <x> <y>
-  naval_fate.exe mine (set|remove) <x> <y> [--moored | --drifting]
-  naval_fate.exe (-h | --help)
-  naval_fate.exe --version
+    Usage:
+      naval_fate.exe ship new <name>...
+      naval_fate.exe ship <name> move <x> <y> [--speed=<kn>]
+      naval_fate.exe ship shoot <x> <y>
+      naval_fate.exe mine (set|remove) <x> <y> [--moored | --drifting]
+      naval_fate.exe (-h | --help)
+      naval_fate.exe --version
 
-Options:
-  -h --help     Show this screen.
-  --version     Show version.
-  --speed=<kn>  Speed in knots [default: 10].
-  --moored      Moored (anchored) mine.
-  --drifting    Drifting mine.
+    Options:
+      -h --help     Show this screen.
+      --version     Show version.
+      --speed=<kn>  Speed in knots [default: 10].
+      --moored      Moored (anchored) mine.
+      --drifting    Drifting mine.
 
-";
+    """;
 
 var argsParser = Docopt.CreateParser(help).WithVersion("Naval Fate 2.0");
 

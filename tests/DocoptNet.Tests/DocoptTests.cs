@@ -67,9 +67,13 @@ namespace DocoptNet.Tests
                     {"-v", false},
                     {"A", "arg"}
                 };
-            var actual = new Docopt().Apply(@"Usage: prog [-v] A
+            const string doc = """
+                Usage: prog [-v] A
 
-             Options: -v  Be verbose.", "arg");
+                Options: -v  Be verbose.
+
+                """;
+            var actual = new Docopt().Apply(doc, "arg");
             Assert.AreEqual(expected, actual);
         }
 
@@ -81,22 +85,28 @@ namespace DocoptNet.Tests
                     {"-v", true},
                     {"A", "arg"}
                 };
-            var actual = new Docopt().Apply(@"Usage: prog [-v] A
+            const string doc = """
+                Usage: prog [-v] A
 
-             Options: -v  Be verbose.", "-v arg");
+                Options: -v  Be verbose.
+
+                """;
+            var actual = new Docopt().Apply(doc, "-v arg");
             Assert.AreEqual(expected, actual);
         }
 
-        const string Doc = @"Usage: prog [-vqr] [FILE]
-              prog INPUT OUTPUT
-              prog --help
+        const string Doc = """
+            Usage: prog [-vqr] [FILE]
+                          prog INPUT OUTPUT
+                          prog --help
 
-    Options:
-      -v  print status messages
-      -q  report only file names
-      -r  show all occurrences of the same error
-      --help
-    ";
+            Options:
+              -v  print status messages
+              -q  report only file names
+              -r  show all occurrences of the same error
+              --help
+
+            """;
 
         [Test]
         public void Match_one_opt_with_arg()
@@ -194,15 +204,23 @@ namespace DocoptNet.Tests
                 {
                     {"-l", ""}
                 };
-            var actual = new Docopt().Apply("usage: prog -l <a>\noptions: -l <a>", Args.Argv("-l", ""));
+            const string doc = """
+                usage: prog -l <a>
+                options: -l <a>
+                """;
+            var actual = new Docopt().Apply(doc, Args.Argv("-l", ""));
             Assert.AreEqual(expected, actual);
         }
 
         [Test]
         public void Test_issue_68_options_shortcut_does_not_include_options_in_usage_pattern()
         {
-            var args = new Docopt().Apply("usage: prog [-ab] [options]\noptions: -x\n -y", "-ax")
-                                   .ShouldNotBeNull();
+            const string doc = """
+                usage: prog [-ab] [options]
+                options: -x
+                 -y
+                """;
+            var args = new Docopt().Apply(doc, "-ax").ShouldNotBeNull();
             Assert.True(args["-a"].IsTrue);
             Assert.True(args["-b"].IsFalse);
             Assert.True(args["-x"].IsTrue);
@@ -212,11 +230,13 @@ namespace DocoptNet.Tests
         [Test]
         public void Test_issue_32_should_parse()
         {
-            const string doc = @"
-Usage: Conversion (load | brokers | loadnonxl | <pn>... [--clean]) [--whatif]
+            const string doc = """
+                Usage: Conversion (load | brokers | loadnonxl | <pn>... [--clean]) [--whatif]
 
--h --help    show this
---verbose    print more text";
+                -h --help    show this
+                --verbose    print more text
+
+                """;
             Assert.DoesNotThrow(() => new Docopt().Apply(doc, "dfg67 dfg4 dg2 --clean"));
         }
     }

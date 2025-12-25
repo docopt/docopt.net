@@ -159,9 +159,9 @@ namespace DocoptNet.Tests
         }
 
         [TestCase((object)new string[0], ExpectedResult = "[]")]
-        [TestCase((object)new[] { "foo" }, ExpectedResult = @"[""foo""]")]
-        [TestCase((object)new[] { "foo", "bar" }, ExpectedResult = @"[""foo"", ""bar""]")]
-        [TestCase((object)new[] { "foo", "bar", "baz" }, ExpectedResult = @"[""foo"", ""bar"", ""baz""]")]
+        [TestCase((object)new[] { "foo" }, ExpectedResult = """["foo"]""")]
+        [TestCase((object)new[] { "foo", "bar" }, ExpectedResult = """["foo", "bar"]""")]
+        [TestCase((object)new[] { "foo", "bar", "baz" }, ExpectedResult = """["foo", "bar", "baz"]""")]
         public string ToString_returns_list_representation(string[] items)
         {
             return StringList.TopBottom(items).ToString();
