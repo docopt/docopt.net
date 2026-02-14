@@ -48,12 +48,10 @@ jobs:
       run: dotnet tool restore
 
     - name: Build
-      # Uses 'dotnet pwsh' because the default shell (bash/cmd) is not PowerShell
       run: dotnet pwsh ./build.ps1 -Build -Configuration ${{ env.CONFIGURATION }}
 
     - name: Pack (Windows only)
       if: runner.os == 'Windows'
-      # Uses 'shell: pwsh' so commands run in PowerShell context
       shell: pwsh
       run: |
         $commitTimestamp = git log -1 --format=%cI
@@ -95,7 +93,6 @@ jobs:
           ForEach-Object { dotnet sourcelink test $_; if ($LASTEXITCODE) { throw "SourceLink test failed for $_" } }
 
     - name: Test
-      # Uses 'dotnet pwsh' because the default shell (bash/cmd) is not PowerShell
       run: dotnet pwsh ./build.ps1 -Test -NoBuild -Configuration ${{ env.CONFIGURATION }}
 
     - name: Integration Tests (Windows)

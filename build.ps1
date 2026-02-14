@@ -84,20 +84,13 @@ Push-Location $PSScriptRoot
 try {
     function Invoke-DotNet {
         param(
-            [string[]] $Arguments,
-            [switch] $AllowTestFailures
+            [string[]] $Arguments
         )
 
         Write-Host "dotnet $($Arguments -join ' ')" -ForegroundColor Cyan
         & dotnet @Arguments
         if ($LASTEXITCODE -ne 0) {
-            # Some test frameworks (e.g., net47) may not run on all platforms (Linux/macOS require mono).
-            # Allow exit code 1 for test commands when the runnable tests passed but some frameworks couldn't execute.
-            if ($AllowTestFailures -and $LASTEXITCODE -eq 1) {
-                Write-Host "Test command returned exit code 1 (this may be due to net47 requiring mono on Linux)" -ForegroundColor Yellow
-            } else {
-                throw "dotnet command failed with exit code $LASTEXITCODE"
-            }
+            throw "dotnet command failed with exit code $LASTEXITCODE"
         }
     }
 
@@ -115,9 +108,7 @@ try {
         }
 
         Write-Host "`n=== Running Tests ===" -ForegroundColor Green
-        # AllowTestFailures handles the case where net47 tests cannot run (requires mono on Linux/macOS)
-        # while still ensuring that tests that can run actually pass
-        Invoke-DotNet 'test', '--no-build', '--configuration', $Configuration -AllowTestFailures
+        Invoke-DotNet 'test', '--no-build', '--configuration', $Configuration
 
         # Note: Roslyn 4.4 analyzer is validated through integration tests
         # that use the packed NuGet package containing both analyzer variants
