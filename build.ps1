@@ -26,6 +26,9 @@
 .PARAMETER VersionSuffix
     Optional version suffix for the NuGet package (e.g., "beta1").
 
+.PARAMETER PackageReleaseNotesFile
+    Optional path to a file containing release notes for the NuGet package.
+
 .EXAMPLE
     ./build.ps1
     Build both Roslyn variants (baseline + 4.4).
@@ -41,6 +44,10 @@
 .EXAMPLE
     ./build.ps1 -Pack -VersionSuffix "beta1"
     Build and pack with version suffix.
+
+.EXAMPLE
+    ./build.ps1 -Pack -PackageReleaseNotesFile "/path/to/notes.txt"
+    Build and pack with release notes from a file.
 #>
 
 [CmdletBinding(DefaultParameterSetName = 'Build')]
@@ -63,7 +70,10 @@ param(
     [switch] $NoBuild,
 
     [Parameter(ParameterSetName = 'Pack')]
-    [string] $VersionSuffix
+    [string] $VersionSuffix,
+
+    [Parameter(ParameterSetName = 'Pack')]
+    [string] $PackageReleaseNotesFile
 )
 
 $ErrorActionPreference = 'Stop'
@@ -122,6 +132,9 @@ try {
         $packArgs = @('pack', 'src/DocoptNet/DocoptNet.csproj', '--no-build', '--configuration', $Configuration)
         if ($VersionSuffix) {
             $packArgs += @('--version-suffix', $VersionSuffix)
+        }
+        if ($PackageReleaseNotesFile) {
+            $packArgs += "-p:PackageReleaseNotesFile=$PackageReleaseNotesFile"
         }
         Invoke-DotNet $packArgs
     }
