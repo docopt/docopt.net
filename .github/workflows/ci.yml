@@ -85,7 +85,7 @@ jobs:
           $packParams.VersionSuffix = $versionSuffix
         }
         
-        dotnet pwsh ./build.ps1 -Pack @packParams
+        & ./build.ps1 -Pack @packParams
         if ($LASTEXITCODE) { throw "Pack failed" }
 
         Get-ChildItem -File -Filter docopt.net.*.nupkg dist |

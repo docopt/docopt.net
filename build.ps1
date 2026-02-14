@@ -115,11 +115,7 @@ try {
         }
 
         Write-Host "`n=== Running Tests ===" -ForegroundColor Green
-        if ($NoBuild) {
-            Invoke-DotNet 'test', '--no-build', '--configuration', $Configuration -AllowTestFailures
-        } else {
-            Invoke-DotNet 'test', '--no-build', '--configuration', $Configuration -AllowTestFailures
-        }
+        Invoke-DotNet 'test', '--no-build', '--configuration', $Configuration -AllowTestFailures
 
         # Note: Roslyn 4.4 analyzer is validated through integration tests
         # that use the packed NuGet package containing both analyzer variants
