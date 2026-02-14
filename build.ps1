@@ -12,7 +12,7 @@
     Build the solution (default parameter set).
 
 .PARAMETER Test
-    Run tests for both Roslyn variants.
+    Run tests. Note: May fail on non-Windows platforms if .NET Framework tests cannot run.
 
 .PARAMETER Pack
     Create a NuGet package containing both analyzer variants.

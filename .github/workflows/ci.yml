@@ -93,7 +93,7 @@ jobs:
           ForEach-Object { dotnet sourcelink test $_; if ($LASTEXITCODE) { throw "SourceLink test failed for $_" } }
 
     - name: Test
-      run: dotnet pwsh ./build.ps1 -Test -NoBuild -Configuration ${{ env.CONFIGURATION }}
+      run: dotnet test --no-build --configuration ${{ env.CONFIGURATION }}
 
     - name: Integration Tests (Windows)
       if: runner.os == 'Windows'
