@@ -1,6 +1,17 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
+    <_Roslyn44AnalyzerDir>$(MSBuildProjectDirectory)/bin/roslyn4.4/</_Roslyn44AnalyzerDir>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(RoslynVersion)' == '4.4'">
+    <BaseOutputPath>$(_Roslyn44AnalyzerDir)</BaseOutputPath>
+    <BaseIntermediateOutputPath>$(MSBuildProjectDirectory)/obj/roslyn4.4/</BaseIntermediateOutputPath>
+    <DefaultItemExcludes>$(DefaultItemExcludes);$(MSBuildProjectDirectory)/obj/**</DefaultItemExcludes>
+    <DefineConstants>$(DefineConstants);ROSLYN4_4</DefineConstants>
+  </PropertyGroup>
+
+  <PropertyGroup>
     <TargetFrameworks>netstandard2.1;netstandard2.0;net47</TargetFrameworks>
     <DefineConstants>$(DefineConstants);DOCOPTNET_PUBLIC</DefineConstants>
     <!--
@@ -49,14 +60,23 @@ Portions Copyright (C) West Wind Technologies, 2008.
     <None Include="CodeGeneration\*.cs" />
   </ItemGroup>
 
-  <ItemGroup Condition="'$(TargetFramework)' != 'net47'">
+  <ItemGroup Condition="'$(TargetFramework)' != 'net47' And '$(RoslynVersion)' != '4.4'">
     <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="3.10.0" PrivateAssets="all" />
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(TargetFramework)' != 'net47' And '$(RoslynVersion)' == '4.4'">
+    <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="4.4.0" PrivateAssets="all" />
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(TargetFramework)' != 'net47'">
     <AdditionalFiles Include="CodeGeneration\AnalyzerReleases.*.md" />
   </ItemGroup>
 
   <ItemGroup>
     <!-- Package the generator in the analyzer directory of the nuget package -->
     <None Include="$(OutputPath)\netstandard2.0\$(AssemblyName).dll" Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false" />
+    <!-- Package the Roslyn 4.4 variant of the generator -->
+    <None Include="$(_Roslyn44AnalyzerDir)$(Configuration)/netstandard2.0/$(AssemblyName).dll" Pack="true" PackagePath="analyzers/dotnet/roslyn4.4/cs" Visible="false" />
     <!--
     Using a "PackagePath" of "build/$(TargetFramework)/%(Filename)%(Extension)" causes the
     following error:
@@ -95,5 +115,13 @@ Portions Copyright (C) West Wind Technologies, 2008.
     <AdditionalFiles Include="PublicAPI/$(TargetFramework)/PublicAPI.Shipped.txt" />
     <AdditionalFiles Include="PublicAPI/$(TargetFramework)/PublicAPI.Unshipped.txt" />
   </ItemGroup>
+
+  <Target Name="_ValidateRoslyn44AnalyzerOutput" BeforeTargets="GenerateNuspec">
+    <PropertyGroup>
+      <_Roslyn44AnalyzerPath>$(_Roslyn44AnalyzerDir)$(Configuration)/netstandard2.0/$(AssemblyName).dll</_Roslyn44AnalyzerPath>
+    </PropertyGroup>
+    <Error Condition="!Exists('$(_Roslyn44AnalyzerPath)')"
+           Text="Roslyn 4.4 analyzer output not found at '$(_Roslyn44AnalyzerPath)'. Build all Roslyn variants first by running: ./build.ps1 -Pack" />
+  </Target>
 
 </Project>
