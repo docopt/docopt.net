@@ -70,6 +70,58 @@ Install [the package][nupkg] in a .NET project using:
 
     dotnet add package docopt.net
 
+## Building from Source
+
+The repository uses a PowerShell script to orchestrate multi-Roslyn variant builds. Ensure you have the required tools installed:
+
+```bash
+dotnet tool restore
+```
+
+### Build
+
+To build the project with both Roslyn 3.10 (baseline) and Roslyn 4.4 variants:
+
+```bash
+dotnet pwsh ./build.ps1
+```
+
+or simply:
+
+```bash
+dotnet pwsh ./build.ps1 -Build -Configuration Release
+```
+
+### Test
+
+To run tests:
+
+```bash
+dotnet pwsh ./build.ps1 -Test
+```
+
+To run tests without rebuilding:
+
+```bash
+dotnet pwsh ./build.ps1 -Test -NoBuild
+```
+
+### Pack
+
+To create a NuGet package containing both analyzer variants:
+
+```bash
+dotnet pwsh ./build.ps1 -Pack
+```
+
+**Note:** Running `dotnet pack` directly without first building all Roslyn variants will fail with an error message. Always use `./build.ps1 -Pack` to ensure both analyzer variants are included in the package.
+
+To pack with a version suffix:
+
+```bash
+dotnet pwsh ./build.ps1 -Pack -VersionSuffix "beta1"
+```
+
 ## Copyright and License
 
 - &copy; 2012-2014 Vladimir Keleshev <vladimir@keleshev.com>
