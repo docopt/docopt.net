@@ -5,8 +5,6 @@
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(RoslynVersion)' == '4.4'">
-    <BaseOutputPath>$(_Roslyn44AnalyzerDir)</BaseOutputPath>
-    <BaseIntermediateOutputPath>$(MSBuildProjectDirectory)/obj/roslyn4.4/</BaseIntermediateOutputPath>
     <DefaultItemExcludes>$(DefaultItemExcludes);$(MSBuildProjectDirectory)/obj/**</DefaultItemExcludes>
     <DefineConstants>$(DefineConstants);ROSLYN4_4</DefineConstants>
   </PropertyGroup>

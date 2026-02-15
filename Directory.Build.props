@@ -1,5 +1,12 @@
 <Project>
 
+  <!-- Roslyn 4.4 variant output paths must be set here (before Microsoft.Common.props)
+       to avoid MSB3539 warning. See: https://go.microsoft.com/fwlink/?linkid=869650 -->
+  <PropertyGroup Condition="'$(RoslynVersion)' == '4.4'">
+    <BaseOutputPath>$(MSBuildProjectDirectory)/bin/roslyn4.4/</BaseOutputPath>
+    <BaseIntermediateOutputPath>$(MSBuildProjectDirectory)/obj/roslyn4.4/</BaseIntermediateOutputPath>
+  </PropertyGroup>
+
   <PropertyGroup>
     <LangVersion>14</LangVersion>
     <Nullable>enable</Nullable>
