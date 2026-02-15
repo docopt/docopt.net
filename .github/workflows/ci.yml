@@ -48,10 +48,7 @@ jobs:
       run: dotnet tool restore
 
     - name: Build
-      run: dotnet build --configuration ${{ env.CONFIGURATION }}
-
-    - name: Build Roslyn 4.4 variant
-      run: dotnet build src/DocoptNet/DocoptNet.csproj -f netstandard2.0 -p:RoslynVersion=4.4 --configuration ${{ env.CONFIGURATION }}
+      run: dotnet pwsh ./build.ps1 -Build -Configuration ${{ env.CONFIGURATION }}
 
     - name: Pack (Windows only)
       if: runner.os == 'Windows'
@@ -79,11 +76,16 @@ jobs:
         }
 
         Add-Content $releaseNotesFile -Encoding UTF8 "Commit @ ${{ github.sha }}"
-        $packArgs = @()
-        if ($versionSuffix) {
-          $packArgs += @('--version-suffix', $versionSuffix)
+        
+        $packParams = @{
+          Configuration = '${{ env.CONFIGURATION }}'
+          PackageReleaseNotesFile = $releaseNotesFile
         }
-        dotnet pack --no-build --configuration ${{ env.CONFIGURATION }} @packArgs "-p:PackageReleaseNotesFile=$releaseNotesFile"
+        if ($versionSuffix) {
+          $packParams.VersionSuffix = $versionSuffix
+        }
+        
+        & ./build.ps1 -Pack @packParams
         if ($LASTEXITCODE) { throw "Pack failed" }
 
         Get-ChildItem -File -Filter docopt.net.*.nupkg dist |
